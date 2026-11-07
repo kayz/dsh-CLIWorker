@@ -38,3 +38,30 @@ test('[repro] [AC-005] config home ignores the directory of the config file', as
     fs.rmSync(base, { recursive: true, force: true })
   }
 })
+
+test('[fixed] [AC-012] live loadConfig gives two config files disjoint state directories', async () => {
+  const { loadConfig } = await import(new URL('../../../lib/config.mjs', import.meta.url).href)
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'cw-live-paths-'))
+  try {
+    const home = path.join(base, 'home')
+    const first = path.join(base, 'first')
+    const second = path.join(base, 'second')
+    for (const dir of [home, first, second]) fs.mkdirSync(dir, { recursive: true })
+
+    const firstFile = path.join(first, 'config.json')
+    const secondFile = path.join(second, 'config.json')
+    for (const file of [firstFile, secondFile]) {
+      fs.writeFileSync(file, JSON.stringify({ providers: {}, models: {} }), 'utf8')
+    }
+
+    const ctx = { fs, env: { CLIWORKER_HOME: home }, platform: process.platform }
+    const a = loadConfig({ file: firstFile, ctx })
+    const b = loadConfig({ file: secondFile, ctx })
+
+    assert.notEqual(a._home, b._home)
+    assert.equal(path.resolve(a._home).startsWith(path.resolve(first) + path.sep), false)
+    assert.equal(path.resolve(b._home).startsWith(path.resolve(second) + path.sep), false)
+  } finally {
+    fs.rmSync(base, { recursive: true, force: true })
+  }
+})
