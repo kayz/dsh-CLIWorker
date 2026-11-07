@@ -122,5 +122,98 @@
     "usage_source": "cli_json",
     "log_ref": ".collab/tasks/004/logs/dev-r1-1.log",
     "error": null
+  },
+  {
+    "task": "004",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-07T17:11:55.682Z",
+    "ended_at": "2026-11-07T17:11:55.682Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 2
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": null,
+      "total": null,
+      "ok": false,
+      "ran_at": "2026-11-07T17:11:55.682Z",
+      "report_ref": ".collab/tasks/004/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/004/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "004",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-07T17:12:03.951Z",
+    "ended_at": "2026-11-07T17:12:03.951Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 2
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": null,
+      "total": null,
+      "ok": false,
+      "ran_at": "2026-11-07T17:12:03.951Z",
+      "report_ref": ".collab/tasks/004/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/004/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "004",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-07T17:12:03.954Z",
+    "ended_at": "2026-11-07T17:17:31.251Z",
+    "duration_ms": 327297,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 3957570,
+      "output": 30838,
+      "cache_read": 3890048,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/004/logs/dev-r1-1.log",
+    "error": null
   }
 ]

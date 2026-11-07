@@ -8,7 +8,8 @@
 - 注册表与快照深相等，30 个码、403 互斥、阈值、映射、枚举全部就位。
 - 四个新检查脚本（`check-contract-doc`、`check-golden-frozen`、`check-no-collab`、`check-write-scope`）被 `check-fast` 按码点自动纳入并通过。
 - `npm test` 89/89 通过，`check-fast` 与 `check-fast.ps1` 均退出 0。
-- 唯一与 acceptance 的逐字差异是 G-4（见 §6.2），原因是 `join` 把 JSON `null` 渲染成空串；按 design §9.4 保留 `null`，未改动金标语义。
+- acceptance.md 已按 CI 可解析的结构重写（见 §7），53 条检查在本机 pwsh 7.6.9 下逐条跑通。
+- 上一轮遗留的 G-4 逐字差异已消除（见 §6.2）：金标里的 `null` 保持不变，把验收命令改成能如实呈现 `null` 的写法。
 
 ## 2. 产物与改动清单
 
@@ -47,7 +48,7 @@
 
 测试与追踪：`test/contract/{registry,examples,freeze,scan-canary,spec-tracked}.test.mjs`（共 51 条，标题与 design §11 逐字一致，覆盖 AC-009/010/011/073）、`test/fixtures/no-collab/**`（6 个违规 + 2 个干净夹具）、`test/traceability/T-004.json`。
 
-本轮相对上一轮的实质改动只有一处（`impl.md` 之外）：见 §6.3 的 `.github/workflows/ci.yml` 行尾归一，仓库内容未变。
+本轮相对上一轮只有两处改动（产物与实现代码均未变）：`.collab/tasks/004/acceptance.md` 按 CI 可解析结构重写（§7），以及据此把 G-4 的验收命令改成 `JSON.stringify` 形式（§6.2）。
 
 ## 3. 关键实现说明
 
@@ -75,7 +76,7 @@
 | F-14～F-16 | `true false false true`；11 个标题逐行一致；`missing 0` |
 | F-17 | 无输出（既有文件未改动） |
 | G-1～G-3、G-5～G-7 | 逐字一致（含 11 个金标的 case 数 `9 9 21 15 11 14 5 1 1 2 2`） |
-| G-4 | 第二行逐字一致；第一行为 `0.3 3 18 `（差 `null` 一词，见 §6.2） |
+| G-4 | 两行逐字一致：`0.3 3 18 null` 与 `exhausted/tasks critical/tasks low_reserve/tasks ok/tasks critical/fraction low_reserve/fraction ok/fraction unknown/none`（见 §6.2） |
 | H-1～H-5 | `check-traceability: ok (covered=9 planned=65)`；追踪分片无 `baseline`；`run-tests: full` 89/89；`check-fast: ok`；`check-fast.ps1` 退出 0 |
 
 补充：`node scripts/snapshot-update.mjs` 在干净仓库上为 no-op；`check-ci`、`check-defects`、`check-test-discovery`、`check-traceability` 均单独退出 0。
@@ -87,20 +88,41 @@
 - AC-011 键/值深度与大小写、整词、call 模板、干净样例、1000 层嵌套 → `test/contract/scan-canary.test.mjs`。
 - AC-073 git 跟踪、规格/金标 schema、必需 case id、manifest 哈希、三个冻结失败场景、范围检查、禁词、文档生成、接口第 5 节清单、检查脚本可发现性 → `test/contract/spec-tracked.test.mjs`。
 
-## 6. 需要说明的三点
+## 6. 需要说明的四点
 
 ### 6.1 新文件已被 git 跟踪
 
 AC-073 的"被 git 跟踪"一条以 `git ls-files` 为准，当前 33 个要求路径全部已登记，且 `git check-ignore` 不命中；该测试通过。
 
-### 6.2 G-4 的逐字差异（design 与 acceptance 的冲突，按 design 处理）
+### 6.2 G-4 的 null 呈现（已解决）
 
-`contracts/golden/forecast/quantiles.json` 的 `n2-invalid` / `n1-invalid` / `n0-invalid` 按 design §9.4 写成 `"expected": {"value": null}`（"n<3 时 value 为 null"）。G-4 的命令用 `Array.prototype.join` 打印这四个值，`join` 把 `null` 渲染为空串，实际输出是 `0.3 3 18 `（末尾一个空格），与文中 `0.3 3 18 null` 差一个词。
+`contracts/golden/forecast/quantiles.json` 的 `n2-invalid` / `n1-invalid` / `n0-invalid` 按 design §9.4 写成 `"expected": {"value": null}`（"n<3 时 value 为 null"）。上一轮的 G-4 命令用 `Array.prototype.join` 打印这四个值，`join` 把 `null` 渲染为空串，输出是 `0.3 3 18 `（末尾一个空格），与文中 `0.3 3 18 null` 差一个词。
 
-保留 `null` 的理由：design §9.1 规定金标 `expected` 与下游实测值**深相等**，T-006 消费这三个 case 时 `quantile_for_usage` 返回的就是 `null`；改成字符串 `"null"` 会让金标与被冻结的语义不一致，正是本任务要防止的缺陷。若验收坚持逐字匹配，改动只有三处值是 `"null"`，随后需依次运行 `node scripts/check-golden-frozen.mjs --write` 与 `node scripts/gen-contract-doc.mjs`（manifest 与文档都含哈希）。
+金标保持不变（`null` 才是 design §9.1 要求的下游深相等值），改的是验收命令：取值改成 `JSON.stringify(c.expected.value)`，于是 `0.3`、`3`、`18`、`null` 各自按 JSON 字面量呈现，输出恰为 `0.3 3 18 null`。这条命令还把 `null` 与字符串 `"null"`、`undefined` 区分开，比原写法更严格。
 
 ### 6.3 `.github/workflows/ci.yml` 的行尾（环境问题，仓库内容未变）
 
 本机 `core.autocrlf=true`，检出的 `ci.yml` 是 CRLF，而 `gen-ci.mjs` 渲染 LF，`check-ci` 逐字节比较，导致 `[AC-002] check-ci accepts the committed workflow` 失败、`check-fast` 在第一步中断（H-3/H-4/H-5 随之失败）。
 
 处理方式：运行 `node scripts/gen-ci.mjs` 把工作区文件重新渲染为 LF。这不是内容改动——归一化后与生成输出逐字节相同（`normalized-equal true`，1516 字节），git 侧的规范化也视其为未修改（`check-write-scope --base 93ebbb3` 仍为 `ok`，未出现 `.github/workflows/ci.yml` 的越界报告），且该文件不在本任务写域内、未被提交。修复后 `npm test` 89/89、`check-fast: ok`、`check-fast.ps1` 均通过。
+
+### 6.4 acceptance.md 的结构重写（CI 无法提取命令）
+
+CI 报的是 `exit 2, zero commands extracted, ci-results.json not written`：上一版 acceptance.md 把命令放在 Markdown 表格的命令单元里，而提取器只认代码块，于是一条命令都没拿到。本轮把它改成与 `.collab/tasks/001/acceptance.md` 同构的可执行结构：
+
+- 每条检查是一个 `## <编号> <标题>` 小节，全篇 52 条（A-1…A-4、B-1…B-4、C-1…C-8、D-1…D-4、E-1…E-3、F-1…F-17、G-1…G-7、H-1…H-5）。
+- 小节正文先是一个围栏代码块，块内恰好一行可执行命令；需要准备临时目录的场景把准备、执行、断言、清理用 `;` 串成一行（F-3～F-6）。
+- 代码块之后是 `- ` 开头的断言要点（退出码、逐字输出、允许/不允许出现的行）。
+- 全篇没有表格、没有 `###` 子节；约定与判定说明放在首个 `## ` 之前的正文里。
+
+内容与上一版逐条对应，只有两处措辞调整：G-4 的命令改用 `JSON.stringify` 呈现 `null`（§6.2）；每条检查的「期望」从表格单元改写为断言要点，判定条件不变。
+
+## 7. 本轮自测
+
+把重写后的 acceptance.md 交给一个复刻提取器行为的脚本（按「`## ` 小节 → 第一个代码块 → 取块内唯一一行」提取，逐条核对输出）执行：
+
+- 52 条全部执行成功且输出满足断言；`A-*` 的四组测试 15/10/10/16 条全过，`B-*` 四条均 `missing=0`。
+- `F-4`、`F-6` 依赖 `Set-Content -Encoding utf8NoBOM`，在 Windows PowerShell 5.1 下报参数不识别，须用 pwsh 7 执行；换 pwsh 后两条分别得到 `golden.unregistered` 与 `write_scope.unregistered`，exit 1。
+- `H-3`/`H-4`/`H-5` 全量回归：`run-tests: full` 89/89、`check-fast: ok`、`check-fast.ps1` 退出 0。
+- 结构自检：52 个 `## `、0 个 `###`、0 条表格行、104 个围栏（52 开 52 闭）、UTF-8 无 BOM、全 LF、末尾恰一个换行。
+- `node scripts/check-traceability.mjs` → `check-traceability: ok (covered=9 planned=65)`。
