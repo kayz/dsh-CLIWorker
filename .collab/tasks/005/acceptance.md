@@ -223,7 +223,7 @@ try {
   assert.equal(warned.exitCode, 0)
   assert.deepEqual(JSON.parse(wctx.stdout.text()).warnings, [{ code: 'W_LEGACY_USAGE' }])
 
-  const { run } = await import('./lib/commands/usage/record.mjs')
+  const { run } = await import('file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/commands/usage/record.mjs')
   await run({ argv: ['--json', JSON.stringify({ model: 'nope' })], ctx, config: c1 })
   const usage = path.join(c1._home, 'usage.jsonl')
   assert.equal(ctx.fs.existsSync(usage), true)
