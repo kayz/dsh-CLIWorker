@@ -111,6 +111,19 @@ node scripts/check-write-scope.mjs --base f6f6057 --scope-from .collab/tasks/007
 
 输出 12 行 `FAIL write_scope.outside`，全部是 `.collab/` 下由调度器维护的文件（`task-graph.json`、`acceptance.md`、`design.md`、`impl.md`、`input-ledger.jsonl`、`inputs.jsonl`、`live.json`、`logs/*.log`、`notice.json`、`run.json`、`state.json`），退出 1。其中 11 行在基线提交 `f6f6057` 上执行同一命令就已存在（我未创建也未修改它们），第 12 行是本次要求产出的本文件 `impl.md`。这些路径不属于 `lib`、`scripts`、`test`，与本任务的写域无关。实现产出的全部代码/测试改动路径（`lib/select.mjs`、`lib/select-draft.mjs`、`lib/contract/validate.mjs`、`scripts/check-unused.mjs`、`test/fixtures/unused/**`、`test/unit/*.test.mjs`、`test/characterization/defects/a5-*.test.mjs`、`test/traceability/T-007.json`）均未出现在 FAIL 行里。
 
+### 4.4 复核（2026-11-08）
+
+在本工作区（`task/007` worktree）重跑 acceptance.md 中全部可自主执行的命令，结果与上表逐条一致：
+
+- `run-tests.mjs --ac AC-020|AC-021|AC-022` → 分别 `filtered 3 / 1 / 2 files`，`fail 0`，退出 0（tests 12 / 8 / 11）。
+- A-02 `false true true`、A-03 `true 12 12`、A-04 `8/8`、A-08 `true true true 0 0`、A-09 三行与验收文本一致。
+- A-12 `check-unused: ok (files=21)`、A-13 `8 true`（退出 1）、A-14 `files=1`、A-15 均退出 2 且 stderr 含 usage、A-17 `files=1`。
+- A-16 `pass 2`、A-19 `pass 6`、A-20 `covered=22 planned=52` / `files=21` / `scanned 265 files` / `14 files`。
+- A-22 `check-fast.ps1` 末行 `check-fast: ok`（含 `check-unused: ok`、`tests 282`、`pass 282`、`fail 0`）。
+- A-21 输出与上文「A-21 写域检查的已知噪声」一致（12 行 FAIL，全部为 `.collab/` 下调度器维护的文件）。
+
+`lib/select.mjs` 中 `isObject` 计数 0、`lib/contract/validate.mjs` 中 `typeOf` 计数 0；`a1-quota.test.mjs`、`defects.json`、`test/unit/select.test.mjs`、`package.json`、`package-lock.json` 的文件时间戳仍为检出时间，未改动。
+
 ## 5. 如何复跑
 
 ```sh
