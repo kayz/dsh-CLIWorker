@@ -693,7 +693,10 @@
         "scripts/check-frozen-files.mjs",
         "test/traceability/T-002.json",
         "scripts/check-defects.mjs",
-        "test/characterization/canary/**"
+        "test/characterization/canary/**",
+        "scripts/check-ci.mjs",
+        "test/unit/traceability.test.mjs",
+        ".gitattributes"
       ],
       "acceptance": [
         "AC-005"
