@@ -1,0 +1,72 @@
+[
+  {
+    "task": "001",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-sol",
+    "model_resolved": "gpt-6.1-sol",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-07T13:42:49.539Z",
+    "ended_at": "2026-11-07T13:47:15.031Z",
+    "duration_ms": 265492,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": null,
+    "usage_source": "unavailable",
+    "log_ref": ".collab/tasks/001/logs/design-r1-1.log",
+    "error": "stall",
+    "handoff": {
+      "file": "handoff/design-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/001/design-r1-c1",
+      "sha": "c7447fc32d2a0695a95c9ad7f77415440191c703"
+    }
+  },
+  {
+    "task": "001",
+    "role": "design",
+    "round": 1,
+    "candidate": 2,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-07T13:47:15.889Z",
+    "ended_at": "2026-11-07T13:56:33.682Z",
+    "duration_ms": 557793,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 32,
+      "output": 76575,
+      "cache_read": 1229668,
+      "cache_write": 135013,
+      "cost_usd": 1.4288328000000001
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/001/logs/design-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "gpt-6.1-sol",
+      "file": "handoff/design-r1-c1-to-c2.md"
+    }
+  }
+]
