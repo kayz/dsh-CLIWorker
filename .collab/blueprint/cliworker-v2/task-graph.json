@@ -557,6 +557,15 @@
         "contract",
         "unit"
       ]
+    },
+    {
+      "id": "AC-076",
+      "text": "Session 协议（见 SESSION-MANAGEMENT.md）：CLIWorker 只提供 start / resume 两个动作，不持有 session、不保存 session_id、不维护轮次状态。session_token 为不透明值，输出中不含 provider 名、CLI 路径或模型 id。resume 必须返回本次实际模型的身份证据（verified/observed/unverified/failed 四档）。六种失效条件各返回固定错误码且不自动重试：模型变化 E_SESSION_MODEL_CHANGED、provider 变化 E_SESSION_PROVIDER_CHANGED、CLI 或契约版本变化 E_SESSION_CONTRACT_CHANGED、过期 E_SESSION_EXPIRED、resume 失败 E_SESSION_RESUME_FAILED、不支持 resume 的 provider 返回 E_SESSION_NOT_SUPPORTED。增量输入：resume 不重发完整 brief/design，只接受 diff 与摘要。额度不足时以 E_SESSION_QUOTA_EXHAUSTED 结束会话，由调用方换模型后用摘要 + diff 新建。角色策略落盘到 .collab/tasks/<id>/sessions/<role>.json：design 与 dev 跨轮复用、review 每轮新建；每轮只读选中模型的 forecast，不重新拉取全量模型列表。",
+      "levels": [
+        "contract",
+        "unit",
+        "integration"
+      ]
     }
   ],
   "tasks": [
@@ -2031,6 +2040,47 @@
       "test_levels": [
         "contract",
         "unit"
+      ]
+    },
+    {
+      "id": "T-032",
+      "title": "Session 协议：start/resume 契约、六种失效条件、增量输入与额度耗尽路径",
+      "milestone": "M5",
+      "inputs": [
+        "SESSION-MANAGEMENT.md",
+        "lib/providers/call.mjs",
+        "lib/contract/views.mjs",
+        "T-031 的身份证据对象"
+      ],
+      "outputs": [
+        "lib/session.mjs",
+        "lib/providers/call.mjs",
+        "test/contract/session.test.mjs",
+        "test/unit/session-invalidation.test.mjs",
+        "test/integration/session-quota.test.mjs"
+      ],
+      "depends_on": [
+        "T-015",
+        "T-019"
+      ],
+      "write_scope": [
+        "lib/session.mjs",
+        "lib/providers/call.mjs",
+        "lib/contract/views.mjs",
+        "test/contract/session.test.mjs",
+        "test/unit/session-invalidation.test.mjs",
+        "test/integration/session-quota.test.mjs"
+      ],
+      "acceptance": [
+        "AC-076"
+      ],
+      "acceptance_direction": [
+        "node --test test/contract/session.test.mjs test/unit/session-invalidation.test.mjs test/integration/session-quota.test.mjs"
+      ],
+      "test_levels": [
+        "contract",
+        "unit",
+        "integration"
       ]
     }
   ]
