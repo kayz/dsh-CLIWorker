@@ -1,0 +1,4 @@
+# dsh-cliworker bundle layer: registers the host half (model routes).
+- insert:
+    - id: dsh-cliworker
+      name: dsh-cliworker

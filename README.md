@@ -45,7 +45,7 @@ AgentLine 仅保存：
 "modelSource": {
   "kind": "cliworker",
   "command": "node",
-  "args": ["C:/git/CLIWorker/bin/cliworker.mjs", "--config", "C:/git/CLIWorker/config/cliworker.local.json"]
+  "args": ["C:/git/dsh-CLIWorker/bin/cliworker.mjs", "--config", "C:/git/dsh-CLIWorker/config/cliworker.local.json"]
 }
 ```
 
@@ -62,3 +62,4 @@ cliworker models select --request <ModelRequest>
 - 未验证 identity、不可调用、弃用模型不会出现在候选中。
 - `rejected[]` 保留原因，便于审计。
 - 预测缺样本返回 `unknown`，不伪造通过。
+
