@@ -1,0 +1,12 @@
+{
+  "items": [
+    { "file": "dirty/functions.mjs", "kind": "function", "name": "deadAsync" },
+    { "file": "dirty/functions.mjs", "kind": "function", "name": "deadGen" },
+    { "file": "dirty/functions.mjs", "kind": "function", "name": "deadHelper" },
+    { "file": "dirty/functions.mjs", "kind": "function", "name": "deadRecursive" },
+    { "file": "dirty/imports.mjs", "kind": "import", "name": "fs" },
+    { "file": "dirty/imports.mjs", "kind": "import", "name": "joinPath" },
+    { "file": "dirty/imports.mjs", "kind": "import", "name": "os" },
+    { "file": "dirty/imports.mjs", "kind": "import", "name": "readFileSync" }
+  ]
+}

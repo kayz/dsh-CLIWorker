@@ -22,3 +22,17 @@ test('[repro] [AC-005] the selected handle repeats the call object as cli', asyn
   assert.equal('call' in handle, true)
   assert.deepEqual(handle.cli, handle.call)
 })
+
+test('[fixed] [AC-020] the live handle has no cli key and keeps call', async () => {
+  const { selectModels } = await import('../../../lib/select.mjs')
+  const config = {
+    providers: { claude: { cli: 'claude', readonly: true } },
+    models: { quick: { provider: 'claude', id: 'q', level: 'Quick', identity: 'verified' } },
+  }
+  const result = selectModels(config, { level: 'Quick' }, { status: { claude: { state: 'callable' } } })
+  assert.equal(result.ok, true)
+
+  const handle = result.models[0]
+  assert.equal('cli' in handle, false)
+  assert.equal('call' in handle, true)
+})
