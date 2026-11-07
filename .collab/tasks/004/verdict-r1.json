@@ -1,0 +1,280 @@
+{
+  "verdict": "pass",
+  "sha": "7681dc6e4a2b4803cd2ed30102dad09957920a63",
+  "passed": 52,
+  "total": 52,
+  "evidence": [
+    "git sha：7681dc6e4a2b4803cd2ed30102dad09957920a63（HEAD，分支 task/004；git status 仅 .collab/tasks/004 运行产物有变更，代码树与 HEAD 一致）。",
+    "CI 来源 .collab/tasks/004/ci-results.json：ranAt=2026-11-08T01:50:53.0227340+08:00，passed=52，total=52，ok=true；逐条复核 52 条结果，均 exitCode=0 且 output 含对应 '<AC> OK'。按【执行证据口径】直接引用，未重跑。",
+    "独立只读验证：registry.snapshot.json 30 码与 design §3.3 表逐项一致（exit/http_status/retryable/trigger_id）；顶层键序与 §3.2 一致。",
+    "独立只读验证：重算 contracts/golden/manifest.json 14 个文件的 CRLF 归一化 SHA-256，mismatch=0；contracts/spec/** 与 contracts/golden/** 实际文件与登记清单无增删。",
+    "独立只读验证：lib/contract/{registry,validate,scan,views}.mjs 通读，与 design §3.4、§3.5、§4、§8 一致；registry.mjs 零 import，其余无 node:/时钟/定时器/环境读取。",
+    "独立只读验证：scripts/snapshot-update.mjs 状态机与 design §3.7 表一致。",
+    "独立只读验证：104 个本任务文本文件（contracts、lib/contract、docs/contract.md、test/contract、夹具、六个脚本）除 T-001 既有 ac-index.json 外无 CR/BOM，均以 LF 结尾；除违规夹具外 0 处 .collab 字面量。",
+    "金标抽查手算：b44-ledger-sonnet-1m(O 1.8/S 9)、b44-reading-then-1m(O 0.8/S 4)、cap-k10-high(2.5M/0.3125=8) 与金标一致。",
+    "过程备注（非缺陷）：dev 在 impl.md §2 说明按用户三次 note（inputs.jsonl）重写了 acceptance.md，格式为 runner 契约；仓库内实现产物未改动。"
+  ],
+  "findings": [],
+  "checks": [
+    {
+      "id": "AC-009 A-1",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（A-1 测试入口）"
+    },
+    {
+      "id": "AC-009 B-1",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（B-1 测试标题齐全）"
+    },
+    {
+      "id": "AC-009 C-1",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（C-1 注册表与快照深相等）；另读 registry.snapshot.json 30 码逐项与 design §3.3 表（exit/http/retryable/trigger_id）核对一致"
+    },
+    {
+      "id": "AC-009 C-2",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（C-2 快照的版本、码数与唯一性）；独立读取快照：30 码、retryable 仅 E_TIMEOUT/E_INSUFFICIENT_QUOTA/E_LEASE_EXPIRED"
+    },
+    {
+      "id": "AC-009 C-3",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（C-3 五个 403 码的退出码与触发编号）；独立读取快照：五个 403 码 exit/trigger_id 与 design 一致"
+    },
+    {
+      "id": "AC-009 C-4",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（C-4 写路由判定顺序）"
+    },
+    {
+      "id": "AC-009 C-5",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（C-5 示例目录的 14 组正反例）"
+    },
+    {
+      "id": "AC-009 C-6",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（C-6 schema 文件数量）"
+    },
+    {
+      "id": "AC-009 C-7",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（C-7 注册表模块零 import）；lib/contract/registry.mjs 零 import"
+    },
+    {
+      "id": "AC-009 C-8",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-009 OK'（C-8 lib/contract 纯函数性）；读 scan.mjs/views.mjs/validate.mjs：无 node: 导入、无时钟/定时器/环境读取"
+    },
+    {
+      "id": "AC-010 A-2",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-010 OK'（A-2 测试入口）"
+    },
+    {
+      "id": "AC-010 B-2",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-010 OK'（B-2 测试标题齐全）"
+    },
+    {
+      "id": "AC-010 D-1",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-010 OK'（D-1 compareRegistry 的 removed、renamed 与 identical）；读 registry.mjs:434-533 compareRegistry/checkFrozen 与 design §3.5 一致"
+    },
+    {
+      "id": "AC-010 D-2",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-010 OK'（D-2 snapshot-update 在未改动注册表上是空操作）；读 scripts/snapshot-update.mjs:88-134 状态机与 design §3.7 表逐行一致"
+    },
+    {
+      "id": "AC-010 D-3",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-010 OK'（D-3 快照的枚举、映射与阈值计数）"
+    },
+    {
+      "id": "AC-010 D-4",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-010 OK'（D-4 两张阈值表的边界）"
+    },
+    {
+      "id": "AC-011 A-3",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-011 OK'（A-3 测试入口）"
+    },
+    {
+      "id": "AC-011 B-3",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-011 OK'（B-3 测试标题齐全）"
+    },
+    {
+      "id": "AC-011 E-1",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-011 OK'（E-1 禁用键配置的形态）"
+    },
+    {
+      "id": "AC-011 E-2",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-011 OK'（E-2 禁用键与禁用值的命中路径）；读 scan.mjs:60-206：显式栈遍历、键小写精确匹配、整词匹配(46-58)"
+    },
+    {
+      "id": "AC-011 E-3",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-011 OK'（E-3 call 子树的模板比对）；读 scan.mjs:87-142 call 模板比对，call 子树不做值扫描(179-183)"
+    },
+    {
+      "id": "AC-073 A-4",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（A-4 测试入口）"
+    },
+    {
+      "id": "AC-073 B-4",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（B-4 测试标题齐全）"
+    },
+    {
+      "id": "AC-073 F-1",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-1 金标冻结检查通过）；独立重算 14 个文件 CRLF 归一化 sha256，bad=0，无未登记/缺失文件"
+    },
+    {
+      "id": "AC-073 F-2",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-2 金标清单的内容）；独立读取 manifest：14 文件，含 ac-index.json，不含 manifest 自身与 registry.snapshot.json"
+    },
+    {
+      "id": "AC-073 F-3",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-3 修改金标后冻结检查失败）"
+    },
+    {
+      "id": "AC-073 F-4",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-4 新增金标后冻结检查失败）"
+    },
+    {
+      "id": "AC-073 F-5",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-5 删除金标后冻结检查失败）"
+    },
+    {
+      "id": "AC-073 F-6",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-6 登记清单之外的规格文件）"
+    },
+    {
+      "id": "AC-073 F-7",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-7 写域检查（登记模式）通过）"
+    },
+    {
+      "id": "AC-073 F-8",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-8 本任务全部变更落在 design.md 的 write_scope 内）"
+    },
+    {
+      "id": "AC-073 F-9",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-9 范围检查能报出越界变更）"
+    },
+    {
+      "id": "AC-073 F-10",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-10 仓库内没有蓝图目录引用）；独立扫描 lib/contracts/docs/scripts/test 新增文件：除违规夹具外 0 处点加 collab 字面量"
+    },
+    {
+      "id": "AC-073 F-11",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-11 违规夹具被逐行报出）"
+    },
+    {
+      "id": "AC-073 F-12",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-12 干净夹具通过）"
+    },
+    {
+      "id": "AC-073 F-13",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-13 契约文档与生成结果一致）"
+    },
+    {
+      "id": "AC-073 F-14",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-14 渲染结果与已提交文档逐字节一致）；新增文件全部 LF、无 BOM、末尾换行（ac-index.json 为 T-001 既有文件含 CR，哈希已归一化）"
+    },
+    {
+      "id": "AC-073 F-15",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-15 文档的固定章节标题）"
+    },
+    {
+      "id": "AC-073 F-16",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-16 本任务产物已被 git 跟踪）"
+    },
+    {
+      "id": "AC-073 F-17",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（F-17 既有文件未被改动）"
+    },
+    {
+      "id": "AC-073 G-1",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（G-1 规格文件的结构计数）"
+    },
+    {
+      "id": "AC-073 G-2",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（G-2 规格与注册表一致、id 全局唯一）"
+    },
+    {
+      "id": "AC-073 G-3",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（G-3 金标文件的 case 数）"
+    },
+    {
+      "id": "AC-073 G-4",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（G-4 分位数与阈值的关键期望值）"
+    },
+    {
+      "id": "AC-073 G-5",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（G-5 三张关键金标的 expected 子集）"
+    },
+    {
+      "id": "AC-073 G-6",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（G-6 金标的 kind 与外壳）"
+    },
+    {
+      "id": "AC-073 G-7",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（G-7 策略金标的选序）"
+    },
+    {
+      "id": "AC-073 H-1",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（H-1 追踪检查通过）"
+    },
+    {
+      "id": "AC-073 H-2",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（H-2 追踪分片的内容）"
+    },
+    {
+      "id": "AC-073 H-3",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（H-3 完整测试回归）"
+    },
+    {
+      "id": "AC-073 H-4",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（H-4 check-fast 按码点纳入新检查）"
+    },
+    {
+      "id": "AC-073 H-5",
+      "passed": true,
+      "evidence": "ci-results.json：exitCode=0，lastLine='AC-073 OK'（H-5 pwsh 包装入口）"
+    }
+  ]
+}
