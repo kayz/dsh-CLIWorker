@@ -256,3 +256,59 @@ check-fast: FAILED step npm test (exit 1)
 推荐改 `AC-009`（而不是 `'covered'`）：它的 owner 是 T-004、当前没有任何分片，仍是 `planned`，能保留该测试“没有分片的 AC 记为 planned”的原意；改成 `'covered'` 会把这个测试变成同义反复。
 
 裁决落地后无需再改任何实现代码，重跑 `pwsh -NoProfile -File scripts/check-fast.ps1` 应为退出码 0、`ℹ fail 0`、末行 `check-fast: ok`。
+
+## 8. 第 4 轮：复核无改动，死锁仍未解开（等待编排方裁决）
+
+### 8.1 本轮改了什么
+
+**没有改任何文件**（`lib/`、`bin/`、`contracts/`、`test/`、`scripts/` 全部保持第 3 轮提交的状态）。原因：
+
+1. `review-r3.md` 的 P1 明确写「实现代码无其它问题」「dev 的做法正确（如实报告、未越界）」，并把 `test/unit/traceability.test.mjs:158` 定性为 **dev 角色无法自行解开的任务级死锁**，要求编排方/设计方裁决；
+2. 裁决所需的两个前置（`design.md` 的 `write_scope`、`acceptance.md` V-R-5 的 `globs` 同时加入该文件）在本轮开始时仍未落地：两份文件 mtime 仍是 01:35，`write_scope` 仍不含 `test/unit/traceability.test.mjs`，`acceptance.md` 全文不含该路径；
+3. 在本轮授权的写入范围内不存在任何能改变 `merged.acs['AC-006']` 的杠杆（`test/traceability/T-003.json` 是范围内唯一影响 `mergeShards` 的文件，把它改成 `planned` 只会让 V-R-2 也变红，见 §7.4）。
+
+### 8.2 本轮复核结果（全部在任务 worktree 根实测）
+
+| 命令 | 结果 |
+|---|---|
+| `node scripts/run-tests.mjs --ac AC-006` | 5 条 `✔ [AC-006]`，`ℹ fail 0`，`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-007` | 5 条 `✔ [AC-007]`，`ℹ fail 0`，`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-008` | 12 条 `✔ [AC-008]`，`ℹ fail 0`，`filtered 2 files` |
+| `node scripts/run-tests.mjs --ac AC-072` | 14 条 `✔ [AC-072]`，`ℹ fail 0`，`filtered 2 files` |
+| `node scripts/check-seams.mjs` | `check-seams: ok (files=15)`，退出码 0 |
+| `node scripts/check-traceability.mjs` | `ok (covered=10 planned=64)`，退出码 0 |
+| `node scripts/check-test-discovery.mjs` | `ok`，退出码 0 |
+| `node scripts/check-frozen-files.mjs` | `ok (8 files)`，退出码 0 |
+| `node scripts/check-ci.mjs` / `check-defects.mjs` | `ok` / `ok`，退出码 0 |
+| `node scripts/check-fast.mjs` | **退出码 1**：`ℹ tests 106 / pass 105 / fail 1`，末行 `check-fast: FAILED step npm test (exit 1)` |
+
+acceptance 的 21 条 `node --input-type=module` 探针本轮逐条重跑，全部 `PROBE-OK`、退出码 0：AC-006 的 `import-safe`/`main-ctx`/`commands`/`main-errors`/`no-process-exit`，AC-007 的 `seams-fixtures`/`seams-allowlist-exact`/`seams-real-tree`，AC-008 的 `host-contract`/`host-stub`/`registration`/`handlers`，AC-072 的 `fake-clock`/`test-clock-file`/`context-contract`/`warn-inproc`/`warn-bin`/`helpers`，总体的 `trace-T-003`/`no-secrets`。非探针项：`--root test/fixtures/seams/date-now` 恰两行且退出码 1、`--bogus` 退出码 2 且 stderr 含 `usage:`、`node bin/cliworker.mjs` 退出码 1 且 stdout 为空。
+
+### 8.3 唯一红项（与前三轮同一行，未扩散）
+
+```
+✖ [AC-004] mergeShards treats ACs without a shard as planned
+  AssertionError: actual 'covered' / expected 'planned'
+  at test/unit/traceability.test.mjs:158:10
+ℹ tests 106  ℹ pass 105  ℹ fail 1
+check-fast: FAILED step npm test (exit 1)
+```
+
+### 8.4 需要的最小裁决（一行，非本角色权限）
+
+```diff
+--- a/test/unit/traceability.test.mjs
++++ b/test/unit/traceability.test.mjs
+@@ test('[AC-004] mergeShards treats ACs without a shard as planned')
+-  assert.equal(merged.acs['AC-006'], 'planned')
++  assert.equal(merged.acs['AC-009'], 'planned')
+```
+
+并同时把 `test/unit/traceability.test.mjs` 加入 `design.md` 的 `write_scope` 与 `acceptance.md` V-R-5 的 `globs`。`AC-009` 的属主是 T-004（`contracts/spec/ac-index.json` 已核对），本分支没有任何分片声明它，改完仍是合法的「无分片」样例，判定应为 `check-fast: ok` / `ℹ fail 0`。改 `'covered'` 也能让红色消失，但会把该用例变成同义反复，不推荐。
+
+本轮不代为执行该改动，因为它落在 write_scope 之外，且 V-R-5 会把该文件判为 `outside write_scope`——同一条死锁的镜像。
+
+### 8.5 本轮未做
+
+- 未执行任何 git 命令（本轮角色授权明确禁止），因此 V-R-5 的 `git diff` 探针未复测；按 §1 清单与 design `write_scope` 逐条对照，未见越界，`lib/select.mjs` 未改动。
+- 未修改 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`；本文件只追加本节。
