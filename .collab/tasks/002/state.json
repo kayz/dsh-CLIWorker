@@ -101,10 +101,16 @@
       "from": "reviewed",
       "to": "pr_open",
       "by": "agentline"
+    },
+    {
+      "at": "2026-11-07T17:25:37.955Z",
+      "from": "pr_open",
+      "to": "merged",
+      "by": "human"
     }
   ],
-  "status": "pr_open",
-  "updated_at": "2026-11-07T17:20:26.731Z",
+  "status": "merged",
+  "updated_at": "2026-11-07T17:25:37.955Z",
   "role": "review",
   "model": "claude-sonnet-5-5",
   "model_resolved": "claude-sonnet-5-5",
@@ -116,7 +122,7 @@
   "interrupted": null,
   "pr": {
     "branch": "task/002",
-    "state": "open",
+    "state": "merged",
     "files": [
       ".collab/tasks/002/acceptance.md",
       ".collab/tasks/002/ci-results.json",
@@ -184,7 +190,11 @@
       "test/unit/frozen-files.test.mjs",
       "test/unit/traceability.test.mjs"
     ],
-    "sha": "76f261fb40abb3668924813848352f290c2b285b"
+    "sha": "e9b135ff94c89c6574c57c00a5e3e8b5ff9c2b50",
+    "merged_at": "2026-11-07T17:25:37.948Z",
+    "permission": "允许合并，之后task合并不需要显式提示，直接处理",
+    "permission_kind": "explicit",
+    "grant_id": null
   },
   "merge_gate": {
     "requires_human_permission": true,
@@ -208,8 +218,8 @@
       "maxFiles": 8,
       "maxLines": 3000
     },
-    "assessed_at": "2026-11-07T17:20:26.679Z",
+    "assessed_at": "2026-11-07T17:25:37.227Z",
     "base": "main",
-    "head": "HEAD"
+    "head": "task/002"
   }
 }
