@@ -29,5 +29,75 @@
     "usage_source": "cli_json",
     "log_ref": ".collab/tasks/005/logs/design-r1-1.log",
     "error": null
+  },
+  {
+    "task": "005",
+    "role": "design",
+    "round": 2,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-07T18:23:17.799Z",
+    "ended_at": "2026-11-07T18:27:56.567Z",
+    "duration_ms": 278768,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": null,
+    "usage_source": "unavailable",
+    "log_ref": ".collab/tasks/005/logs/design-r2-1.log",
+    "error": "rate_limit rejected",
+    "handoff": {
+      "file": "handoff/design-r2-c1-to-c2.md",
+      "checkpoint": "refs/agentline/005/design-r2-c1",
+      "sha": "31eff05da8838ff06ee5b62f6afedbdd60886d1b"
+    }
+  },
+  {
+    "task": "005",
+    "role": "design",
+    "round": 2,
+    "candidate": 2,
+    "backend": "cursor-wsl",
+    "model_requested": "grok-4.7",
+    "model_resolved": "Grok 4.7  High Fast​​",
+    "provider": "cursor-wsl",
+    "effort": null,
+    "started_at": "2026-11-07T18:27:58.223Z",
+    "ended_at": "2026-11-07T18:42:16.662Z",
+    "duration_ms": 858439,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": null,
+      "output": null,
+      "cache_read": null,
+      "cache_write": null,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/005/logs/design-r2-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "claude-sonnet-5-5",
+      "file": "handoff/design-r2-c1-to-c2.md"
+    }
   }
 ]

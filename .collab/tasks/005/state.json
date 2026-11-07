@@ -11,16 +11,22 @@
       "from": "draft",
       "to": "designed",
       "by": "design:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-07T18:42:16.859Z",
+      "from": "designed",
+      "to": "designed",
+      "by": "design:cursor-wsl-grok-4.7 (inherited c1)"
     }
   ],
   "status": "designed",
-  "updated_at": "2026-11-07T18:23:17.372Z",
+  "updated_at": "2026-11-07T18:42:16.859Z",
   "role": "design",
-  "model": "claude-sonnet-5-5",
-  "model_resolved": "claude-sonnet-5-5",
-  "effort": "high",
-  "attempt": 1,
-  "switches": 0,
+  "model": "grok-4.7",
+  "model_resolved": "Grok 4.7  High Fast​​",
+  "effort": null,
+  "attempt": 2,
+  "switches": 1,
   "blocked_reason": null,
   "handoff": null
 }
