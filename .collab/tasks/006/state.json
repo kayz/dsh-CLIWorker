@@ -41,17 +41,49 @@
       "from": "designed",
       "to": "implemented",
       "by": "dev:deepseek-v4.1-flash"
+    },
+    {
+      "at": "2026-11-07T19:14:17.654Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-07T19:14:19.544Z",
+      "from": "reviewable",
+      "to": "blocked",
+      "by": "review",
+      "reason": "rate_limit rejected"
+    },
+    {
+      "at": "2026-11-07T19:15:04.502Z",
+      "from": "blocked",
+      "to": "reviewable",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-07T19:15:16.904Z",
+      "from": "reviewable",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-07T19:29:11.200Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:hy4free"
     }
   ],
-  "status": "implemented",
-  "updated_at": "2026-11-07T19:14:04.461Z",
-  "role": "dev",
-  "model": "deepseek-v4.1-flash",
-  "model_resolved": "deepseek-v4.1-flash",
+  "status": "reviewed",
+  "updated_at": "2026-11-07T19:29:11.200Z",
+  "role": "review",
+  "model": "hy4free",
+  "model_resolved": "hy4free",
   "effort": "high",
-  "attempt": 3,
-  "switches": 2,
+  "attempt": 4,
+  "switches": 3,
   "blocked_reason": null,
   "handoff": null,
-  "interrupted": null
+  "interrupted": null,
+  "rate_limit_reset": null
 }
