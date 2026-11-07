@@ -16,7 +16,7 @@
 | `test/characterization/defects/a5-*.test.mjs` | 各追加 1 个 `test` | 只在文件末尾追加顶层 `test('[fixed] ...')`，`[repro]` 段一字未动（`check-defects` 的 sha256 校验通过）。 |
 | `test/traceability/T-007.json` | 新增 | AC-020/021/022 置为 covered，文件列表按 design §6.4。 |
 
-写域内其余文件（`brief.md`、`design.md`、`acceptance.md`、`defects.json`、`a1-quota.test.mjs`、`package.json`、`package-lock.json`）均未修改。
+写域内其余文件（`brief.md`、`design.md`、`defects.json`、`a1-quota.test.mjs`、`package.json`、`package-lock.json`）均未修改。唯一的例外是 `acceptance.md`：本轮按人类在输入中的明确要求整篇改写为 CI 可提取的形状（`## AC-0xx` + `- 命令:` + `AC-0xx OK`），见 §6。
 
 ## 2. 关键实现与理由
 
@@ -139,3 +139,38 @@ node scripts/check-no-collab.mjs
 node scripts/check-golden-frozen.mjs
 pwsh -NoProfile -File scripts/check-fast.ps1
 ```
+
+## 6. 返工：把 acceptance.md 重写成 CI 可提取的形状（2026-11-08）
+
+### 6.1 为什么
+
+CI 反馈：旧 `acceptance.md` 有 66 个代码围栏，但没有任何 `## AC-xxx` 形式的标题，也没有一行打印 `AC-xxx OK`，于是 runner 提取到 0 条命令并退出 2。提取契约是：每条检查必须写成 `## AC-0xx 标题` + `- 命令: \`单行命令\`` + 期望，命令成功时打印精确字符串 `AC-0xx OK`，且命令从临时目录执行、只能用绝对路径。
+
+### 6.2 改了什么
+
+整篇重写（不是逐行补丁），保留原 A-01..A-22 的全部实质断言，并转成 27 个小节：
+
+- 每个小节标题以 AC 号开头：`## AC-020 A-01 ...` / `## AC-021 A-08 ...` / `## AC-022 A-12 ...`（同一 AC 允许多个小节，沿用本仓库既有 acceptance 的 A-n 编号习惯）。
+- 每条命令只占一行，行首是 `- 命令:`，命令值放在反引号里；行尾统一是 `; Write-Output "AC-0xx OK"`。
+- 命令自带断言：任何一条不满足就 `exit 1`，因此「退出码 0 + 出现 `AC-0xx OK`」两个条件必须同时成立，不会因为分号串联而把失败吞掉。
+- 全部路径改为绝对：ESM 用 `file:///C:/git/dsh-CLIWorker/.collab/worktrees/007/lib/...`；`node --test`、`check-*.mjs`、`check-fast.ps1`、`Get-Content` 都用绝对路径；`npm` 用 `--prefix <绝对路径>`；`git` 用 `-C <绝对路径>`，所以从任何 cwd 执行都等价。
+- `check-unused --json` 传绝对目录，输出的 `file` 仍是相对被扫描路径的 `dirty/...`，与 `expected.json` 直接可比（这是 §3.2 已说明的偏差，本次不变）。
+
+### 6.3 两处刻意的断言调整（附理由）
+
+1. **`typeOf`/`isObject` 用 `-cmatch` 而不是 `-match`。** PowerShell 的 `-match` 默认忽略大小写，会命中 `lib/contract/validate.mjs` 里 JS 的 `typeof` 运算符，导致 A-19 假失败（本轮首次跑就踩到：`typeOf=[True]` 而 `numstat` 已是 `0 7`）。改成区分大小写的 `-cmatch` 后与 node 的 `String.prototype.includes` 语义一致。
+2. **A-24 写域改为「所有 FAIL 行都必须以 `.collab/` 开头」。** `check-write-scope` 把调度器维护的 `.collab/tasks/007/*`、`.collab/blueprint/*` 一并当作 `write_scope.outside`（基线提交上就有 11 行，本轮加上 `impl.md` 与 `acceptance.md` 共 12 行），命令必然退出 1。原期望「无 FAIL 行」与工具行为冲突，无法同时成立；因此断言改成：脚本必须真的跑出结论（`check-write-scope: ok|FAILED`），且越界报告只允许落在 `.collab/` 下——也就是说 `lib`、`scripts`、`test` 的改动必须全部在 `design.md` 的 write_scope 内。判定强度对代码路径没有放松。
+
+### 6.4 如何自测
+
+写了一个与 CI 契约同形的临时提取器（放在 `%TEMP%`，不在仓库内）：按 `^##\s+(AC-\d{3})` 记录当前 AC，按 `^- 命令:\s*\`(.+)\`` 收集命令，把每条命令原样写入 `%TEMP%\ac_N.ps1`，`Set-Location $env:TEMP` 后用 `pwsh -NoProfile -File` 执行，校验「退出码 0」且「输出含 `<AC> OK`」。
+
+结果：
+
+- 提取到 **27 条**命令（AC-020 7 条、AC-021 4 条、AC-022 16 条），`total=27 fail=0`。
+- 同一批命令改用 `powershell -NoProfile -File`（Windows PowerShell 5.1）再跑一遍：`total=27 fail=0`，说明命令不依赖 pwsh 7 的语法（`ConvertFrom-Json`、`Compare-Object`、`-cmatch` 在 5.1 下行为一致）。
+- 文档结构：`grep -c '^## AC-'` 为 27，代码围栏 0 个，`Write-Output "AC-0xx OK"` 27 行。
+
+### 6.5 与写域的关系
+
+本轮只改了两个文件：`acceptance.md`（人类在输入中明确要求整篇重写）与 `impl.md`（本说明）。`acceptance.md` 不在 `design.md` 的 front-matter write_scope 里，是本次唯一的写域外改动，特此声明；`lib/`、`scripts/`、`test/` 下的实现与测试文件均未再改动（§1..§4 的结论仍然成立）。
