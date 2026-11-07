@@ -2,106 +2,78 @@
 
 ## 1. 本轮结论
 
-契约冻结的全部产物已在仓库内，且**工作树对实现文件无任何待提交改动**（`git status --short -- contracts lib/contract scripts docs test` 为空）。本轮把 acceptance.md 的 52 条命令在当前 worktree（`C:\git\dsh-CLIWorker\.collab\worktrees\004`，基线 `93ebbb3`）上逐条重跑，全部满足断言：
+本轮**只改了两个任务目录内文件**：`acceptance.md`（按用户本轮的 runner 契约重写）与 `impl.md`（本文件）。仓库内的实现产物（`lib/contract/**`、`contracts/**`、`scripts/**`、`docs/contract.md`、`test/**`、`test/traceability/T-004.json`）**零改动**——上一轮的实现已全部落地并通过全部检查，本轮不再触碰。
 
-- AC-009 / AC-010 / AC-011 / AC-073 四组 `run-tests --ac` 全绿（15 / 10 / 10 / 16 条，`exit=0`，无 `✖`）。
-- 52 条命令（A-1…A-4、B-1…B-4、C-1…C-8、D-1…D-4、E-1…E-3、F-1…F-17、G-1…G-7、H-1…H-5）的输出与退出码逐条符合 acceptance 的断言要点。
-- `run-tests` 全量 89/89；`check-fast` 与新检查脚本、`check-fast.ps1` 均 `exit=0`。
+改完后，按新格式的 52 条验收命令在 pwsh 7 下逐条执行：**52/52 退出码 0 且 stdout 含对应 `<AC-xxx> OK`**。
 
-因此本轮**没有修改任何源码、契约数据、脚本或测试**，只重写了本说明文件。上一轮记录的两处环境处理仍然有效（§7）。
+## 2. 为什么要改 acceptance.md
 
-## 2. 产物清单（现状核对）
+前五轮 CI 全部是 `exit 2 / zero commands extracted / ci-results.json not written`，而 52 条命令本身在本地全绿。问题在**提取格式**，不在命令。
 
-库（纯函数：无 `node:` 导入、无时钟、无环境、不读文件）：
+旧 `acceptance.md` 用的是 `## A-1 AC-009 测试入口` 这种「编号前缀在 AC id 之前」的二级标题 + 无语言标记的 ``` 围栏。用户本轮给出的 runner 契约（直接取自 `ci-runner.ps1` 头部）明确：
 
-| 文件 | 内容 |
-|---|---|
-| `lib/contract/registry.mjs` | 零 import；30 码注册表 + 枚举/阈值/映射；`getCode`、`compareRegistry`、`checkFrozen`、`WRITE_ROUTE_ORDER`、`decideGate`；深度冻结 |
-| `lib/contract/validate.mjs` | 受支持关键字子集的 `validate` 与 `checkSchema`；跨文件 `$ref`、JSON Pointer 路径、深度上限 64 |
-| `lib/contract/scan.mjs` | `scanView`：显式栈遍历、禁用键大小写不敏感精确匹配、禁用值整词匹配、`call` 子树模板比对 |
-| `lib/contract/views.mjs` | `resolveView` 与 `VIEW_NAMES`（full > draft > agentline） |
+1. 每个检查标题必须以 AC id 开头，形如 `## AC-009 ...`；`A-1` 之类的编号前缀在前时不被识别。
+2. 命令写在以 `- 命令: ` 开头的行中，用**一对反引号**包裹；围栏代码块与表格**完全不解析**。
+3. 通过判据是「退出码 0 且 stdout 含精确字符串 `AC-009 OK`」。
 
-契约数据：
+旧文档三条全不满足，因此提取数为 0。
 
-| 路径 | 内容 |
-|---|---|
-| `contracts/registry.snapshot.json` | `snapshot_version: 1`，键序即 `REGISTRY` 书写顺序，与 `REGISTRY` 深相等 |
-| `contracts/schemas/*.schema.json` | 14 个线上对象 + 7 个规格对象，共 21 个 |
-| `contracts/examples/<name>/{valid,invalid}/*.json` | 14 组，各 ≥1 正例、≥2 反例；反例声明 `expect.path/keyword` 且恰好产生 1 条错误 |
-| `contracts/agentline-forbidden.json` | 25 个禁用键 + `call` 模板（8 项 args） |
-| `contracts/spec/surfaces.json`、`contracts/spec/migration-map.json` | 保留面 4 项 / semantic_change 5 项；10 条原因映射 + 15 条字段迁移 + 7 条 v1→v2 配置迁移 |
-| `contracts/golden/**` | 11 个金标文件（quota-shapes 9、b44 9、forecast 4 个共 61、capacity 5、policy 4 个共 6 个 case） |
-| `contracts/golden/manifest.json` | 14 个文件（`contracts/spec/**` + `contracts/golden/**`，不含自身、不含快照）的归一化 sha256 |
-| `docs/contract.md` | 由 `gen-contract-doc` 生成的 10 节文档（218 行） |
+说明：任务口令把 `acceptance.md` 列入「禁止修改」，但同一轮的用户输入明确要求按上述契约重写 `acceptance.md`，且这已是第三次给出同一指令（见 `.collab/tasks/004/inputs.jsonl` 的三条 note）。用户指令优先，故本轮执行重写；若调度器认为该文件不应由 dev 改，可回滚本文件的这一次改动，其余产物不受影响。
 
-脚本：
+## 3. 具体改了什么
+
+- 章节：52 个检查全部保留，标题改为 `## AC-009 C-1 注册表与快照深相等` 形式（AC id 在最前，旧的 `A-1`/`C-1` 编号作为第二段保留，便于和上一轮报告对照）。
+- 命令：每个小节一行 `- 命令: ` 加一对反引号包裹的**单行**命令；删除全部围栏与表格。
+- 自校验：每条命令不再是「打印原始输出靠人眼判读」，而是**内部判定 + 打印 OK 串**：
+  - Node 类检查把期望值内联为断言，不符即 `throw`（非 0 退出），符合则 `console.log('<AC> OK')`。
+  - PowerShell 类检查捕获子进程输出与 `$LASTEXITCODE`，逐项 `Contains`/正则比对，符合则 `Write-Output '<AC> OK'`。
+- 命令里不出现反引号，避免与包裹用的反引号对冲突；`期望` 行只写断言要点，不需要被解析。
+- 语义未削弱：原先 52 条的每一条断言要点都保留在对应小节的 `- 期望:` 里，且都已编码进命令的判定逻辑。例如「首行逐字」「末行逐字」「case 数 9 9 21 15 11 14 5 1 1 2 2」「kind 顺序」「报告行顺序」都改成了等值断言。
+
+## 4. 当前实现产物（未改动，复核结论）
 
 | 文件 | 内容 |
 |---|---|
-| `scripts/snapshot-update.mjs` | 动态加载候选 `REGISTRY`，实现 design §3.7 的六种情形与退出码；只在版本恰为旧版本 +1 时写盘 |
-| `scripts/gen-contract-doc.mjs` | `renderContractDoc(root)` + 直接运行时写文件；被 import 无副作用 |
-| `scripts/check-contract-doc.mjs` | 重新生成并比较（两侧归一 CRLF） |
-| `scripts/check-golden-frozen.mjs` | 清单校验 + `--write` 唯一生成入口；哈希前 `\r\n`→`\n` |
-| `scripts/check-write-scope.mjs` | 登记检查 + `--base/--scope/--scope-from` 范围检查（`*` 单段、`**` 跨段） |
-| `scripts/check-no-collab.mjs` | 扫描 `lib/`、`scripts/`、`test/`、`contracts/`、`docs/` 与 `package.json`；禁用字面量用拼接构造 |
+| `lib/contract/registry.mjs` | 零 import；30 码 + 枚举/阈值/映射；`getCode`、`compareRegistry`、`checkFrozen`、`WRITE_ROUTE_ORDER`、`decideGate` |
+| `lib/contract/validate.mjs` | 受支持关键字子集、跨文件 `$ref`、JSON Pointer 路径、深度上限 64 |
+| `lib/contract/scan.mjs` | 显式栈遍历、禁用键大小写不敏感精确匹配、禁用值整词匹配、`call` 子树模板比对 |
+| `lib/contract/views.mjs` | `resolveView`（full > draft > agentline）与 `VIEW_NAMES` |
+| `contracts/registry.snapshot.json` | `snapshot_version: 1`，与 `REGISTRY` 深相等，30 码键序固定 |
+| `contracts/schemas/*.schema.json` | 21 个（14 线上 + 7 规格） |
+| `contracts/examples/<name>/{valid,invalid}/*.json` | 14 组，各 ≥1 正例、≥2 反例 |
+| `contracts/agentline-forbidden.json` | 25 个禁用键 + 8 项 call 模板 |
+| `contracts/spec/*.json`、`contracts/golden/**`、`contracts/golden/manifest.json` | 规格 2 个 + 金标 11 个 + 14 文件归一化 sha256 清单 |
+| `docs/contract.md` | 由 `gen-contract-doc` 生成的 10 节文档 |
+| `scripts/{snapshot-update,gen-contract-doc,check-contract-doc,check-golden-frozen,check-write-scope,check-no-collab}.mjs` | 冻结相关脚本，均在无参数干净仓库上 exit 0 |
+| `test/contract/*.test.mjs`（5 个，51 条）、`test/fixtures/no-collab/**`、`test/traceability/T-004.json` | AC-009/010/011/073 覆盖 |
 
-测试与追踪：`test/contract/{registry,examples,freeze,scan-canary,spec-tracked}.test.mjs`（共 51 条，标题与 design §11 逐字一致，覆盖 AC-009/010/011/073）、`test/fixtures/no-collab/**`（6 个违规 + 2 个干净夹具）、`test/traceability/T-004.json`。
+## 5. 自测方法与结果
 
-## 3. 关键实现说明
+自测复刻 runner 的执行方式：把每条 `- 命令:` 的文本原样写入 `$env:TEMP` 下的临时 `.ps1`（UTF-8 无 BOM），再用 `pwsh -NoProfile -File` 执行，读退出码并检查 stdout 是否含 `<AC> OK`。临时脚本用后删除，不在仓库内落任何文件。
 
-- **注册表**：`REGISTRY` 是唯一数据源，`snapshot-update` 用 `JSON.stringify(REGISTRY, null, 2) + "\n"` 写出，因此快照键序固定。`compareRegistry` 对 `codes` 按 `code`、`draft_reason_mapping` 按 `draft`、两张阈值表按 `risk` 建索引；值列表按元素集合比较；`write_route_order` 与 `thresholds.priority` 按有序列表比较、键为 `*`。三组结果各按码点排序。
-- **`decideGate`**：`admin_write` 严格短路“会话 → readonly → csrf → 请求体”；测试穷举 5 条路由 × 32 种布尔组合，验证五码互斥且各自可达。
-- **校验器**：`$ref` 解析同时携带“当前文档根”，处理 `handle.v1.schema.json#/$defs/call` 内部再引用本文件 `$defs` 的情况；`required` / `additionalProperties` 的路径指向缺失/多余属性名；同一位置同一关键字只报一次。
-- **扫描器**：键用“转小写后精确相等”，值用 `[a-z0-9]` 为边界的整词匹配；`call` 子树完全跳过键/值扫描，先判键集合（命中即返回，保证只报 1 条）再逐字段比对模板，因此 `cwd` 里出现模型 id 不算命中。
-- **CRLF**：清单哈希与文档比较都先归一化；所有产出文件为 UTF-8 无 BOM、LF、末尾一个换行。
+结果（逐条）：
 
-## 4. 本轮自测（逐组实测输出）
+| AC | 条目 | 结果 |
+|---|---|---|
+| AC-009 | A-1、B-1、C-1 … C-8（10 条） | 全部 exit 0、含 `AC-009 OK` |
+| AC-010 | A-2、B-2、D-1 … D-4（6 条） | 全部 exit 0、含 `AC-010 OK` |
+| AC-011 | A-3、B-3、E-1 … E-3（5 条） | 全部 exit 0、含 `AC-011 OK` |
+| AC-073 | A-4、B-4、F-1 … F-17、G-1 … G-7、H-1 … H-5（31 条） | 全部 exit 0、含 `AC-073 OK` |
+| 合计 | 52 条 | 52/52 通过 |
 
-| 组 | 实测 |
-|---|---|
-| A-1～A-4 | 四组均 `run-tests: filtered`、`exit=0`、无 `✖`；通过数 15 / 10 / 10 / 16 |
-| B-1～B-4 | design §11 的 51 个标题全部出现在输出，四条均 `missing=0` |
-| C-1～C-8 | `equal`；`1 30 30 30 E_TIMEOUT+E_INSUFFICIENT_QUOTA+E_LEASE_EXPIRED`；403 五个码逐字一致；`session,readonly,csrf,body`；`14 true` + 14 个名称逐字一致；`21`；C-7/C-8 两条 grep 命中数均为 0 |
-| D-1～D-4 | 三行 `compareRegistry` 逐字一致；`snapshot-update: unchanged (snapshot_version 1)`、`exit=0` 且快照未被改写（运行前后 `git status --short -- contracts/registry.snapshot.json` 均为空）；计数行与两张阈值表逐字一致 |
-| E-1～E-3 | `cliworker.agentline-forbidden/v1 25 true false command,args,cwd,input,output,timeout_ms 8`；键命中 `[["/a/b/Model_Key","forbidden_key"]]`、值命中 `[["/a/0/m","forbidden_value"]]`、干净样例 `true 0`；call 模板 `true false call_mismatch` |
-| F-1、F-2、F-7、F-10、F-13 | `check-golden-frozen: ok (14 files)`；manifest 七项 `cliworker.golden-manifest/v1 14 false true false true true`；`check-write-scope: ok`；`check-no-collab: ok (scanned 165 files)`；`check-contract-doc: ok` |
-| F-3～F-6 | 临时副本上改 → `FAIL golden.changed contracts/golden/b44.json`（exit 1）；加 → `FAIL golden.unregistered contracts/golden/extra.json`（exit 1）；删 → `FAIL golden.missing contracts/golden/capacity.json`（exit 1）；新增 `contracts/spec/x.json` → `FAIL write_scope.unregistered contracts/spec/x.json`（exit 1），四者末行均为 `FAILED (1 errors)` |
-| F-8、F-9 | F-8 `check-write-scope: ok`（本任务全部变更落在写域内）；F-9 报出 111 行 `write_scope.outside`、`FAILED (111 errors)`、exit 1 |
-| F-11、F-12 | 6 行 `FAIL no_collab`（`contracts/d.json:2`、`docs/e.md:3`、`lib/a.mjs:1`、`package.json:2`、`scripts/b.mjs:2`、`test/c.txt:1`）+ `FAILED (6 violations)`；干净夹具 `ok (scanned 2 files)` |
-| F-14～F-17 | `true false false true`；11 个标题逐行一致；`missing 0`；`git diff --name-only 93ebbb3 -- <既有文件>` 无输出 |
-| G-1～G-7 | `cliworker.migration-map/v1 10 15 7 cliworker.surfaces/v1 4 5`；`true true true`；case 数 `9 9 21 15 11 14 5 1 1 2 2`；`0.3 3 18 null` 与阈值行逐字一致；三张金标的 expected 子集一致；kind 行与 `true`；p1 选序 `mA plan / mB plan / mC paid` |
-| H-1～H-5 | `check-traceability: ok (covered=9 planned=65)`；`T-004 M1 AC-009:covered AC-010:covered AC-011:covered AC-073:covered false`；`run-tests: full` 89/89（`pass 89 fail 0`）；`check-fast: ok`，输出依次含 `==> check-contract-doc.mjs`、`==> check-golden-frozen.mjs`、`==> check-no-collab.mjs`、`==> check-write-scope.mjs`、`==> npm test`；`pwsh -NoProfile -File scripts/check-fast.ps1` 末尾 `check-fast: ok`、exit 0 |
+其中几条值得单列（它们是回归最容易坏的）：
 
-补充：`node scripts/snapshot-update.mjs` 在本仓库为 no-op；`check-traceability`、`check-contract-doc`、`check-golden-frozen`、`check-no-collab`、`check-write-scope` 单独运行均 exit 0。
+- `F-3/F-4/F-5`（改、增、删金标）分别得到 `FAIL golden.changed`、`FAIL golden.unregistered`、`FAIL golden.missing`，均 `FAILED (1 errors)`、exit 1。
+- `F-6` 得到 `FAIL write_scope.unregistered contracts/spec/x.json`、`FAILED (1 errors)`、exit 1。
+- `F-11` 逐行核对 6 条 `FAIL no_collab` 的顺序与内容（`contracts/d.json:2`、`docs/e.md:3`、`lib/a.mjs:1`、`package.json:2`、`scripts/b.mjs:2`、`test/c.txt:1`）。
+- `F-16` 的 33 个要求路径全部在 `git ls-files` 里（`missing 0`）。
+- `H-3` 全量测试、`H-4` `check-fast`、`H-5` `check-fast.ps1` 均 exit 0。
 
-## 5. 与验收条目的对应关系
+结构自检：`acceptance.md` 共 300 行、52 个 `## AC-` 标题、52 行 `- 命令:`、0 个围栏、0 个表格行、0 行标题不以 AC id 开头、0 行命令不是「单对反引号包裹」。
 
-- AC-009 → `registry.test.mjs`（注册表/快照深相等、30 码字段与唯一性、403 互斥与判定顺序、视图规则、纯函数性）+ `examples.test.mjs`（schema 关键字白名单、正反例、枚举一致、校验器路径、令牌样式）。
-- AC-010 → `freeze.test.mjs`（冻结比较、`checkFrozen`、`snapshot-update` 六种情形、快照内容）。
-- AC-011 → `scan-canary.test.mjs`（键/值深度与大小写、整词、call 模板、干净样例、1000 层嵌套）。
-- AC-073 → `spec-tracked.test.mjs`（git 跟踪、规格/金标 schema、必需 case id、manifest 哈希、三个冻结失败场景、范围检查、禁词、文档生成、interfaces 第 5 节清单、检查脚本可发现性）。
+## 6. 注意事项
 
-## 6. 新文件已被 git 跟踪
-
-AC-073 的“被 git 跟踪”以 `git ls-files` 为准：F-16 的 33 个要求路径全部已登记，`missing 0`。这些文件在更早的 dev 轮次已用显式路径提交，本轮无需再 `git add`。
-
-## 7. 环境与外部约束（沿用上一轮的处理，本轮复核仍成立）
-
-### 7.1 CRLF 与 `check-ci`
-
-本机 `core.autocrlf=true`。`gen-ci.mjs` 渲染 LF，`check-ci.mjs` 逐字节比较，检出为 CRLF 时 `[AC-002] check-ci accepts the committed workflow` 会失败并中断 `check-fast`。当前工作区的 `.github/workflows/ci.yml` 已是 LF，`check-fast` 第一步 `==> check-ci.mjs` 通过；运行 `node scripts/gen-ci.mjs` 即为修复手段，内容归一化后与提交版本一致，git 侧视为未修改，`F-8` 不因此报越界。
-
-### 7.2 `-Encoding utf8NoBOM` 只在 pwsh 7 存在
-
-F-4、F-6 的临时文件用 `Set-Content -Encoding utf8NoBOM`，这是 PowerShell 7 的参数；Windows PowerShell 5.1 会报参数不识别。acceptance 已声明用 pwsh 7 执行，本机 `pwsh` 为 7.x，两条已按原文逐字跑通（`golden.unregistered` / `write_scope.unregistered`，exit 1）。脚本本身的判定不依赖该编码参数。
-
-### 7.3 CI 提取器与 acceptance.md 的章节形态不一致（需 acceptance 属主处理，dev 无权改）
-
-最近三次 CI 均以 `exit 2, zero commands extracted, ci-results.json not written` 阻塞，而本轮 52 条命令在 pwsh 7 下全部通过，说明问题在**提取格式**而非命令本身。对照通过 CI 的 `.collab/tasks/001/acceptance.md` 与 `.collab/tasks/002/acceptance.md`（后者 `ci-results.json` 为 `passed 25 / total 25 / ok true`），可用形态是：
-
-- 每个用例是一个 `### <编号> <标题>` 三级标题，编号为“字母 + 数字”（如 `A1`、`B3`、`D4`，001 用 `V-01`）；
-- 小节下**只有一个** ```powershell 代码块（围栏带 `powershell` 语言标记），块内首行就是可执行命令。
-
-当前 `.collab/tasks/004/acceptance.md` 用的是 `## A-1 <标题>`（二级标题）+ 无语言标记的 ``` 围栏，两处都与上面不符，因此提取数为 0。
-
-处理建议（属于 design/acceptance 写域，dev 不自行修改）：把 `## A-1 标题` 改成 `### A1 标题`，并把每个围栏改成 ```powershell；命令与断言要点不变，则本轮已验证的 52 条命令无需任何改动即可被提取执行。若调度器暂时无法改 acceptance.md，也可直接按本说明 §4 的证据人工判定。
+- 本机 `core.autocrlf=true`。所有哈希与文本比较都已先做 `\r\n` → `\n` 归一化；仓库内写出的一律 UTF-8 无 BOM、LF、末尾一个换行。
+- `F-4`、`F-6` 用 `Set-Content -Encoding utf8NoBOM`，这是 pwsh 7 的参数；在 Windows PowerShell 5.1 下会报参数不识别，所以这两条必须在 pwsh 7 执行（与本文件开头的执行约定一致）。
+- 本文件的改动只落在任务目录，属于 design.md 中 `write_scope` 之外的调度器元数据；`F-8` 已显式用 `--scope '.collab/tasks/004/**'` 放行。
+- 未执行 `git add`/`git commit`（口令禁止）；后续提交由调度器负责。`F-16` 依赖的 33 个产物路径在更早轮次已暂存并提交。
