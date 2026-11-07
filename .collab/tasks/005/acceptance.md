@@ -179,7 +179,7 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { resolvePaths } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
 import { loadConfig } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
-import { main } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'
+import { main } from '../lib/cli.mjs'
 import { createPlugin } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/index.js'
 import { createFakeContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
 import { createHostStub } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/host-stub.mjs'
@@ -408,10 +408,10 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import assert from 'node:assert/strict'
-import { createContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'
+import { createContext } from '../lib/context.mjs'
 import { loadConfig } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
 import { bundledExamplePath, resolvePaths } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
-import { main } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'
+import { main } from '../lib/cli.mjs'
 import { fakeStream } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
 
 const raw = fs.readFileSync('config/cliworker.example.json', 'utf8')
@@ -537,8 +537,8 @@ function lines(file) {
 
 assert.deepEqual(lines('C:/git/dsh-CLIWorker/.collab/worktrees/005/bin/cliworker.mjs'), [
   '#!/usr/bin/env node',
-  "import { main } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'",
-  "import { createContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'",
+  "import { main } from '../lib/cli.mjs'",
+  "import { createContext } from '../lib/context.mjs'",
   '',
   'const { exitCode } = await main(process.argv.slice(2), createContext())',
   'process.exitCode = exitCode',
@@ -630,7 +630,7 @@ import os from 'node:os'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { createContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'
+import { createContext } from '../lib/context.mjs'
 import { loadConfig } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
 import { fakeStream } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
 
