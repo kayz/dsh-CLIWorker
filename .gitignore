@@ -1,5 +1,7 @@
 config/*.local.json
 state/
 *.jsonl
-.collab/
+.collab/worktrees/
+.collab/tasks/*/logs/
+.collab/tasks/*/live.json
 node_modules/
