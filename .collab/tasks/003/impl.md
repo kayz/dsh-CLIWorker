@@ -312,3 +312,65 @@ check-fast: FAILED step npm test (exit 1)
 
 - 未执行任何 git 命令（本轮角色授权明确禁止），因此 V-R-5 的 `git diff` 探针未复测；按 §1 清单与 design `write_scope` 逐条对照，未见越界，`lib/select.mjs` 未改动。
 - 未修改 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`；本文件只追加本节。
+
+## 9. 第 5 轮：复核无改动，阻塞项仍是同一个未落地的裁决
+
+### 9.1 本轮改了什么
+
+**没有改任何文件。** 本轮开工时重新读了 `brief.md`、`design.md`、`acceptance.md`：`design.md` 的 `write_scope` 与 `acceptance.md` V-R-5 的 `globs` 仍不含 `test/unit/traceability.test.mjs`，因此 §7.5/§8.4 请求的裁决依旧未落地，`lib/`、`bin/`、`contracts/`、`test/`、`scripts/` 也保持在 `82cfd61` 的状态——`review-r4.md` 已确认该状态除 V-R-1 外全部达标，重写代码只会引入回归风险。
+
+在 `write_scope` 内能影响 `mergeShards` 的只有 `test/traceability/T-003.json`，而 V-R-2 要求 `covered=10 planned=64` 且 `trace-T-003` 探针逐条断言 AC-006/007/008/072 为 `covered`；把它改成 `planned` 会让 V-R-2 与四条 AC 同时变红，所以范围内无解（不可满足性证明见 §7.4，本轮复核仍然成立）。
+
+### 9.2 本轮复核结果（全部在任务 worktree 根实测，与 §8.2 一致）
+
+| 命令 | 结果 |
+|---|---|
+| `node scripts/run-tests.mjs --ac AC-006` | `pass 5`、`ℹ fail 0`、`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-007` | `pass 5`、`ℹ fail 0`、`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-008` | `pass 12`、`ℹ fail 0`、`filtered 2 files` |
+| `node scripts/run-tests.mjs --ac AC-072` | `pass 14`、`ℹ fail 0`、`filtered 2 files` |
+| `node scripts/check-seams.mjs` | `check-seams: ok (files=15)`，退出码 0 |
+| `node scripts/check-traceability.mjs` | `ok (covered=10 planned=64)`，退出码 0 |
+| `node scripts/check-test-discovery.mjs` | `ok`，退出码 0 |
+| `node scripts/check-frozen-files.mjs` | `ok (8 files)`，退出码 0 |
+| `node bin/cliworker.mjs` | 退出码 1，stdout 空，stderr 为 `ERROR: usage: cliworker providers | models list|select|forecast | usage record|summary`（V-006-7） |
+| `node scripts/check-fast.mjs` | **退出码 1**：`ℹ tests 106 / pass 105 / fail 1`，末行 `check-fast: FAILED step npm test (exit 1)` |
+
+acceptance 的探针本轮逐条重跑，全部 `PROBE-OK`、退出码 0：`import-safe`、`main-ctx`、`commands`、`main-errors`、`no-process-exit`、`seams-fixtures`、`seams-allowlist-exact`、`seams-real-tree`、`host-contract`、`host-stub`、`registration`、`handlers`、`fake-clock`、`test-clock-file`、`context-contract`、`warn-inproc`、`warn-bin`、`helpers`、`trace-T-003`、`no-secrets`。非探针项：`--root test/fixtures/seams/date-now` 恰输出 `FAIL seams.date_now lib/bad.mjs:2` 与 `check-seams: FAILED (1 violations)`、退出码 1；`--bogus` 退出码 2、stdout 空、stderr 含 `usage:`。
+
+### 9.3 唯一红项（第 1–4 轮同一行，未扩散）
+
+```
+✖ [AC-004] mergeShards treats ACs without a shard as planned
+  AssertionError [ERR_ASSERTION]: actual 'covered' / expected 'planned'
+  at test/unit/traceability.test.mjs:158:10
+ℹ tests 106  ℹ pass 105  ℹ fail 1
+check-fast: FAILED step npm test (exit 1)
+```
+
+该断言把 AC-006 当作「没有分片的 AC」的样例；T-003 一旦提交 `test/traceability/T-003.json`（design §10 硬性要求），AC-006 就不再是样例。这不是实现缺陷，而是样例选取与分片落盘互斥。
+
+### 9.4 本轮新增的证据：那行改动确实能收尾
+
+用只读方式复算 `mergeShards({ root: cwd, index })` 的返回（不写任何文件）：
+
+```
+node --input-type=module -e "import fs from 'node:fs'; import { mergeShards } from './scripts/check-traceability.mjs'; const index = JSON.parse(fs.readFileSync('contracts/spec/ac-index.json','utf8')); const m = mergeShards({ root: process.cwd(), index }); console.log('errors', m.errors.length); console.log('AC-006', m.acs['AC-006'], 'AC-009', m.acs['AC-009'], 'AC-010', m.acs['AC-010']);"
+-> errors 0
+-> AC-006 covered AC-009 planned AC-010 planned
+```
+
+即 `errors` 为空（`check-traceability` 仍然 `ok`），而 `AC-009`/`AC-010` 仍是合法的「无分片」样例。因此 §8.4 的一行改动（`AC-006` → `AC-009`）不需要再动任何实现或契约，改完 `check-fast` 的唯一红项即消失；remainder 的 105 条测试本轮全绿。
+
+### 9.5 请求（同 §7.5/§8.4，本轮不重复 diff）
+
+1. 由编排方/设计方把 `test/unit/traceability.test.mjs` 加进 `design.md` 的 `write_scope` 与 `acceptance.md` V-R-5 的 `globs`；
+2. 允许把该文件第 158 行的 `'AC-006'` 改为 `'AC-009'`；
+3. 之后重跑 `pwsh -NoProfile -File scripts/check-fast.ps1`，期望退出码 0、`ℹ fail 0`、末行 `check-fast: ok`。
+
+三条都落在本角色授权之外（第 1、2 条要么改冻结规格，要么改 write_scope 之外的文件，且会让 V-R-5 判为 `outside write_scope`），所以本轮只报告、不代改。若编排方希望由 dev 直接执行第 2 条并接受 V-R-5 的一次性例外，需要显式授权，我可以在下一轮用一条命令完成并给出复测结果。
+
+### 9.6 本轮未做
+
+- 未执行任何 git 命令，V-R-5 的 `git diff` 探针未复测；按 §1 清单与 design `write_scope` 逐条对照，未见越界，`lib/select.mjs` 未改动。
+- 未修改 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`；本文件只追加本节。
