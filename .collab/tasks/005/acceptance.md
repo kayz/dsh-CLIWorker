@@ -179,7 +179,7 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { resolvePaths } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
 import { loadConfig } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
-import { main } from '../lib/cli.mjs'
+import { main } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'
 import { createPlugin } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/index.js'
 import { createFakeContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
 import { createHostStub } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/host-stub.mjs'
@@ -223,7 +223,7 @@ try {
   assert.equal(warned.exitCode, 0)
   assert.deepEqual(JSON.parse(wctx.stdout.text()).warnings, [{ code: 'W_LEGACY_USAGE' }])
 
-  const { run } = await import('file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/commands/usage/record.mjs')
+  const { run } = await import('./lib/commands/usage/record.mjs')
   await run({ argv: ['--json', JSON.stringify({ model: 'nope' })], ctx, config: c1 })
   const usage = path.join(c1._home, 'usage.jsonl')
   assert.equal(ctx.fs.existsSync(usage), true)
@@ -408,10 +408,10 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import assert from 'node:assert/strict'
-import { createContext } from '../lib/context.mjs'
+import { createContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'
 import { loadConfig } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
 import { bundledExamplePath, resolvePaths } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
-import { main } from '../lib/cli.mjs'
+import { main } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'
 import { fakeStream } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
 
 const raw = fs.readFileSync('config/cliworker.example.json', 'utf8')
@@ -523,10 +523,10 @@ if ($e -ne 0) { exit $e }
 ## AC-013 E-1 bin 与 _util 不改
 
 ```powershell
-$d = git diff --name-only main -- bin/cliworker.mjs lib/commands/_util.mjs; if ($d) { throw "modified files: $d" }; Write-Output 'AC-013 OK'
+$d = git diff --name-only main -- bin/cliworker.mjs lib/commands/_util.mjs; if ($d) { throw "modified" }; Write-Output 'AC-013 OK'
 ```
 
-- 期望: 输出最后一行是 `AC-013 OK`，且这两个文件相对 main 没有任何改动。
+- 期望: 最后一行是 `AC-013 OK`。
 
 ## AC-014 A-1 测试入口
 
@@ -586,7 +586,7 @@ import os from 'node:os'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { createContext } from '../lib/context.mjs'
+import { createContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'
 import { loadConfig } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
 import { fakeStream } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
 
