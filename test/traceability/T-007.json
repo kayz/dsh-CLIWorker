@@ -1,0 +1,28 @@
+{
+  "task": "T-007",
+  "milestone": "M1",
+  "entries": [
+    {
+      "ac": "AC-020",
+      "status": "covered",
+      "files": [
+        "test/unit/select-draft.test.mjs",
+        "test/characterization/defects/a5-dup-call.test.mjs",
+        "test/characterization/defects/a5-forecast-x3.test.mjs"
+      ]
+    },
+    {
+      "ac": "AC-021",
+      "status": "covered",
+      "files": ["test/unit/select-draft.test.mjs"]
+    },
+    {
+      "ac": "AC-022",
+      "status": "covered",
+      "files": [
+        "test/unit/check-unused.test.mjs",
+        "test/characterization/defects/a5-unused.test.mjs"
+      ]
+    }
+  ]
+}

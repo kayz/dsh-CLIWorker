@@ -1,0 +1,253 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\007",
+  "taskDir": ".collab\\tasks\\007",
+  "ranAt": "2026-11-08T06:33:13.4135763+08:00",
+  "passed": 27,
+  "total": 27,
+  "ok": true,
+  "results": [
+    {
+      "id": "AC-020",
+      "title": "A-01 过滤运行 AC-020",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.69,
+      "lastLine": "AC-020 OK",
+      "output": "AC-020 OK"
+    },
+    {
+      "id": "AC-020",
+      "title": "A-02 draft handle 有 call、没有 cli 键",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.57,
+      "lastLine": "AC-020 OK",
+      "output": "AC-020 OK"
+    },
+    {
+      "id": "AC-020",
+      "title": "A-03 每个模型的配额只读一次",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "AC-020 OK",
+      "output": "AC-020 OK"
+    },
+    {
+      "id": "AC-020",
+      "title": "A-04 forecast 计数等于通过前置过滤的模型数",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.49,
+      "lastLine": "AC-020 OK",
+      "output": "AC-020 OK"
+    },
+    {
+      "id": "AC-020",
+      "title": "A-05 两个缺陷文件的 [fixed] 段通过",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.57,
+      "lastLine": "AC-020 OK",
+      "output": "AC-020 OK"
+    },
+    {
+      "id": "AC-020",
+      "title": "A-06 缺陷账本未被改动",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.49,
+      "lastLine": "AC-020 OK",
+      "output": "AC-020 OK"
+    },
+    {
+      "id": "AC-020",
+      "title": "A-07 既有选模测试不改也通过",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.64,
+      "lastLine": "AC-020 OK",
+      "output": "AC-020 OK"
+    },
+    {
+      "id": "AC-021",
+      "title": "A-08 过滤运行 AC-021",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.65,
+      "lastLine": "AC-021 OK",
+      "output": "AC-021 OK"
+    },
+    {
+      "id": "AC-021",
+      "title": "A-09 金标 Heavy 全拒、Normal 与 Light 不拒",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.54,
+      "lastLine": "AC-021 OK",
+      "output": "AC-021 OK"
+    },
+    {
+      "id": "AC-021",
+      "title": "A-10 heavyRejection 与导出清单",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.48,
+      "lastLine": "AC-021 OK",
+      "output": "AC-021 OK"
+    },
+    {
+      "id": "AC-021",
+      "title": "A-11 a1-quota.test.mjs 未被修改",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.47,
+      "lastLine": "AC-021 OK",
+      "output": "AC-021 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-12 过滤运行 AC-022",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.91,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-13 对 lib 报告 0",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.52,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-14 对夹具恰好报告 8 项",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.52,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-15 干净夹具报告 0",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-16 用法错误退出 2",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.54,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-17 a5-unused 的 [fixed] 段通过且死函数已删",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.61,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-18 扫描器自身不留下未使用项",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.49,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-19 只删了 typeOf，其余未动",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-20 缺陷账本门禁",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 3.52,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-21 追踪门禁",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.49,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-22 缝隙门禁",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-23 无协作目录引用与金标冻结",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.57,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-24 写域",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.59,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-25 整体检查",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 9.62,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-26 全量测试",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 5.15,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    },
+    {
+      "id": "AC-022",
+      "title": "A-27 零第三方运行时依赖",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.53,
+      "lastLine": "AC-022 OK",
+      "output": "AC-022 OK"
+    }
+  ]
+}

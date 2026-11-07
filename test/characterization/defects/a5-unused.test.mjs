@@ -15,3 +15,14 @@ test('[repro] [AC-005] a dead helper and an unused fs import survive in 0.1', ()
   assert.match(cliSource, /import fs from/)
   assert.equal(cliSource.includes('fs.'), false)
 })
+
+test('[fixed] [AC-022] the live selector has no dead helper and no unused binding', async () => {
+  const { scanPaths } = await import('../../../scripts/check-unused.mjs')
+  const root = fileURLToPath(new URL('../../../', import.meta.url))
+
+  const source = fs.readFileSync(path.join(root, 'lib', 'select.mjs'), 'utf8')
+  assert.equal(source.split('isObject').length - 1, 0)
+
+  const report = scanPaths(['lib'], { root })
+  assert.deepEqual(report.items, [])
+})

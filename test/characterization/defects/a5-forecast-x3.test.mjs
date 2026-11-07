@@ -37,3 +37,35 @@ test('[repro] [AC-005] the provider quota is read three times per model', async 
   assert.equal(result.ok, true)
   assert.ok(reads > 12, `expected more than 12 quota reads, saw ${reads}`)
 })
+
+test('[fixed] [AC-020] the live selector reads each provider quota once', async () => {
+  const { selectModels } = await import('../../../lib/select.mjs')
+
+  let reads = 0
+  const quotas = new Proxy(
+    {},
+    {
+      get(target, prop) {
+        if (prop === 'claude') reads += 1
+        return target[prop]
+      },
+    }
+  )
+
+  const models = {}
+  for (let i = 0; i < 12; i += 1) {
+    models[`claude-m${i}`] = {
+      provider: 'claude',
+      id: `m${i}`,
+      level: 'Quick',
+      identity: 'verified',
+      prices: { input_per_mtok: 1, output_per_mtok: 1 },
+    }
+  }
+  const config = { providers: { claude: { cli: 'claude', readonly: true } }, models, quotas }
+
+  const result = selectModels(config, { level: 'Quick', count: 12 }, { status: { claude: { state: 'callable' } } })
+  assert.equal(result.ok, true)
+  assert.equal(result.models.length, 12)
+  assert.equal(reads, 12)
+})
