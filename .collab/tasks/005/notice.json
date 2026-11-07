@@ -3,10 +3,10 @@
   "event": "blocked",
   "reason": "ci_failed",
   "verdict": null,
-  "ci": "12/13",
+  "ci": "10/13",
   "files": null,
   "branch": "task/005",
   "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】005 / task 005\n结果：blocked — ci_failed\n阶段：design ✅ · dev ✅ · CI 12/13 ❌\n变更：分支 task/005 · 耗时 2h46m\n验收：CI 12/13\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-07T21:08:01.636Z"
+  "summary": "【AgentLine 任务被阻塞】005 / task 005\n结果：blocked — ci_failed\n阶段：design ✅ · dev ✅ · CI 10/13 ❌\n变更：分支 task/005 · 耗时 3h07m\n验收：CI 10/13\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-07T21:29:09.517Z"
 }
