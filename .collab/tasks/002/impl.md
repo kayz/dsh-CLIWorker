@@ -250,8 +250,52 @@ r3 的用户输入把 `scripts/check-ci.mjs`、`test/unit/traceability.test.mjs`
 
 E-2（`git diff` / `git status` 的写域核对）由编排侧执行：本轮只写了 `scripts/check-ci.mjs`、
 `test/unit/traceability.test.mjs` 两个文件与本文件，未触碰 `brief.md` / `design.md` / `acceptance.md` /
-`review*` / `verdict*` / `state.json` / `run.json`。
+`review*` / `verdict*` / `state.json` / `run.json`。（r4 起 `acceptance.md` 按编排指令重写，见 §9。）
 
 D-4/D-5/D-6 仍会出现一条 `FAIL defects.repro_baseline_failed a3-runner`：临时根按要求只复制
 `test/` + `contracts/`，a3-runner 的 repro 依赖 `../../../scripts/run-tests.mjs` 因而无法加载。
 验收判据只要求出现目标行、且 D-5 不得有其它 `canary_survived`，均满足；真实仓库（A-3）无此噪声。
+
+## 9. r4：按 `ci-runner.ps1` 的解析规则重写 acceptance.md
+
+本轮交付物代码零改动，只处理 CI 报的「exit 2 / 零命令 / 未写 ci-results.json」。
+
+### 9.1 根因
+
+`ci-runner.ps1` 只把匹配
+`^#{2,4}\s+((?:AC-?\d+)|(?:[A-Z]{1,3}\d+)|(?:\d+(?:\.\d+)*))\b...` 的标题当作用例：编号必须是
+`AC-005`、`A1`、`B3`、`0`、`1` 这类形态。旧稿的标题是 `## A. 总入口` 与 `### A-1 过滤运行 AC-005`，
+`A` 后面没有数字、`A-1` 的连字符也不被允许，因此**一个用例都没被解析出来**，脚本在
+`no runnable cases parsed` 处 `exit 2`，`run.json` 里 `commands: []`、`passed/total: null`。
+
+### 9.2 改法（内容不变，只改可被解析的形态）
+
+- 结构对齐 T-001：组标题 `## 1. 总入口` … `## 6. 各缺陷 repro 的实质内容`，用例标题
+  `### A1`、`### A2` … `### B1` … `### C1`、`### D1` … `### E1` … `### F1`。编号字母 + 数字，
+  与旧稿 `A-1`/`B-3`/`D-4` 的对应关系是组内顺序（A 组 5 条、B 组 6 条、C 组 2 条、D 组 7 条、
+  E 组 3 条、F 组 2 条，共 25 条）。
+- 每个用例只留一个 ```powershell 块：runner 只取标题下第一个代码块，首行即命令，其余同块内容
+  顺序执行；断言改成紧随其后的项目符号，不再出现「期望输出」代码块（runner 会把任何代码块当命令）。
+- 脚本自包含：不依赖 §0 定义的 `Run`/`NewTmp`（runner 为每个用例另起一个 `pwsh -File` 进程，
+  前一条定义的函数不可见）。全部断言成立时打印 `<编号> OK` 并 `exit 0`，否则 `throw`（非 0 退出）。
+  runner 的判定是「输出含 `<编号> OK` 且退出码 0」，因此 marker 与退出码都真实反映断言结果。
+- 两处 PowerShell 陷阱：`"… $code: …"` 里的 `$code:` 会被当成 scope/drive 限定符而报「变量引用
+  无效」，改成 `${code}:`；E-2 的 write_scope 正则补上 task-graph（8af0141）为本任务追加的
+  `scripts/check-ci.mjs`、`test/unit/traceability.test.mjs` 以及 `.collab/blueprint/cliworker-v2/task-graph.json`。
+
+### 9.3 自测
+
+用真实 runner 本地跑（输出到临时目录，不写仓库）：
+
+```
+pwsh -NoProfile -File <tools>/ci-runner.ps1 -RepoRoot <repo> -TaskDir .collab\tasks\002 -OutFile <temp>.json
+```
+
+| 轮次 | 结果 |
+|---|---|
+| 首轮 | 25 条全部解析出来，18 PASS / 7 FAIL；7 条都是 `$code:` 的 PowerShell 解析错误 |
+| 修 `$code:` 后 | **25/25 PASS，runner exit 0**（A1–A5、B1–B6、C1–C2、D1–D7、E1–E3、F1–F2） |
+
+`node scripts/run-tests.mjs --ac AC-005` 复核仍为 `run-tests: filtered 12 files`、31/31 pass；
+`check-frozen-files: ok (8 files)`、`check-defects: ok`、`check-fast: ok` 均未受影响。
+
