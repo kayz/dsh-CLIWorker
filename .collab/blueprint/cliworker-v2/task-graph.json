@@ -981,7 +981,8 @@
         "test/characterization/defects/a5-dup-call.test.mjs",
         "test/characterization/defects/a5-forecast-x3.test.mjs",
         "test/characterization/defects/a5-unused.test.mjs",
-        "test/traceability/T-007.json"
+        "test/traceability/T-007.json",
+        "lib/contract/validate.mjs"
       ],
       "acceptance": [
         "AC-020",
