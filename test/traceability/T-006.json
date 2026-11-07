@@ -1,0 +1,15 @@
+{
+  "task": "T-006",
+  "milestone": "M1",
+  "entries": [
+    {
+      "ac": "AC-015",
+      "status": "covered",
+      "files": ["test/unit/pools.test.mjs", "test/characterization/defects/a1-quota.test.mjs"]
+    },
+    { "ac": "AC-016", "status": "covered", "files": ["test/unit/pools.test.mjs"] },
+    { "ac": "AC-017", "status": "covered", "files": ["test/unit/forecast-engine.test.mjs"] },
+    { "ac": "AC-018", "status": "covered", "files": ["test/unit/forecast-unknown.test.mjs"] },
+    { "ac": "AC-019", "status": "covered", "files": ["test/unit/reset.test.mjs"] }
+  ]
+}

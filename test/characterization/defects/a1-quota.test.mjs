@@ -25,3 +25,25 @@ test('[repro] [AC-005] a percentage quota turns the forecast into unknown', asyn
   assert.equal(credits.risk, 'unknown')
   assert.equal('reason' in credits, false)
 })
+test('[fixed] [AC-015] live forecast reads percentage and credits quotas', async () => {
+  const { buildForecast } = await import('../../../lib/forecast.mjs')
+  const samples = [
+    { mtok: 0.2, cost_usd: null },
+    { mtok: 0.2, cost_usd: null },
+    { mtok: 0.2, cost_usd: null },
+  ]
+
+  const percent = buildForecast({ quota: { remaining_pct: 5 }, samples, usage: 'Normal', now: 0 })
+  assert.equal(percent.remaining_fraction, 0.05)
+  assert.equal(percent.remaining_mtok, null)
+  assert.equal(percent.tasks_left, null)
+  assert.equal(percent.tasks_left_basis, 'none')
+  assert.equal(percent.risk, 'low_reserve')
+  assert.equal(percent.risk_basis, 'fraction')
+
+  const credits = buildForecast({ quota: { remaining: 1, unit: 'credits' }, samples: [], usage: 'Normal', now: 0 })
+  assert.equal(credits.reason, 'credits_conversion_missing')
+  assert.equal(credits.risk, 'unknown')
+  assert.equal(credits.risk_basis, 'none')
+  assert.equal(credits.status, 'unknown')
+})

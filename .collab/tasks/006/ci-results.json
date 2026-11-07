@@ -1,0 +1,145 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\006",
+  "taskDir": ".collab\\tasks\\006",
+  "ranAt": "2026-11-08T03:15:16.8518142+08:00",
+  "passed": 15,
+  "total": 15,
+  "ok": true,
+  "results": [
+    {
+      "id": "AC-015",
+      "title": "A-1 过滤运行",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.69,
+      "lastLine": "AC-015 OK",
+      "output": "AC-015 OK"
+    },
+    {
+      "id": "AC-015",
+      "title": "A-2 金标深相等",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.48,
+      "lastLine": "AC-015 OK",
+      "output": "AC-015 OK"
+    },
+    {
+      "id": "AC-015",
+      "title": "A-3 旧 forecast 仍给出 tasks_left 10",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.46,
+      "lastLine": "AC-015 OK",
+      "output": "AC-015 OK"
+    },
+    {
+      "id": "AC-015",
+      "title": "A-4 a1-quota 只追加 [fixed]，repro 哈希不变，check-defects 通过",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 3.81,
+      "lastLine": "AC-015 OK",
+      "output": "AC-015 OK"
+    },
+    {
+      "id": "AC-016",
+      "title": "A-5 过滤运行",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.72,
+      "lastLine": "AC-016 OK",
+      "output": "AC-016 OK"
+    },
+    {
+      "id": "AC-016",
+      "title": "A-6 b44 金标深相等",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.53,
+      "lastLine": "AC-016 OK",
+      "output": "AC-016 OK"
+    },
+    {
+      "id": "AC-016",
+      "title": "A-7 schema 形状与计费权重",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.51,
+      "lastLine": "AC-016 OK",
+      "output": "AC-016 OK"
+    },
+    {
+      "id": "AC-016",
+      "title": "A-8 b44-reading-half 的 sonnet 手算",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.47,
+      "lastLine": "AC-016 OK",
+      "output": "AC-016 OK"
+    },
+    {
+      "id": "AC-017",
+      "title": "A-9 过滤运行",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.74,
+      "lastLine": "AC-017 OK",
+      "output": "AC-017 OK"
+    },
+    {
+      "id": "AC-017",
+      "title": "A-10 四个金标文件逐条深相等",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.48,
+      "lastLine": "AC-017 OK",
+      "output": "AC-017 OK"
+    },
+    {
+      "id": "AC-017",
+      "title": "A-11 用量分位、变异系数与伪时钟",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.48,
+      "lastLine": "AC-017 OK",
+      "output": "AC-017 OK"
+    },
+    {
+      "id": "AC-018",
+      "title": "A-12 过滤运行",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.68,
+      "lastLine": "AC-018 OK",
+      "output": "AC-018 OK"
+    },
+    {
+      "id": "AC-018",
+      "title": "A-13 assumed 不进入 risk，输出过 schema",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "AC-018 OK",
+      "output": "AC-018 OK"
+    },
+    {
+      "id": "AC-019",
+      "title": "A-14 过滤运行",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.71,
+      "lastLine": "AC-019 OK",
+      "output": "AC-019 OK"
+    },
+    {
+      "id": "AC-019",
+      "title": "A-15 重置优先级与越过重置",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.45,
+      "lastLine": "AC-019 OK",
+      "output": "AC-019 OK"
+    }
+  ]
+}

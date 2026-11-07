@@ -1,0 +1,297 @@
+[
+  {
+    "task": "006",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-07T18:21:45.873Z",
+    "ended_at": "2026-11-07T18:28:26.029Z",
+    "duration_ms": 400156,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 50,
+      "output": 49697,
+      "cache_read": 2364822,
+      "cache_write": 136573,
+      "cost_usd": 1.2798442
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/006/logs/design-r1-1.log",
+    "error": "You've hit your session limit · resets 4:20am (Asia/Shanghai)",
+    "handoff": {
+      "file": "handoff/design-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/006/design-r1-c1",
+      "sha": "9f28196c01e7208398220f75c60c0c9c086b4ea0"
+    }
+  },
+  {
+    "task": "006",
+    "role": "design",
+    "round": 1,
+    "candidate": 2,
+    "backend": "cursor-wsl",
+    "model_requested": "grok-4.7",
+    "model_resolved": "Grok 4.7 256K High",
+    "provider": "cursor-wsl",
+    "effort": null,
+    "started_at": "2026-11-07T18:28:28.096Z",
+    "ended_at": "2026-11-07T18:47:56.864Z",
+    "duration_ms": 1168768,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": null,
+      "output": null,
+      "cache_read": null,
+      "cache_write": null,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/006/logs/design-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "claude-sonnet-5-5",
+      "file": "handoff/design-r1-c1-to-c2.md"
+    }
+  },
+  {
+    "task": "006",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-07T18:55:10.230Z",
+    "ended_at": "2026-11-07T18:55:12.207Z",
+    "duration_ms": 1977,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": null,
+    "usage_source": "unavailable",
+    "log_ref": ".collab/tasks/006/logs/design-r1-1.log",
+    "error": "rate_limit rejected",
+    "handoff": {
+      "file": "handoff/design-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/006/design-r1-c1",
+      "sha": "b1aa6028361a730f7c21d0657a8c24a913193474"
+    }
+  },
+  {
+    "task": "006",
+    "role": "design",
+    "round": 1,
+    "candidate": 2,
+    "backend": "cursor-wsl",
+    "model_requested": "grok-4.7",
+    "model_resolved": "Grok 4.7 256K High",
+    "provider": "cursor-wsl",
+    "effort": null,
+    "started_at": "2026-11-07T18:55:13.631Z",
+    "ended_at": "2026-11-07T19:08:32.270Z",
+    "duration_ms": 798639,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": null,
+      "output": null,
+      "cache_read": null,
+      "cache_write": null,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/006/logs/design-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "claude-sonnet-5-5",
+      "file": "handoff/design-r1-c1-to-c2.md"
+    }
+  },
+  {
+    "task": "006",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-07T19:08:33.163Z",
+    "ended_at": "2026-11-07T19:14:04.376Z",
+    "duration_ms": 331213,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 3839892,
+      "output": 50571,
+      "cache_read": 3735168,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/006/logs/dev-r1-1.log",
+    "error": null
+  },
+  {
+    "task": "006",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-07T19:14:17.653Z",
+    "ended_at": "2026-11-07T19:14:17.653Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 15,
+      "total": 15,
+      "ok": true,
+      "ran_at": "2026-11-07T19:14:17.653Z",
+      "report_ref": ".collab/tasks/006/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/006/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "006",
+    "role": "review",
+    "round": 1,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-07T19:14:17.662Z",
+    "ended_at": "2026-11-07T19:14:19.542Z",
+    "duration_ms": 1880,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": null,
+    "usage_source": "unavailable",
+    "log_ref": ".collab/tasks/006/logs/review-r1-1.log",
+    "error": "rate_limit rejected"
+  },
+  {
+    "task": "006",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-07T19:15:16.902Z",
+    "ended_at": "2026-11-07T19:15:16.902Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 15,
+      "total": 15,
+      "ok": true,
+      "ran_at": "2026-11-07T19:15:16.903Z",
+      "report_ref": ".collab/tasks/006/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/006/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "006",
+    "role": "review",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "hy4free",
+    "model_resolved": "hy4free",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-07T19:15:16.914Z",
+    "ended_at": "2026-11-07T19:29:11.200Z",
+    "duration_ms": 834286,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 5416333,
+      "output": 67914,
+      "cache_read": 5198912,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/006/logs/review-r1-1.log",
+    "error": null
+  }
+]
