@@ -1,0 +1,10 @@
+{
+  "mode": "filtered",
+  "filter": "AC-001",
+  "files": [
+    "test/unit/a.test.mjs",
+    "test/unit/b.test.mjs"
+  ],
+  "platform": "linux",
+  "node": "v20.0.0"
+}

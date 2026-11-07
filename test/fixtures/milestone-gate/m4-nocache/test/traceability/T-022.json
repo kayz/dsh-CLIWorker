@@ -1,0 +1,13 @@
+{
+  "task": "T-022",
+  "milestone": "M4",
+  "entries": [
+    {
+      "ac": "AC-055",
+      "status": "covered",
+      "files": [
+        "test/unit/gate-055.test.mjs"
+      ]
+    }
+  ]
+}

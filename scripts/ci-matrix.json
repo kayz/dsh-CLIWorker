@@ -1,0 +1,35 @@
+{
+  "os": [
+    {
+      "name": "ubuntu",
+      "runs_on": "ubuntu-latest",
+      "baseline": "linux"
+    },
+    {
+      "name": "windows",
+      "runs_on": "windows-latest",
+      "baseline": "win32"
+    },
+    {
+      "name": "macos",
+      "runs_on": "macos-latest",
+      "baseline": "darwin"
+    }
+  ],
+  "node": [
+    20,
+    22
+  ],
+  "check_command": "npm run check",
+  "results_dir": "test-results",
+  "artifacts": [
+    "files-executed.json",
+    "skips.jsonl"
+  ],
+  "perf": {
+    "runs_on": "ubuntu-latest",
+    "node": 22,
+    "command": "npm run perf",
+    "blocking": false
+  }
+}

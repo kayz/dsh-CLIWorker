@@ -3,8 +3,8 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { selectModels, listModels } from '../lib/select.mjs'
-import { forecast, estimateCost } from '../lib/forecast.mjs'
+import { selectModels, listModels } from '../../lib/select.mjs'
+import { forecast, estimateCost } from '../../lib/forecast.mjs'
 
 function config() {
   return {

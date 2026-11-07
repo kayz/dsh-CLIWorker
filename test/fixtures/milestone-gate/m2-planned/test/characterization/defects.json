@@ -1,0 +1,16 @@
+{
+  "defects": [
+    {
+      "id": "a3-runner",
+      "owner_task": "T-001",
+      "owner_milestone": "M1",
+      "ac": "AC-001"
+    },
+    {
+      "id": "a5-shell",
+      "owner_task": "T-010",
+      "owner_milestone": "M2",
+      "ac": "AC-026"
+    }
+  ]
+}
