@@ -59,7 +59,7 @@
 | B2 | 七行全部 ` True` |
 | B3 | 三行全部 ` True` |
 | B4 | 无输出 |
-| B5 | 无缺失 lib 文件（本机 Windows PowerShell 5.1 无 `[IO.Path]::GetRelativePath`，用 `Substring` 等价实现复验；`pwsh` 7 已安装，原命令可用） |
+| B5 | 无缺失 lib 文件（24 个 lib 文件全部在清单中；本机 Windows PowerShell 5.1 无 `[IO.Path]::GetRelativePath`，改为在同一 `npm pack` 清单上用 `collectLibFiles` 做集合比对复验，`missing=[]`） |
 | C1 | `tests 7 / pass 7 / fail 0`，七个 `ok` 标题齐全，退出 0 |
 | C2 | stderr 含 `unknown argument: --bogus` 与 `usage:`，`exit=2` |
 | C3 | 临时目录输出 8 条 `FAIL pack.missing_required`，无 `pack.bin_mismatch` / `pack.version_mismatch`，含 `check-pack: FAILED (8 errors)`，`exit=1` |
@@ -103,3 +103,22 @@ node scripts/check-frozen-files.mjs
 node scripts/check-golden-frozen.mjs
 pwsh -NoProfile -File scripts/check-fast.ps1   # 当前会停在 check-no-collab，原因见 §4
 ```
+
+## 6. 复核（2026-11-08）
+
+按 design.md 逐条重读本轮工作区中的 6 个交付文件，未发现与规格不符之处，因此没有再改动代码或测试；本轮只修正了 §3 中 B5 的复验方法描述并补本节。逐条复跑结果：
+
+- 清单字段：A1 `bin/cliworker.mjs`、A2 `true`、A3 `false`、A4 `true`、A5 `0`。
+- 真实打包：B1 `check-pack: ok`（退出 0）；B2 七行全 `True`；B3 三行全 `True`；B4 无输出；B5 `collectLibFiles` 的 24 个文件中 `missing=[]`。
+- 清单实况：共 49 个文件——`README.md`、`bin/cliworker.mjs`、`config/cliworker.example.json`、`contracts/`（2 个白名单文件 + 21 个 schema + host + context）、`cordis.patch.yml`、`dsh.plugin.json`、`package.json`、`lib/` 的 24 个文件。
+- 负向行为：C1 `tests 7 / pass 7 / fail 0`，七个标题逐字匹配；C2 `--bogus` 与 `--root` 缺值均 stderr 含 `unknown argument` / `--root requires a directory` 与 `usage:`，`exit=2`；C3 临时目录 8 条 `FAIL pack.missing_required`（`bin/cliworker.mjs`、`config/cliworker.example.json`、`contracts/agentline-forbidden.json`、`contracts/{context,host,registry.snapshot,schemas}`、`lib/`），无 `pack.bin_mismatch` / `pack.version_mismatch`，`check-pack: FAILED (8 errors)`，`exit=1`。
+- 缺陷：D1 `check-defects: ok`；D3 `ok 1 - [fixed] [AC-025] ...`，`# fail 0`；D4 `f520198675d74dc94fd4be7bd120a0f7f5168e0058e85369bcc618100dbd9c93`；F5 `bin: null` 计数 `1`。
+- 追溯：E1 `filtered 2 files`，`tests 9 / pass 9 / fail 0`；E2 输出与期望逐字一致；E3 `check-traceability: ok (covered=26 planned=48)`。
+- 其余静态检查单独执行均通过：`check-pack`、`check-seams (files=24)`、`check-test-discovery`、`check-traceability`、`check-unused (files=24)`、`check-write-scope`、`check-frozen-files (8 files)`、`check-golden-frozen (14 files)`、`check-ci`、`check-contract-doc`。
+
+仍然阻塞的条目与 §4 一致，且本轮复跑的现象完全相同：
+
+- D2：`FAIL defects.missing_fixed a5-ignored-fields has no [fixed] section`（owner T-008）。
+- E4：`milestone-gate M1: BLOCKED (3 errors)`，全是 `AC-023 is planned`、`AC-024 is planned`、`a5-ignored-fields` 缺 `[fixed]`，不涉及 AC-025 / `a2-pack`。
+- F1：`FAIL no_collab test/unit/gitignore.test.mjs:13`、`:18`；F3 因此停在 `check-no-collab` 步。
+- 全量 `node scripts/run-tests.mjs`：`tests 312 / pass 309 / fail 3`，失败为 `[AC-073] check-no-collab ...`、`[AC-013] git check-ignore ...`、`[AC-006] failures are reported on ctx.stderr ...`（`test/unit/import-safe.test.mjs:70`），均属基线中其他任务的写域。
