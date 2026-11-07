@@ -11,16 +11,41 @@
       "from": "draft",
       "to": "designed",
       "by": "design:cursor-wsl-grok-4.7 (inherited c1)"
+    },
+    {
+      "at": "2026-11-07T18:47:57.563Z",
+      "from": "designed",
+      "to": "blocked",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-07T18:55:10.213Z",
+      "from": "blocked",
+      "to": "designed",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-07T18:55:10.219Z",
+      "from": "designed",
+      "to": "draft",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-07T19:08:32.456Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:cursor-wsl-grok-4.7 (inherited c1)"
     }
   ],
   "status": "designed",
-  "updated_at": "2026-11-07T18:47:57.055Z",
+  "updated_at": "2026-11-07T19:08:32.456Z",
   "role": "design",
   "model": "grok-4.7",
   "model_resolved": "Grok 4.7 256K High",
   "effort": null,
-  "attempt": 1,
-  "switches": 1,
+  "attempt": 2,
+  "switches": 2,
   "blocked_reason": null,
-  "handoff": null
+  "handoff": null,
+  "interrupted": null
 }

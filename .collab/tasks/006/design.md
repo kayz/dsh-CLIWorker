@@ -7,11 +7,16 @@ write_scope:
   - test/unit/forecast-unknown.test.mjs
   - test/unit/reset.test.mjs
   - test/traceability/T-006.json
+  - test/characterization/defects/a1-quota.test.mjs
 ---
 
 # Task 006 设计：额度池归一与预测引擎定稿（T-006，M1，纯函数）
 
-继承候选 #1 的 `design.md`：导出清单、公式、测试划分，以及下面 §1.1 的五条裁决。这些内容与冻结的 `contracts/golden/**`、`forecast.v1.schema.json`、`registry.snapshot.json`、interfaces §6、§7 和蓝图 design §10.2（D-7）一致，并且保住了 `lib/select.mjs` 仍在调用的旧 `forecast()`，所以保留。本轮补上 `acceptance.md`，写明 `reading` 与 `used_fraction` 的对应、变异系数公式、一个手算例，以及 a1-quota 写域冲突在未回答前的处理。`attention.json` 仍保留：brief 的产出要求给 `a1-quota` 追加 `[fixed]`，write_scope 却不含该文件，这一冲突不能从现有文件里消掉。
+继承已写定的 `design.md` 与 `acceptance.md`：导出清单、§3 的公式、§4 的测试划分、§1.1 的前四条裁决，以及验收命令「自包含、最后一行 OK」的写法。这些内容与冻结的 `contracts/golden/**`、`forecast.v1.schema.json`、`registry.snapshot.json`、interfaces §6、§7 和蓝图 design §10.2（D-7）一致，并且保住了 `lib/select.mjs` 仍在调用的旧 `forecast()`，所以保留，不另起字段或函数名。
+
+交班时与方案有关的未提交改动，只有 `.collab/blueprint/cliworker-v2/task-graph.json` 里 T-006 的 `write_scope` 多了 `test/characterization/defects/a1-quota.test.mjs`。这是人类批准写域之后写进任务图的结果，予以保留。实现者不得再改这个文件。`attention.json` 已删除。logs、state、inputs、notice 是调度器文件，不是需求。
+
+人类回答（本轮执行）：批准该测试文件进入 T-006 的 write_scope（主仓库与本工作区的任务图都已写入）。只允许在文件末尾追加 `[fixed]`，不得改动 `[repro]` 块。据此更新 front matter、§1.1 第 5 条、§4、§5、§6、§8 和 `acceptance.md`。
 
 基准：分支 `task/006`，起点提交 `887c7a2115e649e6df5046448dcc97d571e8f660`（`chore(003): mark merged after human permission`）。brief 没有另给验收报告路径。在该提交上：
 
@@ -26,7 +31,7 @@ write_scope:
 
 - 新增 `lib/pools.mjs`：额度形状归一、多池剩余量、重置时间解析与越过重置的处理、`round3`。
 - 改写 `lib/forecast.mjs`：新增预测引擎（分位数、阈值表、置信度、burn、eta、assumed 语义、`buildForecast`）。
-- 四个测试文件与追踪分片 `test/traceability/T-006.json`。
+- 四个测试文件、追踪分片 `test/traceability/T-006.json`，以及既有 `test/characterization/defects/a1-quota.test.mjs` 末尾追加的一个 `[fixed]` 测试（§8）。
 - **保留旧导出不动**：`DEFAULT_PRICES`、`normalizePrices`、`estimateCost`、旧 `forecast()`。原因是 `lib/select.mjs`、`lib/commands/models/forecast.mjs`、`lib/commands/usage/record.mjs`、`test/unit/select.test.mjs` 仍在使用旧形状（该测试用 2 个样本断言 `tasks_left === 10`，新语义下样本不足会得到 null）。这些调用点由 T-007 迁移，不在本任务范围内。旧 `forecast()` 加 `@deprecated` 注释即可。
 - 签名里有 `now` 的函数只收显式传入的毫秒数，调用方传 `ctx.clock.now()`；`now` 不是有限数字时抛 `TypeError`，绝不回落到系统时钟。`lib/pools.mjs` 不得出现 `Date.now`、`systemNow`、零参数 `new Date()`、任何定时器。`new Date(ms)` 带参数是 `check-seams` 允许的（它只禁零参数 `new Date()`），ISO 输出用它。`lib/forecast.mjs` 里标识符 `systemNow` 恰好出现 2 次，都在旧 `forecast()`：导入一处、默认参数一处。两个文件都不得出现 `Date.now`。
 - 零第三方依赖，Node 20+，ESM。
@@ -37,7 +42,7 @@ write_scope:
 2. **AC-019 与 D-7（design.md §10.2）。** D-7 规定：来自估算的 reset_at 越过只触发复核，不得清零；只有 CLI 上报的 reset_at 越过才清零。裁决：`reset_source === 'cli'` 越过 → used 归零；`config`、`estimated` 越过 → used 保持，并在池明细上置 `recheck: true`。AC-019 的归零断言用 cli 来源的池。
 3. **`reading_stale` 不产出。** 注册表枚举里有它，但 b44 金标要求读数过期后改用账本时 `reason` 为 `null`，所以 T-006 不产出 `reading_stale`。
 4. **`credits` 剩余为 0、无换算率**：金标 `q-credits-zero` 只要求 `risk: exhausted`。「剩余量确切为 0」是事实，不是假设，所以判 exhausted（见 §3.3 零剩余规则）。
-5. **a1-quota 的 `[fixed]` 段落不在 write_scope 内**，见 §8。
+5. **a1-quota 只追加 `[fixed]`。** 人类已批准该文件进入 write_scope。只追加 §8 的那一个测试，不改 `[repro]`。
 
 ## 2. 导出清单（函数名固定，金标 `fn` 字段与之对应）
 
@@ -168,13 +173,14 @@ write_scope:
 | 文件 | AC | 内容 |
 |---|---|---|
 | `test/unit/pools.test.mjs` | AC-015、AC-016 | quota-shapes 金标 9 例（经 `buildForecast`，`samples` 与 `usage` 取自金标）；b44 金标 9 例（经 `remainingForModels`）；`normalizeQuota` 五种形状直测 |
+| `test/characterization/defects/a1-quota.test.mjs` | AC-015 | 末尾追加 §8 的一个 `[fixed]` 测试。不改 `[repro]` |
 | `test/unit/forecast-engine.test.mjs` | AC-017 | thresholds 金标 21 例、quantiles 15 例、confidence 11 例、burn-eta 14 例（`fn` 分派表）；Heavy/Normal/Light 取 p90/p50/p25 的 `buildForecast` 直测；`Date.now` 被替换成抛错函数时引擎仍工作 |
 | `test/unit/forecast-unknown.test.mjs` | AC-018 | unknown 语义；输出用 `lib/contract/validate.mjs` 的 `validate` 对 `forecast.v1.schema.json` 校验；遍历所有无样本输入断言 `risk_basis !== 'tasks'` 且 `risk ∉ {ok, critical}`（除非 fraction 依据） |
 | `test/unit/reset.test.mjs` | AC-019 | `resolveResetAt` 四级优先级；下面这组夹具：cli 池在 reset 前 `used_fraction === 0.5` 且 `recheck === false`，越过后 `used_fraction === 0` 且 `recheck === false`；同一夹具改成 `config` 后越过仍是 0.5 且 `recheck === true` |
 
 AC-019 夹具（两步都用 `createFakeContext` 的 `ctx.clock.now()`）：池 `id` `p`，窗口 `start_at` `2026-11-07T07:00:00.000Z`、`reset_at` `2026-11-07T12:00:00.000Z`、`reset_source` `cli`，容量 `{ m: 10 }`，读数 `{ value: 0.5, at: '2026-11-07T11:50:01.000Z' }`，无行，`reading_ttl_s` 600。读数时刻取 11:50:01 而不是 11:50:00，是为了越过重置之后年龄仍不超过 600 秒，否则过期读数会改走空账本，看不出「保持」和「归零」的差别。`setNow(Date.parse('2026-11-07T11:59:59.000Z'))` 时年龄 598 秒，`used_fraction` 为 0.5，`recheck` 为 false。`advance(2000)` 之后 now 为 `2026-11-07T12:00:01.000Z`，年龄恰 600 秒。cli 越过之后 `used_fraction` 为 0，`recheck` 仍为 false。`config` 来源用同一组时间，只把 `reset_source` 改成 `config`：越过之后 `used_fraction` 仍是 0.5，`recheck` 为 true。滚动估算例：`now` `2026-11-07T10:00:00.000Z`，`window.anchor` `rolling`，`length_s` 3600，行的 `at` 为 `08:00`、`09:30`、`09:10`（均 2026-11-07、Z），最早落入窗口的是 `09:10`，`reset_at` 为 `2026-11-07T10:10:00.000Z`，`reset_source` `estimated`。同时给出 cli 与 config 时来源为 `cli`，`reset_at` 规整为 `2026-11-07T12:00:00.000Z`。什么都没有时 `{ reset_at: null, reset_source: 'unknown' }`。
 
-每个测试文件只写自己负责的 `[AC-xxx]` 标签。`pools.test.mjs` 同时写 AC-015 与 AC-016，因此 `--ac AC-015` 与 `--ac AC-016` 都只选中这一个文件。
+每个新建的测试文件只写自己负责的 `[AC-xxx]` 标签。`pools.test.mjs` 同时写 AC-015 与 AC-016。`--ac AC-016` 只选中 `pools.test.mjs`。`--ac AC-015` 选中两个文件：`pools.test.mjs`，以及追加了 `[AC-015]` 标题的 `a1-quota.test.mjs`（该文件里的 `[repro]` 标题含 `[AC-005]`，过滤 AC-015 时整文件都会跑，`[repro]` 仍须通过）。
 
 各金标 case 数量：quota-shapes 9、b44 9、thresholds 21、quantiles 15、confidence 11、burn-eta 14。数量以仓库里金标文件的实际 case 数为准。
 
@@ -185,7 +191,7 @@ AC-019 夹具（两步都用 `createFakeContext` 的 `ctx.clock.now()`）：池 
   "task": "T-006",
   "milestone": "M1",
   "entries": [
-    { "ac": "AC-015", "status": "covered", "files": ["test/unit/pools.test.mjs"] },
+    { "ac": "AC-015", "status": "covered", "files": ["test/unit/pools.test.mjs", "test/characterization/defects/a1-quota.test.mjs"] },
     { "ac": "AC-016", "status": "covered", "files": ["test/unit/pools.test.mjs"] },
     { "ac": "AC-017", "status": "covered", "files": ["test/unit/forecast-engine.test.mjs"] },
     { "ac": "AC-018", "status": "covered", "files": ["test/unit/forecast-unknown.test.mjs"] },
@@ -202,7 +208,8 @@ AC-019 夹具（两步都用 `createFakeContext` 的 `ctx.clock.now()`）：池 
 2. 在 `lib/forecast.mjs` 保留旧导出，新增 §2 的函数与 `buildForecast`、`DEFAULT_POLICY`；`export { round3 } from './pools.mjs'`；`forecast.mjs` 导入 `pools.mjs`，反向不得导入（避免循环）。
 3. 写四个测试文件，先让金标驱动的用例全部通过，再补直测用例。
 4. 写 `test/traceability/T-006.json`。
-5. 自检（顺序）：`node scripts/run-tests.mjs`（完整，退出码 0）、`node scripts/check-seams.mjs`（`check-seams: ok (files=20)`）、`node scripts/check-traceability.mjs`（`check-traceability: ok (covered=19 planned=55)`）、`node scripts/check-golden-frozen.mjs`（仍是 `ok (14 files)`）、`node scripts/check-write-scope.mjs --base 887c7a2115e649e6df5046448dcc97d571e8f660 --scope-from .collab/tasks/006/design.md --scope .collab/tasks/006/**`。`node scripts/check-defects.mjs` 在 AC-015 标成 covered 之后退出码 1，且仅有一行 `FAIL defects.missing_fixed a1-quota has no [fixed] section`。不要为了让它变绿去改 write_scope 之外的文件。`check-fast` 会停在这一步，本任务不把 `check-fast` 退出码 0 当作完成条件。
+5. 按 §8 只追加 `a1-quota` 的 `[fixed]` 测试。
+6. 自检（顺序）：`node scripts/run-tests.mjs`（完整，退出码 0）、`node scripts/check-seams.mjs`（`check-seams: ok (files=20)`）、`node scripts/check-traceability.mjs`（`check-traceability: ok (covered=19 planned=55)`）、`node scripts/check-golden-frozen.mjs`（仍是 `ok (14 files)`）、`node scripts/check-defects.mjs`（`check-defects: ok`）、`node scripts/check-fast.mjs`（`check-fast: ok`）、`node scripts/check-write-scope.mjs --base 887c7a2115e649e6df5046448dcc97d571e8f660 --scope-from .collab/tasks/006/design.md --scope .collab/tasks/006/** --scope .collab/blueprint/cliworker-v2/task-graph.json`。最后这项多放行的任务图路径，只因为人类批准时已经改过那一行；实现者不得再改它（§8 的 sha256）。不要改 write_scope 之外的文件。
 
 ## 7. 风险与边界
 
@@ -210,10 +217,27 @@ AC-019 夹具（两步都用 `createFakeContext` 的 `ctx.clock.now()`）：池 
 - 浮点：`10 * (1 - 0.6)` 得到 `4.000000000000001`，靠 `round3` 吸收；`classifyRisk` 的 fraction 比较用未取整值，`0.15` 恰为 `ok`（`15/100` 的双精度值等于字面量 `0.15`）。
 - 样本中混有 null：token 序列与成本序列各自过滤，互不影响。
 
-## 8. 范围冲突（attention.json 仍待回答）
+## 8. a1-quota 的 [fixed]（人类已批准扩围）
 
-brief 的产出清单和任务图 outputs 都写了「defects/a1-quota 的预测部分 [fixed]」，但 brief 与任务图的 write_scope 都不含 `test/characterization/defects/a1-quota.test.mjs`。该文件现在只有 `[repro]` 段；`defects.json` 里 `a1-quota` 的属主是 T-006、对应 AC-015，`repro_sha256` 为 `1dd92cf708089283f8e3790273c02ac77c63e0965c6c9d38489c2f236bbdf1ec`。T-007 的 outputs 写了同一缺陷的 draft 部分，它的 write_scope 同样没有这个文件。`check-defects` 在无 `--milestone` 时，只对追踪状态已经是 covered 的 AC 要求 `[fixed]`。因此一旦 §5 把 AC-015 标成 covered，`node scripts/check-defects.mjs` 就以 `FAIL defects.missing_fixed a1-quota has no [fixed] section` 失败，`check-fast` 跟着失败。
+人类已批准：`test/characterization/defects/a1-quota.test.mjs` 进入 T-006 的 write_scope。主仓库与本工作区的任务图都已加上这一项。本任务对这个文件只做一件事：在末尾追加一个 `[fixed]` 测试。不得改 `[repro]` 块，不得在它前面插入 import、注释或空行。
 
-本文不扩大 front matter 的 write_scope，dev 不得改这个文件，也不得改 `[repro]` 块。`[repro]` 的 sha256 必须仍等于账本里的值，源码里不得出现 `[fixed]`。
+账本 `test/characterization/defects.json` 里 `a1-quota` 的 `owner_task` 是 `T-006`、`ac` 是 `AC-015`、`repro_sha256` 是 `1dd92cf708089283f8e3790273c02ac77c63e0965c6c9d38489c2f236bbdf1ec`。`scripts/check-defects.mjs` 的 `reproSha256` 只哈希列 0 的 `test('[repro]...'` 到列 0 的 `})` 这一段，并先把 CRLF 收成 LF。追加在该段之后，哈希不变。
 
-若人类在 `attention.json` 里批准扩围，下一轮再把该路径写入 write_scope。批准后只允许追加一个 `test()`，标题以 `[fixed]` 开头，用 `buildForecast` 对 live lib 断言：`{ remaining_pct: 5 }` 加 3 个 `{ mtok: 0.2, cost_usd: null }`、usage Normal，得到 `remaining_fraction` 0.05、`risk` `low_reserve`、`risk_basis` `fraction`；`{ remaining: 1, unit: 'credits' }` 得到 `reason` `credits_conversion_missing`。在那之前这不是本轮的交付。
+把当前文件按 LF 归一后的 sha256 是 `68d8df3db41597b8d2810a2335b94ec18857655abb4b63d3e664b9260f47888c`。追加之后，打开行 `test('[fixed] [AC-015] live forecast reads percentage and credits quotas'` 之前的前缀，LF 归一后的 sha256 必须仍是这个值。全文里子串 `[fixed]` 恰好出现 1 次。标题必须逐字是：
+
+`[fixed] [AC-015] live forecast reads percentage and credits quotas`
+
+`hasFixedSection` 只认普通 `test(` / `it(`，不认 `test.skip` 或 `test.todo`。打开行用单引号，与现有 `[repro]` 一致。
+
+测试正文在函数内部 `import('../../../lib/forecast.mjs')`，只调用 live 的 `buildForecast`。不要调用仍保留的旧 `forecast()`，也不要 import `test/fixtures/characterization/v0.1`。`[repro]` 继续对副本断言旧缺陷。`now` 传 `0`。
+
+断言：
+
+1. `quota: { remaining_pct: 5 }`，`samples` 为 3 个 `{ mtok: 0.2, cost_usd: null }`，`usage: 'Normal'`：`remaining_fraction` 为 `0.05`，`remaining_mtok` 为 `null`，`tasks_left` 为 `null`，`tasks_left_basis` 为 `'none'`，`risk` 为 `'low_reserve'`，`risk_basis` 为 `'fraction'`。这 3 个样本不得把 risk 改成 tasks 依据。
+2. `quota: { remaining: 1, unit: 'credits' }`，`samples: []`，`usage: 'Normal'`：`reason` 为 `'credits_conversion_missing'`，`risk` 为 `'unknown'`，`risk_basis` 为 `'none'`，`status` 为 `'unknown'`。
+
+T-007 的 outputs 仍写了同一缺陷的 draft 部分，但它的 write_scope 没有这个文件。本任务不写 draft 用例，也不改标题去覆盖那一半。
+
+`.collab/blueprint/cliworker-v2/task-graph.json` 不在本任务的 write_scope 里。实现者不得修改它。其中 T-006 的 `write_scope` 必须与本文 front matter 的 8 条相同、顺序相同。该文件按 LF 归一后的 sha256 是 `794e1a3b0ada3c3689175033b639dbc26b04a0106be078e330325e9d9cd8bc6f`。
+
+AC-015 标成 covered 并且 `[fixed]` 追加之后，`node scripts/check-defects.mjs` 退出码 0，输出 `check-defects: ok`。`node scripts/check-fast.mjs` 退出码 0，输出含 `check-fast: ok`。

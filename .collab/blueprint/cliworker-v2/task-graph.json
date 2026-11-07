@@ -929,7 +929,8 @@
         "test/unit/forecast-engine.test.mjs",
         "test/unit/forecast-unknown.test.mjs",
         "test/unit/reset.test.mjs",
-        "test/traceability/T-006.json"
+        "test/traceability/T-006.json",
+        "test/characterization/defects/a1-quota.test.mjs"
       ],
       "acceptance": [
         "AC-015",

@@ -1,8 +1,0 @@
-{
-  "question": "T-006 的产出清单要求「defects/a1-quota 的预测部分 [fixed]」，但 brief 与任务图给 T-006 的 write_scope 都不含 test/characterization/defects/a1-quota.test.mjs。该缺陷的属主是 T-006（对应 AC-015）；一旦追踪分片把 AC-015 标为 covered，scripts/check-defects.mjs 会因该文件没有 [fixed] 段报 defects.missing_fixed，check-fast 随之失败。是否批准把这一个文件加入 T-006 的 write_scope（只追加一个 [fixed] 用例，不改动 [repro] 块）？",
-  "options": [
-    "批准：把 test/characterization/defects/a1-quota.test.mjs 加入 write_scope，dev 只追加 [fixed] 用例，不得改动 [repro] 块",
-    "不批准：write_scope 保持 brief 原样，由人类或 T-007 之后另行补 a1-quota 的 [fixed]；T-006 的 check-fast 在此之前会因 defects.missing_fixed 失败"
-  ],
-  "default": "批准：把 test/characterization/defects/a1-quota.test.mjs 加入 write_scope，dev 只追加 [fixed] 用例，不得改动 [repro] 块"
-}
