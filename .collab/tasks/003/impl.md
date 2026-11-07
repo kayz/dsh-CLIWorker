@@ -431,3 +431,84 @@ check-fast: FAILED step npm test (exit 1)
 
 - 未执行任何 git 命令；V-R-5 的 `git diff` 探针未复测。按 §1 清单与 `design.md` `write_scope` 逐条对照未见越界，`lib/select.mjs` 未改动。
 - 未修改 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`，未修改 `write_scope` 之外的任何文件；本文件只追加本节。
+
+## 11. 第 7 轮：复核无改动，阻塞项仍是 §10.5 的裁决
+
+### 11.1 本轮改了什么
+
+**没有改任何实现文件。** 三条依据：
+
+1. **规格未变**：`design.md` 的 `write_scope`、`acceptance.md` V-R-5 的 `globs` 仍不含 `test/unit/traceability.test.mjs`；两份文件 mtime 仍为 01:35，对 `traceability.test` 的 grep 在三份规格文件（`brief.md`、`design.md`、`acceptance.md`）里零命中。§7.5 / §8.4 / §9.5 / §10.5 请求的裁决没有落地。
+2. **实现已无待办**：AC-006 / AC-007 / AC-008 / AC-072 四条全绿（§11.2），`acceptance.md` 的 32 条 `node` 命令本轮跑了 31 条（只跳过需要 git 的 V-R-5），除 V-R-1 的 `check-fast` 外全部与期望一致；重写已通过的代码只会引入回归。
+3. **范围内无杠杆**：V-R-1 与 V-R-2 是同一函数输出的两个互斥断言，任何 `write_scope` 内的改动都只能把红项搬位置（§11.4）。
+
+### 11.2 本轮复核结果
+
+环境：任务 worktree 根，Node v22.23.3，2026-11-08 02:13 起逐条实测。
+
+| 命令 | 结果 |
+|---|---|
+| `node scripts/run-tests.mjs --ac AC-006` | `tests 5 / pass 5 / fail 0`，`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-007` | `tests 5 / pass 5 / fail 0`，`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-008` | `tests 12 / pass 12 / fail 0`，`filtered 2 files` |
+| `node scripts/run-tests.mjs --ac AC-072` | `tests 14 / pass 14 / fail 0`，`filtered 2 files` |
+| `node scripts/check-seams.mjs` | `check-seams: ok (files=15)`，退出码 0 |
+| `node scripts/check-seams.mjs --root test/fixtures/seams/date-now` | 恰两行：`FAIL seams.date_now lib/bad.mjs:2`、`check-seams: FAILED (1 violations)`；退出码 1 |
+| `node scripts/check-seams.mjs --bogus` | 退出码 2；stdout 0 字节；stderr 为 `unknown argument: --bogus` + `usage: node scripts/check-seams.mjs [--root <dir>] [--json]` |
+| `node bin/cliworker.mjs` | 退出码 1；stdout 0 字节；stderr 首行为 `ERROR: usage: cliworker providers \| models list\|select\|forecast \| usage record\|summary` |
+| `node scripts/check-traceability.mjs` | `check-traceability: ok (covered=10 planned=64)`，退出码 0 |
+| `node scripts/check-test-discovery.mjs` | `check-test-discovery: ok`，退出码 0 |
+| `node scripts/check-frozen-files.mjs` | `check-frozen-files: ok (8 files)`，退出码 0 |
+| `node scripts/check-fast.mjs` | **退出码 1**：`ℹ tests 106 / pass 105 / fail 1`，末行 `check-fast: FAILED step npm test (exit 1)` |
+
+`acceptance.md` 的 20 条 `node --input-type=module` 探针本轮按文件原文逐条执行，全部输出 `PROBE-OK …`、退出码 0：`import-safe`、`main-ctx`、`commands`、`main-errors`、`no-process-exit`、`seams-fixtures`、`seams-allowlist-exact`、`seams-real-tree`、`host-contract`、`host-stub`、`registration`、`handlers`、`fake-clock`、`test-clock-file`、`context-contract`、`warn-inproc`、`warn-bin`、`helpers`、`trace-T-003`、`no-secrets`。V-R-5 的探针需要 git（本轮授权禁止），未复测；除本文件外本轮未改动任何文件，实现部分与上一轮被评审的提交一致，按 §1 清单与 `design.md` `write_scope` 对照未见越界。
+
+### 11.3 唯一红项（第 1–6 轮同一行，未扩散）
+
+```
+✖ [AC-004] mergeShards treats ACs without a shard as planned
+  AssertionError [ERR_ASSERTION]: actual 'covered' / expected 'planned'
+  at test/unit/traceability.test.mjs:158:10
+ℹ tests 106  ℹ pass 105  ℹ fail 1
+check-fast: FAILED step npm test (exit 1)
+```
+
+### 11.4 为什么 `write_scope` 内无解（V-R-1 与 V-R-2 直接互斥）
+
+两条验收断言的是**同一个函数、同一份输入**的输出：
+
+- V-R-2：`node scripts/check-traceability.mjs` 必须输出 `covered=10 planned=64`，其 `--json` 探针逐条断言 `AC-006` 为 `covered`；
+- V-R-1：`test/unit/traceability.test.mjs:158` 断言 `mergeShards(...)` 对 `AC-006` 给出 `planned`。
+
+`mergeShards`（`scripts/check-traceability.mjs:282-286`）对每个 AC 只产出一个状态，所以这两条在同一仓库状态下不可能同时成立。`write_scope` 内能影响它的文件只有 `test/traceability/T-003.json`，逐条否掉：
+
+| 范围内的尝试 | 结果 |
+|---|---|
+| 把分片里 AC-006 改成 `planned` | V-R-2 的 `covered=10` 与 `trace-T-003` 探针同时变红，AC-006 的 5 条测试失去追踪 |
+| 删掉该条目或整个分片 | `covered` 退化为 6，V-R-2 变红 |
+| 往分片里制造 `shard.*` 错误使条目失效 | `check-traceability` 的 `ok` 变 false，V-R-2 变红 |
+| 让别的分片声明 AC-006 | AC-006 的 owner 是 T-003，会触发 `shard.not_owner`；该分片也不在 `write_scope` |
+
+`design.md` §0 记录基准提交 `7f655f7` 上 `check-fast` 通过（70 个测试）——当时没有 `T-003.json`，AC-006 恰好是 `planned`，所以该样例成立；本任务提交分片后样例失效。这是样例选取与分片落盘互斥，不是实现缺陷。
+
+只读复算（不写文件）确认收尾只需改测试里的样例 AC：
+
+```
+node --input-type=module -e "…mergeShards({ root: process.cwd(), index })…"
+-> errors=0 AC-006=covered AC-009=planned AC-010=planned covered=10 planned=64
+```
+
+即把第 158 行的 `'AC-006'` 换成 `'AC-009'` 后，`check-traceability` 仍为 `ok`，其余 105 条测试全绿，`check-fast` 的唯一红项消失。
+
+### 11.5 请求（同 §7.5 / §8.4 / §9.5 / §10.5）
+
+1. 把 `test/unit/traceability.test.mjs` 同时加入 `design.md` 的 `write_scope` 与 `acceptance.md` V-R-5 的 `globs`；
+2. 授权把该文件第 158 行改为 `assert.equal(merged.acs['AC-009'], 'planned')`（保留“没有分片的 AC 记为 planned”的原意；改成 `'covered'` 会让该用例变成同义反复，不推荐）；
+3. 之后重跑 `pwsh -NoProfile -File scripts/check-fast.ps1`，期望退出码 0、`ℹ fail 0`、末行 `check-fast: ok`。
+
+第 1、2 条都落在本角色授权之外（一条改冻结规格，一条改 `write_scope` 之外的文件并会让 V-R-5 判为 `outside write_scope`），所以本轮依旧只报告、不代改。若编排方给出显式授权，下一轮我用一条命令完成第 2 条并附上 `check-fast` 的完整复测输出。
+
+### 11.6 本轮未做
+
+- 未执行任何 git 命令；V-R-5 的 `git diff` 探针未复测。除本文件外本轮未改动任何文件，`lib/select.mjs` 未改动。
+- 未修改 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`，未修改 `write_scope` 之外的任何文件；`brief.md` 未指定验收报告路径，因此除本节外无其它文档追加。
