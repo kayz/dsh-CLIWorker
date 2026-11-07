@@ -1,0 +1,21 @@
+{
+  "contract": "cliworker.context",
+  "version": 1,
+  "members": {
+    "exec": "function",
+    "fs": "object",
+    "fetch": "function",
+    "env": "object",
+    "platform": "string",
+    "stdout": "stream",
+    "stderr": "stream",
+    "random": "function",
+    "clock": "object",
+    "now": "function"
+  },
+  "stream_methods": ["write"],
+  "fs_methods": ["readFileSync", "writeFileSync", "appendFileSync", "mkdirSync", "existsSync", "statSync", "readdirSync", "renameSync", "rmSync"],
+  "clock_methods": ["now", "nowIso", "setTimeout", "clearTimeout", "sleep"],
+  "fake_clock_extras": ["setNow", "advance", "pending"],
+  "test_clock_env": "CLIWORKER_TEST_CLOCK_FILE"
+}
