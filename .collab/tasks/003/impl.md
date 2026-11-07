@@ -512,3 +512,66 @@ node --input-type=module -e "…mergeShards({ root: process.cwd(), index })…"
 
 - 未执行任何 git 命令；V-R-5 的 `git diff` 探针未复测。除本文件外本轮未改动任何文件，`lib/select.mjs` 未改动。
 - 未修改 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`，未修改 `write_scope` 之外的任何文件；`brief.md` 未指定验收报告路径，因此除本节外无其它文档追加。
+
+## 12. 第 8 轮：阻塞项已由编排方解除，本轮收尾
+
+### 12.1 本轮改了什么
+
+只改了一行，其余实现、契约、夹具、测试全部保持第 1 轮交付的状态。
+
+| 文件 | 改动 | 原因 |
+|---|---|---|
+| `lib/index.js:38` | `const s = settings || {}` → `const s = { readonly: false, ...(settings || {}) }` | design §6 要求 `settings` 取 `configPath`、`readonly`（缺省 false）、`strict`（缺省 false）。前一轮只读到了 `configPath` 与 `strict`，`readonly` 缺省值字面上不成立。补上后与 HEAD 的 `DEFAULTS.readonly` 语义一致：该键被接受但不参与任何行为（旧 `index.js` 同样未使用它），因此注册流程、HTTP 输出与报告结构都不变。 |
+
+不改的原因（其余部分）：
+
+- 第 1–7 轮的唯一红项 `test/unit/traceability.test.mjs:158` 已由编排方在 `c4cc757` 落地裁决（改为基于不变量的断言），本轮实测 `check-fast` 回到 106/106。该文件不在 `write_scope`，本轮未碰。
+- AC-006 / AC-007 / AC-008 / AC-072 的实现与 `design.md` §2–§9 逐条对得上（§11.2 已复核，本轮重跑一致），没有需要修补的缺陷。
+
+### 12.2 阻塞项状态
+
+| 项 | 第 7 轮 | 本轮 |
+|---|---|---|
+| V-R-1 `check-fast` | 退出码 1，`pass 105 / fail 1`（`traceability.test.mjs:158`） | **退出码 0，`tests 106 / pass 106 / fail 0`，末行 `check-fast: ok`** |
+| V-R-2 `check-traceability` | `ok (covered=10 planned=64)` | 同上，未变 |
+
+也就是说 §7.5 / §8.4 / §9.5 / §10.5 / §11.5 请求的裁决已经执行，本任务不再有阻塞项。
+
+### 12.3 本轮自测
+
+环境：任务 worktree 根，Node v22.23.3，2026-11-08 02:17 起逐条实测。
+
+| 命令 | 结果 |
+|---|---|
+| `node scripts/run-tests.mjs --ac AC-006` | `tests 5 / pass 5 / fail 0`，`filtered 1 files`，5 条 `✔ [AC-006]` |
+| `node scripts/run-tests.mjs --ac AC-007` | `tests 5 / pass 5 / fail 0`，`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-008` | `tests 12 / pass 12 / fail 0`，`filtered 2 files` |
+| `node scripts/run-tests.mjs --ac AC-072` | `tests 14 / pass 14 / fail 0`，`filtered 2 files` |
+| `node scripts/check-seams.mjs` | `check-seams: ok (files=15)`，退出码 0 |
+| `node scripts/check-seams.mjs --root test/fixtures/seams/date-now` | 恰两行 `FAIL seams.date_now lib/bad.mjs:2` 与 `check-seams: FAILED (1 violations)`；退出码 1 |
+| `node scripts/check-seams.mjs --bogus` | 退出码 2；stdout 0 字节；stderr 含 `usage:` |
+| `node bin/cliworker.mjs` | 退出码 1；stdout 0 字节；stderr 首行为用法错误 |
+| `node scripts/check-traceability.mjs` | `ok (covered=10 planned=64)`，退出码 0 |
+| `node scripts/check-test-discovery.mjs` | `check-test-discovery: ok`，退出码 0 |
+| `node scripts/check-frozen-files.mjs` | `check-frozen-files: ok (8 files)`，退出码 0 |
+| `node scripts/check-fast.mjs` | 退出码 0；`ℹ tests 106 / pass 106 / fail 0`；末行 `check-fast: ok` |
+| `pwsh -NoProfile -File scripts/check-fast.ps1` | 退出码 0；`pass 106 / fail 0`；末行 `check-fast: ok` |
+
+`acceptance.md` 里 20 条 `node --input-type=module` 探针按文件原文逐条执行，全部输出 `PROBE-OK …`、退出码 0：`import-safe`、`main-ctx`、`commands`、`main-errors`、`no-process-exit`、`seams-fixtures`、`seams-allowlist-exact`、`seams-real-tree`、`host-contract`、`host-stub`、`registration`、`handlers`、`fake-clock`、`test-clock-file`、`context-contract`、`warn-inproc`、`warn-bin`、`helpers`、`trace-T-003`、`no-secrets`。
+
+V-R-5（`git diff` 写域探针）本轮按 acceptance 原文执行：命令本身只调用 `git diff --name-only` 与 `git ls-files --others` 读取工作树状态，不改动仓库。结果退出码 1，唯一一条 `outside write_scope: [ 'test/unit/traceability.test.mjs' ]`，即 §12.4 记录的、不在本角色授权内的既有例外；`lib/`、`bin/`、`contracts/`、`scripts/check-seams.mjs`、`test/helpers`、`test/fixtures/seams`、六个测试文件与 `test/traceability/T-003.json` 都在 `write_scope` 内。
+
+### 12.4 剩余 finding（都在本角色授权之外）
+
+| 来源 | 位置 | 状态 |
+|---|---|---|
+| 第 6 轮 P2-1 | `acceptance.md` V-R-5 的 `globs` / `design.md` 的 `write_scope` 未列 `test/unit/traceability.test.mjs` | 仍在。该文件是编排方为解开死锁所改（`c4cc757`），V-R-5 按字面会把它判为越界。要消除只能改冻结规格或改该文件，两者都超出本角色权限。 |
+| 第 6 轮 P2-2 | `test/unit/traceability.test.mjs:159-162` 的 `for (const id of plannedIds) assert.equal(…, 'planned')` 恒真 | 仍在。建议补 `assert.ok(plannedIds.length > 0)`；该文件不在 `write_scope`，本轮未动。 |
+
+两条都不影响 AC-006 / AC-007 / AC-008 / AC-072 与 V-R-1…V-R-4、V-R-6 的判定。
+
+### 12.5 本轮未做
+
+- 未直接执行任何 git 命令（提交、切换、重置等）；唯一涉及 git 的是 acceptance 原文的 V-R-5 探针，只读取 `git diff` / `git ls-files`。
+- 未修改 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`；除本文件与 `lib/index.js` 的一行外，未修改任何文件，`lib/select.mjs` 未改动。
+- `brief.md` 未指定验收报告路径，因此除本节外没有其它文档追加。
