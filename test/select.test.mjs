@@ -25,7 +25,7 @@ function config() {
 
 test('deprecated and unverified models never enter candidates', () => {
   const status = { claude: { state: 'callable' }, codebuddy: { state: 'callable' }, codex: { state: 'callable' } }
-  const r = selectModels(config(), { tier: 'top', count: 3 }, { status })
+  const r = selectModels(config(), { level: 'Top', count: 3 }, { status })
   assert.deepEqual(r.models.map((m) => m.key).sort(), ['a', 'b'])
   assert.ok(r.rejected.some((x) => x.key === 'old' && /availability/.test(x.reason)))
   assert.ok(r.rejected.some((x) => x.key === 'unverified' && x.reason === 'identity_unverified'))
@@ -35,7 +35,7 @@ test('read-only requirement rejects providers without it', () => {
   const c = config()
   c.models.b.readonly = false
   const status = { claude: { state: 'callable' }, codebuddy: { state: 'callable' }, codex: { state: 'callable' } }
-  const r = selectModels(c, { tier: 'top', count: 3, require_readonly: true }, { status })
+  const r = selectModels(c, { level: 'Top', count: 3, require_readonly: true }, { status })
   assert.deepEqual(r.models.map((m) => m.key), ['a'])
   assert.ok(r.rejected.some((x) => x.key === 'b' && x.reason === 'readonly_unavailable'))
 })
@@ -61,4 +61,25 @@ test('models list hides deprecated by default, includes with flag', () => {
   assert.ok(!a.some((m) => m.key === 'old'))
   const b = listModels(config(), { status, includeDeprecated: true })
   assert.ok(b.some((m) => m.key === 'old' && m.deprecated))
+})
+
+
+test('requests return CLI calls and honor level/usage/count', () => {
+  const status = { claude: { state: 'callable' }, codebuddy: { state: 'callable' }, codex: { state: 'callable' } }
+  const c = config()
+  c.models.a.level = 'Top'; c.models.b.level = 'Top'; c.models.old.level = 'Top'; c.models.unverified.level = 'High'
+  const r = selectModels(c, { level: 'Top', count: 2, usage: 'Heavy' }, { status })
+  assert.equal(r.ok, true)
+  assert.equal(r.level, 'Top')
+  assert.equal(r.calls.length, 2)
+  assert.ok(r.calls.every((x) => x.command && Array.isArray(x.args) && x.input === 'stdin'))
+  assert.equal(r.calls[0].cwd, '<workspace>')
+})
+
+test('missing level is rejected and no model is returned', () => {
+  const status = { claude: { state: 'callable' }, codebuddy: { state: 'callable' }, codex: { state: 'callable' } }
+  const r = selectModels(config(), { count: 2 }, { status })
+  assert.equal(r.ok, false)
+  assert.equal(r.reason, 'E_LEVEL_REQUIRED')
+  assert.deepEqual(r.models, [])
 })

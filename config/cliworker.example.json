@@ -3,29 +3,46 @@
     "claude": {
       "cli": "claude",
       "adapter": "claude",
-      "version_args": ["--version"],
-      "auth_args": ["auth", "status"],
+      "version_args": [
+        "--version"
+      ],
+      "auth_args": [
+        "auth",
+        "status"
+      ],
       "auth_ok": "logged in",
       "readonly": true
     },
     "codex": {
       "cli": "codex",
       "adapter": "codex",
-      "version_args": ["--version"],
-      "auth_args": ["login", "status"],
+      "version_args": [
+        "--version"
+      ],
+      "auth_args": [
+        "login",
+        "status"
+      ],
       "auth_ok": "logged in",
       "readonly": true
     },
     "codebuddy": {
       "cli": "codebuddy",
       "adapter": "codebuddy",
-      "version_args": ["--version"],
+      "version_args": [
+        "--version"
+      ],
       "auth_args": [],
       "readonly": true
     },
     "cursor-wsl": {
       "cli": "wsl.exe",
-      "args_prefix": ["-e", "bash", "-lc", "agent"],
+      "args_prefix": [
+        "-e",
+        "bash",
+        "-lc",
+        "agent"
+      ],
       "adapter": "cursor-wsl",
       "readonly": false
     },
@@ -37,60 +54,213 @@
   },
   "models": {
     "claude-opus-5-5": {
-      "provider": "claude", "id": "claude-opus-5-5", "tier": "top", "identity": "verified",
-      "identity_group": "anthropic-opus-5-5", "vendor": "anthropic", "deprecated": false,
-      "prices": { "input_per_mtok": 15, "output_per_mtok": 75 },
-      "limits": { "context_tokens": 200000 }
+      "provider": "claude",
+      "id": "claude-opus-5-5",
+      "tier": "top",
+      "identity": "verified",
+      "identity_group": "anthropic-opus-5-5",
+      "vendor": "anthropic",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 15,
+        "output_per_mtok": 75
+      },
+      "limits": {
+        "context_tokens": 200000
+      },
+      "level": "Top"
     },
     "gpt-6-astra": {
-      "provider": "codex", "id": "gpt-6-astra", "tier": "top", "identity": "unverified",
-      "identity_group": "openai-astra", "vendor": "openai", "deprecated": false,
-      "prices": { "input_per_mtok": 2, "output_per_mtok": 12 }
+      "provider": "codex",
+      "id": "gpt-6-astra",
+      "tier": "top",
+      "identity": "unverified",
+      "identity_group": "openai-astra",
+      "vendor": "openai",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 2,
+        "output_per_mtok": 12
+      },
+      "level": "Top"
     },
     "gpt-6.1-sol": {
-      "provider": "codex", "id": "gpt-6.1-sol", "tier": "top", "identity": "unverified",
-      "identity_group": "openai-sol", "vendor": "openai", "deprecated": false,
-      "prices": { "input_per_mtok": 2, "output_per_mtok": 12 }
+      "provider": "codex",
+      "id": "gpt-6.1-sol",
+      "tier": "top",
+      "identity": "unverified",
+      "identity_group": "openai-sol",
+      "vendor": "openai",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 2,
+        "output_per_mtok": 12
+      },
+      "level": "Top"
     },
     "gpt-6.1-terra": {
-      "provider": "codex", "id": "gpt-6.1-terra", "tier": "top", "identity": "unverified",
-      "identity_group": "openai-terra", "vendor": "openai", "deprecated": false,
-      "prices": { "input_per_mtok": 1.5, "output_per_mtok": 9 }
+      "provider": "codex",
+      "id": "gpt-6.1-terra",
+      "tier": "top",
+      "identity": "unverified",
+      "identity_group": "openai-terra",
+      "vendor": "openai",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 1.5,
+        "output_per_mtok": 9
+      },
+      "level": "High"
     },
     "hy4free": {
-      "provider": "codebuddy", "id": "hy4free", "tier": "top", "identity": "verified",
-      "identity_group": "hy4-free", "vendor": "tencent", "deprecated": false,
-      "prices": { "input_per_mtok": 0, "output_per_mtok": 0 }
+      "provider": "codebuddy",
+      "id": "hy4free",
+      "tier": "top",
+      "identity": "verified",
+      "identity_group": "hy4-free",
+      "vendor": "tencent",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 0,
+        "output_per_mtok": 0
+      },
+      "level": "Top"
     },
     "deepseek-v4.1-flash": {
-      "provider": "codebuddy", "id": "deepseek-v4.1-flash", "tier": "top", "identity": "verified",
-      "identity_group": "deepseek-flash", "vendor": "tencent", "deprecated": false,
-      "prices": { "input_per_mtok": 0.5, "output_per_mtok": 2 }
+      "provider": "codebuddy",
+      "id": "deepseek-v4.1-flash",
+      "tier": "top",
+      "identity": "verified",
+      "identity_group": "deepseek-flash",
+      "vendor": "tencent",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 0.5,
+        "output_per_mtok": 2
+      },
+      "level": "High"
     },
     "deepseek-v4-pro": {
-      "provider": "codebuddy", "id": "deepseek-v4-pro", "tier": "top", "identity": "unverified",
-      "identity_group": "deepseek-pro", "vendor": "tencent", "deprecated": true,
+      "provider": "codebuddy",
+      "id": "deepseek-v4-pro",
+      "tier": "top",
+      "identity": "unverified",
+      "identity_group": "deepseek-pro",
+      "vendor": "tencent",
+      "deprecated": true,
       "deprecated_reason": "CodeBuddy only allows deepseek-v4.1-flash (1017)"
     },
     "claude-opus-4-5": {
-      "provider": "claude", "id": "claude-opus-4-5", "tier": "advanced", "identity": "unverified",
-      "identity_group": "anthropic-opus-4-5", "vendor": "anthropic", "deprecated": true,
+      "provider": "claude",
+      "id": "claude-opus-4-5",
+      "tier": "advanced",
+      "identity": "unverified",
+      "identity_group": "anthropic-opus-4-5",
+      "vendor": "anthropic",
+      "deprecated": true,
       "deprecated_reason": "superseded by opus 5.5"
     },
     "cursor-wsl-grok-4.7": {
-      "provider": "cursor-wsl", "id": "grok-4.7", "tier": "top", "identity": "verified",
-      "identity_group": "xai-grok-4-7", "vendor": "xai", "deprecated": false,
-      "prices": { "input_per_mtok": 3, "output_per_mtok": 15 }, "readonly": false
+      "provider": "cursor-wsl",
+      "id": "grok-4.7",
+      "tier": "top",
+      "identity": "verified",
+      "identity_group": "xai-grok-4-7",
+      "vendor": "xai",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 3,
+        "output_per_mtok": 15
+      },
+      "readonly": false,
+      "level": "High"
     },
     "gemini-4-argon-high": {
-      "provider": "gemini", "id": "gemini-4-argon-high", "tier": "top", "identity": "unverified",
-      "identity_group": "google-gemini-4-argon", "vendor": "google", "deprecated": false,
-      "prices": { "input_per_mtok": 1.25, "output_per_mtok": 10 }
+      "provider": "gemini",
+      "id": "gemini-4-argon-high",
+      "tier": "top",
+      "identity": "unverified",
+      "identity_group": "google-gemini-4-argon",
+      "vendor": "google",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 1.25,
+        "output_per_mtok": 10
+      },
+      "level": "High"
+    },
+    "hy3": {
+      "provider": "codebuddy",
+      "id": "hy3",
+      "tier": "advanced",
+      "level": "Middle",
+      "identity": "verified",
+      "identity_group": "hy3",
+      "vendor": "tencent",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 0.2,
+        "output_per_mtok": 0.8
+      }
+    },
+    "hy3x": {
+      "provider": "codebuddy",
+      "id": "hy3-x",
+      "tier": "advanced",
+      "level": "Middle",
+      "identity": "verified",
+      "identity_group": "hy3-x",
+      "vendor": "tencent",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 0.3,
+        "output_per_mtok": 1
+      }
+    },
+    "gemini-3.7-flash-high": {
+      "provider": "gemini",
+      "id": "gemini-3.7-flash-high",
+      "tier": "standard",
+      "level": "Quick",
+      "identity": "unverified",
+      "identity_group": "google-gemini-3.7-flash",
+      "vendor": "google",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 0.3,
+        "output_per_mtok": 1.2
+      }
+    },
+    "claude-haiku-5-5": {
+      "provider": "claude",
+      "id": "claude-haiku-5-5",
+      "tier": "standard",
+      "level": "Quick",
+      "identity": "unverified",
+      "identity_group": "anthropic-haiku-5-5",
+      "vendor": "anthropic",
+      "deprecated": false,
+      "prices": {
+        "input_per_mtok": 0.8,
+        "output_per_mtok": 4
+      }
     }
   },
   "quotas": {
-    "claude": { "window": "5h", "remaining_pct": 100, "reset_at": null },
-    "codex": { "window": "7d", "remaining_pct": 100, "reset_at": null },
-    "codebuddy": { "window": "credits", "remaining": 1000, "unit": "credits" }
+    "claude": {
+      "window": "5h",
+      "remaining_pct": 100,
+      "reset_at": null
+    },
+    "codex": {
+      "window": "7d",
+      "remaining_pct": 100,
+      "reset_at": null
+    },
+    "codebuddy": {
+      "window": "credits",
+      "remaining": 1000,
+      "unit": "credits"
+    }
   }
 }
