@@ -126,6 +126,59 @@ test('[AC-001] a filtered run writes a filtered manifest and skips the compariso
   }
 })
 
+test('[AC-001] a failed run drops the previous manifest and truncates skips', () => {
+  const out = tmp('cliworker-stale-')
+  const manifestPath = path.join(out, 'files-executed.json')
+  const skipsPath = path.join(out, 'skips.jsonl')
+  const orphanRoot = path.join(ROOT, 'test', 'fixtures', 'discovery-selftest', 'orphan')
+  try {
+    const ok = run([RUN_TESTS, '--root', OK_FIXTURE, '--out-dir', out])
+    assert.equal(ok.status, 0, output(ok))
+    assert.equal(JSON.parse(fs.readFileSync(manifestPath, 'utf8')).mode, 'full')
+
+    const missed = run([RUN_TESTS, '--root', OK_FIXTURE, '--ac', 'AC-999', '--out-dir', out])
+    assert.equal(missed.status, 1, output(missed))
+    assert.match(output(missed), /run\.no_match/)
+    assert.equal(fs.existsSync(manifestPath), false)
+    assert.equal(fs.readFileSync(skipsPath, 'utf8'), '')
+
+    fs.writeFileSync(manifestPath, '{"mode":"full","files":["stale"]}\n')
+    fs.writeFileSync(skipsPath, '{"stale":true}\n')
+    const orphan = run([RUN_TESTS, '--root', orphanRoot, '--out-dir', out])
+    assert.equal(orphan.status, 1, output(orphan))
+    assert.match(output(orphan), /discovery\.orphan/)
+    assert.match(output(orphan), /test\/loose\.test\.mjs/)
+    assert.equal(fs.existsSync(manifestPath), false)
+    assert.equal(fs.readFileSync(skipsPath, 'utf8'), '')
+  } finally {
+    fs.rmSync(out, { recursive: true, force: true })
+  }
+})
+
+test('[AC-001] a nested run leaves the parent artifacts untouched', () => {
+  const out = tmp('cliworker-nested-')
+  const manifestPath = path.join(out, 'files-executed.json')
+  const skipsPath = path.join(out, 'skips.jsonl')
+  const manifest = '{"mode":"full","files":["keep"]}\n'
+  const skips = '{"keep":true}\n'
+  try {
+    fs.writeFileSync(manifestPath, manifest)
+    fs.writeFileSync(skipsPath, skips)
+    const result = run([RUN_TESTS, '--ac', 'AC-074', '--out-dir', out], {
+      env: {
+        ...process.env,
+        CLIWORKER_RUN_ACTIVE: '1',
+        CLIWORKER_RESULTS_DIR: out,
+      },
+    })
+    assert.equal(result.status, 2, output(result))
+    assert.equal(fs.readFileSync(manifestPath, 'utf8'), manifest)
+    assert.equal(fs.readFileSync(skipsPath, 'utf8'), skips)
+  } finally {
+    fs.rmSync(out, { recursive: true, force: true })
+  }
+})
+
 test('[AC-001] the discovery self-test passes end to end', () => {
   const result = run([CHECK_DISCOVERY])
   assert.equal(result.status, 0, output(result))

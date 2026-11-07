@@ -448,5 +448,81 @@
     "usage_source": "cli_json",
     "log_ref": ".collab/tasks/001/logs/review-r1-1.log",
     "error": null
+  },
+  {
+    "task": "001",
+    "role": "dev",
+    "round": 2,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-07T14:50:30.888Z",
+    "ended_at": "2026-11-07T14:50:34.257Z",
+    "duration_ms": 3369,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/001/logs/dev-r2-1.log",
+    "error": "result error",
+    "handoff": {
+      "file": "handoff/dev-r2-c1-to-c2.md",
+      "checkpoint": "refs/agentline/001/dev-r2-c1",
+      "sha": "2bc59392dc004d157a51931221aaa2afb46e908f"
+    }
+  },
+  {
+    "task": "001",
+    "role": "dev",
+    "round": 2,
+    "candidate": 2,
+    "backend": "cursor-wsl",
+    "model_requested": "grok-4.7",
+    "model_resolved": "Grok 4.7 256K High",
+    "provider": "cursor-wsl",
+    "effort": null,
+    "started_at": "2026-11-07T14:50:35.156Z",
+    "ended_at": "2026-11-07T15:05:12.486Z",
+    "duration_ms": 877330,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": null,
+      "output": null,
+      "cache_read": null,
+      "cache_write": null,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/001/logs/dev-r2-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": true
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "deepseek-v4.1-flash",
+      "file": "handoff/dev-r2-c1-to-c2.md"
+    }
   }
 ]

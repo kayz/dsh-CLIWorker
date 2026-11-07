@@ -2,6 +2,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import test from 'node:test'
+import vm from 'node:vm'
 import { fileURLToPath } from 'node:url'
 
 function pathExtensions() {
@@ -95,12 +96,34 @@ export function recordSkip({ test: name, file, ac, requires, reason }) {
   return true
 }
 
+function callerFilename(file) {
+  if (typeof file !== 'string' || file === '') return null
+  if (file.startsWith('file:')) {
+    try {
+      return fileURLToPath(file)
+    } catch {
+      return null
+    }
+  }
+  return path.resolve(file)
+}
+
 export function platformTest(name, options, fn) {
   const { ac = null, requires, file, reason } = options ?? {}
-  test(name, (t) => {
+  const body = (t) => {
     if (satisfies(requires)) return fn(t)
     const why = reason ?? `requires ${requires} not satisfied on ${process.platform}`
     recordSkip({ test: name, file, ac, requires, reason: why })
     t.skip(why)
-  })
+  }
+  // node:test records the file that called test(). Calling it from this helper would
+  // put the helper into files-executed.json and fail the full-run comparison. The call
+  // is compiled under the caller's filename so the event stays on that test file.
+  const filename = callerFilename(file)
+  if (filename) {
+    const register = vm.compileFunction('test(name, body)', ['test', 'name', 'body'], { filename })
+    register(test, name, body)
+    return
+  }
+  test(name, body)
 }

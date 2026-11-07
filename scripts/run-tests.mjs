@@ -231,6 +231,12 @@ async function main() {
     return
   }
 
+  fs.mkdirSync(outDir, { recursive: true })
+  const manifestPath = path.join(outDir, MANIFEST_NAME)
+  const skipsPath = path.join(outDir, SKIPS_NAME)
+  fs.rmSync(manifestPath, { force: true })
+  fs.writeFileSync(skipsPath, '')
+
   const enumerated = enumerateTestFiles(root)
   let files = enumerated
 
@@ -270,16 +276,6 @@ async function main() {
     usageError(`run-tests: file list is too long for one command line (${joined.length} characters)`)
     return
   }
-
-  fs.mkdirSync(outDir, { recursive: true })
-  const manifestPath = path.join(outDir, MANIFEST_NAME)
-  const skipsPath = path.join(outDir, SKIPS_NAME)
-  try {
-    fs.rmSync(manifestPath, { force: true })
-  } catch {
-    /* ignore */
-  }
-  fs.writeFileSync(skipsPath, '')
 
   const mode = filtered ? 'filtered' : 'full'
   const env = {
