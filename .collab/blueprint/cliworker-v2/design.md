@@ -256,3 +256,45 @@ reset_at 来自估算时只触发复核（recheck），不得直接把 used_frac
 ### 10.3 Top 档兜底（D-8）
 
 Top 档池必须至少含一个非 claude 供应商的候选；选模优先控制 claude 配额消耗，仅在池内耗尽并给出 E_TIER_EXHAUSTED 时才申请跨档授权（allow_downgrade=true），授权记录进审计。
+
+
+## 11. 身份证据契约（身份归 CLIWorker）
+
+AgentLine 已回退 `modelResolved || model` 的伪造兜底，并确认：身份判定不再由控制面各自实现，统一归 CLIWorker。本节是 CLIWorker 侧必须提供的契约。
+
+### 11.1 身份等级（固定枚举）
+
+| 等级 | 含义 | 是否阻断调用 |
+|---|---|---|
+| `verified` | 本次调用的 stdout 结构里直接证明实际模型 | 否 |
+| `observed` | 旁路证据（rollout 文件、统计表、CLI 自报日志）可推断实际模型 | 否 |
+| `unverified` | 无任何证据；只记录了请求模型 | **否** |
+| `failed` | 调用本身失败（超时、认证、限流、非零退出） | 是（触发候选降级） |
+
+### 11.2 ModelHandle 的 identity 对象
+
+```json
+{
+  "identity": {
+    "level": "verified | observed | unverified | failed",
+    "identity_source": "stdout.modelUsage | stdout.event.model | stats.models | rollout-file | cli_flag | none",
+    "evidence": { "path": "...", "at": "...", "detail": "..." },
+    "requested_model": "...",
+    "reported_model": "..." 
+  }
+}
+```
+
+- `unverified` 必须照常返回可调用的 handle，不得因为缺少证据而拒绝。
+- `evidence` 里不得出现令牌、路径中的用户名等敏感信息（经 redact）。
+- codex 的 `~/.codex/sessions/.../rollout-*.jsonl` 只能记为 `observed` + `identity_source: rollout-file`，永不冒充 `stdout` 证据。
+- gemini 的 `stats.models`、claude 的 `modelUsage`、codebuddy 的 `event.model` 记为 `verified`。
+
+### 11.3 calls[] 的证据
+
+每次调用返回：`requested_model`、`reported_model`、`identity.level`、`identity_source`、`evidence`、`exit_code`、`latency_ms`、`tokens_in/out`、`outcome`（`ok | failed`）。
+
+### 11.4 与上层的分工
+
+- CLIWorker：判定等级、产出证据、在 `failed` 时给出可切换的候选（`exclude` 语义）。
+- AgentLine：只消费 `identity` 与 `calls[]`，不再解析各 CLI 的 stdout，不因 `unverified` 拒绝，只在 `failed` 时降级。

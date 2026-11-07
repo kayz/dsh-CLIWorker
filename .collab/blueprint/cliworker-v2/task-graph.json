@@ -549,6 +549,14 @@
       "levels": [
         "unit"
       ]
+    },
+    {
+      "id": "AC-075",
+      "text": "身份证据契约：ModelHandle.identity 给出 verified / observed / unverified / failed 四档与 identity_source；codex 的 rollout 文件只能记为 observed（identity_source=rollout-file），永不冒充 stdout 证据；unverified 不阻断调用并照常返回 handle；failed 才触发候选降级；calls[] 携带 requested_model、reported_model、level、identity_source、evidence、exit_code、latency_ms、tokens 与 outcome，且 evidence 经 redact 无令牌与用户名。",
+      "levels": [
+        "contract",
+        "unit"
+      ]
     }
   ],
   "tasks": [
@@ -1986,6 +1994,44 @@
         "unit"
       ],
       "milestone": "M5"
+    },
+    {
+      "id": "T-031",
+      "title": "身份证据契约：四档身份、identity_source、calls[] 证据与 unverified 不阻断",
+      "milestone": "M5",
+      "inputs": [
+        "design.md 第 11 节",
+        "lib/providers/call.mjs",
+        "lib/select.mjs",
+        "adapters 的 reply 解析"
+      ],
+      "outputs": [
+        "lib/identity.mjs",
+        "lib/providers/call.mjs",
+        "test/contract/identity.test.mjs",
+        "test/unit/identity-levels.test.mjs"
+      ],
+      "depends_on": [
+        "T-015",
+        "T-019"
+      ],
+      "write_scope": [
+        "lib/identity.mjs",
+        "lib/providers/call.mjs",
+        "lib/contract/views.mjs",
+        "test/contract/identity.test.mjs",
+        "test/unit/identity-levels.test.mjs"
+      ],
+      "acceptance": [
+        "AC-075"
+      ],
+      "acceptance_direction": [
+        "node --test test/contract/identity.test.mjs test/unit/identity-levels.test.mjs"
+      ],
+      "test_levels": [
+        "contract",
+        "unit"
+      ]
     }
   ]
 }
