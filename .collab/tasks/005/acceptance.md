@@ -535,7 +535,7 @@ function lines(file) {
   return all
 }
 
-assert.deepEqual(lines('bin/cliworker.mjs'), [
+assert.deepEqual(lines('C:/git/dsh-CLIWorker/.collab/worktrees/005/bin/cliworker.mjs'), [
   '#!/usr/bin/env node',
   "import { main } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'",
   "import { createContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'",
@@ -543,7 +543,7 @@ assert.deepEqual(lines('bin/cliworker.mjs'), [
   'const { exitCode } = await main(process.argv.slice(2), createContext())',
   'process.exitCode = exitCode',
 ])
-assert.deepEqual(lines('lib/commands/_util.mjs'), [
+assert.deepEqual(lines('C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/commands/_util.mjs'), [
   "import path from 'node:path'",
   "import { defaultHome } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/config.mjs'",
   '',
