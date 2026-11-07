@@ -1,12 +1,9 @@
 {
   "task": "006",
-  "event": "blocked",
-  "reason": "rate_limit",
-  "verdict": null,
+  "event": "merged",
+  "status": "merged",
   "ci": "15/15",
-  "files": null,
   "branch": "task/006",
-  "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】006 / task 006\n结果：blocked — rate_limit\n阶段：design ✅ · dev ✅ · CI 15/15 ✅\n变更：分支 task/006 · 耗时 52m34s\n验收：CI 15/15\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-07T19:14:19.555Z"
+  "summary": "【AgentLine 任务已合并】dsh-CLIWorker / task 006\n结果：已并入 main（0e796a0）\n阶段：design ✅ · dev ✅ · CI 15/15 ✅ · review r1 pass ✅\n变更：分支 task/006（已删除） · 25 个文件 · 耗时 1h07m\n验收：CI 15/15 · verdict=pass · findings 0\n下一步：无，任务已结束",
+  "at": "2026-11-07T19:35:07.895Z"
 }
