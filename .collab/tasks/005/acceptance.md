@@ -28,7 +28,7 @@ $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ((New-Guid).Guid + '.mjs')
 $code = @'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
-import { reproSha256 } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/scripts/check-defects.mjs'
+import { reproSha256 } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/scripts/check-defects.mjs'
 
 const groups = {
   'test/unit/paths.test.mjs': [
@@ -80,8 +80,8 @@ import os from 'node:os'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import assert from 'node:assert/strict'
-import { resolvePaths, legacyUsageWarnings, bundledExamplePath } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
-import { createFakeContext } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
+import { resolvePaths, legacyUsageWarnings, bundledExamplePath } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
+import { createFakeContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
 
 function hash12(configPath, platform) {
   const key = platform === 'win32' ? configPath.toLowerCase() : configPath
@@ -177,12 +177,12 @@ import os from 'node:os'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { resolvePaths } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
-import { loadConfig } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
-import { main } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'
-import { createPlugin } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/index.js'
-import { createFakeContext } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
-import { createHostStub } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/host-stub.mjs'
+import { resolvePaths } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
+import { loadConfig } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
+import { main } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'
+import { createPlugin } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/index.js'
+import { createFakeContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
+import { createHostStub } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/host-stub.mjs'
 
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'ac012-d-'))
 const home = path.join(base, 'h')
@@ -408,11 +408,11 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import assert from 'node:assert/strict'
-import { createContext } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'
-import { loadConfig } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
-import { bundledExamplePath, resolvePaths } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
-import { main } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'
-import { fakeStream } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
+import { createContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'
+import { loadConfig } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
+import { bundledExamplePath, resolvePaths } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/paths.mjs'
+import { main } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'
+import { fakeStream } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
 
 const raw = fs.readFileSync('config/cliworker.example.json', 'utf8')
 assert.notEqual(raw.charCodeAt(0), 0xfeff)
@@ -537,15 +537,15 @@ function lines(file) {
 
 assert.deepEqual(lines('bin/cliworker.mjs'), [
   '#!/usr/bin/env node',
-  "import { main } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'",
-  "import { createContext } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'",
+  "import { main } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/cli.mjs'",
+  "import { createContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'",
   '',
   'const { exitCode } = await main(process.argv.slice(2), createContext())',
   'process.exitCode = exitCode',
 ])
 assert.deepEqual(lines('lib/commands/_util.mjs'), [
   "import path from 'node:path'",
-  "import { defaultHome } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/config.mjs'",
+  "import { defaultHome } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/config.mjs'",
   '',
   'export function arg(argv, name, fallback) {',
   '  const i = argv.indexOf(name)',
@@ -588,7 +588,7 @@ $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ((New-Guid).Guid + '.mjs')
 $code = @'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
-import { reproSha256 } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/scripts/check-defects.mjs'
+import { reproSha256 } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/scripts/check-defects.mjs'
 
 const groups = {
   'test/unit/config.test.mjs': [
@@ -630,9 +630,9 @@ import os from 'node:os'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { createContext } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'
-import { loadConfig } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
-import { fakeStream } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
+import { createContext } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/context.mjs'
+import { loadConfig } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/config.mjs'
+import { fakeStream } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/test/helpers/ctx.mjs'
 
 const cases = [
   ['null.json', 'null', 'root must be a JSON object'],
