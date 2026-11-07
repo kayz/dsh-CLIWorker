@@ -1,12 +1,12 @@
 {
   "task": "005",
   "event": "blocked",
-  "reason": "awaiting_human",
+  "reason": "ci_failed",
   "verdict": null,
-  "ci": null,
+  "ci": "7/13",
   "files": null,
   "branch": "task/005",
   "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】005 / task 005\n结果：blocked — awaiting_human\n阶段：design ✅\n变更：分支 task/005 · 耗时 20m31s\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-07T18:42:17.443Z"
+  "summary": "【AgentLine 任务被阻塞】005 / task 005\n结果：blocked — ci_failed\n阶段：design ✅ · dev ✅ · CI 7/13 ❌\n变更：分支 task/005 · 耗时 56m37s\n验收：CI 7/13\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-07T19:18:23.124Z"
 }
