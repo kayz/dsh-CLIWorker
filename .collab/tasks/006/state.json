@@ -84,10 +84,16 @@
       "from": "reviewed",
       "to": "pr_open",
       "by": "agentline"
+    },
+    {
+      "at": "2026-11-07T19:35:07.245Z",
+      "from": "pr_open",
+      "to": "merged",
+      "by": "human"
     }
   ],
-  "status": "pr_open",
-  "updated_at": "2026-11-07T19:29:11.841Z",
+  "status": "merged",
+  "updated_at": "2026-11-07T19:35:07.245Z",
   "role": "review",
   "model": "hy4free",
   "model_resolved": "hy4free",
@@ -100,7 +106,7 @@
   "rate_limit_reset": null,
   "pr": {
     "branch": "task/006",
-    "state": "open",
+    "state": "merged",
     "files": [
       ".collab/blueprint/cliworker-v2/task-graph.json",
       ".collab/tasks/006/acceptance.md",
@@ -128,7 +134,11 @@
       "test/unit/pools.test.mjs",
       "test/unit/reset.test.mjs"
     ],
-    "sha": "54197c86f272910d85171194bb49bcd79b28803a"
+    "sha": "0e796a04a52d650b585582487627dfda75b3c306",
+    "merged_at": "2026-11-07T19:35:07.238Z",
+    "permission": "用满三个task并行量继续推进，之后task合并不需要我显式提示，直接处理掉",
+    "permission_kind": "explicit",
+    "grant_id": null
   },
   "merge_gate": {
     "requires_human_permission": true,
@@ -152,8 +162,8 @@
       "maxFiles": 8,
       "maxLines": 3000
     },
-    "assessed_at": "2026-11-07T19:29:11.791Z",
+    "assessed_at": "2026-11-07T19:35:06.504Z",
     "base": "main",
-    "head": "HEAD"
+    "head": "task/006"
   }
 }
