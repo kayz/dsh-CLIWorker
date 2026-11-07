@@ -374,3 +374,60 @@ node --input-type=module -e "import fs from 'node:fs'; import { mergeShards } fr
 
 - 未执行任何 git 命令，V-R-5 的 `git diff` 探针未复测；按 §1 清单与 design `write_scope` 逐条对照，未见越界，`lib/select.mjs` 未改动。
 - 未修改 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`；本文件只追加本节。
+
+## 10. 第 6 轮：复核无改动，死锁仍在（等待 §9.5 的裁决）
+
+### 10.1 本轮改了什么
+
+**没有改任何实现文件。** 开工时重读 `brief.md`、`design.md`、`acceptance.md`：三者的 `write_scope` / V-R-5 `globs` 仍不含 `test/unit/traceability.test.mjs`（`design.md`、`acceptance.md` mtime 仍为 01:35），§9.5 请求的裁决没有落地。`lib/`、`bin/`、`contracts/`、`scripts/check-seams.mjs`、`test/` 下本任务相关文件保持在上轮已通过 4/4 AC 的状态，重写只会引入回归，因此本轮只做复核与记录。
+
+### 10.2 本轮复核结果（全部在任务 worktree 根实测）
+
+| 命令 | 结果 |
+|---|---|
+| `node scripts/run-tests.mjs --ac AC-006` | `tests 5 / pass 5 / fail 0`，`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-007` | `tests 5 / pass 5 / fail 0`，`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-008` | `tests 12 / pass 12 / fail 0`，`filtered 2 files` |
+| `node scripts/run-tests.mjs --ac AC-072` | `tests 14 / pass 14 / fail 0`，`filtered 2 files` |
+| `node scripts/check-seams.mjs` | `check-seams: ok (files=15)`，退出码 0 |
+| `node scripts/check-traceability.mjs` | `check-traceability: ok (covered=10 planned=64)`，退出码 0 |
+| `node scripts/check-test-discovery.mjs` | `check-test-discovery: ok`，退出码 0 |
+| `node scripts/check-frozen-files.mjs` | `check-frozen-files: ok (8 files)`，退出码 0 |
+| `node bin/cliworker.mjs` | 退出码 1，stdout 空，stderr 为 `ERROR: usage: cliworker providers | models list|select|forecast | usage record|summary`（V-006-7） |
+| `pwsh -NoProfile -File scripts/check-fast.ps1` | **退出码 1**：`ℹ tests 106 / pass 105 / fail 1`，末行 `check-fast: FAILED step npm test (exit 1)` |
+
+`acceptance.md` 的 32 条 `node` 命令本轮按文件原文逐条执行：29 条直接给出 `PROBE-OK …`；另外 3 条按规格本就返回非 0（`node bin/cliworker.mjs` 退出 1；`--root test/fixtures/seams/date-now` 退出 1 且恰输出 `FAIL seams.date_now lib/bad.mjs:2` 与 `check-seams: FAILED (1 violations)` 两行；`--bogus` 退出 2、stdout 空、stderr 含 `usage:`），逐条比对均与期望一致。V-R-1 的 pwsh 步骤由 PowerShell 7 执行，输出与上表一致。
+
+### 10.3 唯一红项（第 1–5 轮同一行）
+
+```
+✖ [AC-004] mergeShards treats ACs without a shard as planned
+  AssertionError [ERR_ASSERTION]: actual 'covered' / expected 'planned'
+  at test/unit/traceability.test.mjs:158:10
+ℹ tests 106  ℹ pass 105  ℹ fail 1
+check-fast: FAILED step npm test (exit 1)
+```
+
+`test/unit/traceability.test.mjs:158` 用 `AC-006` 作为「没有分片的 AC」样例；`design.md` §10 要求提交 `test/traceability/T-003.json` 且 AC-006 为 `covered`，`acceptance.md` V-R-2 又要求 `covered=10 planned=64` 并逐条断言 AC-006 为 `covered`。`mergeShards`（`scripts/check-traceability.mjs:282-286`）对同一 AC 只输出一个状态，两条验收在同一仓库状态下互斥。
+
+### 10.4 为什么 `write_scope` 内无解
+
+`write_scope` 内唯一能影响该断言的文件是 `test/traceability/T-003.json`，它正是 V-R-2 的输入：
+
+- 把 AC-006 改成 `planned`：`trace-T-003` 探针与 `covered=10` 同时变红，AC-006 的 5 条测试也失去追踪；
+- 删除该分片或整文件：`covered` 退化为 6，V-R-2 变红；
+- 往分片里制造 `shard.*` 错误让条目失效：`check-traceability` 的 `ok` 变 false，V-R-2 变红。
+
+`scripts/check-traceability.mjs`、`contracts/spec/ac-index.json`、`test/unit/traceability.test.mjs` 三者都不在 `write_scope`，改任一个都会同时踩 V-R-5。因此这不是实现缺陷，而是验收条目之间的冲突。
+
+### 10.5 请求（同 §7.5 / §8.4 / §9.5）
+
+1. 把 `test/unit/traceability.test.mjs` 同时加入 `design.md` 的 `write_scope` 与 `acceptance.md` V-R-5 的 `globs`；
+2. 授权把该文件第 158 行改为 `assert.equal(merged.acs['AC-009'], 'planned')`（只读复算：`errors 0`，`AC-006 covered`，`AC-009 planned`，其余 105 条测试全绿）。
+
+若编排方给出上述任一项授权，下一轮我执行第 2 条并重跑 `pwsh -NoProfile -File scripts/check-fast.ps1`，预期退出码 0、`ℹ fail 0`、末行 `check-fast: ok`，本任务即可收尾。
+
+### 10.6 本轮未做
+
+- 未执行任何 git 命令；V-R-5 的 `git diff` 探针未复测。按 §1 清单与 `design.md` `write_scope` 逐条对照未见越界，`lib/select.mjs` 未改动。
+- 未修改 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`，未修改 `write_scope` 之外的任何文件；本文件只追加本节。
