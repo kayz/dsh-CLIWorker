@@ -1,7 +1,7 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\003",
   "taskDir": ".collab\\tasks\\003",
-  "ranAt": "2026-11-08T01:52:48.7871622+08:00",
+  "ranAt": "2026-11-08T02:02:47.4175234+08:00",
   "passed": 4,
   "total": 4,
   "ok": true,
@@ -11,7 +11,7 @@
       "title": "import-safe 入口",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.52,
+      "durationS": 0.5,
       "lastLine": "ERROR: usage: cliworker providers | models list|select|forecast | usage record|summary",
       "output": "ERROR: usage: cliworker providers | models list|select|forecast | usage record|summary"
     },
@@ -20,7 +20,7 @@
       "title": "缝规则与 check-seams",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.46,
+      "durationS": 0.52,
       "lastLine": "PROBE-OK seams-real-tree",
       "output": "PROBE-OK seams-real-tree"
     },
@@ -29,7 +29,7 @@
       "title": "宿主 stub 与注册",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.47,
+      "durationS": 0.5,
       "lastLine": "PROBE-OK handlers",
       "output": "PROBE-OK handlers"
     },
@@ -38,9 +38,9 @@
       "title": "时钟与上下文契约",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.67,
+      "durationS": 0.71,
       "lastLine": "run-tests: filtered 2 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\de78199bd131\\files-executed.json",
-      "output": "鉁?[AC-072] the contract file fixes the context surface (1.2449ms)\n鉁?[AC-072] the real context matches the contract (43.2877ms)\n鉁?[AC-072] the real clock exposes only the five clock methods (0.9868ms)\n鉁?[AC-072] the fake context matches the contract (0.4963ms)\n鉁?[AC-072] the fake clock adds exactly the documented extras (0.1435ms)\n鉁?[AC-072] the fake context keeps its handles on the members themselves (0.3793ms)\n鉁?[AC-072] advance moves the fake clock and setNow moves it either way (1.6247ms)\n鉁?[AC-072] timers fire in due order and pending tracks the queue (1.4487ms)\n鉁?[AC-072] sleep resolves only after advance reaches the deadline (0.1861ms)\n鉁?[AC-072] overdue timers fire on the next advance and negative delays are rejected (0.4912ms)\n鉁?[AC-072] the real clock rereads the clock file on every call (0.6702ms)\n鉁?[AC-072] an invalid clock file raises an error naming the variable (3.0167ms)\n鉁?[AC-072] main adds W_TEST_CLOCK only when the clock file variable is set (1.1349ms)\n鉁?[AC-072] the fake context now() aliases its clock (0.1908ms)\n鈩?tests 14\n鈩?suites 0\n鈩?pass 14\n鈩?fail 0\n鈩?cancelled 0\n鈩?skipped 0\n鈩?todo 0\n鈩?duration_ms 129.8267\nrun-tests: filtered 2 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\de78199bd131\\files-executed.json"
+      "output": "鉁?[AC-072] the contract file fixes the context surface (1.3192ms)\n鉁?[AC-072] the real context matches the contract (37.9965ms)\n鉁?[AC-072] the real clock exposes only the five clock methods (1.0521ms)\n鉁?[AC-072] the fake context matches the contract (0.5401ms)\n鉁?[AC-072] the fake clock adds exactly the documented extras (0.1691ms)\n鉁?[AC-072] the fake context keeps its handles on the members themselves (0.423ms)\n鉁?[AC-072] advance moves the fake clock and setNow moves it either way (2.0806ms)\n鉁?[AC-072] timers fire in due order and pending tracks the queue (1.7914ms)\n鉁?[AC-072] sleep resolves only after advance reaches the deadline (0.2213ms)\n鉁?[AC-072] overdue timers fire on the next advance and negative delays are rejected (0.5638ms)\n鉁?[AC-072] the real clock rereads the clock file on every call (0.6053ms)\n鉁?[AC-072] an invalid clock file raises an error naming the variable (3.2098ms)\n鉁?[AC-072] main adds W_TEST_CLOCK only when the clock file variable is set (1.1083ms)\n鉁?[AC-072] the fake context now() aliases its clock (0.2405ms)\n鈩?tests 14\n鈩?suites 0\n鈩?pass 14\n鈩?fail 0\n鈩?cancelled 0\n鈩?skipped 0\n鈩?todo 0\n鈩?duration_ms 130.0579\nrun-tests: filtered 2 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\de78199bd131\\files-executed.json"
     }
   ]
 }

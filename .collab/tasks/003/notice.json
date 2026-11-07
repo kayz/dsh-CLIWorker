@@ -1,0 +1,12 @@
+{
+  "task": "003",
+  "event": "blocked",
+  "reason": "review_exhausted",
+  "verdict": "needs_revision",
+  "ci": "4/4",
+  "files": null,
+  "branch": "task/003",
+  "status": "blocked",
+  "summary": "【AgentLine 任务被阻塞】003 / task 003\n结果：blocked — review_exhausted\n阶段：design ✅ · dev ✅ · CI 4/4 ✅ · review r3 needs_revision ❌\n变更：分支 task/003 · 耗时 33m58s\n验收：CI 4/4 · verdict=needs_revision · findings 1\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-07T17:59:43.674Z"
+}
