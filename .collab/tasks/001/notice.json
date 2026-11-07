@@ -2,11 +2,11 @@
   "task": "001",
   "event": "blocked",
   "reason": "stall",
-  "verdict": null,
+  "verdict": "needs_revision",
   "ci": "42/42",
   "files": null,
   "branch": "task/001",
   "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】001 / task 001\n结果：blocked — stall\n阶段：design ✅ · dev ✅ · CI 42/42 ✅\n变更：分支 task/001 · 耗时 58m47s\n验收：CI 42/42\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-07T14:41:36.395Z"
+  "summary": "【AgentLine 任务被阻塞】001 / task 001\n结果：blocked — stall\n阶段：design ✅ · dev ✅ · CI 42/42 ✅ · review r1 needs_revision ❌\n变更：分支 task/001 · 耗时 1h31m\n验收：CI 42/42 · verdict=needs_revision · findings 3\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-07T15:13:59.649Z"
 }

@@ -90,16 +90,47 @@
       "from": "reviewed",
       "to": "implemented",
       "by": "dev:cursor-wsl-grok-4.7 (inherited c1)"
+    },
+    {
+      "at": "2026-11-07T15:05:53.774Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-07T15:13:59.638Z",
+      "from": "reviewable",
+      "to": "blocked",
+      "by": "review",
+      "reason": "stall"
+    },
+    {
+      "at": "2026-11-07T15:15:23.850Z",
+      "from": "blocked",
+      "to": "reviewable",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-07T15:16:02.450Z",
+      "from": "reviewable",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-07T15:29:31.355Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:hy4std"
     }
   ],
-  "status": "implemented",
-  "updated_at": "2026-11-07T15:05:12.733Z",
-  "role": "dev",
-  "model": "grok-4.7",
-  "model_resolved": "Grok 4.7 256K High",
-  "effort": null,
-  "attempt": 6,
-  "switches": 4,
+  "status": "reviewed",
+  "updated_at": "2026-11-07T15:29:31.355Z",
+  "role": "review",
+  "model": "hy4std",
+  "model_resolved": "hy4std",
+  "effort": "high",
+  "attempt": 7,
+  "switches": 5,
   "blocked_reason": null,
   "handoff": null,
   "interrupted": null
