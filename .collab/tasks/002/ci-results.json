@@ -1,0 +1,235 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\002",
+  "taskDir": ".collab\\tasks\\002",
+  "ranAt": "2026-11-08T01:19:26.0196151+08:00",
+  "passed": 25,
+  "total": 25,
+  "ok": true,
+  "results": [
+    {
+      "id": "A1",
+      "title": "过滤运行 AC-005",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 2.03,
+      "lastLine": "A1 OK",
+      "output": "A1 OK"
+    },
+    {
+      "id": "A2",
+      "title": "冻结检查（真实仓库）",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.53,
+      "lastLine": "A2 OK",
+      "output": "A2 OK"
+    },
+    {
+      "id": "A3",
+      "title": "缺陷检查（真实仓库，严格模式，含 canary）",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 3.79,
+      "lastLine": "A3 OK",
+      "output": "A3 OK"
+    },
+    {
+      "id": "A4",
+      "title": "check-fast 执行了这两项检查",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 8.1,
+      "lastLine": "A4 OK",
+      "output": "A4 OK"
+    },
+    {
+      "id": "A5",
+      "title": "完整测试",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 3.97,
+      "lastLine": "A5 OK",
+      "output": "A5 OK"
+    },
+    {
+      "id": "B1",
+      "title": "副本与 f75bb76 的 blob 一致，且文件集合恰好是 7 个",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.89,
+      "lastLine": "B1 OK",
+      "output": "B1 OK"
+    },
+    {
+      "id": "B2",
+      "title": "frozen-files.json 的形状与允许集合",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "B2 OK",
+      "output": "B2 OK"
+    },
+    {
+      "id": "B3",
+      "title": "篡改一个登记文件的字节 → 检查失败",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.91,
+      "lastLine": "B3 OK",
+      "output": "B3 OK"
+    },
+    {
+      "id": "B4",
+      "title": "登记 lib/、bin/、config/、scripts/ 路径 → 检查失败",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.92,
+      "lastLine": "B4 OK",
+      "output": "B4 OK"
+    },
+    {
+      "id": "B5",
+      "title": "副本里多出一个未登记文件 → 检查失败",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.87,
+      "lastLine": "B5 OK",
+      "output": "B5 OK"
+    },
+    {
+      "id": "B6",
+      "title": "未知参数",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.61,
+      "lastLine": "B6 OK",
+      "output": "B6 OK"
+    },
+    {
+      "id": "C1",
+      "title": "所有相对 import 都指向副本",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.51,
+      "lastLine": "C1 OK",
+      "output": "C1 OK"
+    },
+    {
+      "id": "C2",
+      "title": "保留面是真的被锁住的：把副本里的排除原因改坏，stable 必须失败",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.95,
+      "lastLine": "C2 OK",
+      "output": "C2 OK"
+    },
+    {
+      "id": "D1",
+      "title": "defects.json 恰好 11 条，字段与取值正确",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.52,
+      "lastLine": "D1 OK",
+      "output": "D1 OK"
+    },
+    {
+      "id": "D2",
+      "title": "每条缺陷都有 repro 文件、canary 与合法的 canary.json，且 canary 目录里没有 `*.test.mjs`",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.54,
+      "lastLine": "D2 OK",
+      "output": "D2 OK"
+    },
+    {
+      "id": "D3",
+      "title": "[repro] 与 [fixed] 分离",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.54,
+      "lastLine": "D3 OK",
+      "output": "D3 OK"
+    },
+    {
+      "id": "D4",
+      "title": "篡改 [repro] 段 → check-defects 失败",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 4.06,
+      "lastLine": "D4 OK",
+      "output": "D4 OK"
+    },
+    {
+      "id": "D5",
+      "title": "canary 失效 → check-defects 失败",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 4.18,
+      "lastLine": "D5 OK",
+      "output": "D5 OK"
+    },
+    {
+      "id": "D6",
+      "title": "缺少 canary → check-defects 失败",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 3.79,
+      "lastLine": "D6 OK",
+      "output": "D6 OK"
+    },
+    {
+      "id": "D7",
+      "title": "T-001 既有行为不变",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 1.77,
+      "lastLine": "D7 OK",
+      "output": "D7 OK"
+    },
+    {
+      "id": "E1",
+      "title": "追踪分片",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.55,
+      "lastLine": "E1 OK",
+      "output": "E1 OK"
+    },
+    {
+      "id": "E2",
+      "title": "只写了 write_scope 内的文件",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.63,
+      "lastLine": "E2 OK",
+      "output": "\\$/g,'')).filter(f=>!re.some(r=>r.test(f)));console.log(out.length?'OUT '+out.join(','):'dirty: in-scope only');process.exit(out.length?1:0): C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-1f8c7161-366b-48b3-9cec-4684adb71e64.ps1:5\nLine |\n   5 |  鈥?eplace(/^\\\"|\\\"$/g,'')).filter(f=>!re.some(r=>r.test(f)));console.log( 鈥?\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 鏈 '\\$/g,'')).filter(f=>!re.some(r=>r.test(f)));console.log(out.length?'OUT '+out.join(','):'dirty: in-scope\n     | only');process.exit(out.length?1:0)' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nInvalidOperation: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-1f8c7161-366b-48b3-9cec-4684adb71e64.ps1:7\nLine |\n   7 |  if ($status.Trim() -ne 'dirty: in-scope only') { throw \"unexpected wo 鈥?\n     |      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 涓嶈兘瀵瑰€间负 Null 鐨勮〃杈惧紡璋冪敤鏂规硶銆?\nE2 OK"
+    },
+    {
+      "id": "E3",
+      "title": "无第三方依赖、无令牌",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "E3 OK",
+      "output": "E3 OK"
+    },
+    {
+      "id": "F1",
+      "title": "每条 repro 在副本上通过",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 1.97,
+      "lastLine": "F1 OK",
+      "output": "F1 OK"
+    },
+    {
+      "id": "F2",
+      "title": "canary 对每个缺陷都真的命中",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 3.69,
+      "lastLine": "F2 OK",
+      "output": "F2 OK"
+    }
+  ]
+}

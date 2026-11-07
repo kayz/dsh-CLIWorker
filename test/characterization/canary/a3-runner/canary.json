@@ -1,0 +1,9 @@
+{
+  "defect": "a3-runner",
+  "repro_edits": [
+    {
+      "find": "scripts: null,",
+      "replace": "scripts: { test: 'node scripts/run-tests.mjs' },"
+    }
+  ]
+}

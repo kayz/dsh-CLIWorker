@@ -1,0 +1,12 @@
+{
+  "task": "002",
+  "event": "blocked",
+  "reason": "ci_failed",
+  "verdict": null,
+  "ci": null,
+  "files": null,
+  "branch": "task/002",
+  "status": "blocked",
+  "summary": "【AgentLine 任务被阻塞】002 / task 002\n结果：blocked — ci_failed\n阶段：design ✅ · dev ✅\n变更：分支 task/002 · 耗时 24m21s\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-07T17:00:39.124Z"
+}

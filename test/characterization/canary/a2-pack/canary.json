@@ -1,0 +1,9 @@
+{
+  "defect": "a2-pack",
+  "repro_edits": [
+    {
+      "find": "bin: null",
+      "replace": "bin: 'bin/cliworker.mjs'"
+    }
+  ]
+}

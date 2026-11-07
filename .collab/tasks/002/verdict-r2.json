@@ -1,0 +1,43 @@
+{
+  "verdict": "pass",
+  "sha": "2865dd5aae6316b82425fe2280e957f11b12c4ed",
+  "passed": 25,
+  "total": 25,
+  "evidence": [
+    "SHA 核验（只读）：.git 指针 -> C:/git/dsh-CLIWorker/.git/worktrees/002/HEAD = ref: refs/heads/task/002；.git/refs/heads/task/002 = 2865dd5aae6316b82425fe2280e957f11b12c4ed，与会话开头 git log 首行 2865dd5（fix(dev-r2): address review findings (task 002)）一致。未执行 git 命令。",
+    "CI 来源 .collab/tasks/002/ci-results.json:2-7：passed=25, total=25, ok=true，ranAt=2026-11-08T01:19:26+08:00；A1-A5、B1-B6、C1-C2、D1-D7、E1-E3、F1-F2 逐条 passed=true、exitCode=0、lastLine='<id> OK'。按【执行类证据口径】直接引用，不自行重跑。",
+    "E2 的 CI 输出（ci-results.json:205）与 r1 同样：第二段（git status 写域检查）因 node -e 引号在 PowerShell 里被破坏而报错，脚本仍打印 E2 OK。第一段（git diff main...HEAD）成功，否则会 throw。第二段改为只读核验：会话开头 git status 仅含 .collab/tasks/002/ 下文件（ci-results.json、run.json、state.json、live.json、logs/review-r2-1.log），均在范围内；r2 的两处改动已提交于 2865dd5，且都在 write_scope 内。结论：写域通过，不判无法确认。",
+    "r1 P1 修复核验：scripts/check-defects.mjs:467-468 strictMode = strict || !rootGiven（不带 --root 总是严格）；:482-485 strictMode && absent 时追加 defects.file_missing（已存在则不重复，:55 为 --milestone 路径）；:502 'nothing to check' 出口收紧为 absent && errors.length === 0 && !milestone，所以严格模式缺账本落到 :513-515 的 FAIL/FAILED 出口并 exit 1。非严格（带 --root、无 --strict、无 --milestone）仍打印 absent 并 exit 0。checkDefects 签名/返回值/absent 语义未变（:478-480）。",
+    "新增用例 test/unit/frozen-files.test.mjs:313-329 '[AC-005] defects: strict mode fails when the ledger is missing'：空临时根上 --root <tmp> --strict 断言 exit 1、输出含 'FAIL defects.file_missing test/characterization/defects.json'、不含 absent；去掉 --strict 断言 exit 0 且仍为 'check-defects: defects.json absent, nothing to check'；finally 清理临时根。",
+    "回归：r2 只改 scripts/check-defects.mjs 与 test/unit/frozen-files.test.mjs，二者都不在 frozen-files.json 的 8 条登记中，A2/B2/B3 不受影响；defects.json 的 repro_sha256 只覆盖 defects/<id>.test.mjs 的 [repro] 段，未动。新用例标题带 [AC-005]，A1 的 21 个标题不变。新增 import 均为 node:child_process、node:url（E3）。impl.md §10.3 记录 --ac AC-005 32 tests/0 fail、全量 70 tests/0 fail、check-fast: ok，与 CI 一致。",
+    "未修改 brief/design/acceptance/impl/state/run 或任何被评审代码；brief 未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [],
+  "checks": [
+    { "id": "A1", "passed": true, "evidence": "ci-results.json:9-16 A1 OK；新增用例标题带 [AC-005]，原 21 个标题与 10 个 '[repro] [AC-005]' 标题不变。" },
+    { "id": "A2", "passed": true, "evidence": "ci-results.json:18-25 A2 OK；r2 未动任何登记文件（check-frozen-files: ok (8 files)）。" },
+    { "id": "A3", "passed": true, "evidence": "ci-results.json:27-34 A3 OK；严格模式、账本存在，11 条 canary 全部命中，无 FAIL/absent。" },
+    { "id": "A4", "passed": true, "evidence": "ci-results.json:36-43 A4 OK；check-fast 含 check-defects/check-frozen-files/npm test 三个步骤。" },
+    { "id": "A5", "passed": true, "evidence": "ci-results.json:45-52 A5 OK；impl.md §10.3 全量 70 tests / 0 fail。" },
+    { "id": "B1", "passed": true, "evidence": "ci-results.json:54-61 B1 OK（ok 7）。" },
+    { "id": "B2", "passed": true, "evidence": "ci-results.json:63-70 B2 OK。" },
+    { "id": "B3", "passed": true, "evidence": "ci-results.json:72-79 B3 OK。" },
+    { "id": "B4", "passed": true, "evidence": "ci-results.json:81-88 B4 OK。" },
+    { "id": "B5", "passed": true, "evidence": "ci-results.json:90-97 B5 OK。" },
+    { "id": "B6", "passed": true, "evidence": "ci-results.json:99-106 B6 OK。" },
+    { "id": "C1", "passed": true, "evidence": "ci-results.json:108-115 C1 OK。" },
+    { "id": "C2", "passed": true, "evidence": "ci-results.json:117-124 C2 OK。" },
+    { "id": "D1", "passed": true, "evidence": "ci-results.json:126-133 D1 OK。" },
+    { "id": "D2", "passed": true, "evidence": "ci-results.json:135-142 D2 OK。" },
+    { "id": "D3", "passed": true, "evidence": "ci-results.json:144-151 D3 OK。" },
+    { "id": "D4", "passed": true, "evidence": "ci-results.json:153-160 D4 OK。" },
+    { "id": "D5", "passed": true, "evidence": "ci-results.json:162-169 D5 OK。" },
+    { "id": "D6", "passed": true, "evidence": "ci-results.json:171-178 D6 OK。" },
+    { "id": "D7", "passed": true, "evidence": "ci-results.json:180-187 D7 OK；非严格 absent 路径保持（check-defects.mjs:502-506），并由 frozen-files.test.mjs:322-325 锁住。" },
+    { "id": "E1", "passed": true, "evidence": "ci-results.json:189-196 E1 OK。" },
+    { "id": "E2", "passed": true, "evidence": "ci-results.json:198-205：git diff 段成功；git status 段 CI 命令引号被破坏未真正执行，已按只读方式核验（会话开头 git status 仅含 .collab/tasks/002/ 文件，r2 改动均在 write_scope 内）。" },
+    { "id": "E3", "passed": true, "evidence": "ci-results.json:207-214 E3 OK；新增 import 只有 node:child_process、node:url。" },
+    { "id": "F1", "passed": true, "evidence": "ci-results.json:216-223 F1 OK。" },
+    { "id": "F2", "passed": true, "evidence": "ci-results.json:225-232 F2 OK。" }
+  ]
+}

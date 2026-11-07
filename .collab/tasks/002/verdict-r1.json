@@ -1,0 +1,55 @@
+{
+  "verdict": "needs_revision",
+  "sha": "ccd916fb0ef211d53f0725b5dff0d9f9d52a22ad",
+  "passed": 25,
+  "total": 25,
+  "evidence": [
+    "SHA 核验（只读）：.git 指针 -> C:/git/dsh-CLIWorker/.git/worktrees/002/HEAD = ref: refs/heads/task/002；.git/refs/heads/task/002 = ccd916fb0ef211d53f0725b5dff0d9f9d52a22ad，与会话开头 git log 首行 ccd916f（fix(dev): repair after CI failure (task 002)）一致。未执行 git 命令。",
+    "CI 来源 .collab/tasks/002/ci-results.json:2-7：passed=25, total=25, ok=true，ranAt=2026-11-08T01:14:00+08:00；A1-A5、B1-B6、C1-C2、D1-D7、E1-E3、F1-F2 逐条 passed=true、exitCode=0、lastLine='<id> OK'。按【执行类证据口径】直接引用，不自行重跑。",
+    "E2 的 CI 输出（ci-results.json:205）第二段（git status 写域检查）因 node -e 引号在 PowerShell 里被破坏而报错（乱码行 + $status 为 null），脚本仍打印 E2 OK。第一段（git diff main...HEAD 写域检查）成功，否则会 throw。第二段改为只读独立核验：会话开头 git status 仅含 .collab/tasks/002/ 下文件（均在范围内）；lib/*.{mjs,js} 与 config/cliworker.example.json 去 CR 后与副本逐字节相同（diff 全部 same），说明 lib/、config/ 未被改；工作树无 .gitattributes。结论：写域通过，不判无法确认。",
+    "副本哈希独立重算（只读，CRLF→LF 后 sha256）：frozen-files.json 的 8 条登记（副本 7 个 + stable.test.mjs）全部与磁盘一致（8×ok）；source_commit='f75bb76'；键仅 files/source_commit；未登记 contracts/spec/ac-index.json，符合 design §2。副本目录只有 lib 6 个 + config 1 个，canary 目录下 find -name '*.test.mjs' 为空。",
+    "scripts/check-frozen-files.mjs:30-55 classifyPath：反斜杠/盘符/绝对路径/'..' → frozen.outside_allowed；规范化后先判 lib/ bin/ config/（大小写不敏感）→ frozen.forbidden_path，再判允许集合（:16-17 前缀 + :14 精确 stable.test.mjs）；:143-152 扫描副本目录与 stable.test.mjs 报 frozen.unregistered；:157-188 未知参数退出 2、输出 ok (N files)/FAIL/FAILED (n errors)。与 design §4 一致。",
+    "scripts/check-defects.mjs:144-179 extractReproSection/reproSha256 与 design §5.2 一致（块 = 行首 test('[repro] 且以 { 结尾 → 其后第一个行首 '})'，CRLF→LF，'\\n' 连接）；:316-408 checkRepros 的七类失败 id 齐全；:272-314 runRepro 用 mkdtemp(os.tmpdir()/cliworker-canary-)、finally 删除、删 NODE_TEST_CONTEXT、60s 超时、--test-reporter=tap；:385-386 基线要求 exit 0 + ok [repro] 且无 not ok；:401 canary 必须出现 /^\\s*not ok \\d+ - \\[repro\\]/m（仅退出码非 0 不算命中）。",
+    "test/unit/frozen-files.test.mjs:110-307 共 15 条用例，标题与 design §6 逐字一致；:261-269 以恒真 repro 证明 canary_survived，:291-307 证明加载失败不被当作 canary 命中。stable.test.mjs:27-101 共 6 条，标题逐字一致，仅两条静态 import（:10-11 均指向 ../fixtures/characterization/v0.1/lib/），断言与 design §3 表一致。",
+    "defects.json：11 条，字段 id/owner_task/owner_milestone/ac/repro_sha256，取值与 design §5.1 表逐行一致；repro_sha256 均为 64 位小写十六进制。11 个 canary.json 的 defect 等于目录名；a2-pack、a3-runner 用 repro_edits（find 'bin: null'、'scripts: null,'），其余 9 个有 overlay。overlay/lib/select.mjs 与 lib/select.mjs 的差异（a5-dup-call）仅 `cli: call,` 一处，是最小已修复变体。",
+    "test/traceability/T-002.json：键恰为 task/milestone/entries；AC-005 covered；files = stable.test.mjs、frozen-files.test.mjs；无 baseline。ac-index.json:8 中 AC-005 owner=T-002、levels=[unit]。",
+    "实现不满足的规格点（acceptance 未覆盖，见 findings）：scripts/check-defects.mjs:482-501 在真实仓库（无 --root，即 check-fast 调用方式）下，若 test/characterization/defects.json 不存在，checkDefects 返回 absent=true，严格分支 `if (strictMode && !absent)` 被跳过，随后 :497-501 输出 'check-defects: defects.json absent, nothing to check' 并以 0 退出。design §5.6 明确要求「真实仓库不会静默跳过」「账本 id 集合必须恰好是 11 个（不论是否带 --milestone）」，AC-005 要求 check-defects 不得静默通过。删除 defects.json 即可让全部 repro/canary 校验失效而 check-fast 仍为绿；defects.json 也不在 frozen-files.json 登记中。",
+    "未修改 brief/design/acceptance/impl/state/run 或任何被评审代码；brief 未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [
+    {
+      "severity": "P1",
+      "title": "严格模式下缺失 defects.json 会静默通过",
+      "file": "scripts/check-defects.mjs",
+      "line": 497,
+      "detail": "design §5.6：不带 --root（真实仓库、check-fast 的调用方式）必须严格，账本 id 集合必须恰好是 11 个，真实仓库不得静默跳过。实现里 `strictMode && !absent` 才进入严格检查；absent 时落到 :497-501，打印 'defects.json absent, nothing to check' 并退出 0。删除 test/characterization/defects.json 后，11 条 repro 与 canary 全部不再校验，check-defects 和 check-fast 仍然绿。修复建议：当 strictMode（含不带 --root 的 CLI 和带 --strict）且账本缺失时，追加 { id: 'defects.file_missing', detail: 'test/characterization/defects.json' }（或 defects.set_mismatch）并退出 1；非严格模式（带 --root 且无 --strict、无 --milestone）保持现有 absent 行为，T-001 夹具测试不受影响。同时补一条 test/unit/frozen-files.test.mjs 用例，断言 `check-defects --root <无账本的临时根> --strict` 退出 1。"
+    }
+  ],
+  "checks": [
+    { "id": "A1", "passed": true, "evidence": "ci-results.json:9-16 A1 OK；stable.test.mjs 6 条 + frozen-files.test.mjs 15 条标题与 A1 标题表逐字一致，10 个 repro 标题均为 '[repro] [AC-005] ...'。" },
+    { "id": "A2", "passed": true, "evidence": "ci-results.json:18-25 A2 OK；独立重算 8 条登记哈希全部一致，登记数 8 ≥ 8。" },
+    { "id": "A3", "passed": true, "evidence": "ci-results.json:27-34 A3 OK；严格模式 checkRepros 对 11 条逐一做基线+canary（check-defects.mjs:316-408）。注意 finding：账本缺失时的严格性缺口不在 A3 判据内。" },
+    { "id": "A4", "passed": true, "evidence": "ci-results.json:36-43 A4 OK；check-fast 自动运行 scripts/check-*.mjs，含新增 check-frozen-files.mjs。" },
+    { "id": "A5", "passed": true, "evidence": "ci-results.json:45-52 A5 OK；全量 69 tests 0 fail（impl.md §8.3）。" },
+    { "id": "B1", "passed": true, "evidence": "ci-results.json:54-61 B1 OK（git cat-file blob 逐字节比较，ok 7）；独立确认副本与 lib/ 去 CR 后相同。" },
+    { "id": "B2", "passed": true, "evidence": "ci-results.json:63-70 B2 OK；frozen-files.json 形状独立核对：键 files/source_commit、8 条、每条仅 path/sha256。" },
+    { "id": "B3", "passed": true, "evidence": "ci-results.json:72-79 B3 OK；check-frozen-files.mjs:138-140 hash_mismatch。" },
+    { "id": "B4", "passed": true, "evidence": "ci-results.json:81-88 B4 OK；check-frozen-files.mjs:47-53 判定顺序 forbidden → outside_allowed。" },
+    { "id": "B5", "passed": true, "evidence": "ci-results.json:90-97 B5 OK；check-frozen-files.mjs:143-149 frozen.unregistered。" },
+    { "id": "B6", "passed": true, "evidence": "ci-results.json:99-106 B6 OK；check-frozen-files.mjs:172-176 退出 2 并写 'unknown argument: --bogus'。" },
+    { "id": "C1", "passed": true, "evidence": "ci-results.json:108-115 C1 OK；stable.test.mjs:10-11 两个相对 import 均含 fixtures/characterization/v0.1/。" },
+    { "id": "C2", "passed": true, "evidence": "ci-results.json:117-124 C2 OK；stable.test.mjs:71-77 断言 rejected 恰为 [{key:'top',reason:'excluded'}]，副本改坏后必失败。" },
+    { "id": "D1", "passed": true, "evidence": "ci-results.json:126-133 D1 OK；defects.json 11 条与 design §5.1 表逐行一致。" },
+    { "id": "D2", "passed": true, "evidence": "ci-results.json:135-142 D2 OK；11 个 canary.json 与 repro 文件存在，canary 下无 *.test.mjs。" },
+    { "id": "D3", "passed": true, "evidence": "ci-results.json:144-151 D3 OK；10 个新 repro 文件均含 CLIWORKER_V01_ROOT、无 [fixed]。" },
+    { "id": "D4", "passed": true, "evidence": "ci-results.json:153-160 D4 OK；check-defects.mjs:352-356 repro_changed。" },
+    { "id": "D5", "passed": true, "evidence": "ci-results.json:162-169 D5 OK；check-defects.mjs:401-404 canary_survived。" },
+    { "id": "D6", "passed": true, "evidence": "ci-results.json:171-178 D6 OK；check-defects.mjs:219-232 canary_missing。" },
+    { "id": "D7", "passed": true, "evidence": "ci-results.json:180-187 D7 OK；checkDefects 签名与返回值未变，非严格分支保持原行为（check-defects.mjs:50-138、467-468）。" },
+    { "id": "E1", "passed": true, "evidence": "ci-results.json:189-196 E1 OK；T-002.json 形状独立核对一致。" },
+    { "id": "E2", "passed": true, "evidence": "ci-results.json:198-205：git diff 段成功；git status 段 CI 命令被引号破坏未真正执行，已按只读方式独立核验（lib/config 与副本去 CR 相同，会话开头 git status 仅含 .collab/tasks/002/ 文件）。" },
+    { "id": "E3", "passed": true, "evidence": "ci-results.json:207-214 E3 OK；check-frozen-files.mjs:4-7、check-defects.mjs:3-10、frozen-files.test.mjs:1-9 仅 node: 内置与相对导入。" },
+    { "id": "F1", "passed": true, "evidence": "ci-results.json:216-223 F1 OK；a1-quota、a5-forecast-x3、a5-nocache、a2-pack 的 repro 自包含，通过 CLIWORKER_V01_ROOT 动态导入副本，nocache 的 finally 还原 cwd/环境变量并清理。" },
+    { "id": "F2", "passed": true, "evidence": "ci-results.json:225-232 F2 OK；canary 命中判据为 not ok [repro]，不接受导入/语法错误。" }
+  ]
+}
