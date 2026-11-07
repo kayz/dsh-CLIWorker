@@ -1,0 +1,18 @@
+{
+  "id": "claude:plan-5h",
+  "cli": "claude",
+  "kind": "plan_window",
+  "funding": "plan",
+  "window": {
+    "length_s": 18000,
+    "anchor": "rolling",
+    "start_at": "2026-11-07T07:00:00Z",
+    "reset_at": "2026-11-07T12:00:00Z",
+    "reset_source": "cli"
+  },
+  "capacity_mtok": {
+    "claude:claude-sonnet-5-5": { "value": 10, "source": "measured", "confidence": "medium" }
+  },
+  "used_fraction": { "value": 0.5, "source": "cli", "at": "2026-11-07T09:55:00Z" },
+  "credits_per_mtok": null
+}

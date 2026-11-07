@@ -1,0 +1,46 @@
+{
+  "expect": { "path": "/models", "keyword": "maxItems" },
+  "document": {
+    "schema": "cliworker.selection/v1",
+    "ok": false,
+    "request_id": "r-001",
+    "models": [
+      {
+        "schema": "cliworker.handle/v1",
+        "handle_id": "h_9f2c",
+        "lease_id": "l_7d1e",
+        "level": "Top",
+        "label": "Top-1",
+        "readonly": true,
+        "expires_at": "2026-11-07T12:00:00Z",
+        "call": {
+          "command": "node",
+          "args": [
+            "C:/pkg/bin/cliworker.mjs",
+            "run",
+            "--lease",
+            "l_7d1e",
+            "--state-dir",
+            "C:/state",
+            "--config",
+            "C:/config/cliworker.json"
+          ],
+          "cwd": "C:/work/repo",
+          "input": "stdin",
+          "output": "cliworker.event/v1",
+          "timeout_ms": 1800000
+        }
+      }
+    ],
+    "calls": [],
+    "truncated": false,
+    "shortfall": 2,
+    "rejected": [],
+    "error": {
+      "code": "E_NO_CANDIDATE",
+      "message": "no candidate passed the filters",
+      "retryable": false,
+      "retry_after": null
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "usage.v1.schema.json",
+  "title": "cliworker.usage/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "idempotency_key",
+    "lease_id",
+    "model",
+    "pools",
+    "kind",
+    "input_tokens",
+    "output_tokens",
+    "cache_read_tokens",
+    "cache_write_tokens",
+    "cost_usd",
+    "pool_fraction_before",
+    "pool_fraction_after",
+    "at"
+  ],
+  "properties": {
+    "schema": { "const": "cliworker.usage/v1" },
+    "id": { "type": "string" },
+    "idempotency_key": { "type": "string" },
+    "lease_id": { "type": "string" },
+    "model": { "type": "string" },
+    "pools": { "type": "array", "items": { "type": "string" } },
+    "kind": { "enum": ["task", "probe", "manual"] },
+    "input_tokens": { "type": "integer", "minimum": 0 },
+    "output_tokens": { "type": "integer", "minimum": 0 },
+    "cache_read_tokens": { "type": "integer", "minimum": 0 },
+    "cache_write_tokens": { "type": "integer", "minimum": 0 },
+    "cost_usd": { "type": "number", "minimum": 0 },
+    "pool_fraction_before": { "type": ["number", "null"] },
+    "pool_fraction_after": { "type": ["number", "null"] },
+    "at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    }
+  },
+  "additionalProperties": true
+}

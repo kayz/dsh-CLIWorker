@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "golden.schema.json",
+  "title": "cliworker.golden/v1",
+  "type": "object",
+  "required": ["schema", "kind", "description", "cases"],
+  "properties": {
+    "schema": { "const": "cliworker.golden/v1" },
+    "kind": {
+      "enum": [
+        "quota-shapes",
+        "b44",
+        "forecast-thresholds",
+        "forecast-quantiles",
+        "forecast-confidence",
+        "forecast-burn-eta",
+        "capacity",
+        "policy"
+      ]
+    },
+    "description": { "type": "string" },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "input", "expected"],
+        "properties": {
+          "id": { "type": "string" },
+          "fn": { "type": "string" },
+          "input": { "type": "object" },
+          "expected": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+{
+  "task": "T-004",
+  "milestone": "M1",
+  "entries": [
+    {
+      "ac": "AC-009",
+      "status": "covered",
+      "files": ["test/contract/registry.test.mjs", "test/contract/examples.test.mjs"]
+    },
+    { "ac": "AC-010", "status": "covered", "files": ["test/contract/freeze.test.mjs"] },
+    { "ac": "AC-011", "status": "covered", "files": ["test/contract/scan-canary.test.mjs"] },
+    { "ac": "AC-073", "status": "covered", "files": ["test/contract/spec-tracked.test.mjs"] }
+  ]
+}

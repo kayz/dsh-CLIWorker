@@ -1,0 +1,61 @@
+{
+  "schema": "cliworker.golden-manifest/v1",
+  "files": [
+    {
+      "path": "contracts/golden/b44.json",
+      "sha256": "0b914f53d4e1178d19a763e19ca9ac78d6246a5ed094610fdc543fe37faeb135"
+    },
+    {
+      "path": "contracts/golden/capacity.json",
+      "sha256": "fbb812f2714d34fe45fe4fcfdfd44f78f55fb7dabb8c6f4326276aae9d96c993"
+    },
+    {
+      "path": "contracts/golden/forecast/burn-eta.json",
+      "sha256": "9fb862cfbeebc9547ce49bc3967c78b6190f4a717e653ce4129fab9f8ae87366"
+    },
+    {
+      "path": "contracts/golden/forecast/confidence.json",
+      "sha256": "a1f3ba3ba88a86b60f3a6173d0c45a573943996eb050049953891b949af6b781"
+    },
+    {
+      "path": "contracts/golden/forecast/quantiles.json",
+      "sha256": "86da5e797e09bc2ae961abca558a02e50054f540712c8b3aa06f2c84eacf8927"
+    },
+    {
+      "path": "contracts/golden/forecast/thresholds.json",
+      "sha256": "eb3185fdec62295274635ec77c87255455fe31d4349dad296bb0b2351eb6810b"
+    },
+    {
+      "path": "contracts/golden/policy/p1-order.json",
+      "sha256": "790bddf2751cf69e9fa23e70f33655eef55e5951401fc47643bebae22421fac3"
+    },
+    {
+      "path": "contracts/golden/policy/p2-quota-low.json",
+      "sha256": "fa3578883fa3fd6bece41f49ce3eeec1a32413f48408a428efb6c4bccd696349"
+    },
+    {
+      "path": "contracts/golden/policy/p3-unknown.json",
+      "sha256": "16fe9c34bff7ffb0722600b2f3427ea4e6b7f758bcee2a4c906979d2901c68e8"
+    },
+    {
+      "path": "contracts/golden/policy/p4-identity-group.json",
+      "sha256": "5bd4475e20f62f7c5391f2368b2df43bde4ba80ae7424c178302e3e69810a240"
+    },
+    {
+      "path": "contracts/golden/quota-shapes.json",
+      "sha256": "44670f30a6042767d187adceed5fc39cfa5846b40cd8aaa28eb11f939696467e"
+    },
+    {
+      "path": "contracts/spec/ac-index.json",
+      "sha256": "809631c89371c88f38e801fda82b6b32fdecc72bdfb50e07ef20386fbf54d12f"
+    },
+    {
+      "path": "contracts/spec/migration-map.json",
+      "sha256": "f68bae918ac4eeeffe6e13d7fbda98e8729059aacb44b0367eafb979ed794b1e"
+    },
+    {
+      "path": "contracts/spec/surfaces.json",
+      "sha256": "ce39945e4f694b04e509f6fe02ae995e635e439e51f8d4c314e8fae749c1846a"
+    }
+  ]
+}

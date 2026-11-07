@@ -1,0 +1,9 @@
+{
+  "expect": { "path": "/session", "keyword": "pattern" },
+  "document": {
+    "schema": "cliworker.session/v1",
+    "session": "AAAA AAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "csrf": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "expires_at": "2026-11-07T22:00:00Z"
+  }
+}

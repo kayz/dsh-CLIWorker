@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "golden-manifest.schema.json",
+  "title": "cliworker.golden-manifest/v1",
+  "type": "object",
+  "required": ["schema", "files"],
+  "properties": {
+    "schema": { "const": "cliworker.golden-manifest/v1" },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string", "pattern": "^contracts/(spec|golden)/.+$" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

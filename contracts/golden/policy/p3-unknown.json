@@ -1,0 +1,64 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "policy",
+  "description": "Unknown plan capacity is admitted after known pools or rejected by policy",
+  "cases": [
+    {
+      "id": "p3-after-known",
+      "fn": "select_policy",
+      "input": {
+        "est_mtok": 1,
+        "count": 3,
+        "importance": "high",
+        "policy": { "unknown_policy": "after_known", "reserve_fraction_for_high": 0.15 },
+        "reserve_mtok": 0,
+        "pools": [
+          { "id": "A", "funding": "plan", "remaining_mtok": 3, "cap_mtok": 10, "reset_in_h": 1 },
+          { "id": "U", "funding": "plan", "remaining_mtok": null, "cap_mtok": 10, "reset_in_h": null },
+          { "id": "C", "funding": "paid", "remaining_mtok": 100, "cap_mtok": 100, "reset_in_h": null }
+        ],
+        "candidates": [
+          { "key": "mA", "pool_ids": ["A"], "price": 1, "identity_group": null },
+          { "key": "mU", "pool_ids": ["U"], "price": 1, "identity_group": null },
+          { "key": "mC", "pool_ids": ["C"], "price": 3, "identity_group": null }
+        ]
+      },
+      "expected": {
+        "selected": [
+          { "key": "mA", "funding": "plan" },
+          { "key": "mU", "funding": "plan" },
+          { "key": "mC", "funding": "paid" }
+        ],
+        "rejected": []
+      }
+    },
+    {
+      "id": "p3-reject",
+      "fn": "select_policy",
+      "input": {
+        "est_mtok": 1,
+        "count": 3,
+        "importance": "high",
+        "policy": { "unknown_policy": "reject", "reserve_fraction_for_high": 0.15 },
+        "reserve_mtok": 0,
+        "pools": [
+          { "id": "A", "funding": "plan", "remaining_mtok": 3, "cap_mtok": 10, "reset_in_h": 1 },
+          { "id": "U", "funding": "plan", "remaining_mtok": null, "cap_mtok": 10, "reset_in_h": null },
+          { "id": "C", "funding": "paid", "remaining_mtok": 100, "cap_mtok": 100, "reset_in_h": null }
+        ],
+        "candidates": [
+          { "key": "mA", "pool_ids": ["A"], "price": 1, "identity_group": null },
+          { "key": "mU", "pool_ids": ["U"], "price": 1, "identity_group": null },
+          { "key": "mC", "pool_ids": ["C"], "price": 3, "identity_group": null }
+        ]
+      },
+      "expected": {
+        "selected": [
+          { "key": "mA", "funding": "plan" },
+          { "key": "mC", "funding": "paid" }
+        ],
+        "rejected": [{ "key": "mU", "reason": "quota_unknown_policy" }]
+      }
+    }
+  ]
+}

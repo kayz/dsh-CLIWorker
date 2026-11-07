@@ -1,0 +1,13 @@
+{
+  "expect": { "path": "/credits_per_mtok", "keyword": "type" },
+  "document": {
+    "id": "claude:plan-5h",
+    "cli": "claude",
+    "kind": "credits",
+    "funding": "plan",
+    "window": null,
+    "capacity_mtok": {},
+    "used_fraction": null,
+    "credits_per_mtok": "1000"
+  }
+}

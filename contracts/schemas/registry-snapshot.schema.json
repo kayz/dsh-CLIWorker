@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "registry-snapshot.schema.json",
+  "title": "cliworker.registry/v1 snapshot",
+  "type": "object",
+  "required": [
+    "schema",
+    "snapshot_version",
+    "codes",
+    "write_route_order",
+    "warning_codes",
+    "reject_reasons",
+    "draft_reason_mapping",
+    "forecast_reasons",
+    "risk",
+    "risk_basis",
+    "tasks_left_basis",
+    "thresholds",
+    "availability",
+    "identity",
+    "semantic_change"
+  ],
+  "properties": {
+    "schema": { "const": "cliworker.registry/v1" },
+    "snapshot_version": { "type": "integer", "minimum": 1 },
+    "codes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "exit", "http_status", "retryable", "trigger_id", "trigger"],
+        "properties": {
+          "code": { "type": "string", "pattern": "^E_[A-Z0-9_]+$" },
+          "exit": { "type": "integer", "minimum": 1 },
+          "http_status": { "type": "integer", "minimum": 100, "maximum": 599 },
+          "retryable": { "type": "boolean" },
+          "trigger_id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "trigger": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "write_route_order": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "enum": ["session", "readonly", "csrf", "body"] }
+    },
+    "warning_codes": { "type": "array", "items": { "type": "string" } },
+    "reject_reasons": {
+      "type": "object",
+      "required": ["v1", "admin_only", "draft"],
+      "properties": {
+        "v1": { "type": "array", "items": { "type": "string" } },
+        "admin_only": { "type": "array", "items": { "type": "string" } },
+        "draft": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "draft_reason_mapping": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["draft", "v1"],
+        "properties": {
+          "draft": { "type": "string" },
+          "v1": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "forecast_reasons": { "type": "array", "items": { "type": "string" } },
+    "risk": { "type": "array", "items": { "type": "string" } },
+    "risk_basis": { "type": "array", "items": { "type": "string" } },
+    "tasks_left_basis": { "type": "array", "items": { "type": "string" } },
+    "thresholds": {
+      "type": "object",
+      "required": ["tasks", "fraction", "priority"],
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["risk", "op", "value"],
+            "properties": {
+              "risk": { "type": "string" },
+              "op": { "enum": ["<=", "<", "else"] },
+              "value": { "type": ["number", "null"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "fraction": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["risk", "op", "value"],
+            "properties": {
+              "risk": { "type": "string" },
+              "op": { "enum": ["<=", "<", "else"] },
+              "value": { "type": ["number", "null"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "priority": {
+          "type": "array",
+          "items": { "enum": ["tasks", "usd", "fraction", "unknown"] }
+        }
+      },
+      "additionalProperties": false
+    },
+    "availability": { "type": "array", "items": { "type": "string" } },
+    "identity": { "type": "array", "items": { "type": "string" } },
+    "semantic_change": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

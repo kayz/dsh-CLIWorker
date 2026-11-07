@@ -1,0 +1,19 @@
+{
+  "expect": { "path": "/error/code", "keyword": "enum" },
+  "document": {
+    "schema": "cliworker.selection/v1",
+    "ok": false,
+    "request_id": "r-001",
+    "models": [],
+    "calls": [],
+    "truncated": false,
+    "shortfall": 2,
+    "rejected": [],
+    "error": {
+      "code": "E_NOPE",
+      "message": "unknown",
+      "retryable": false,
+      "retry_after": null
+    }
+  }
+}

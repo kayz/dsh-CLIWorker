@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "handle.v1.schema.json",
+  "title": "cliworker.handle/v1",
+  "type": "object",
+  "required": ["schema", "handle_id", "lease_id", "level", "label", "readonly", "expires_at", "call"],
+  "properties": {
+    "schema": { "const": "cliworker.handle/v1" },
+    "handle_id": { "type": "string", "pattern": "^h_[A-Za-z0-9]+$" },
+    "lease_id": { "type": "string", "pattern": "^l_[A-Za-z0-9]+$" },
+    "level": { "enum": ["Top", "High", "Middle", "Quick"] },
+    "label": { "type": "string" },
+    "readonly": { "type": "boolean" },
+    "expires_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "call": { "$ref": "#/$defs/call" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "call": {
+      "type": "object",
+      "required": ["command", "args", "cwd", "input", "output", "timeout_ms"],
+      "properties": {
+        "command": { "type": "string" },
+        "args": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": { "type": "string" }
+        },
+        "cwd": { "type": "string" },
+        "input": { "const": "stdin" },
+        "output": { "const": "cliworker.event/v1" },
+        "timeout_ms": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "cliworker.agentline-forbidden/v1",
+  "keys": [
+    "model_key",
+    "provider",
+    "cli",
+    "vendor",
+    "funding",
+    "pools",
+    "pool",
+    "forecast",
+    "direct_call",
+    "env_names",
+    "prices",
+    "quota",
+    "aliases",
+    "tier",
+    "key",
+    "availability",
+    "capabilities",
+    "identity_group",
+    "level_source",
+    "adapter",
+    "api_key",
+    "secret",
+    "token",
+    "authorization",
+    "env"
+  ],
+  "call": {
+    "keys": ["command", "args", "cwd", "input", "output", "timeout_ms"],
+    "input": "stdin",
+    "output": "cliworker.event/v1",
+    "args": [
+      "<bin>",
+      "run",
+      "--lease",
+      "<lease_id>",
+      "--state-dir",
+      "<state_dir>",
+      "--config",
+      "<config>"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "cliworker.surfaces/v1",
+  "preserved": [
+    {
+      "id": "candidate.deprecated_unverified_excluded",
+      "description": "Deprecated models and models with unverified identity never enter the candidate list"
+    },
+    {
+      "id": "candidate.level_filter",
+      "description": "Candidates are filtered by exact level; no silent downgrade"
+    },
+    {
+      "id": "candidate.exclude_reason",
+      "description": "A model listed in exclude is rejected with reason excluded"
+    },
+    {
+      "id": "schema_names",
+      "description": "The four schema name strings are kept",
+      "values": [
+        "cliworker.selection/v1",
+        "cliworker.handle/v1",
+        "cliworker.model/v1",
+        "cliworker.forecast/v1"
+      ]
+    }
+  ],
+  "semantic_change": [
+    {
+      "id": "forecast.tasks_left",
+      "description": "tasks_left may be null and comes with tasks_left_basis"
+    },
+    {
+      "id": "forecast.risk",
+      "description": "risk is derived with risk_basis and the threshold tables in the registry snapshot"
+    },
+    { "id": "handle.cli_removed", "description": "The duplicate cli key is removed from the handle" },
+    {
+      "id": "draft_reason_mapping",
+      "description": "Draft rejection reasons are mapped to v1 reasons"
+    },
+    { "id": "config_v1_to_v2", "description": "Config v1 is migrated in memory to v2" }
+  ]
+}

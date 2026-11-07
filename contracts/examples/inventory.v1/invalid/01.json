@@ -1,0 +1,28 @@
+{
+  "expect": { "path": "/entries/0/status", "keyword": "enum" },
+  "document": {
+    "schema": "cliworker.inventory/v1",
+    "generated_at": "2026-11-07T09:00:00Z",
+    "host": { "platform": "win32", "arch": "x64", "wsl_distros": [] },
+    "entries": [
+      {
+        "id": "claude",
+        "recognized": true,
+        "platform": "win32",
+        "path": "C:/bin/claude.exe",
+        "realpath": "C:/bin/claude.exe",
+        "version": "1.2.3",
+        "fingerprint": {
+          "size": 1024,
+          "mtime": "2026-11-01T00:00:00Z",
+          "realpath": "C:/bin/claude.exe"
+        },
+        "auth": { "state": "logged_in", "source": "cli_status" },
+        "evidence": [],
+        "first_seen": "2026-10-01T00:00:00Z",
+        "last_seen": "2026-11-07T09:00:00Z",
+        "status": "here"
+      }
+    ]
+  }
+}

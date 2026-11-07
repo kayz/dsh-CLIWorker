@@ -1,0 +1,21 @@
+{
+  "expect": { "path": "/availability/state", "keyword": "enum" },
+  "document": {
+    "schema": "cliworker.model/v1",
+    "key": "claude:claude-sonnet-5-5",
+    "id": "claude-sonnet-5-5",
+    "cli": "claude",
+    "provider": "claude",
+    "vendor": "anthropic",
+    "aliases": [],
+    "allowed": true,
+    "level": null,
+    "level_source": null,
+    "availability": { "state": "fine", "reason": null, "at": null, "ttl_s": null, "evidence": null },
+    "identity": "unverified",
+    "capabilities": { "context_tokens": 0, "readonly": false, "stdin": false },
+    "prices": { "input_per_mtok": 0, "output_per_mtok": 0, "source": "manual" },
+    "source": { "kind": "manual", "ref": "config.json", "at": "2026-11-07T09:00:00Z" },
+    "deprecated": false
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "expect": { "path": "/error", "keyword": "const" },
+  "document": {
+    "schema": "cliworker.selection/v1",
+    "ok": true,
+    "request_id": "r-001",
+    "level": "Top",
+    "usage": "Heavy",
+    "count_requested": 2,
+    "count_returned": 0,
+    "truncated": false,
+    "shortfall": 2,
+    "models": [],
+    "calls": [],
+    "rejected": [],
+    "warnings": [],
+    "error": { "code": "E_NO_CANDIDATE" },
+    "generated_at": "2026-11-07T10:00:00Z"
+  }
+}

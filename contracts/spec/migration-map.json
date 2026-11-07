@@ -1,0 +1,78 @@
+{
+  "schema": "cliworker.migration-map/v1",
+  "draft_to_v1": {
+    "reasons": [
+      { "id": "draft.reason.excluded", "draft": "excluded", "v1": "excluded" },
+      { "id": "draft.reason.not_in_workspace_order", "draft": "not_in_workspace_order", "v1": "excluded" },
+      { "id": "draft.reason.level", "draft": "level:<Level>", "v1": "level_mismatch" },
+      { "id": "draft.reason.availability_unverified", "draft": "availability:unverified", "v1": "availability_unverified" },
+      { "id": "draft.reason.availability_blocked", "draft": "availability:blocked", "v1": "availability_blocked" },
+      { "id": "draft.reason.availability_unavailable", "draft": "availability:unavailable", "v1": "availability_unavailable" },
+      { "id": "draft.reason.availability_deprecated", "draft": "availability:deprecated", "v1": "deprecated" },
+      { "id": "draft.reason.identity_unverified", "draft": "identity_unverified", "v1": "identity_unverified" },
+      { "id": "draft.reason.readonly_unavailable", "draft": "readonly_unavailable", "v1": "readonly_unavailable" },
+      { "id": "draft.reason.forecast_exhaustion", "draft": "E_FORECAST_EXHAUSTION", "v1": "quota_low" }
+    ],
+    "fields": [
+      { "id": "draft.field.key", "from": "handle.key", "to": ["detail.model_key"], "note": "Full view only" },
+      { "id": "draft.field.provider", "from": "handle.provider", "to": ["detail.cli"], "note": "Full view only" },
+      { "id": "draft.field.id", "from": "handle.id", "to": [], "note": "AgentLine view never exposes the model id" },
+      { "id": "draft.field.level", "from": "handle.level", "to": ["level"], "note": "Unchanged" },
+      { "id": "draft.field.prices", "from": "handle.prices", "to": [], "note": "Prices live in model/v1 on admin views" },
+      { "id": "draft.field.quota", "from": "handle.quota", "to": ["detail.pools"], "note": "Full view only" },
+      { "id": "draft.field.forecast", "from": "handle.forecast", "to": ["detail.forecast"], "note": "Full view only" },
+      { "id": "draft.field.call", "from": "handle.call", "to": ["call"], "note": "Wrapped call template" },
+      { "id": "draft.field.cli", "from": "handle.cli", "to": [], "note": "Removed (handle.cli_removed)" },
+      { "id": "draft.field.readonly", "from": "handle.readonly", "to": ["readonly"], "note": "Unchanged" },
+      { "id": "draft.field.vendor", "from": "handle.vendor", "to": ["detail.vendor"], "note": "Full view only" },
+      { "id": "draft.field.rejected_key", "from": "rejected[].key", "to": ["rejected[].ref"], "note": "Opaque reference" },
+      { "id": "draft.field.rejected_forecast", "from": "rejected[].forecast", "to": [], "note": "Removed" },
+      { "id": "draft.field.reason", "from": "reason", "to": ["error.code"], "note": "Mapped to registry codes" },
+      { "id": "draft.field.request", "from": "request", "to": [], "note": "Echo removed; request_id is kept" }
+    ]
+  },
+  "config_v1_to_v2": [
+    {
+      "id": "config.schema",
+      "from": "schema (absent or cliworker.config/v1)",
+      "to": ["schema"],
+      "note": "Migrated in memory to cliworker.config/v2 with W_CONFIG_V1"
+    },
+    {
+      "id": "config.models",
+      "from": "models",
+      "to": ["catalog.manual", "catalog.allow", "catalog.levels"],
+      "note": "level_source kind is config"
+    },
+    {
+      "id": "config.quotas.remaining_pct",
+      "from": "quotas.<provider>.remaining_pct",
+      "to": ["pools"],
+      "note": "Pool with funding plan, used_fraction = 1 - remaining_pct/100"
+    },
+    {
+      "id": "config.quotas.credits",
+      "from": "quotas.<provider>.remaining + credits",
+      "to": ["pools"],
+      "note": "Pool of kind credits"
+    },
+    {
+      "id": "config.quotas.remaining_usd",
+      "from": "quotas.<provider>.remaining_usd",
+      "to": ["pools"],
+      "note": "Pool of kind prepaid_usd"
+    },
+    {
+      "id": "config.quotas.tokens",
+      "from": "quotas.<provider>.remaining + unit tokens",
+      "to": ["pools"],
+      "note": "Pool with known capacity"
+    },
+    {
+      "id": "config.providers",
+      "from": "providers",
+      "to": ["discovery.cli_overrides"],
+      "note": "Provider entries become CLI overrides"
+    }
+  ]
+}

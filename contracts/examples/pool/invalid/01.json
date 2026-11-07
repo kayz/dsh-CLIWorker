@@ -1,0 +1,13 @@
+{
+  "expect": { "path": "/kind", "keyword": "enum" },
+  "document": {
+    "id": "claude:plan-5h",
+    "cli": "claude",
+    "kind": "plan",
+    "funding": "plan",
+    "window": null,
+    "capacity_mtok": {},
+    "used_fraction": null,
+    "credits_per_mtok": null
+  }
+}

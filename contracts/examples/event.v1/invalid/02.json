@@ -1,0 +1,10 @@
+{
+  "expect": { "path": "/seq", "keyword": "type" },
+  "document": {
+    "schema": "cliworker.event/v1",
+    "seq": "1",
+    "lease_id": "l_7d1e",
+    "type": "start",
+    "at": "2026-11-07T10:00:00Z"
+  }
+}

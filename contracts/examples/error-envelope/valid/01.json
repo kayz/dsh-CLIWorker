@@ -1,0 +1,9 @@
+{
+  "ok": false,
+  "error": {
+    "code": "E_CSRF",
+    "message": "csrf header missing",
+    "retryable": false,
+    "retry_after": null
+  }
+}

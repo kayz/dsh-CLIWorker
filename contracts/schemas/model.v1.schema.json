@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "model.v1.schema.json",
+  "title": "cliworker.model/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "key",
+    "id",
+    "cli",
+    "provider",
+    "vendor",
+    "aliases",
+    "allowed",
+    "level",
+    "level_source",
+    "availability",
+    "identity",
+    "capabilities",
+    "prices",
+    "source",
+    "deprecated"
+  ],
+  "properties": {
+    "schema": { "const": "cliworker.model/v1" },
+    "key": { "type": "string" },
+    "id": { "type": "string" },
+    "cli": { "type": "string" },
+    "provider": { "type": "string" },
+    "vendor": { "type": "string" },
+    "aliases": { "type": "array", "items": { "type": "string" } },
+    "allowed": { "type": "boolean" },
+    "level": { "enum": ["Top", "High", "Middle", "Quick", null] },
+    "level_source": {
+      "type": ["object", "null"],
+      "required": ["kind", "ref", "at"],
+      "properties": {
+        "kind": { "enum": ["config", "measured", "cli"] },
+        "ref": { "type": "string" },
+        "at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "availability": {
+      "type": "object",
+      "required": ["state", "reason", "at", "ttl_s", "evidence"],
+      "properties": {
+        "state": { "enum": ["unverified", "callable", "blocked", "unavailable", "deprecated"] },
+        "reason": { "type": ["string", "null"] },
+        "at": { "type": ["string", "null"] },
+        "ttl_s": { "type": ["integer", "null"] },
+        "evidence": { "type": ["object", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "identity": { "enum": ["verified", "unverified", "mismatch"] },
+    "capabilities": {
+      "type": "object",
+      "required": ["context_tokens", "readonly", "stdin"],
+      "properties": {
+        "context_tokens": { "type": "integer", "minimum": 0 },
+        "readonly": { "type": "boolean" },
+        "stdin": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "prices": {
+      "type": "object",
+      "required": ["input_per_mtok", "output_per_mtok", "source"],
+      "properties": {
+        "input_per_mtok": { "type": "number", "minimum": 0 },
+        "output_per_mtok": { "type": "number", "minimum": 0 },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": ["kind", "ref", "at"],
+      "properties": {
+        "kind": { "enum": ["subcommand", "help", "cache", "api", "manual"] },
+        "ref": { "type": "string" },
+        "at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "deprecated": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

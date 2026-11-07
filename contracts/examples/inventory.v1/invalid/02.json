@@ -1,0 +1,8 @@
+{
+  "expect": { "path": "/host", "keyword": "required" },
+  "document": {
+    "schema": "cliworker.inventory/v1",
+    "generated_at": "2026-11-07T09:00:00Z",
+    "entries": []
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ac-index.schema.json",
+  "title": "cliworker.ac-index/v1",
+  "type": "object",
+  "required": ["schema", "acs"],
+  "properties": {
+    "schema": { "const": "cliworker.ac-index/v1" },
+    "acs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ac", "owner", "milestone", "levels", "baseline"],
+        "properties": {
+          "ac": { "type": "string", "pattern": "^AC-\\d{3}$" },
+          "owner": { "type": "string", "pattern": "^T-\\d{3}$" },
+          "milestone": { "type": "string", "pattern": "^M\\d+$" },
+          "levels": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": ["unit", "integration", "contract", "e2e", "smoke", "characterization", "flows"]
+            }
+          },
+          "baseline": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "enum": ["linux", "win32", "darwin", "real-smoke"] }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,105 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "capacity",
+  "description": "Capacity learned from reading pairs and ledger rows",
+  "cases": [
+    {
+      "id": "cap-k2-low",
+      "fn": "learn_capacity",
+      "input": {
+        "readings": [
+          { "at": "2026-11-07T08:00:00Z", "fraction": 0 },
+          { "at": "2026-11-07T09:00:00Z", "fraction": 0.25 },
+          { "at": "2026-11-07T10:00:00Z", "fraction": 0.5 }
+        ],
+        "rows": [
+          { "at": "2026-11-07T08:30:00Z", "tokens": 1000000 },
+          { "at": "2026-11-07T09:30:00Z", "tokens": 1000000 }
+        ]
+      },
+      "expected": { "capacity_mtok": 4, "k": 2, "confidence": "low", "source": "measured" }
+    },
+    {
+      "id": "cap-k3-medium",
+      "fn": "learn_capacity",
+      "input": {
+        "readings": [
+          { "at": "2026-11-07T07:00:00Z", "fraction": 0 },
+          { "at": "2026-11-07T08:00:00Z", "fraction": 0.125 },
+          { "at": "2026-11-07T09:00:00Z", "fraction": 0.25 },
+          { "at": "2026-11-07T10:00:00Z", "fraction": 0.375 }
+        ],
+        "rows": [
+          { "at": "2026-11-07T07:30:00Z", "tokens": 1000000 },
+          { "at": "2026-11-07T08:30:00Z", "tokens": 500000 },
+          { "at": "2026-11-07T09:30:00Z", "tokens": 1500000 }
+        ]
+      },
+      "expected": { "capacity_mtok": 8, "k": 3, "confidence": "medium", "source": "measured" }
+    },
+    {
+      "id": "cap-k10-high",
+      "fn": "learn_capacity",
+      "input": {
+        "readings": [
+          { "at": "2026-11-07T00:00:00Z", "fraction": 0 },
+          { "at": "2026-11-07T01:00:00Z", "fraction": 0.03125 },
+          { "at": "2026-11-07T02:00:00Z", "fraction": 0.0625 },
+          { "at": "2026-11-07T03:00:00Z", "fraction": 0.09375 },
+          { "at": "2026-11-07T04:00:00Z", "fraction": 0.125 },
+          { "at": "2026-11-07T05:00:00Z", "fraction": 0.15625 },
+          { "at": "2026-11-07T06:00:00Z", "fraction": 0.1875 },
+          { "at": "2026-11-07T07:00:00Z", "fraction": 0.21875 },
+          { "at": "2026-11-07T08:00:00Z", "fraction": 0.25 },
+          { "at": "2026-11-07T09:00:00Z", "fraction": 0.28125 },
+          { "at": "2026-11-07T10:00:00Z", "fraction": 0.3125 }
+        ],
+        "rows": [
+          { "at": "2026-11-07T00:30:00Z", "tokens": 250000 },
+          { "at": "2026-11-07T01:30:00Z", "tokens": 250000 },
+          { "at": "2026-11-07T02:30:00Z", "tokens": 250000 },
+          { "at": "2026-11-07T03:30:00Z", "tokens": 250000 },
+          { "at": "2026-11-07T04:30:00Z", "tokens": 250000 },
+          { "at": "2026-11-07T05:30:00Z", "tokens": 250000 },
+          { "at": "2026-11-07T06:30:00Z", "tokens": 250000 },
+          { "at": "2026-11-07T07:30:00Z", "tokens": 250000 },
+          { "at": "2026-11-07T08:30:00Z", "tokens": 250000 },
+          { "at": "2026-11-07T09:30:00Z", "tokens": 250000 }
+        ]
+      },
+      "expected": { "capacity_mtok": 8, "k": 10, "confidence": "high", "source": "measured" }
+    },
+    {
+      "id": "cap-discard-small-delta",
+      "fn": "learn_capacity",
+      "input": {
+        "readings": [
+          { "at": "2026-11-07T08:00:00Z", "fraction": 0.5 },
+          { "at": "2026-11-07T09:00:00Z", "fraction": 0.5078125 },
+          { "at": "2026-11-07T10:00:00Z", "fraction": 0.7578125 }
+        ],
+        "rows": [
+          { "at": "2026-11-07T08:30:00Z", "tokens": 100000 },
+          { "at": "2026-11-07T09:30:00Z", "tokens": 2000000 }
+        ]
+      },
+      "expected": { "capacity_mtok": 8, "k": 1, "confidence": "low", "source": "measured" }
+    },
+    {
+      "id": "cap-reset-pair-ignored",
+      "fn": "learn_capacity",
+      "input": {
+        "readings": [
+          { "at": "2026-11-07T08:00:00Z", "fraction": 0.5 },
+          { "at": "2026-11-07T09:00:00Z", "fraction": 0.0625 },
+          { "at": "2026-11-07T10:00:00Z", "fraction": 0.3125 }
+        ],
+        "rows": [
+          { "at": "2026-11-07T08:30:00Z", "tokens": 300000 },
+          { "at": "2026-11-07T09:30:00Z", "tokens": 2000000 }
+        ]
+      },
+      "expected": { "capacity_mtok": 8, "k": 1, "confidence": "low", "source": "measured" }
+    }
+  ]
+}

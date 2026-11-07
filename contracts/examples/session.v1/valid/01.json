@@ -1,0 +1,6 @@
+{
+  "schema": "cliworker.session/v1",
+  "session": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "csrf": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "expires_at": "2026-11-07T22:00:00Z"
+}

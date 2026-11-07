@@ -1,0 +1,59 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "policy",
+  "description": "Identity group de-duplication keeps one candidate per group",
+  "cases": [
+    {
+      "id": "p4-distinct-group",
+      "fn": "select_policy",
+      "input": {
+        "est_mtok": 1,
+        "count": 2,
+        "importance": "high",
+        "policy": { "unknown_policy": "after_known", "reserve_fraction_for_high": 0.15 },
+        "reserve_mtok": 0,
+        "pools": [
+          { "id": "A", "funding": "plan", "remaining_mtok": 10, "cap_mtok": 20, "reset_in_h": 2 }
+        ],
+        "candidates": [
+          { "key": "m1", "pool_ids": ["A"], "price": 1, "identity_group": "g1" },
+          { "key": "m2", "pool_ids": ["A"], "price": 2, "identity_group": "g1" },
+          { "key": "m3", "pool_ids": ["A"], "price": 3, "identity_group": "g2" }
+        ]
+      },
+      "expected": {
+        "selected": [
+          { "key": "m1", "funding": "plan" },
+          { "key": "m3", "funding": "plan" }
+        ],
+        "rejected": []
+      }
+    },
+    {
+      "id": "p4-fill-same-group",
+      "fn": "select_policy",
+      "input": {
+        "est_mtok": 1,
+        "count": 2,
+        "importance": "high",
+        "policy": { "unknown_policy": "after_known", "reserve_fraction_for_high": 0.15 },
+        "reserve_mtok": 0,
+        "pools": [
+          { "id": "A", "funding": "plan", "remaining_mtok": 10, "cap_mtok": 20, "reset_in_h": 2 }
+        ],
+        "candidates": [
+          { "key": "m1", "pool_ids": ["A"], "price": 1, "identity_group": "g1" },
+          { "key": "m2", "pool_ids": ["A"], "price": 2, "identity_group": "g1" },
+          { "key": "m3", "pool_ids": ["A"], "price": 3, "identity_group": "g1" }
+        ]
+      },
+      "expected": {
+        "selected": [
+          { "key": "m1", "funding": "plan" },
+          { "key": "m2", "funding": "plan" }
+        ],
+        "rejected": []
+      }
+    }
+  ]
+}
