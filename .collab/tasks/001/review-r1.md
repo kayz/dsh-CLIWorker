@@ -1,0 +1,87 @@
+结论：**needs_revision**。核验 Git SHA：`b8601312da072fcbc8a815d0b7e6ca63efeb1aec`。逐条核对 `acceptance.md` 的 47 项，**38/47 通过，9 项无法确认**；另有两条明确的设计实现偏差。
+
+SHA 来源：.git:1 → C:/git/dsh-CLIWorker/.git/worktrees/001/HEAD:1 → C:/git/dsh-CLIWorker/.git/refs/heads/task/001:1。只读解压 commit 对象并重新计算 SHA-1，相等；tree 为 93f269b98fbd1ce905ad037d2a697139f5ab3aad。
+只读比对该 HEAD tree 的 128 个跟踪文件与工作树：差异仅 .collab/tasks/001/ 下 ci-results.json、notice.json、run.json、state.json；本轮评审前未跟踪文件=[]。被评审代码与 HEAD 内容一致（比较容许原有 CRLF/LF 转换；交付文本另做严格字节检查）。
+CI 来源 .collab/tasks/001/ci-results.json，ranAt=2026-11-07T22:43:41.6773831+08:00，SHA-256=912b9b5cd6e1bce9aaa931f5a68f76b3558c5c49678cee9191998c752444820b。CI 未自行记录 git SHA；此处 SHA 是本轮独立核验的工作树 HEAD，不声称 CI 提供了提交绑定。
+计数为 acceptance.md 的 47 个编号条目，38 项有充分证据、9 项无法确认（checks 中 passed=false）；另有两条 design.md 实现偏差。CI 的 42/42 是执行块汇总，不能替代逐项验收。
+未执行 git 命令，未重跑会写文件的测试、check-fast 或验收脚本；只读取 CI、代码和现有产物，执行只读的哈希/数据/纯函数核对。brief 未指定已有验收报告路径。
+
+以下 findings 均需处理后再评审：
+
+1. **P1 — CI 将未执行成功的验收块标为通过，尚有 9 项缺有效执行证据**
+
+   - .collab/tasks/001/acceptance.md:5 要求同一 pwsh 会话依序执行，:10-11 定义 Run/NewTmp；ci-results.json:34、52、61、88、115、124、295、313、367 显示辅助函数未定义或清单 MODULE_NOT_FOUND。
+   - .collab/tasks/001/ci-results.json:178 把期望文本 clean:/stale:/blocking:/node: 当命令执行；:106、277、322、331、340、349 等输出为空；:196 的 A3-02 实际退出 0，不是规定的 7；:214 清理环境变量报错。顶层 :5-7 却写 passed=42,total=42,ok=true。
+   - 本轮按 acceptance.md 的 47 个独立编号核对；已有完整运行自测能补证的条目已通过，仍无法确认 A1-03、A1-04、A1-07、A1-10、A1-11、A3-04、A4-07、A74-01、A74-07。
+
+   应由编排方在保留辅助函数与变量的同一 PowerShell 7 会话中执行实际命令块，避免执行期望输出块；按每项的预期输出和目标子进程退出码判断，补交上述 9 项有效结果。不能仅根据外层 pwsh 退出 0 标记成功。此问题是 CI 原始证据缺失/自相矛盾，不是评审环境缺 pwsh 或临时文件权限。
+
+2. **P2 — 运行器提前失败时保留上一轮清单和跳过记录**
+
+   - .collab/tasks/001/design.md:103 要求解出 outDir 后先创建目录、删除旧 files-executed.json、截空 skips.jsonl，再做孤儿/过滤检查。
+   - scripts/run-tests.mjs:248-251（过滤无命中）、:254-258（孤儿）、:262-265（零文件）、:268-271（过长参数）均在 :274-282 的清理前返回。
+   - 例如对同一 --out-dir 先完成一次 full 运行，再以 --ac AC-999 或 orphan 夹具运行；代码会返回 1，却保留上次 mode=full 的 files-executed.json 以及旧 skips.jsonl。
+
+   将本轮产物初始化移到防嵌套覆盖检查之后、发现与过滤检查之前；保持 --perf 不写清单，嵌套拒绝不触碰父产物。补充复用输出目录后失败不会留下旧清单的验证。该偏差不能由现有成功路径自测排除。
+
+3. **P2 — reporter 按扩展名丢弃事件路径，未满足设计的全事件收集要求**
+
+   - .collab/tasks/001/design.md:125 要求收集所有 event.data.file 为字符串的事件路径；scripts/reporters/files.mjs:29-35 额外以 endsWith('.test.mjs') 过滤。
+   - .collab/tasks/001/impl.md:9、35 明确说明新增过滤是为隐藏 helper 的事件归属；实现说明不能覆盖 design.md 的明确约束。
+   - 只读内存事件验证：输入 test/unit/a.test.mjs 与 test/helpers/extra.mjs 两个 test:pass 事件，实际输出 manifestFiles=["test/unit/a.test.mjs"]，verifyFullRun 返回 {"ok":true,"errors":[]}。按设计应保留后者并报告 discovery.unexpected。
+
+   按当前设计恢复所有字符串文件事件的收集；同时解决 platformTest 引发的 helper 事件与完整集合比较之间的不一致。若确实需要调整收集口径，须先由设计责任方明确修订规格，不能由实现自行缩窄后仍宣称与设计一致。
+
+以下逐项沿用 `acceptance.md` 编号。“无法确认”表示未获得该项所需的有效运行结果，不等于已经证明代码在该项失败。CI 记录中已成功执行的全量自测可作为同一行为的补充执行证据；各条均注明采信范围。
+
+| 验收项 | 结论 | 证据 |
+|---|---|---|
+| V-01 | 通过 | 只读解压 HEAD commit/tree 并逐文件比较：128 个已跟踪文件，差异仅 ci-results.json、notice.json、run.json、state.json，均在豁免目录；未跟踪文件为 []。未执行 git 命令。 |
+| V-02 | 通过 | package.json:1-32 无四类依赖字段；package-lock.json:6-15 的 packages 仅根包。 |
+| V-03 | 通过 | package.json:11-16 四项脚本及顺序与 acceptance.md:42 一致。 |
+| V-04 | 通过 | 只读检查 package.json、package-lock.json、scripts/、test/、contracts/、.github/ 共 65 个文件，输出 encodingChecked=65、bomCrOrMissingFinalNewline=[]。 |
+| V-05 | 通过 | .collab/tasks/001/ci-results.json:25 输出 False、True，select 六个测试全部通过，fail 0、最后退出码 0；test/unit/select.test.mjs:1-5 为迁入后的导入。 |
+| A1-01 | 通过 | .collab/tasks/001/ci-results.json:34 的 npm test 有效输出 tests 36、pass 36、fail 0、skipped 0、run-tests: full 5 files、0。同条 Run 包装失败不采信；显式 --out-dir 完整运行另由已通过的 runner-selftest.test.mjs:95-109 证明。 |
+| A1-02 | 通过 | .collab/tasks/001/ci-results.json:232 的有效全量运行给出临时清单路径；只读该 files-executed.json 得到 full、空 filter、5 个预期文件、platform=win32、node=v22.23.3，无 fixtures/helpers/perf；同目录 skips.jsonl 存在且长度 0。清单字段与 scripts/reporters/files.mjs:38-44 一致。原专项记录 .collab/tasks/001/ci-results.json:43 读取 /files-executed.json 失败，不采信。 |
+| A1-03 | 无法确认 | .collab/tasks/001/ci-results.json:52 的 Run 未定义，随后 MODULE_NOT_FOUND /files-executed.json；无真实仓库 --ac AC-074 的退出码及清单。scripts/run-tests.mjs:237-247 的静态逻辑不能代替本项运行证据。 |
+| A1-04 | 无法确认 | .collab/tasks/001/ci-results.json:61 两次 Run 都未定义，缺少期望 2、1、True；scripts/run-tests.mjs:147-150、248-251 的分支存在，但有效执行证据缺失。 |
+| A1-05 | 通过 | .collab/tasks/001/ci-results.json:34、232 中完整夹具自测通过；test/unit/runner-selftest.test.mjs:95-109 断言退出 0、full、完整三文件列表和 skips 文件；scripts/check-test-discovery.mjs:88-99 亦核对同一列表。 |
+| A1-06 | 通过 | .collab/tasks/001/ci-results.json:34、232 中过滤夹具自测通过；test/unit/runner-selftest.test.mjs:115-123 真运行 --ac AC-001 并断言退出 0、filtered、AC-001、仅 a.test.mjs。 |
+| A1-07 | 无法确认 | .collab/tasks/001/ci-results.json:88 的 Run 未定义，输出 False、False，无退出 1 / discovery.orphan / loose 路径的实际运行结果。已通过自测仅验证 findOrphans，未调用运行器的孤儿失败分支（scripts/run-tests.mjs:254-258）。 |
+| A1-08 | 通过 | .collab/tasks/001/ci-results.json:232 两次 check-fast 都有 ==> check-test-discovery.mjs、check-test-discovery: ok；runner-selftest.test.mjs:129-132 对该 CLI 退出码与输出的断言也在同份 CI 中通过。 |
+| A1-09 | 通过 | .collab/tasks/001/ci-results.json:232 的发现自测成功；scripts/check-test-discovery.mjs:102-123 实际读取四份 drift 清单并分别验证成功、missing、unexpected、mode_not_full；单点入口 :24-34 使用相同 verifyFullRun。原专项 .collab/tasks/001/ci-results.json:106 为空，不作为证据。 |
+| A1-10 | 无法确认 | .collab/tasks/001/ci-results.json:115 的 Run 未定义，清单 MODULE_NOT_FOUND；CI 中 npm test 跑过 runner-selftest 不等于 --ac AC-001 入口及其 filtered 清单已验证。 |
+| A1-11 | 无法确认 | .collab/tasks/001/ci-results.json:124 的 Run 未定义且删除 CLIWORKER_RESULTS_DIR 失败，没有退出 2；scripts/run-tests.mjs:222-231 有防护分支，但现有自测不执行父子共用 out-dir 的拒绝路径。 |
+| A1-12 | 通过 | .collab/tasks/001/ci-results.json:133 输出 npm run perf、run-tests: no perf tests、0；scripts/run-tests.mjs:206-214 在任何 manifest 创建逻辑之前返回，不写清单。 |
+| A1-13 | 通过 | .collab/tasks/001/ci-results.json:142 有四个要求的名称；.collab/tasks/001/ci-results.json:232 中跳过记录自测通过；test/unit/runner-selftest.test.mjs:135-176 逐字段核对 schema、test、file、ac、requires、platform、node、reason、at 及精确键集合。 |
+| A2-01 | 通过 | .collab/tasks/001/ci-results.json:232 两次 check-ci: ok；只读 renderCi(matrix) 与 workflow 比较输出 workflowExact=true；scripts/check-ci.mjs:52-91 为实际校验。 |
+| A2-02 | 通过 | .collab/tasks/001/ci-results.json:160 输出 ubuntu,windows,macos\|20,22\|npm run check\|files-executed.json,skips.jsonl\|false；scripts/ci-matrix.json:1-37 与设计矩阵一致。 |
+| A2-03 | 通过 | .collab/tasks/001/ci-results.json:169 九项 True，随后 1、0；.github/workflows/ci.yml:12-29 有六格，:38-47 执行 check 并 always 上传，:48-57 为唯一不阻断 perf 作业，无 needs。 |
+| A2-04 | 通过 | .collab/tasks/001/ci-results.json:232 中 CI 篡改自测通过；test/unit/runner-selftest.test.mjs:182-255 真调用 check-ci，检查 clean=0、stale=1、blocking=1、node=1 及错误标识。原专项 .collab/tasks/001/ci-results.json:178 误执行期望文本 clean:/stale:/blocking:/node:，不采信。 |
+| A3-01 | 通过 | .collab/tasks/001/ci-results.json:232 中 first failure 自测通过；test/unit/runner-selftest.test.mjs:258-277 真注入 a/b/c/final 并断言 status=7、check-b.mjs、日志 a\nb。 |
+| A3-02 | 通过 | .collab/tasks/001/ci-results.json:232 中 pwsh wrapper 自测实际通过，skipped 0；test/unit/runner-selftest.test.mjs:310-331 同时传入注入变量并断言 pwsh status=7、check-b.mjs。原专项 .collab/tasks/001/ci-results.json:196 实为正常全量运行退出 0，不采信。 |
+| A3-03 | 通过 | .collab/tasks/001/ci-results.json:232 中 code point order 自测通过；test/unit/runner-selftest.test.mjs:283-304 断言 a,b,c,final、排除自身且最后显示 npm test。 |
+| A3-04 | 无法确认 | .collab/tasks/001/ci-results.json:214 为三个 Env 路径不存在的 Remove-Item 错误，并非验收要求的无输出；先前注入环境未跨执行块保留，同一 pwsh 会话的清理流程无法确认。后续 A3-06 运行成功单独采信。 |
+| A3-05 | 通过 | .collab/tasks/001/ci-results.json:223 输出 True、True、True；scripts/check-fast.ps1:1-2 仅一层 node 调用与 exit $LASTEXITCODE。 |
+| A3-06 | 通过 | .collab/tasks/001/ci-results.json:232 包含 pwsh 和 npm run check 两次完整执行，均退出 0；四个 check 顺序正确、最后 npm test、check-fast: ok，没有执行自身。scripts/check-fast.mjs:51-79 与证据一致。 |
+| A4-01 | 通过 | .collab/tasks/001/ci-results.json:232 两次 check-traceability: ok (covered=5 planned=69)；只读 validateIndex/mergeShards 输出 indexErrors=[]、mergeErrors=[]、covered=5、planned=69。 |
+| A4-02 | 通过 | 只读逐条对照 contracts/spec/ac-index.json 与 .collab/blueprint/cliworker-v2/task-graph.json，检查每个 AC 恰有一属主、owner/milestone/levels 均匹配，输出 graphMismatches=[]；scripts/check-traceability.mjs:291-346 的参数化交叉比较逻辑一致。专项 CI 的 Run 失败未采信，未把 test/unit/traceability.test.mjs:176-204 的合成图冒充蓝图。 |
+| A4-03 | 通过 | .collab/tasks/001/ci-results.json:259 精确输出 74\|AC-001\|AC-074\|darwin,linux,win32\|win32\|linux\|real-smoke\|linux\|T-001\|M2\|M4\|M1\|contract,integration\|smoke；独立 validateIndex 无错误。 |
+| A4-04 | 通过 | .collab/tasks/001/ci-results.json:268 精确输出 cliworker.ac-index/v1\|schema,acs\|ac,owner,milestone,levels,baseline\|74；contracts/spec/ac-index.json:1-17 展示规定结构。 |
+| A4-05 | 通过 | .collab/tasks/001/ci-results.json:232 中 shard fixtures 自测通过；test/unit/traceability.test.mjs:122-142 对全部六个夹具调用 CLI 并断言实际退出码、ok 与错误标识。专项 .collab/tasks/001/ci-results.json:277 为空不采信。 |
+| A4-06 | 通过 | .collab/tasks/001/ci-results.json:232 中同一分片自测通过；test/unit/traceability.test.mjs:30-37 解析 CLI JSON，:144-148 精确断言重复夹具错误集合为 shard.duplicate、shard.not_owner，:134-135 断言退出 1 / ok=false。 |
+| A4-07 | 无法确认 | .collab/tasks/001/ci-results.json:295 的八个字符串检查均 True，且 .collab/tasks/001/ci-results.json:232 中索引变异自测通过；但本项 Run --ac AC-004 未定义，清单 MODULE_NOT_FOUND，无法确认规定的 filtered\|test/unit/traceability.test.mjs 输出。 |
+| A4-08 | 通过 | .collab/tasks/001/ci-results.json:304 输出 0；脚本任务图路径经 scripts/check-traceability.mjs:382-385 参数传入。 |
+| A74-01 | 无法确认 | .collab/tasks/001/ci-results.json:313 的 Run 未定义，无 --ac AC-074 退出码。全量运行中该文件通过已由 .collab/tasks/001/ci-results.json:232 证明，但不代替规定过滤入口（同 A1-03）。 |
+| A74-02 | 通过 | .collab/tasks/001/ci-results.json:232 中 m2-planned 自测通过；test/unit/milestone-gate.test.mjs:29-39 真调用 M1/M2 门并断言 PASS/0、BLOCKED/1、AC-026 与 a5-shell 错误。 |
+| A74-03 | 通过 | .collab/tasks/001/ci-results.json:232 中 m4-nocache 自测通过；test/unit/milestone-gate.test.mjs:42-51 断言 M3 PASS/0、M4 BLOCKED/1、缺 a5-nocache fixed、没有 ac_not_covered。 |
+| A74-04 | 通过 | .collab/tasks/001/ci-results.json:232 中 check-defects default 自测通过；test/unit/milestone-gate.test.mjs:54-61 真调用两个夹具默认模式，断言 0 和 1/missing_fixed。仅确认本项指定夹具。 |
+| A74-05 | 通过 | .collab/tasks/001/ci-results.json:232 中 check-defects --milestone 自测通过；test/unit/milestone-gate.test.mjs:64-80 检查 M1=0、M2=1/missing、M5=1/set_mismatch、M9=2；scripts/check-defects.mjs:96-110 可确认 M5 同时保留缺 fixed 错误。 |
+| A74-06 | 通过 | .collab/tasks/001/ci-results.json:232 中 gate refuses without valid milestone 自测通过；test/unit/milestone-gate.test.mjs:83-90 断言未给 milestone 和 M9 均退出 2。 |
+| A74-07 | 无法确认 | .collab/tasks/001/ci-results.json:367 两次 Run 未定义，输出 default exit=、M1 exit= file=False；账本确实不存在，默认放行由 .collab/tasks/001/ci-results.json:232 证明，但真实仓库 --milestone M1 的退出 1 / file_missing 缺有效执行证据。scripts/check-defects.mjs:43-45、181-196 仅提供静态支持。 |
+| A74-08 | 通过 | .collab/tasks/001/ci-results.json:376 三个 a3-runner 测试通过、fail 0、退出 0，两个标题搜索 True；test/characterization/defects/a3-runner.test.mjs:20-40 含有效 repro/fixed 断言。 |
+| T-01 | 通过 | .collab/tasks/001/ci-results.json:385 的输出与 acceptance.md:492 一致；test/traceability/T-001.json:1-11 仅 task、milestone、entries，五个 covered AC 及文件映射正确，无 baseline。 |
+| T-02 | 通过 | .collab/tasks/001/ci-results.json:34 的 npm test 与 :232 的 npm run check 均有效退出 0，36 tests/pass、fail 0、skipped 0；临时 skips.jsonl 长度 0。依 design.md:108 使用 spec reporter 的 fail 0 汇总，不因 ℹ / # 字面前缀差异判失败。 |
+| T-03 | 通过 | 在 CI 结束后只读核对 HEAD tree、工作树及未跟踪文件，差异仅 .collab/tasks/001/ 下编排产物，未跟踪=[]；未发现仓库 test-results/ 或 files-executed.json。与 V-01 同一只读核验。 |
+
+本轮仅创建 `review-r1.md`、`verdict-r1.json`，未修改规格、实现说明、编排状态、代码或被评审文档。

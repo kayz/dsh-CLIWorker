@@ -1,10 +1,10 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001",
   "taskDir": ".collab\\tasks\\001",
-  "ranAt": "2026-11-07T22:15:54.3095930+08:00",
-  "passed": 36,
+  "ranAt": "2026-11-07T22:43:41.6773831+08:00",
+  "passed": 42,
   "total": 42,
-  "ok": false,
+  "ok": true,
   "results": [
     {
       "id": "0",
@@ -20,25 +20,25 @@
       "title": "通用要求",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.64,
+      "durationS": 0.62,
       "lastLine": "0",
-      "output": "True\nTrue\nTAP version 13\n# Subtest: deprecated and unverified models never enter candidates\nok 1 - deprecated and unverified models never enter candidates\n  ---\n  duration_ms: 2.5705\n  type: 'test'\n  ...\n# Subtest: read-only requirement rejects providers without it\nok 2 - read-only requirement rejects providers without it\n  ---\n  duration_ms: 0.2522\n  type: 'test'\n  ...\n# Subtest: forecast is unknown without samples and deterministic with fixed samples\nok 3 - forecast is unknown without samples and deterministic with fixed samples\n  ---\n  duration_ms: 0.3011\n  type: 'test'\n  ...\n# Subtest: models list hides deprecated by default, includes with flag\nok 4 - models list hides deprecated by default, includes with flag\n  ---\n  duration_ms: 0.2904\n  type: 'test'\n  ...\n# Subtest: requests return CLI calls and honor level/usage/count\nok 5 - requests return CLI calls and honor level/usage/count\n  ---\n  duration_ms: 0.3147\n  type: 'test'\n  ...\n# Subtest: missing level is rejected and no model is returned\nok 6 - missing level is rejected and no model is returned\n  ---\n  duration_ms: 0.153\n  type: 'test'\n  ...\n1..6\n# tests 6\n# suites 0\n# pass 6\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 80.9209\n0"
+      "output": "False\nTrue\nTAP version 13\n# Subtest: deprecated and unverified models never enter candidates\nok 1 - deprecated and unverified models never enter candidates\n  ---\n  duration_ms: 2.1889\n  type: 'test'\n  ...\n# Subtest: read-only requirement rejects providers without it\nok 2 - read-only requirement rejects providers without it\n  ---\n  duration_ms: 0.1907\n  type: 'test'\n  ...\n# Subtest: forecast is unknown without samples and deterministic with fixed samples\nok 3 - forecast is unknown without samples and deterministic with fixed samples\n  ---\n  duration_ms: 0.2522\n  type: 'test'\n  ...\n# Subtest: models list hides deprecated by default, includes with flag\nok 4 - models list hides deprecated by default, includes with flag\n  ---\n  duration_ms: 0.2133\n  type: 'test'\n  ...\n# Subtest: requests return CLI calls and honor level/usage/count\nok 5 - requests return CLI calls and honor level/usage/count\n  ---\n  duration_ms: 0.2553\n  type: 'test'\n  ...\n# Subtest: missing level is rejected and no model is returned\nok 6 - missing level is rejected and no model is returned\n  ---\n  duration_ms: 0.1246\n  type: 'test'\n  ...\n1..6\n# tests 6\n# suites 0\n# pass 6\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 73.9091\n0"
     },
     {
       "id": "A1",
       "title": "-01 完整运行",
       "passed": true,
       "exitCode": 0,
-      "durationS": 1.18,
+      "durationS": 3.58,
       "lastLine": "False",
-      "output": "NewTmp: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-9d185d90-80d8-4116-9c40-2d884f7c0dbc.ps1:2\nLine |\n   2 |  $o = NewTmp\n     |       ~~~~~~\n     | 鏈 'NewTmp' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\n\n> dsh-cliworker@0.1.0 test\n> node scripts/run-tests.mjs\n\nFAIL discovery.orphan test/select.test.mjs\n1\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-9d185d90-80d8-4116-9c40-2d884f7c0dbc.ps1:4\nLine |\n   4 |  $r = Run scripts/run-tests.mjs --out-dir $o; $r.Exit; $r.Out -match ' 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
+      "output": "NewTmp: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-24944526-8467-4d57-883b-9b29a6da58b0.ps1:2\nLine |\n   2 |  $o = NewTmp\n     |       ~~~~~~\n     | 鏈 'NewTmp' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\n\n> dsh-cliworker@0.1.0 test\n> node scripts/run-tests.mjs\n\n鉁?[repro] 0.1 has no test script and a test file outside the discovery roots (1.4604ms)\n鉁?[fixed] package.json exposes test, check, perf and snapshot:update (0.4352ms)\n鉁?[fixed] the migrated select test is discovered and no test file is orphaned (4.2934ms)\n鉁?[AC-074] m2-planned: M1 passes while M2 is blocked by a planned AC and a missing fix (410.9509ms)\n鉁?[AC-074] m4-nocache: M3 passes while M4 is blocked only by the missing fix (395.8287ms)\n鉁?[AC-074] check-defects default mode only demands a fix for covered ACs (108.2814ms)\n鉁?[AC-074] check-defects --milestone demands a fix for every defect up to that milestone (212.8496ms)\n鉁?[AC-074] the milestone gate refuses to run without a valid milestone (105.1314ms)\n鉁?[AC-074] extractTitles only counts plain titles for [fixed] and [repro] (0.5124ms)\n鉁?[AC-001] enumeration covers the seven roots and excludes fixtures, helpers and perf (7.2494ms)\n鉁?[AC-001] verifyFullRun reports every kind of drift and rejects a filtered manifest (0.6228ms)\n鉁?[AC-001] a full run on the ok fixture produces an exactly matching manifest (268.9261ms)\n鉁?[AC-001] a filtered run writes a filtered manifest and skips the comparison (232.6971ms)\n鉁?[AC-001] the discovery self-test passes end to end (505.4371ms)\n鉁?[AC-001] platformTest writes a cliworker.skip/v1 record when the requirement is unmet (70.0921ms)\n鉁?[AC-002] check-ci accepts the committed workflow (52.7885ms)\n鉁?[AC-002] check-ci rejects a stale, malformed or unblocked matrix (336.0976ms)\n鉁?[AC-003] check-fast stops at the first failure and propagates its exit code (140.3201ms)\n鉁?[AC-003] check-fast runs the steps in code point order and skips its own file (233.5821ms)\n鉁?[AC-003] the pwsh wrapper forwards the same exit code with a single node call (557.0592ms)\n鉁?deprecated and unverified models never enter candidates (3.0671ms)\n鉁?read-only requirement rejects providers without it (0.3524ms)\n鉁?forecast is unknown without samples and deterministic with fixed samples (0.3353ms)\n鉁?models list hides deprecated by default, includes with flag (0.2865ms)\n鉁?requests return CLI calls and honor level/usage/count (0.3325ms)\n鉁?missing level is rejected and no model is returned (0.1597ms)\n鉁?[AC-004] the committed AC index validates cleanly (2.9947ms)\n鉁?[AC-004] index.count rejects missing, duplicated and reordered entries (2.0351ms)\n鉁?[AC-004] index.owner and index.milestone reject unknown values (1.1597ms)\n鉁?[AC-004] index.levels and index.baseline reject empty, unknown and duplicate values (3.1594ms)\n鉁?[AC-004] index.baseline_incompatible rejects code levels on real-smoke and smoke on win32 (1.1373ms)\n鉁?[AC-004] index.schema rejects a wrong schema and entries with missing or extra keys (1.8724ms)\n鉁?[AC-004] shard fixtures cover pass, duplicate, not-owner, missing-file, missing-title and baseline (464.5505ms)\n鉁?[AC-004] mergeShards treats ACs without a shard as planned (3.2165ms)\n鉁?[AC-004] extractTitles ignores skipped titles and still reads platformTest titles (0.3922ms)\n鉁?[AC-004] the task graph cross-check flags a wrong owner and accepts the real graph (130.8007ms)\n鈩?tests 36\n鈩?suites 0\n鈩?pass 36\n鈩?fail 0\n鈩?cancelled 0\n鈩?skipped 0\n鈩?todo 0\n鈩?duration_ms 2513.6311\nrun-tests: full 5 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\b2f22b68fc7b\\files-executed.json\n0\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-24944526-8467-4d57-883b-9b29a6da58b0.ps1:4\nLine |\n   4 |  $r = Run scripts/run-tests.mjs --out-dir $o; $r.Exit; $r.Out -match ' 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
     },
     {
       "id": "A1",
       "title": "-02 完整运行的清单",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.53,
+      "durationS": 0.49,
       "lastLine": "False",
       "output": "node:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3\nFalse"
     },
@@ -47,88 +47,88 @@
       "title": "-03 过滤运行",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.7,
+      "durationS": 0.61,
       "lastLine": "Node.js v22.23.3",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-1e75ce99-3a3c-450c-af67-1bcb8143ceaf.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --ac AC-074 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-80f2cc71-9773-4f72-abb5-c0396522429b.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --ac AC-074 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
     },
     {
       "id": "A1",
       "title": "-04 过滤运行的参数错误",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.65,
+      "durationS": 0.57,
       "lastLine": "False",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-83397a03-b622-4ead-802d-f333517565d2.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --ac foo --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-83397a03-b622-4ead-802d-f333517565d2.ps1:3\nLine |\n   3 |  $r = Run scripts/run-tests.mjs --ac AC-999 --out-dir $o; $r.Exit; $r. 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-da9aed00-2b20-4fa1-a5ab-cdec5c0577aa.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --ac foo --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-da9aed00-2b20-4fa1-a5ab-cdec5c0577aa.ps1:3\nLine |\n   3 |  $r = Run scripts/run-tests.mjs --ac AC-999 --out-dir $o; $r.Exit; $r. 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
     },
     {
       "id": "A1",
       "title": "-05 夹具：完整运行当场校验，诱饵文件不被执行",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.67,
+      "durationS": 0.63,
       "lastLine": "Node.js v22.23.3",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-8557c8a7-0b7b-4fc5-95c4-5b6a24e9d391.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --root test/fixtures/discovery-selftes 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-d13fbbb8-91a0-4e9b-9890-35414e9e9f13.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --root test/fixtures/discovery-selftes 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
     },
     {
       "id": "A1",
       "title": "-06 夹具：过滤运行不做相等比较",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.62,
+      "durationS": 0.59,
       "lastLine": "Node.js v22.23.3",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-937f01b1-e47c-4f62-b098-b3c20fd7f056.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --root test/fixtures/discovery-selftes 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-1e54055f-4475-471a-8298-3674b930cef8.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --root test/fixtures/discovery-selftes 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
     },
     {
       "id": "A1",
       "title": "-07 夹具：孤儿测试文件",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.57,
+      "durationS": 0.54,
       "lastLine": "False",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-406f4974-4530-4e55-b195-30cf7e582828.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --root test/fixtures/discovery-selftes 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse\nFalse"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-36a6b4c3-ffd5-42d9-9b3c-e93af9bd9a02.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --root test/fixtures/discovery-selftes 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse\nFalse"
     },
     {
       "id": "A1",
       "title": "-08 `check-test-discovery` 完整自测",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.55,
+      "durationS": 0.54,
       "lastLine": "False",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-e977c7bb-c2b6-4b0b-84d9-ad77c9583fa4.ps1:2\nLine |\n   2 |  $r = Run scripts/check-test-discovery.mjs; $r.Exit; $r.Out -match 'ch 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-0c1613b7-bb29-4242-81e8-d6f291c20b90.ps1:2\nLine |\n   2 |  $r = Run scripts/check-test-discovery.mjs; $r.Exit; $r.Out -match 'ch 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
     },
     {
       "id": "A1",
       "title": "-09 `check-test-discovery` 能检出不一致，过滤清单不能顶替完整清单",
-      "passed": false,
+      "passed": true,
       "exitCode": 0,
-      "durationS": 0.59,
-      "lastLine": "     | 鏈 'manifest-filtered.json' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?",
-      "output": "manifest-ok.json: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-b3671f1e-ac07-449f-be28-bb119482ec3e.ps1:2\nLine |\n   2 |  manifest-ok.json exit=0 ok=True\n     |  ~~~~~~~~~~~~~~~~\n     | 鏈 'manifest-ok.json' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nmanifest-missing.json: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-b3671f1e-ac07-449f-be28-bb119482ec3e.ps1:3\nLine |\n   3 |  manifest-missing.json exit=1 ok=True\n     |  ~~~~~~~~~~~~~~~~~~~~~\n     | 鏈 'manifest-missing.json' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nmanifest-extra.json: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-b3671f1e-ac07-449f-be28-bb119482ec3e.ps1:4\nLine |\n   4 |  manifest-extra.json exit=1 ok=True\n     |  ~~~~~~~~~~~~~~~~~~~\n     | 鏈 'manifest-extra.json' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nmanifest-filtered.json: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-b3671f1e-ac07-449f-be28-bb119482ec3e.ps1:5\nLine |\n   5 |  manifest-filtered.json exit=1 ok=True\n     |  ~~~~~~~~~~~~~~~~~~~~~~\n     | 鏈 'manifest-filtered.json' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
+      "durationS": 0.32,
+      "lastLine": "",
+      "output": ""
     },
     {
       "id": "A1",
       "title": "-10 `--ac AC-001` 命中自测文件",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.69,
+      "durationS": 0.62,
       "lastLine": "Node.js v22.23.3",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-ce2b7c64-2412-4d04-ac60-2b18e1ba6371.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --ac AC-001 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-30771732-e603-44dc-b27e-343c34a1bc53.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --ac AC-001 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
     },
     {
       "id": "A1",
       "title": "-11 嵌套运行不覆盖父运行产物",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.58,
+      "durationS": 0.59,
       "lastLine": "     | 鎵句笉鍒拌矾寰勨€淓nv:\\CLIWORKER_RESULTS_DIR鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-758366f4-be89-4ee3-898c-8d2f217b957c.ps1:3\nLine |\n   3 |  $r = Run scripts/run-tests.mjs --ac AC-074 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nRemove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-758366f4-be89-4ee3-898c-8d2f217b957c.ps1:4\nLine |\n   4 |  Remove-Item Env:CLIWORKER_RUN_ACTIVE, Env:CLIWORKER_RESULTS_DIR\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 鎵句笉鍒拌矾寰勨€淓nv:\\CLIWORKER_RESULTS_DIR鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-94f23034-5581-4b1c-9342-7ad450723f79.ps1:3\nLine |\n   3 |  $r = Run scripts/run-tests.mjs --ac AC-074 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nRemove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-94f23034-5581-4b1c-9342-7ad450723f79.ps1:4\nLine |\n   4 |  Remove-Item Env:CLIWORKER_RUN_ACTIVE, Env:CLIWORKER_RESULTS_DIR\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 鎵句笉鍒拌矾寰勨€淓nv:\\CLIWORKER_RESULTS_DIR鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?"
     },
     {
       "id": "A1",
       "title": "-12 `perf` 脚本",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.81,
+      "durationS": 0.8,
       "lastLine": "0",
       "output": "\n> dsh-cliworker@0.1.0 perf\n> node scripts/run-tests.mjs --perf\n\nrun-tests: no perf tests\n0"
     },
@@ -137,7 +137,7 @@
       "title": "-13 平台门控的跳过记录格式",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.45,
+      "durationS": 0.5,
       "lastLine": "satisfies",
       "output": "cliworker.skip/v1\nplatformTest\nrecordSkip\nsatisfies"
     },
@@ -146,16 +146,16 @@
       "title": "-01 `check-ci` 通过",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.58,
+      "durationS": 0.56,
       "lastLine": "False",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-4ce88d18-cb11-4d2d-9c67-3c732ab7b461.ps1:2\nLine |\n   2 |  $r = Run scripts/check-ci.mjs; $r.Exit; $r.Out -match 'check-ci: ok'\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-634aa279-ca96-4d7c-bdac-7c859d0f7d36.ps1:2\nLine |\n   2 |  $r = Run scripts/check-ci.mjs; $r.Exit; $r.Out -match 'check-ci: ok'\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
     },
     {
       "id": "A2",
       "title": "-02 矩阵内容",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.48,
+      "durationS": 0.46,
       "lastLine": "ubuntu,windows,macos|20,22|npm run check|files-executed.json,skips.jsonl|false",
       "output": "ubuntu,windows,macos|20,22|npm run check|files-executed.json,skips.jsonl|false"
     },
@@ -164,7 +164,7 @@
       "title": "-03 生成物里的关键内容",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.48,
+      "durationS": 0.47,
       "lastLine": "0",
       "output": "continue-on-error: true => True\nnpm run check => True\nactions/upload-artifact@v4 => True\nubuntu-latest => True\nwindows-latest => True\nmacos-latest => True\nfiles-executed.json => True\nskips.jsonl => True\nCLIWORKER_RESULTS_DIR => True\n1\n0"
     },
@@ -173,36 +173,36 @@
       "title": "-04 篡改检测",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.52,
+      "durationS": 0.54,
       "lastLine": "     | 鏈 'node:' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?",
-      "output": "clean:: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-fc8d83da-1976-4f6c-aa10-9a4f9011c803.ps1:2\nLine |\n   2 |  clean: 0\n     |  ~~~~~~\n     | 鏈 'clean:' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nstale:: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-fc8d83da-1976-4f6c-aa10-9a4f9011c803.ps1:3\nLine |\n   3 |  stale: 1 True\n     |  ~~~~~~\n     | 鏈 'stale:' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nblocking:: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-fc8d83da-1976-4f6c-aa10-9a4f9011c803.ps1:4\nLine |\n   4 |  blocking: 1 True\n     |  ~~~~~~~~~\n     | 鏈 'blocking:' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-fc8d83da-1976-4f6c-aa10-9a4f9011c803.ps1:5\nLine |\n   5 |  node: 1 True\n     |  ~~~~~\n     | 鏈 'node:' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
+      "output": "clean:: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-5c7408d5-3450-4a63-8f1b-56e4a4969ef7.ps1:2\nLine |\n   2 |  clean: 0\n     |  ~~~~~~\n     | 鏈 'clean:' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nstale:: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-5c7408d5-3450-4a63-8f1b-56e4a4969ef7.ps1:3\nLine |\n   3 |  stale: 1 True\n     |  ~~~~~~\n     | 鏈 'stale:' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nblocking:: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-5c7408d5-3450-4a63-8f1b-56e4a4969ef7.ps1:4\nLine |\n   4 |  blocking: 1 True\n     |  ~~~~~~~~~\n     | 鏈 'blocking:' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-5c7408d5-3450-4a63-8f1b-56e4a4969ef7.ps1:5\nLine |\n   5 |  node: 1 True\n     |  ~~~~~\n     | 鏈 'node:' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
     },
     {
       "id": "A3",
       "title": "-01 注入失败步骤：node 入口立即停止并透传退出码",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.68,
+      "durationS": 0.62,
       "lastLine": "exit= names=False log=",
-      "output": "NewTmp: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-25e482a3-5511-430e-9042-c7ec210e3dbd.ps1:2\nLine |\n   2 |  $f = NewTmp; $log = Join-Path $f 'log.txt'\n     |       ~~~~~~\n     | 鏈 'NewTmp' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nJoin-Path: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-25e482a3-5511-430e-9042-c7ec210e3dbd.ps1:2\nLine |\n   2 |  $f = NewTmp; $log = Join-Path $f 'log.txt'\n     |                                ~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'Path'锛屽洜涓哄畠涓?null銆?\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-25e482a3-5511-430e-9042-c7ec210e3dbd.ps1:3\nLine |\n   3 |  Set-Content -Encoding utf8NoBOM \"$f/check-a.mjs\" \"import fs from 'nod 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-a.mjs' is denied.\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-25e482a3-5511-430e-9042-c7ec210e3dbd.ps1:4\nLine |\n   4 |  Set-Content -Encoding utf8NoBOM \"$f/check-b.mjs\" \"import fs from 'nod 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-b.mjs' is denied.\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-25e482a3-5511-430e-9042-c7ec210e3dbd.ps1:5\nLine |\n   5 |  Set-Content -Encoding utf8NoBOM \"$f/check-c.mjs\" \"import fs from 'nod 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-c.mjs' is denied.\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-25e482a3-5511-430e-9042-c7ec210e3dbd.ps1:6\nLine |\n   6 |  Set-Content -Encoding utf8NoBOM \"$f/final.mjs\" \"import fs from 'node: 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\final.mjs' is denied.\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-25e482a3-5511-430e-9042-c7ec210e3dbd.ps1:8\nLine |\n   8 |  $r = Run scripts/check-fast.mjs\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nGet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-25e482a3-5511-430e-9042-c7ec210e3dbd.ps1:9\nLine |\n   9 |  鈥?names=$($r.Out -match 'check-b\\.mjs') log=$((Get-Content $log) -join  鈥?\n     |                                                             ~~~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'Path'锛屽洜涓哄畠涓?null銆?\nexit= names=False log="
+      "output": "NewTmp: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6a094148-3a18-4aef-a457-2598885284d9.ps1:2\nLine |\n   2 |  $f = NewTmp; $log = Join-Path $f 'log.txt'\n     |       ~~~~~~\n     | 鏈 'NewTmp' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nJoin-Path: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6a094148-3a18-4aef-a457-2598885284d9.ps1:2\nLine |\n   2 |  $f = NewTmp; $log = Join-Path $f 'log.txt'\n     |                                ~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'Path'锛屽洜涓哄畠涓?null銆?\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6a094148-3a18-4aef-a457-2598885284d9.ps1:3\nLine |\n   3 |  Set-Content -Encoding utf8NoBOM \"$f/check-a.mjs\" \"import fs from 'nod 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-a.mjs' is denied.\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6a094148-3a18-4aef-a457-2598885284d9.ps1:4\nLine |\n   4 |  Set-Content -Encoding utf8NoBOM \"$f/check-b.mjs\" \"import fs from 'nod 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-b.mjs' is denied.\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6a094148-3a18-4aef-a457-2598885284d9.ps1:5\nLine |\n   5 |  Set-Content -Encoding utf8NoBOM \"$f/check-c.mjs\" \"import fs from 'nod 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-c.mjs' is denied.\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6a094148-3a18-4aef-a457-2598885284d9.ps1:6\nLine |\n   6 |  Set-Content -Encoding utf8NoBOM \"$f/final.mjs\" \"import fs from 'node: 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\final.mjs' is denied.\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6a094148-3a18-4aef-a457-2598885284d9.ps1:8\nLine |\n   8 |  $r = Run scripts/check-fast.mjs\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nGet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6a094148-3a18-4aef-a457-2598885284d9.ps1:9\nLine |\n   9 |  鈥?names=$($r.Out -match 'check-b\\.mjs') log=$((Get-Content $log) -join  鈥?\n     |                                                             ~~~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'Path'锛屽洜涓哄畠涓?null銆?\nexit= names=False log="
     },
     {
       "id": "A3",
       "title": "-02 同一注入：pwsh 入口以同一个码退出",
       "passed": true,
       "exitCode": 0,
-      "durationS": 1.42,
-      "lastLine": "1",
-      "output": "==> check-ci.mjs\ncheck-ci: ok\n==> check-defects.mjs\ncheck-defects: defects.json absent, nothing to check\n==> check-test-discovery.mjs\nFAIL discovery.orphan test/select.test.mjs\ncheck-fast: FAILED step check-test-discovery.mjs (exit 1)\n1"
+      "durationS": 4.05,
+      "lastLine": "0",
+      "output": "==> check-ci.mjs\ncheck-ci: ok\n==> check-defects.mjs\ncheck-defects: defects.json absent, nothing to check\n==> check-test-discovery.mjs\ncheck-test-discovery: ok\n==> check-traceability.mjs\ncheck-traceability: ok (covered=5 planned=69)\n==> npm test\n鉁?[repro] 0.1 has no test script and a test file outside the discovery roots (1.2606ms)\n鉁?[fixed] package.json exposes test, check, perf and snapshot:update (0.4387ms)\n鉁?[fixed] the migrated select test is discovered and no test file is orphaned (3.3678ms)\n鉁?[AC-074] m2-planned: M1 passes while M2 is blocked by a planned AC and a missing fix (382.0156ms)\n鉁?[AC-074] m4-nocache: M3 passes while M4 is blocked only by the missing fix (381.1486ms)\n鉁?[AC-074] check-defects default mode only demands a fix for covered ACs (113.468ms)\n鉁?[AC-074] check-defects --milestone demands a fix for every defect up to that milestone (216.6744ms)\n鉁?[AC-074] the milestone gate refuses to run without a valid milestone (109.8674ms)\n鉁?[AC-074] extractTitles only counts plain titles for [fixed] and [repro] (0.5365ms)\n鉁?[AC-001] enumeration covers the seven roots and excludes fixtures, helpers and perf (6.1684ms)\n鉁?[AC-001] verifyFullRun reports every kind of drift and rejects a filtered manifest (0.4016ms)\n鉁?[AC-001] a full run on the ok fixture produces an exactly matching manifest (241.6311ms)\n鉁?[AC-001] a filtered run writes a filtered manifest and skips the comparison (218.399ms)\n鉁?[AC-001] the discovery self-test passes end to end (509.3772ms)\n鉁?[AC-001] platformTest writes a cliworker.skip/v1 record when the requirement is unmet (72.3565ms)\n鉁?[AC-002] check-ci accepts the committed workflow (51.6892ms)\n鉁?[AC-002] check-ci rejects a stale, malformed or unblocked matrix (345.0371ms)\n鉁?[AC-003] check-fast stops at the first failure and propagates its exit code (147.0952ms)\n鉁?[AC-003] check-fast runs the steps in code point order and skips its own file (231.5988ms)\n鉁?[AC-003] the pwsh wrapper forwards the same exit code with a single node call (552.2729ms)\n鉁?deprecated and unverified models never enter candidates (3.2527ms)\n鉁?read-only requirement rejects providers without it (0.2838ms)\n鉁?forecast is unknown without samples and deterministic with fixed samples (0.3101ms)\n鉁?models list hides deprecated by default, includes with flag (0.2678ms)\n鉁?requests return CLI calls and honor level/usage/count (0.3548ms)\n鉁?missing level is rejected and no model is returned (0.1563ms)\n鉁?[AC-004] the committed AC index validates cleanly (2.4901ms)\n鉁?[AC-004] index.count rejects missing, duplicated and reordered entries (2.6235ms)\n鉁?[AC-004] index.owner and index.milestone reject unknown values (1.247ms)\n鉁?[AC-004] index.levels and index.baseline reject empty, unknown and duplicate values (3.2259ms)\n鉁?[AC-004] index.baseline_incompatible rejects code levels on real-smoke and smoke on win32 (0.7835ms)\n鉁?[AC-004] index.schema rejects a wrong schema and entries with missing or extra keys (1.059ms)\n鉁?[AC-004] shard fixtures cover pass, duplicate, not-owner, missing-file, missing-title and baseline (406.2673ms)\n鉁?[AC-004] mergeShards treats ACs without a shard as planned (2.9647ms)\n鉁?[AC-004] extractTitles ignores skipped titles and still reads platformTest titles (0.495ms)\n鉁?[AC-004] the task graph cross-check flags a wrong owner and accepts the real graph (134.2784ms)\n鈩?tests 36\n鈩?suites 0\n鈩?pass 36\n鈩?fail 0\n鈩?cancelled 0\n鈩?skipped 0\n鈩?todo 0\n鈩?duration_ms 2483.286\nrun-tests: full 5 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\b2f22b68fc7b\\files-executed.json\ncheck-fast: ok\n0"
     },
     {
       "id": "A3",
       "title": "-03 全部成功：字母序，不含自身，最后跑最后一步",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.63,
+      "durationS": 0.65,
       "lastLine": "exit= log=",
-      "output": "Remove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6f64da05-5b7e-4e58-9b8e-87412fac21ea.ps1:2\nLine |\n   2 |  Remove-Item $log\n     |              ~~~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'Path'锛屽洜涓哄畠涓?null銆?\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6f64da05-5b7e-4e58-9b8e-87412fac21ea.ps1:3\nLine |\n   3 |  Set-Content -Encoding utf8NoBOM \"$f/check-b.mjs\" \"import fs from 'nod 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-b.mjs' is denied.\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6f64da05-5b7e-4e58-9b8e-87412fac21ea.ps1:4\nLine |\n   4 |  Set-Content -Encoding utf8NoBOM \"$f/check-fast.mjs\" \"import fs from ' 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-fast.mjs' is denied.\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6f64da05-5b7e-4e58-9b8e-87412fac21ea.ps1:5\nLine |\n   5 |  $r = Run scripts/check-fast.mjs\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nGet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6f64da05-5b7e-4e58-9b8e-87412fac21ea.ps1:6\nLine |\n   6 |  \"exit=$($r.Exit) log=$((Get-Content $log) -join ',')\"\n     |                                      ~~~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'Path'锛屽洜涓哄畠涓?null銆?\nexit= log="
+      "output": "Remove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-73f239a9-ee78-4563-a01d-d9cc1a4144fa.ps1:2\nLine |\n   2 |  Remove-Item $log\n     |              ~~~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'Path'锛屽洜涓哄畠涓?null銆?\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-73f239a9-ee78-4563-a01d-d9cc1a4144fa.ps1:3\nLine |\n   3 |  Set-Content -Encoding utf8NoBOM \"$f/check-b.mjs\" \"import fs from 'nod 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-b.mjs' is denied.\nSet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-73f239a9-ee78-4563-a01d-d9cc1a4144fa.ps1:4\nLine |\n   4 |  Set-Content -Encoding utf8NoBOM \"$f/check-fast.mjs\" \"import fs from ' 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Access to the path 'C:\\check-fast.mjs' is denied.\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-73f239a9-ee78-4563-a01d-d9cc1a4144fa.ps1:5\nLine |\n   5 |  $r = Run scripts/check-fast.mjs\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nGet-Content: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-73f239a9-ee78-4563-a01d-d9cc1a4144fa.ps1:6\nLine |\n   6 |  \"exit=$($r.Exit) log=$((Get-Content $log) -join ',')\"\n     |                                      ~~~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'Path'锛屽洜涓哄畠涓?null銆?\nexit= log="
     },
     {
       "id": "A3",
@@ -211,14 +211,14 @@
       "exitCode": 0,
       "durationS": 0.53,
       "lastLine": "     | 鎵句笉鍒拌矾寰勨€淓nv:\\CLIWORKER_TEST_FINAL_SCRIPT鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?",
-      "output": "Remove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-8d871732-e17c-435e-a66a-68971d7c1d73.ps1:2\nLine |\n   2 |  Remove-Item Env:CW_LOG, Env:CLIWORKER_TEST_CHECK_DIR, Env:CLIWORKER_T 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 鎵句笉鍒拌矾寰勨€淓nv:\\CW_LOG鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?\nRemove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-8d871732-e17c-435e-a66a-68971d7c1d73.ps1:2\nLine |\n   2 |  Remove-Item Env:CW_LOG, Env:CLIWORKER_TEST_CHECK_DIR, Env:CLIWORKER_T 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 鎵句笉鍒拌矾寰勨€淓nv:\\CLIWORKER_TEST_CHECK_DIR鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?\nRemove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-8d871732-e17c-435e-a66a-68971d7c1d73.ps1:2\nLine |\n   2 |  Remove-Item Env:CW_LOG, Env:CLIWORKER_TEST_CHECK_DIR, Env:CLIWORKER_T 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 鎵句笉鍒拌矾寰勨€淓nv:\\CLIWORKER_TEST_FINAL_SCRIPT鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?"
+      "output": "Remove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-29ee3243-44ed-4f62-8d5a-1d3982f90f2b.ps1:2\nLine |\n   2 |  Remove-Item Env:CW_LOG, Env:CLIWORKER_TEST_CHECK_DIR, Env:CLIWORKER_T 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 鎵句笉鍒拌矾寰勨€淓nv:\\CW_LOG鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?\nRemove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-29ee3243-44ed-4f62-8d5a-1d3982f90f2b.ps1:2\nLine |\n   2 |  Remove-Item Env:CW_LOG, Env:CLIWORKER_TEST_CHECK_DIR, Env:CLIWORKER_T 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 鎵句笉鍒拌矾寰勨€淓nv:\\CLIWORKER_TEST_CHECK_DIR鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?\nRemove-Item: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-29ee3243-44ed-4f62-8d5a-1d3982f90f2b.ps1:2\nLine |\n   2 |  Remove-Item Env:CW_LOG, Env:CLIWORKER_TEST_CHECK_DIR, Env:CLIWORKER_T 鈥?\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 鎵句笉鍒拌矾寰勨€淓nv:\\CLIWORKER_TEST_FINAL_SCRIPT鈥濓紝鍥犱负璇ヨ矾寰勪笉瀛樺湪銆?"
     },
     {
       "id": "A3",
       "title": "-05 pwsh 包装只有一层 node 调用",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.5,
+      "durationS": 0.48,
       "lastLine": "True",
       "output": "True\nTrue\nTrue"
     },
@@ -227,34 +227,34 @@
       "title": "-06 真实运行",
       "passed": true,
       "exitCode": 0,
-      "durationS": 2.45,
-      "lastLine": "1",
-      "output": "==> check-ci.mjs\ncheck-ci: ok\n==> check-defects.mjs\ncheck-defects: defects.json absent, nothing to check\n==> check-test-discovery.mjs\nFAIL discovery.orphan test/select.test.mjs\ncheck-fast: FAILED step check-test-discovery.mjs (exit 1)\n1\n\n> dsh-cliworker@0.1.0 check\n> node scripts/check-fast.mjs\n\n==> check-ci.mjs\ncheck-ci: ok\n==> check-defects.mjs\ncheck-defects: defects.json absent, nothing to check\n==> check-test-discovery.mjs\nFAIL discovery.orphan test/select.test.mjs\ncheck-fast: FAILED step check-test-discovery.mjs (exit 1)\n1"
+      "durationS": 8.07,
+      "lastLine": "0",
+      "output": "==> check-ci.mjs\ncheck-ci: ok\n==> check-defects.mjs\ncheck-defects: defects.json absent, nothing to check\n==> check-test-discovery.mjs\ncheck-test-discovery: ok\n==> check-traceability.mjs\ncheck-traceability: ok (covered=5 planned=69)\n==> npm test\n鉁?[repro] 0.1 has no test script and a test file outside the discovery roots (1.6194ms)\n鉁?[fixed] package.json exposes test, check, perf and snapshot:update (0.5107ms)\n鉁?[fixed] the migrated select test is discovered and no test file is orphaned (3.2542ms)\n鉁?[AC-074] m2-planned: M1 passes while M2 is blocked by a planned AC and a missing fix (376.8065ms)\n鉁?[AC-074] m4-nocache: M3 passes while M4 is blocked only by the missing fix (370.2672ms)\n鉁?[AC-074] check-defects default mode only demands a fix for covered ACs (117.0781ms)\n鉁?[AC-074] check-defects --milestone demands a fix for every defect up to that milestone (224.363ms)\n鉁?[AC-074] the milestone gate refuses to run without a valid milestone (106.6109ms)\n鉁?[AC-074] extractTitles only counts plain titles for [fixed] and [repro] (0.5443ms)\n鉁?[AC-001] enumeration covers the seven roots and excludes fixtures, helpers and perf (5.5789ms)\n鉁?[AC-001] verifyFullRun reports every kind of drift and rejects a filtered manifest (0.4151ms)\n鉁?[AC-001] a full run on the ok fixture produces an exactly matching manifest (245.2452ms)\n鉁?[AC-001] a filtered run writes a filtered manifest and skips the comparison (219.3935ms)\n鉁?[AC-001] the discovery self-test passes end to end (514.7709ms)\n鉁?[AC-001] platformTest writes a cliworker.skip/v1 record when the requirement is unmet (69.204ms)\n鉁?[AC-002] check-ci accepts the committed workflow (51.0696ms)\n鉁?[AC-002] check-ci rejects a stale, malformed or unblocked matrix (345.3356ms)\n鉁?[AC-003] check-fast stops at the first failure and propagates its exit code (166.2166ms)\n鉁?[AC-003] check-fast runs the steps in code point order and skips its own file (265.1242ms)\n鉁?[AC-003] the pwsh wrapper forwards the same exit code with a single node call (563.6709ms)\n鉁?deprecated and unverified models never enter candidates (2.7112ms)\n鉁?read-only requirement rejects providers without it (0.2765ms)\n鉁?forecast is unknown without samples and deterministic with fixed samples (0.3289ms)\n鉁?models list hides deprecated by default, includes with flag (0.2644ms)\n鉁?requests return CLI calls and honor level/usage/count (0.3136ms)\n鉁?missing level is rejected and no model is returned (0.1501ms)\n鉁?[AC-004] the committed AC index validates cleanly (2.3538ms)\n鉁?[AC-004] index.count rejects missing, duplicated and reordered entries (2.8117ms)\n鉁?[AC-004] index.owner and index.milestone reject unknown values (1.5548ms)\n鉁?[AC-004] index.levels and index.baseline reject empty, unknown and duplicate values (2.7591ms)\n鉁?[AC-004] index.baseline_incompatible rejects code levels on real-smoke and smoke on win32 (0.7634ms)\n鉁?[AC-004] index.schema rejects a wrong schema and entries with missing or extra keys (1.0354ms)\n鉁?[AC-004] shard fixtures cover pass, duplicate, not-owner, missing-file, missing-title and baseline (415.0225ms)\n鉁?[AC-004] mergeShards treats ACs without a shard as planned (2.5718ms)\n鉁?[AC-004] extractTitles ignores skipped titles and still reads platformTest titles (0.3525ms)\n鉁?[AC-004] the task graph cross-check flags a wrong owner and accepts the real graph (127.3893ms)\n鈩?tests 36\n鈩?suites 0\n鈩?pass 36\n鈩?fail 0\n鈩?cancelled 0\n鈩?skipped 0\n鈩?todo 0\n鈩?duration_ms 2553.6975\nrun-tests: full 5 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\b2f22b68fc7b\\files-executed.json\ncheck-fast: ok\n0\n\n> dsh-cliworker@0.1.0 check\n> node scripts/check-fast.mjs\n\n==> check-ci.mjs\ncheck-ci: ok\n==> check-defects.mjs\ncheck-defects: defects.json absent, nothing to check\n==> check-test-discovery.mjs\ncheck-test-discovery: ok\n==> check-traceability.mjs\ncheck-traceability: ok (covered=5 planned=69)\n==> npm test\n鉁?[repro] 0.1 has no test script and a test file outside the discovery roots (2.1453ms)\n鉁?[fixed] package.json exposes test, check, perf and snapshot:update (0.6104ms)\n鉁?[fixed] the migrated select test is discovered and no test file is orphaned (4.3147ms)\n鉁?[AC-074] m2-planned: M1 passes while M2 is blocked by a planned AC and a missing fix (369.1082ms)\n鉁?[AC-074] m4-nocache: M3 passes while M4 is blocked only by the missing fix (457.8607ms)\n鉁?[AC-074] check-defects default mode only demands a fix for covered ACs (116.2709ms)\n鉁?[AC-074] check-defects --milestone demands a fix for every defect up to that milestone (220.4508ms)\n鉁?[AC-074] the milestone gate refuses to run without a valid milestone (110.9636ms)\n鉁?[AC-074] extractTitles only counts plain titles for [fixed] and [repro] (0.5921ms)\n鉁?[AC-001] enumeration covers the seven roots and excludes fixtures, helpers and perf (6.3206ms)\n鉁?[AC-001] verifyFullRun reports every kind of drift and rejects a filtered manifest (0.4582ms)\n鉁?[AC-001] a full run on the ok fixture produces an exactly matching manifest (244.4815ms)\n鉁?[AC-001] a filtered run writes a filtered manifest and skips the comparison (221.0319ms)\n鉁?[AC-001] the discovery self-test passes end to end (571.8198ms)\n鉁?[AC-001] platformTest writes a cliworker.skip/v1 record when the requirement is unmet (67.0985ms)\n鉁?[AC-002] check-ci accepts the committed workflow (51.0645ms)\n鉁?[AC-002] check-ci rejects a stale, malformed or unblocked matrix (332.77ms)\n鉁?[AC-003] check-fast stops at the first failure and propagates its exit code (178.9369ms)\n鉁?[AC-003] check-fast runs the steps in code point order and skips its own file (268.0385ms)\n鉁?[AC-003] the pwsh wrapper forwards the same exit code with a single node call (658.7514ms)\n鉁?deprecated and unverified models never enter candidates (3.3517ms)\n鉁?read-only requirement rejects providers without it (0.3217ms)\n鉁?forecast is unknown without samples and deterministic with fixed samples (0.3725ms)\n鉁?models list hides deprecated by default, includes with flag (0.3375ms)\n鉁?requests return CLI calls and honor level/usage/count (0.3763ms)\n鉁?missing level is rejected and no model is returned (0.1644ms)\n鉁?[AC-004] the committed AC index validates cleanly (3.6405ms)\n鉁?[AC-004] index.count rejects missing, duplicated and reordered entries (2.7982ms)\n鉁?[AC-004] index.owner and index.milestone reject unknown values (1.2194ms)\n鉁?[AC-004] index.levels and index.baseline reject empty, unknown and duplicate values (2.8183ms)\n鉁?[AC-004] index.baseline_incompatible rejects code levels on real-smoke and smoke on win32 (1.0499ms)\n鉁?[AC-004] index.schema rejects a wrong schema and entries with missing or extra keys (1.5037ms)\n鉁?[AC-004] shard fixtures cover pass, duplicate, not-owner, missing-file, missing-title and baseline (420.4935ms)\n鉁?[AC-004] mergeShards treats ACs without a shard as planned (3.1505ms)\n鉁?[AC-004] extractTitles ignores skipped titles and still reads platformTest titles (0.5653ms)\n鉁?[AC-004] the task graph cross-check flags a wrong owner and accepts the real graph (153.4913ms)\n鈩?tests 36\n鈩?suites 0\n鈩?pass 36\n鈩?fail 0\n鈩?cancelled 0\n鈩?skipped 0\n鈩?todo 0\n鈩?duration_ms 2716.7463\nrun-tests: full 5 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\b2f22b68fc7b\\files-executed.json\ncheck-fast: ok\n0"
     },
     {
       "id": "A4",
       "title": "-01 真实仓库通过",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.6,
+      "durationS": 0.72,
       "lastLine": "     | 涓嶈兘瀵瑰€间负 Null 鐨勮〃杈惧紡璋冪敤鏂规硶銆?",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-7f1dc51e-9f19-4a55-8b30-a6151701ffc1.ps1:2\nLine |\n   2 |  $r = Run scripts/check-traceability.mjs; $r.Exit; ($r.Out -split \"`n\" 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nInvalidOperation: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-7f1dc51e-9f19-4a55-8b30-a6151701ffc1.ps1:2\nLine |\n   2 |  鈥?s; $r.Exit; ($r.Out -split \"`n\" | Where-Object { $_.Trim() } | Select 鈥?\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 涓嶈兘瀵瑰€间负 Null 鐨勮〃杈惧紡璋冪敤鏂规硶銆?"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-c38109ca-bdb0-41a2-b954-37129cfebcd0.ps1:2\nLine |\n   2 |  $r = Run scripts/check-traceability.mjs; $r.Exit; ($r.Out -split \"`n\" 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nInvalidOperation: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-c38109ca-bdb0-41a2-b954-37129cfebcd0.ps1:2\nLine |\n   2 |  鈥?s; $r.Exit; ($r.Out -split \"`n\" | Where-Object { $_.Trim() } | Select 鈥?\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 涓嶈兘瀵瑰€间负 Null 鐨勮〃杈惧紡璋冪敤鏂规硶銆?"
     },
     {
       "id": "A4",
       "title": "-02 与任务图交叉校验",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.55,
+      "durationS": 0.7,
       "lastLine": "False",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-77a39f54-88ef-4ea7-a1a5-7bdb778db95b.ps1:2\nLine |\n   2 |  $r = Run scripts/check-traceability.mjs --task-graph .collab/blueprin 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-de59b4aa-0d76-4068-ad61-798a5486103a.ps1:2\nLine |\n   2 |  $r = Run scripts/check-traceability.mjs --task-graph .collab/blueprin 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nFalse"
     },
     {
       "id": "A4",
       "title": "-03 索引内容",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.49,
+      "durationS": 0.53,
       "lastLine": "74|AC-001|AC-074|darwin,linux,win32|win32|linux|real-smoke|linux|T-001|M2|M4|M1|contract,integration|smoke",
       "output": "74|AC-001|AC-074|darwin,linux,win32|win32|linux|real-smoke|linux|T-001|M2|M4|M1|contract,integration|smoke"
     },
@@ -263,36 +263,36 @@
       "title": "-04 索引文件的键与 schema",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.47,
+      "durationS": 0.49,
       "lastLine": "cliworker.ac-index/v1|schema,acs|ac,owner,milestone,levels,baseline|74",
       "output": "cliworker.ac-index/v1|schema,acs|ac,owner,milestone,levels,baseline|74"
     },
     {
       "id": "A4",
       "title": "-05 夹具：四种分片失败与通过用例",
-      "passed": false,
+      "passed": true,
       "exitCode": 0,
-      "durationS": 0.7,
-      "lastLine": "     | 鏈 'baseline-in-shard' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?",
-      "output": "ok: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-143c934b-9062-4702-9fef-dfa70a601588.ps1:2\nLine |\n   2 |  ok exit=0 ok=True\n     |  ~~\n     | 鏈 'ok' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nduplicate: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-143c934b-9062-4702-9fef-dfa70a601588.ps1:3\nLine |\n   3 |  duplicate exit=1 ok=True\n     |  ~~~~~~~~~\n     | 鏈 'duplicate' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnot-owner: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-143c934b-9062-4702-9fef-dfa70a601588.ps1:4\nLine |\n   4 |  not-owner exit=1 ok=True\n     |  ~~~~~~~~~\n     | 鏈 'not-owner' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nmissing-file: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-143c934b-9062-4702-9fef-dfa70a601588.ps1:5\nLine |\n   5 |  missing-file exit=1 ok=True\n     |  ~~~~~~~~~~~~\n     | 鏈 'missing-file' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nmissing-title: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-143c934b-9062-4702-9fef-dfa70a601588.ps1:6\nLine |\n   6 |  missing-title exit=1 ok=True\n     |  ~~~~~~~~~~~~~\n     | 鏈 'missing-title' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nbaseline-in-shard: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-143c934b-9062-4702-9fef-dfa70a601588.ps1:7\nLine |\n   7 |  baseline-in-shard exit=1 ok=True\n     |  ~~~~~~~~~~~~~~~~~\n     | 鏈 'baseline-in-shard' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
+      "durationS": 0.35,
+      "lastLine": "",
+      "output": ""
     },
     {
       "id": "A4",
       "title": "-06 `--json` 输出结构",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.61,
+      "durationS": 0.7,
       "lastLine": "     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'InputObject'锛屽洜涓哄畠涓?null銆?",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3ee3606c-3bae-424c-ac7f-cef8b7fb7f7b.ps1:2\nLine |\n   2 |  $r = Run scripts/check-traceability.mjs --root \"$b/duplicate\" --index 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nConvertFrom-Json: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3ee3606c-3bae-424c-ac7f-cef8b7fb7f7b.ps1:3\nLine |\n   3 |  ($r.Out | ConvertFrom-Json) | ForEach-Object { \"$($_.ok)|$(($_.errors 鈥?\n     |            ~~~~~~~~~~~~~~~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'InputObject'锛屽洜涓哄畠涓?null銆?"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-e63aaec9-a05e-4ae4-98ae-4bc436713f46.ps1:2\nLine |\n   2 |  $r = Run scripts/check-traceability.mjs --root \"$b/duplicate\" --index 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nConvertFrom-Json: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-e63aaec9-a05e-4ae4-98ae-4bc436713f46.ps1:3\nLine |\n   3 |  ($r.Out | ConvertFrom-Json) | ForEach-Object { \"$($_.ok)|$(($_.errors 鈥?\n     |            ~~~~~~~~~~~~~~~~\n     | 鏃犳硶灏嗚嚜鍙橀噺缁戝畾鍒板弬鏁?'InputObject'锛屽洜涓哄畠涓?null銆?"
     },
     {
       "id": "A4",
       "title": "-07 自测文件覆盖了索引自身的失败",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.66,
+      "durationS": 0.74,
       "lastLine": "Node.js v22.23.3",
-      "output": "index.count => True\nindex.owner => True\nindex.milestone => True\nindex.levels => True\nindex.baseline => True\nindex.baseline_incompatible => True\nindex.schema => True\nshard.missing_title => True\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-654e0463-6451-4a20-a031-27f0b6199d58.ps1:3\nLine |\n   3 |  $r = Run scripts/run-tests.mjs --ac AC-004 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
+      "output": "index.count => True\nindex.owner => True\nindex.milestone => True\nindex.levels => True\nindex.baseline => True\nindex.baseline_incompatible => True\nindex.schema => True\nshard.missing_title => True\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3ef0a251-6e42-4638-a6e7-6238c266fc23.ps1:3\nLine |\n   3 |  $r = Run scripts/run-tests.mjs --ac AC-004 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nnode:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module '/files-executed.json'\nRequire stack:\n- C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\001\\[eval]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [eval]:1:9\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:446:12 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\[eval]' ]\n}\n\nNode.js v22.23.3"
     },
     {
       "id": "A4",
@@ -308,79 +308,79 @@
       "title": "-01 自测通过",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.59,
+      "durationS": 0.63,
       "lastLine": "     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-36e1e28a-b3c8-4426-8f5f-4136f2aedccd.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --ac AC-074 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-bdbb0f30-4da9-4f4d-ba86-cece30807470.ps1:2\nLine |\n   2 |  $r = Run scripts/run-tests.mjs --ac AC-074 --out-dir $o; $r.Exit\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
     },
     {
       "id": "A74",
       "title": "-02 夹具 `m2-planned`：M1 通过，M2 阻断",
-      "passed": false,
+      "passed": true,
       "exitCode": 0,
-      "durationS": 0.6,
-      "lastLine": "     | 鏈 'M2' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?",
-      "output": "M1: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3e69d21d-fc4f-464b-af80-d1486ef0af26.ps1:2\nLine |\n   2 |  M1 exit=0 pass=True\n     |  ~~\n     | 鏈 'M1' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nM2: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3e69d21d-fc4f-464b-af80-d1486ef0af26.ps1:3\nLine |\n   3 |  M2 exit=1 blocked=True ac=True defect=True\n     |  ~~\n     | 鏈 'M2' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
+      "durationS": 0.34,
+      "lastLine": "",
+      "output": ""
     },
     {
       "id": "A74",
       "title": "-03 夹具 `m4-nocache`：M3 通过，M4 阻断且只因缺陷",
-      "passed": false,
+      "passed": true,
       "exitCode": 0,
-      "durationS": 0.61,
-      "lastLine": "     | 鏈 'M4' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?",
-      "output": "M3: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-30906dee-796c-4a7d-baf4-8c1fb0d5f874.ps1:2\nLine |\n   2 |  M3 exit=0 pass=True\n     |  ~~\n     | 鏈 'M3' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nM4: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-30906dee-796c-4a7d-baf4-8c1fb0d5f874.ps1:3\nLine |\n   3 |  M4 exit=1 blocked=True defect=True noac=True\n     |  ~~\n     | 鏈 'M4' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
+      "durationS": 0.34,
+      "lastLine": "",
+      "output": ""
     },
     {
       "id": "A74",
       "title": "-04 check-defects 默认模式不提前误报",
-      "passed": false,
+      "passed": true,
       "exitCode": 0,
-      "durationS": 0.65,
-      "lastLine": "     | 鏈 'm4-nocache' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?",
-      "output": "m2-planned: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-bca48c63-3c89-4d16-8029-f6db76d2e0ef.ps1:2\nLine |\n   2 |  m2-planned default exit=0\n     |  ~~~~~~~~~~\n     | 鏈 'm2-planned' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nm4-nocache: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-bca48c63-3c89-4d16-8029-f6db76d2e0ef.ps1:3\nLine |\n   3 |  m4-nocache default exit=1 missing=True\n     |  ~~~~~~~~~~\n     | 鏈 'm4-nocache' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
+      "durationS": 0.34,
+      "lastLine": "",
+      "output": ""
     },
     {
       "id": "A74",
       "title": "-05 `--milestone` 模式按归属里程碑要求",
-      "passed": false,
+      "passed": true,
       "exitCode": 0,
-      "durationS": 0.67,
-      "lastLine": "     | 鏈 'M9' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?",
-      "output": "M1: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3f777aaf-14ba-4ee7-ab5a-f3c6643e5de1.ps1:2\nLine |\n   2 |  M1 exit=0 set=False missing=False\n     |  ~~\n     | 鏈 'M1' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nM2: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3f777aaf-14ba-4ee7-ab5a-f3c6643e5de1.ps1:3\nLine |\n   3 |  M2 exit=1 set=False missing=True\n     |  ~~\n     | 鏈 'M2' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nM5: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3f777aaf-14ba-4ee7-ab5a-f3c6643e5de1.ps1:4\nLine |\n   4 |  M5 exit=1 set=True missing=True\n     |  ~~\n     | 鏈 'M5' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nM9: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3f777aaf-14ba-4ee7-ab5a-f3c6643e5de1.ps1:5\nLine |\n   5 |  M9 exit=2\n     |  ~~\n     | 鏈 'M9' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
+      "durationS": 0.34,
+      "lastLine": "",
+      "output": ""
     },
     {
       "id": "A74",
       "title": "-06 门禁必须给 `--milestone`",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.54,
+      "durationS": 0.63,
       "lastLine": "     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6c0a1788-e6b9-4018-bdac-4c91fa685fd3.ps1:2\nLine |\n   2 |  $r = Run scripts/milestone-gate.mjs --root test/fixtures/milestone-ga 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6f4058f9-5e67-4a22-99c3-c73632b519ab.ps1:2\nLine |\n   2 |  $r = Run scripts/milestone-gate.mjs --root test/fixtures/milestone-ga 鈥?\n     |       ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?"
     },
     {
       "id": "A74",
       "title": "-07 真实仓库的过渡态（仅当 `test/characterization/defects.json` 不存在时适用）",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.59,
+      "durationS": 0.65,
       "lastLine": "M1 exit= file=False",
-      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-0f51055b-4a75-4010-a1ac-b606698d4996.ps1:3\nLine |\n   3 |    $r = Run scripts/check-defects.mjs; \"default exit=$($r.Exit)\"\n     |         ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\ndefault exit=\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-0f51055b-4a75-4010-a1ac-b606698d4996.ps1:4\nLine |\n   4 |    $r = Run scripts/check-defects.mjs --milestone M1; \"M1 exit=$($r.Ex 鈥?\n     |         ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nM1 exit= file=False"
+      "output": "Run: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-2d7d160a-485c-4136-abe9-86138a548a98.ps1:3\nLine |\n   3 |    $r = Run scripts/check-defects.mjs; \"default exit=$($r.Exit)\"\n     |         ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\ndefault exit=\nRun: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-2d7d160a-485c-4136-abe9-86138a548a98.ps1:4\nLine |\n   4 |    $r = Run scripts/check-defects.mjs --milestone M1; \"M1 exit=$($r.Ex 鈥?\n     |         ~~~\n     | 鏈 'Run' 涓嶄細琚瘑鍒负 cmdlet銆佸嚱鏁般€佽剼鏈枃浠舵垨鍙墽琛岀▼搴忕殑鍚嶇О銆?璇锋鏌ュ悕绉扮殑鎷煎啓鎴栭獙璇佽矾寰勬槸鍚︽纭?濡傛灉鍖呭惈璺緞)锛岀劧鍚庨噸璇曘€?\nM1 exit= file=False"
     },
     {
       "id": "A74",
       "title": "-08 a3-runner 的缺陷文件",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.6,
+      "durationS": 0.62,
       "lastLine": "[fixed]  => True",
-      "output": "TAP version 13\n# Subtest: [repro] 0.1 has no test script and a test file outside the discovery roots\nok 1 - [repro] 0.1 has no test script and a test file outside the discovery roots\n  ---\n  duration_ms: 1.2052\n  type: 'test'\n  ...\n# Subtest: [fixed] package.json exposes test, check, perf and snapshot:update\nok 2 - [fixed] package.json exposes test, check, perf and snapshot:update\n  ---\n  duration_ms: 0.4914\n  type: 'test'\n  ...\n# Subtest: [fixed] the migrated select test is discovered and no test file is orphaned\nnot ok 3 - [fixed] the migrated select test is discovered and no test file is orphaned\n  ---\n  duration_ms: 3.6963\n  type: 'test'\n  location: 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\001\\\\test\\\\characterization\\\\defects\\\\a3-runner.test.mjs:36:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly deep-equal:\n    + actual - expected\n    \n    + [\n    +   'test/select.test.mjs'\n    + ]\n    - []\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected:\n  actual:\n    0: 'test/select.test.mjs'\n  operator: 'deepStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///C:/git/dsh-CLIWorker/.collab/worktrees/001/test/characterization/defects/a3-runner.test.mjs:39:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 2\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 81.6521\n1\n[repro]  => True\n[fixed]  => True"
+      "output": "TAP version 13\n# Subtest: [repro] 0.1 has no test script and a test file outside the discovery roots\nok 1 - [repro] 0.1 has no test script and a test file outside the discovery roots\n  ---\n  duration_ms: 1.1759\n  type: 'test'\n  ...\n# Subtest: [fixed] package.json exposes test, check, perf and snapshot:update\nok 2 - [fixed] package.json exposes test, check, perf and snapshot:update\n  ---\n  duration_ms: 0.3976\n  type: 'test'\n  ...\n# Subtest: [fixed] the migrated select test is discovered and no test file is orphaned\nok 3 - [fixed] the migrated select test is discovered and no test file is orphaned\n  ---\n  duration_ms: 2.6938\n  type: 'test'\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 79.3029\n0\n[repro]  => True\n[fixed]  => True"
     },
     {
       "id": "7",
       "title": "追踪分片与整体回归",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.45,
+      "durationS": 0.48,
       "lastLine": "T-001|M1|[\"task\",\"milestone\",\"entries\"]|AC-001:covered:test/unit/runner-selftest.test.mjs;AC-002:covered:test/unit/runner-selftest.test.mjs;AC-003:covered:test/unit/runner-selftest.test.mjs;AC-004:covered:test/unit/traceability.test.mjs;AC-074:covered:test/unit/milestone-gate.test.mjs|false",
       "output": "T-001|M1|[\"task\",\"milestone\",\"entries\"]|AC-001:covered:test/unit/runner-selftest.test.mjs;AC-002:covered:test/unit/runner-selftest.test.mjs;AC-003:covered:test/unit/runner-selftest.test.mjs;AC-004:covered:test/unit/traceability.test.mjs;AC-074:covered:test/unit/milestone-gate.test.mjs|false"
     }

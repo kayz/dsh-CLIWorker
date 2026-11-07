@@ -41,16 +41,59 @@
       "from": "implemented",
       "to": "implemented",
       "by": "dev:cursor-wsl-grok-4.7 (inherited c1)"
+    },
+    {
+      "at": "2026-11-07T14:33:29.891Z",
+      "from": "implemented",
+      "to": "blocked",
+      "by": "flow"
+    },
+    {
+      "at": "2026-11-07T14:33:48.867Z",
+      "from": "blocked",
+      "to": "implemented",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-07T14:34:25.590Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-07T14:41:36.384Z",
+      "from": "reviewable",
+      "to": "blocked",
+      "by": "review",
+      "reason": "stall"
+    },
+    {
+      "at": "2026-11-07T14:43:04.137Z",
+      "from": "blocked",
+      "to": "reviewable",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-07T14:43:41.796Z",
+      "from": "reviewable",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-07T14:50:30.481Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:gpt-6-astra"
     }
   ],
-  "status": "implemented",
-  "updated_at": "2026-11-07T14:32:49.368Z",
-  "role": "dev",
-  "model": "grok-4.7",
-  "model_resolved": "Grok 4.7  High Fast​​",
-  "effort": null,
-  "attempt": 4,
-  "switches": 2,
+  "status": "reviewed",
+  "updated_at": "2026-11-07T14:50:30.481Z",
+  "role": "review",
+  "model": "gpt-6-astra",
+  "model_resolved": "gpt-6-astra",
+  "effort": "high",
+  "attempt": 5,
+  "switches": 3,
   "blocked_reason": null,
   "handoff": null,
   "interrupted": null

@@ -299,5 +299,154 @@
       "model": "deepseek-v4.1-flash",
       "file": "handoff/dev-r1-c1-to-c2.md"
     }
+  },
+  {
+    "task": "001",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-07T14:33:29.889Z",
+    "ended_at": "2026-11-07T14:33:29.889Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 1
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 36,
+      "total": 42,
+      "ok": false,
+      "ran_at": "2026-11-07T14:33:29.889Z",
+      "report_ref": ".collab/tasks/001/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/001/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "001",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-07T14:34:25.589Z",
+    "ended_at": "2026-11-07T14:34:25.589Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 42,
+      "total": 42,
+      "ok": true,
+      "ran_at": "2026-11-07T14:34:25.589Z",
+      "report_ref": ".collab/tasks/001/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/001/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "001",
+    "role": "review",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6-astra",
+    "model_resolved": "gpt-6-astra",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-07T14:34:25.600Z",
+    "ended_at": "2026-11-07T14:41:36.382Z",
+    "duration_ms": 430782,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": null,
+    "usage_source": "unavailable",
+    "log_ref": ".collab/tasks/001/logs/review-r1-1.log",
+    "error": "stall"
+  },
+  {
+    "task": "001",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-07T14:43:41.795Z",
+    "ended_at": "2026-11-07T14:43:41.795Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 42,
+      "total": 42,
+      "ok": true,
+      "ran_at": "2026-11-07T14:43:41.795Z",
+      "report_ref": ".collab/tasks/001/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/001/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "001",
+    "role": "review",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6-astra",
+    "model_resolved": "gpt-6-astra",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-07T14:43:41.805Z",
+    "ended_at": "2026-11-07T14:50:30.481Z",
+    "duration_ms": 408676,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 1964202,
+      "output": 12695,
+      "cache_read": 1856384,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/001/logs/review-r1-1.log",
+    "error": null
   }
 ]
