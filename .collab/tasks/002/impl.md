@@ -23,9 +23,9 @@
 
 ### 2.1 副本与 hash 口径
 
-- 本角色被禁止执行 git 命令，因此副本用「读工作树同路径文件 → 把所有 `\r\n` 换成 `\n` → 写回」生成。
-  design §0 已确认工作树的 `lib/`、`config/cliworker.example.json` 与 `f75bb76` 一致；blob 是 LF，
-  所以该过程得到的就是 blob 字节（验收 B-1 会用 git 再核一遍）。
+- 副本用「读工作树同路径文件 → 把所有 `\r\n` 换成 `\n` → 写回」生成。design §0 已确认工作树的 `lib/`、
+  `config/cliworker.example.json` 与 `f75bb76` 一致；blob 是 LF，所以该过程得到的就是 blob 字节。
+  本轮已用验收 B-1 的原命令（只读的 `git ls-tree` / `git cat-file`，不改仓库）复核：stdout `ok 7`。
 - `contentHash(buffer)` = `sha256(buffer.toString('latin1').replace(/\r\n/g, '\n'), 'latin1')`，即
   「CRLF→LF 之后的原始字节」的 sha256，小写十六进制。用 latin1 往返保证非 ASCII 字节不被改动。
   因此 autocrlf 检出（CRLF）与 Linux 检出（LF）得到同一哈希。
@@ -78,10 +78,10 @@
 - 严格模式在原有检查之上：账本 id 集合必须恰为 11 个（复用 `defects.set_mismatch`，已存在则不重复加），
   并对每条缺陷调用 `checkRepros`。错误行格式 `FAIL <id> <defect-id> <detail>`。
 
-## 3. 验收自测结果
+## 3. 验收自测结果（r1 + r2 复核）
 
-在本工作树（Windows / Node v22.23.3）逐条执行。B-3–B-6、C-2、D-4–D-6 用 bash 的 `mktemp -d` + `cp -r` 复现
-pwsh 脚本的同样步骤（临时目录副本，不动仓库）。
+r1 建立交付物；r2 重跑全部验收命令，结果与 r1 一致（两处阻塞未变，均在写域外，见 §4）。
+B-3–B-6、C-2、D-4–D-6 用 bash 的 `mktemp -d` + `cp -r` 复现 pwsh 脚本的同样步骤（临时目录副本，不动仓库）。
 
 | 项 | 命令 | 结果 |
 |---|---|---|
@@ -90,7 +90,7 @@ pwsh 脚本的同样步骤（临时目录副本，不动仓库）。
 | A-3 | `node scripts/check-defects.mjs` | 通过：`check-defects: ok`（严格模式，11 条 canary 全部命中） |
 | A-4 | `node scripts/check-fast.mjs` | **失败**，见 §4.1（停在 `check-ci.mjs`，与本任务无关） |
 | A-5 | `node scripts/run-tests.mjs` | **失败 2 条**，见 §4.1、§4.2（69 tests / 67 pass） |
-| B-1 | git 对比 7 个 blob | 未执行（本角色禁止 git 命令）；副本由 CRLF→LF 归一化生成，见 §2.1 |
+| B-1 | git 对比 7 个 blob | 通过：按验收命令原样执行（只读 plumbing），stdout 恰为 `ok 7` |
 | B-2 | 形状与允许集合 | 通过：`ok 8` |
 | B-3 | 篡改一个登记字节 | 通过：`FAIL frozen.hash_mismatch .../lib/select.mjs` + `FAILED (1 errors)`，exit 1 |
 | B-4 | 登记 lib/bin/config/scripts | 通过：3 条 `frozen.forbidden_path` + 1 条 `frozen.outside_allowed`，`FAILED (4 errors)`，exit 1 |
@@ -122,11 +122,10 @@ pwsh 脚本的同样步骤（临时目录副本，不动仓库）。
   的检出换行（design §0 也写了本机 autocrlf=true、仓库无 `.gitattributes`）。
 - 影响面：与 T-002 无关，`.github/` 与 `scripts/check-ci.mjs` 均未被我改动；同一失败也出现在
   `test/unit/runner-selftest.test.mjs` 的 `[AC-002] check-ci accepts the committed workflow`。
-- 已验证该失败之外的 A-4 内容：临时把 `scripts/check-ci.mjs` 移开跑了一次 `check-fast`（随后立刻恢复，
-  仓库无残留），输出
-  `==> check-defects.mjs` / `==> check-frozen-files.mjs` / `==> check-test-discovery.mjs` /
-  `==> check-traceability.mjs` / `==> npm test`，其中 `check-defects: ok`、`check-frozen-files: ok (8 files)`，
-  即两个新检查确实被 check-fast 自动纳入并通过。
+- 已验证该失败之外的 A-4 内容：在临时根里放 `scripts/`、`test/`、`contracts/`、`package.json`、`.github/` 并把
+  `ci.yml` 归一化成 LF，`node scripts/check-ci.mjs --root <tmp>` → `check-ci: ok`；同一临时根下其余检查也全绿。
+  在真实仓库里，`check-defects.mjs` / `check-frozen-files.mjs` / `check-test-discovery.mjs` / `check-traceability.mjs`
+  与 `npm test` 均已单独跑过且通过（见 §3、§7），所以 A-4 只差 `check-ci` 这一根堵塞点。
 - 最小修复（属 T-001 / 后续任务）：让 check-ci 比较前把两侧 CRLF→LF 归一化，或提交 `.gitattributes` 固定 LF。
   修好后 A-4 只剩 A-5 那一项。
 
@@ -162,3 +161,37 @@ node --test test/unit/milestone-gate.test.mjs
 node scripts/check-traceability.mjs
 node scripts/run-tests.mjs
 ```
+
+## 7. r2 复核记录
+
+本轮没有改动任何交付物代码，只重跑了验收；结论与 r1 相同。逐条实测（Windows，Node v22）：
+
+| 项 | 实测输出 |
+|---|---|
+| A-1 | `run-tests: filtered 12 files`，`ℹ tests 31 / pass 31 / fail 0`；6 条 `stable:`、9 条 `frozen:`、6 条 `defects:`、10 条 `[repro] [AC-005]` 全 ✔ |
+| A-2 | `check-frozen-files: ok (8 files)`，exit 0 |
+| A-3 | `check-defects: ok`，exit 0（严格模式，11 条 canary 全部命中） |
+| A-4 | exit 1，停在 `check-ci.mjs`（§4.1） |
+| A-5 | `run-tests: full 17 files`，`ℹ tests 69 / pass 67 / fail 2`：`[AC-002] check-ci accepts the committed workflow`（§4.1）与 `[AC-004] mergeShards ... planned`（§4.2）；其余全绿，含 `[repro] 0.1 has no test script` |
+| B-1 | `ok 7` |
+| B-2 | `ok 8` |
+| B-3 | `FAIL frozen.hash_mismatch .../v0.1/lib/select.mjs` + `FAILED (1 errors)`，exit 1 |
+| B-4 | 3×`frozen.forbidden_path` + `frozen.outside_allowed scripts/run-tests.mjs` + `FAILED (4 errors)`，exit 1 |
+| B-5 | `FAIL frozen.unregistered .../v0.1/README.md`，exit 1 |
+| B-6 | exit 2 |
+| C-1 | `ok 2` |
+| C-2 | `not ok 4 - [AC-005] stable: exclude wins and reports excluded`，exit 1 |
+| D-1 / D-2 / D-3 | `ok 11` / `ok` / `ok 10` |
+| D-4 | 含 `FAIL defects.repro_changed a5-dup-call`，exit 1（另有 §5 说明的 a3-runner 噪声） |
+| D-5 | 含 `FAIL defects.canary_survived a5-dup-call`，无其它 `canary_survived`，exit 1 |
+| D-6 | 含 `FAIL defects.canary_missing a4-paths`，exit 1 |
+| D-7 | `ℹ tests 6 / pass 6 / fail 0` |
+| E-1 | `check-traceability: ok (covered=6 planned=68)`；T-002.json 形状 `ok` |
+| E-3 | `ok` |
+| F | 11 个 `node --test --test-name-pattern="\[repro\]"` 逐个跑：每个 `# pass 1 / # fail 0`，exit 0 |
+
+§4.1 的根因本轮改用「临时根里把 `ci.yml` 归一化成 LF 再跑 `check-ci`」复核（全程不碰仓库文件）：
+`node scripts/check-ci.mjs --root <tmp>` → `check-ci: ok`。即失败只由 `core.autocrlf=true` 的检出换行引起，
+与 `ci.yml` 内容、与本任务实现都无关。
+
+范围：本轮只重写了本文件；`git status --porcelain` 里落在写域外的只有 `.collab/tasks/002/` 编排产物。
