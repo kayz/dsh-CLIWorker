@@ -4,7 +4,7 @@
 
 约定：`$LASTEXITCODE` 指紧邻上一条原生命令的退出码；`run-tests` 的成功输出含 `ℹ fail 0`，并以 `run-tests: filtered N files` 报告过滤出的文件数。
 
-本文按 design.md §0 的默认方案 A 写（`lib/contract/validate.mjs` 获批进入写域，删除 `typeOf`）。人类若选 B 或 C，A-18 以及 A-12、A-13 里涉及「lib 为 0」的部分由设计师重跑本轮后改写。
+人类已批准 design.md §0 的方案 A：`lib/contract/validate.mjs` 进入写域，只删除 `typeOf`，其余不动（A-18 校验）。
 
 ## 一、AC-020：draft handle 无 cli 键，forecast 记忆化
 
@@ -193,13 +193,13 @@ node scripts/check-unused.mjs scripts/check-unused.mjs; $LASTEXITCODE
 
 期望：输出恰为 `check-unused: ok (files=1)`，最后一行 `0`。
 
-**A-18** 写域缺口（方案 A）：只删了 `typeOf`
+**A-18** 写域缺口（人类已批准的方案 A）：只删了 `typeOf`，该文件其余内容未动
 
 ```
 git diff f6f6057 --stat -- lib/contract/validate.mjs
 ```
 
-期望：恰为一个文件被改，且只有删除行：`git diff f6f6057 --numstat -- lib/contract/validate.mjs` 输出形如 `0<TAB>N<TAB>lib/contract/validate.mjs`（新增行数为 0，删除行数 N 大于 0 且不超过 9）。
+期望：恰为一个文件被改，且只有删除行：`git diff f6f6057 --numstat -- lib/contract/validate.mjs` 输出 `0<TAB>7<TAB>lib/contract/validate.mjs`（新增 0 行，删除 7 行：`typeOf` 的 6 行函数加其后 1 个空行）。若实现者删了空行的不同一侧，删除行数允许是 6 或 7，不允许有新增行。
 
 ```
 node -e "const s=require('node:fs').readFileSync('lib/contract/validate.mjs','utf8');console.log(s.includes('typeOf'))"

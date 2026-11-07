@@ -26,11 +26,13 @@ write_scope:
 
 权威规格：`.collab/blueprint/cliworker-v2/design.md` §2 第 5 条、§3（缺陷账本与 `[repro]`/`[fixed]` 分段）、`interfaces.md` §1（draft 拒选原因 `E_FORECAST_EXHAUSTION`）、§6（forecast 字段）、`contracts/golden/quota-shapes.json`（AC-015 金标，只读）、`contracts/spec/migration-map.json`（draft 原因映射，只读）。本文不新增任何契约字段、码或 schema 名。
 
-## 0. 待人类裁决的写域缺口（见 attention.json）
+## 0. 写域缺口：人类已裁决（方案 A）
+
+**人类已选方案 A**（用户输入：「lib/contract/validate.mjs added to T-007 write_scope (main and worktree). Delete only the unused function typeOf; do not touch anything else in that file.」）。没有待决问题，不需要 `attention.json`。
 
 AC-022 要求 `check-unused` 对 `lib` 报告 0。`scripts/check-fast.mjs` 会无参运行每个 `scripts/check-*.mjs`，所以 `node scripts/check-unused.mjs` 在 `lib` 上必须退出 0。但基准上 `lib/contract/validate.mjs:45` 有未导出、全仓无引用的 `typeOf`（T-004 遗留），不在 brief 的 write_scope 内。
 
-本文按默认方案 A 写：人类批准把 `lib/contract/validate.mjs` 加入 T-007 的 write_scope，实现者**只删除 `typeOf` 函数**。front matter 已含该路径。如果人类选 B 或 C，设计师重跑本轮，本文第 5 步和验收 A-18 随之调整。在得到批准之前，实现者不得改 `validate.mjs`；若批准没来，实现者在 `impl.md` 里如实写明 AC-022 的 lib 部分因此未满足，不得靠放宽扫描规则绕过。
+处理：`lib/contract/validate.mjs` 加入 T-007 的 write_scope（front matter 已含该路径），实现者**只删除 `typeOf` 函数**（第 45–50 行的函数及其后的一个空行，共 7 行），该文件其余内容一字不动，包括不整理格式、不改其它函数。不得靠放宽扫描规则（例如排除 `lib/contract/**`）绕过。
 
 ## 1. 范围
 
@@ -39,7 +41,7 @@ AC-022 要求 `check-unused` 对 `lib` 报告 0。`scripts/check-fast.mjs` 会�
 - 新增 `scripts/check-unused.mjs`、夹具 `test/fixtures/unused/**`、测试 `test/unit/check-unused.test.mjs`。
 - 新增 `test/unit/select-draft.test.mjs`。
 - 在三个既有缺陷文件末尾各追加 `[fixed]` 测试；新增追踪分片 `test/traceability/T-007.json`。
-- 删除 `lib/contract/validate.mjs` 中的 `typeOf`（按 §0 的默认方案）。
+- 删除 `lib/contract/validate.mjs` 中的 `typeOf`（按 §0，人类已批准）。
 
 ### 1.1 不做的事与裁决
 
@@ -150,7 +152,7 @@ node scripts/check-unused.mjs [--root <dir>] [--json] [path...]
 2. 运行 `node scripts/check-unused.mjs`，列出 `lib` 上的全部报告。预期只有 `lib/select.mjs` 的 `isObject` 和 `lib/contract/validate.mjs` 的 `typeOf`。若还有别的（尤其在 write_scope 之外的文件），先核对是不是扫描器误报；确是真未使用且不在写域内，写入 `impl.md` 并停下，不要擅自改文件。
 3. 写 `lib/select-draft.mjs`。
 4. 改 `lib/select.mjs`（§2），删 `isObject`；确认自己引入的每个 import 都被使用。
-5. 按 §0 的方案 A 删除 `lib/contract/validate.mjs` 的 `typeOf`。
+5. 按 §0（已批准的方案 A）删除 `lib/contract/validate.mjs` 的 `typeOf`，只删这一个函数。
 6. 写 `test/unit/select-draft.test.mjs`、三个缺陷文件的 `[fixed]` 追加、`test/traceability/T-007.json`。
 7. 跑验收文件里的全部命令，最后跑 `pwsh -NoProfile -File scripts/check-fast.ps1`。
 
@@ -180,7 +182,7 @@ AC-021：
 
 - 对 `test/fixtures/unused` 调 `scanPaths`，取 `(file, kind, name)` 排序后深相等 `expected.json` 的 `items`（8 项）。
 - `clean/` 子目录报告 0 项。
-- `scanPaths(['lib'])` 报告 0 项（依赖 §0 方案 A）。
+- `scanPaths(['lib'])` 报告 0 项（依赖 §0 已批准的 `typeOf` 删除）。
 - 子进程运行 CLI：夹具目录退出码 1，`--json` 的 stdout 可解析且 `items` 与 `expected.json` 一致；`lib` 退出码 0 且最后一行以 `check-unused: ok (files=` 开头；未知参数退出码 2。
 - `scanSource` 单测：注释、字符串、模板文本里的名字不算引用；模板 `${x}` 里的算引用；`obj.fs` 不算引用；含引号的正则不让后续扫描错位；`export { a as b }` 把 `a` 算引用。
 

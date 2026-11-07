@@ -1,9 +1,0 @@
-{
-  "question": "AC-022 要求 check-unused 对 lib 报告 0 个未使用项，且 scripts/check-fast.mjs 会无参运行 scripts/check-*.mjs，所以 check-unused 在 lib 上必须退出 0。但基准 f6f6057 上 lib/contract/validate.mjs:45 有一个未导出、全仓无引用的死函数 typeOf（T-004 遗留）。它不在 T-007 的 write_scope 内，所以按现在的范围，任务无法让 AC-022 通过。请问怎么处理？",
-  "options": [
-    "A：批准把 lib/contract/validate.mjs 加入 T-007 的 write_scope（主仓库与本工作区的 task-graph.json 都要写入），实现者只删除 typeOf 这一个函数，其余不动",
-    "B：不批准改 validate.mjs，改为在 check-unused 里加一份显式的豁免清单，把 lib/contract/validate.mjs 的 typeOf 登记进去（会削弱 AC-022 的「对 lib 报告 0」）",
-    "C：不批准，AC-022 里「对 lib 报告 0」降级为「对 lib 只报告 validate.mjs 的 typeOf」，由 T-004 的后续任务清理"
-  ],
-  "default": "A"
-}
