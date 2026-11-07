@@ -72,10 +72,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:hy4free"
+    },
+    {
+      "at": "2026-11-07T19:29:11.642Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-07T19:29:11.841Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-07T19:29:11.200Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-07T19:29:11.841Z",
   "role": "review",
   "model": "hy4free",
   "model_resolved": "hy4free",
@@ -85,5 +97,63 @@
   "blocked_reason": null,
   "handoff": null,
   "interrupted": null,
-  "rate_limit_reset": null
+  "rate_limit_reset": null,
+  "pr": {
+    "branch": "task/006",
+    "state": "open",
+    "files": [
+      ".collab/blueprint/cliworker-v2/task-graph.json",
+      ".collab/tasks/006/acceptance.md",
+      ".collab/tasks/006/ci-results.json",
+      ".collab/tasks/006/design.md",
+      ".collab/tasks/006/handoff/design-r1-c1-to-c2.md",
+      ".collab/tasks/006/impl.md",
+      ".collab/tasks/006/input-ledger.jsonl",
+      ".collab/tasks/006/inputs.jsonl",
+      ".collab/tasks/006/logs/design-r1-1.log",
+      ".collab/tasks/006/logs/design-r1-2.log",
+      ".collab/tasks/006/logs/dev-r1-1.log",
+      ".collab/tasks/006/logs/review-r1-1.log",
+      ".collab/tasks/006/notice.json",
+      ".collab/tasks/006/review.md",
+      ".collab/tasks/006/run.json",
+      ".collab/tasks/006/state.json",
+      ".collab/tasks/006/verdict.json",
+      "lib/forecast.mjs",
+      "lib/pools.mjs",
+      "test/characterization/defects/a1-quota.test.mjs",
+      "test/traceability/T-006.json",
+      "test/unit/forecast-engine.test.mjs",
+      "test/unit/forecast-unknown.test.mjs",
+      "test/unit/pools.test.mjs",
+      "test/unit/reset.test.mjs"
+    ],
+    "sha": "54197c86f272910d85171194bb49bcd79b28803a"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "confirm",
+    "reasons": [
+      "1 个文件在 write_scope 之外：.collab/blueprint/cliworker-v2/task-graph.json",
+      "改动 9 个文件，超过 8 个"
+    ],
+    "metrics": {
+      "files": 9,
+      "lines": 1047,
+      "review_rounds": 1,
+      "out_of_scope": 1,
+      "write_scope": 8
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-07T19:29:11.791Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
