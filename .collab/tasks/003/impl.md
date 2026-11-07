@@ -166,3 +166,93 @@ acceptance.md 里的 21 条 `node --input-type=module -e …` 探针逐条抽取
 - (b) 由设计方把“无分片的 AC 样本”改成一个当前没有 shard 的 AC，并在 T-001 归属下更新该断言。
 
 裁决落地后，本轮无需再改实现代码，只需按 (a)/(b) 改那一行并重跑 `pwsh -NoProfile -File scripts/check-fast.ps1`。
+
+## 7. 第 3 轮：全量复核，无实现改动
+
+### 7.1 本轮改了什么
+
+**没有改任何 `lib/`、`bin/`、`contracts/`、`test/`、`scripts/` 下的文件。** 本轮只重跑验收、复核代码，并把结果写进本报告。
+
+原因：第 1、2 轮评审的唯一 P1 都落在 `test/unit/traceability.test.mjs:158`，该文件不在 `write_scope`；两轮评审建议的裁决（`design.md` 的 `write_scope` 与 `acceptance.md` V-R-5 的 `globs` 同时加入该文件）在本轮开始前仍未落地——`design.md`、`acceptance.md` 的 mtime 是 01:35，早于第 1 轮评审的 01:45。在没有新授权的前提下，改动它会让 V-R-5 转红（见 §7.4），所以维持现状。
+
+第 1、2 轮已提交的实现（§1 的变更清单）本轮逐条复核，与 `design.md` 一致，未发现需要修正的地方：
+
+- `lib/cli.mjs`：`main(argv, ctx)` 返回 `{exitCode}`，先 `resolveRoute` 再 `loadConfig`，成功写 `ctx.stdout`、异常写 `ctx.stderr`；静态 `ROUTES` + 静态导入，导入零副作用。
+- `lib/index.js`：`createPlugin` 返回实时 `{registered, errors}`，单条失败不阻塞其余；`inject` 缺失/抛错记 `path:null`；`apply` 的 strict 抛错并挂 `error.registration`。
+- `lib/context.mjs` / `lib/exec.mjs` / `lib/availability.mjs` / `lib/config.mjs` / `lib/forecast.mjs` / `lib/commands/**`：注入点替换与 design §2–§5 逐条对应。
+
+### 7.2 复核结果（全部在任务 worktree 根执行）
+
+| 命令 | 结果 |
+|---|---|
+| `node scripts/run-tests.mjs --ac AC-006` | 5 条 `✔ [AC-006]`，`ℹ fail 0`，`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-007` | 5 条 `✔ [AC-007]`，`ℹ fail 0`，`filtered 1 files` |
+| `node scripts/run-tests.mjs --ac AC-008` | 12 条 `✔ [AC-008]`，`ℹ fail 0`，`filtered 2 files` |
+| `node scripts/run-tests.mjs --ac AC-072` | 14 条 `✔ [AC-072]`，`ℹ fail 0`，`filtered 2 files` |
+| `node scripts/check-seams.mjs` | `check-seams: ok (files=15)`，退出码 0 |
+| `node scripts/check-traceability.mjs` | `check-traceability: ok (covered=10 planned=64)`，退出码 0 |
+| `node scripts/check-test-discovery.mjs` | `check-test-discovery: ok`，退出码 0 |
+| `node scripts/check-frozen-files.mjs` | `check-frozen-files: ok (8 files)`，退出码 0 |
+| `pwsh -NoProfile -File scripts/check-fast.ps1` | **退出码 1**：106 tests、`pass 105`、`fail 1`，末行 `check-fast: FAILED step npm test (exit 1)` |
+
+`acceptance.md` 的 21 条 `node --input-type=module -e …` 探针本轮全部重跑，全部 `PROBE-OK`、退出码 0：
+
+- AC-006：`import-safe`、`main-ctx`、`commands`、`main-errors`、`no-process-exit`
+- AC-007：`seams-fixtures`、`seams-allowlist-exact`、`seams-real-tree`
+- AC-008：`host-contract`、`host-stub`、`registration`、`handlers`
+- AC-072：`fake-clock`、`test-clock-file`、`context-contract`、`warn-inproc`、`warn-bin`、`helpers`
+- 总体：`trace-T-003`、`scope 47`（V-R-5）、`no-secrets`（V-R-6）
+
+非探针命令：
+
+- V-007-4：`--root test/fixtures/seams/date-now` 输出恰两行 `FAIL seams.date_now lib/bad.mjs:2` 与 `check-seams: FAILED (1 violations)`，退出码 1；`--bogus` 退出码 2、stdout 空、stderr 含 `usage:`。
+- V-006-7 `node bin/cliworker.mjs`：退出码 1、stdout 空、stderr 以 `ERROR: usage: cliworker providers | models list|select|forecast | usage record|summary` 开头。
+
+合计：AC-006/007/008/072 的 25 条验收项全绿，V-R-2/3/4/5/6 全绿，唯一红项是 V-R-1。
+
+### 7.3 V-R-1 的失败明细（与前两轮同一处）
+
+```
+✖ [AC-004] mergeShards treats ACs without a shard as planned
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  + 'covered'
+  - 'planned'
+  at TestContext.<anonymous> (file:///C:/git/dsh-CLIWorker/.collab/worktrees/003/test/unit/traceability.test.mjs:158:10)
+ℹ tests 106  ℹ pass 105  ℹ fail 1
+check-fast: FAILED step npm test (exit 1)
+```
+
+### 7.4 为什么在 `write_scope` 内无法消除（不可满足性）
+
+同一份仓库状态被三条验收同时约束：
+
+1. **V-R-1** 要求 `ℹ fail 0`，即 `merged.acs['AC-006'] === 'planned'`（`traceability.test.mjs:158`）。
+2. **V-R-2** 要求 `covered=10 planned=64`，且 `trace-T-003` 探针逐个断言 AC-006/007/008/072 为 `covered`，即 `merged.acs['AC-006'] === 'covered'`。
+3. `scripts/check-traceability.mjs:282-286` 的 `mergeShards` 对每个 AC 只产出**一个**状态；测试与 CLI 读的是同一个 `test/traceability` 目录。
+
+因此 (1) 与 (2) 在同一状态下互斥。能改变 (1) 的只有三种改动，全部在写入范围之外：
+
+| 改动 | 是否可行 | 副作用 |
+|---|---|---|
+| 改 `test/unit/traceability.test.mjs:158` | 文件不在 `write_scope` | V-R-5 的 `scope` 探针把它判为 `outside write_scope`，V-R-5 转红 |
+| 让 `T-003.json` 把 AC-006 记为 `planned` | 文件在范围内，但违反 design §10 | V-R-2 变成 `covered=9 planned=65`，失败项从 1 个变 2 个 |
+| 让另一个任务的分片声明 AC-006 | AC-006 的 owner 是 T-003（`contracts/spec/ac-index.json`），别的分片会触发 `shard.not_owner` | 该分片也不在 `write_scope` |
+
+所以在没有新授权时，任何改动都只是把红项从一个验收条目搬到另一个。本轮据此保持仓库现状，把证据留在 §7.3。
+
+### 7.5 请求裁决（与第 1、2 轮一致，本轮给出可直接执行的 diff）
+
+需要 `design.md` 的 `write_scope` 与 `acceptance.md` V-R-5 的 `globs` 同时增设 `test/unit/traceability.test.mjs`，然后按下面任一改法改一行：
+
+```diff
+--- a/test/unit/traceability.test.mjs
++++ b/test/unit/traceability.test.mjs
+@@ test('[AC-004] mergeShards treats ACs without a shard as planned')
+-  assert.equal(merged.acs['AC-006'], 'planned')
++  assert.equal(merged.acs['AC-009'], 'planned')
+```
+
+推荐改 `AC-009`（而不是 `'covered'`）：它的 owner 是 T-004、当前没有任何分片，仍是 `planned`，能保留该测试“没有分片的 AC 记为 planned”的原意；改成 `'covered'` 会把这个测试变成同义反复。
+
+裁决落地后无需再改任何实现代码，重跑 `pwsh -NoProfile -File scripts/check-fast.ps1` 应为退出码 0、`ℹ fail 0`、末行 `check-fast: ok`。
