@@ -16,3 +16,13 @@ test('[repro] [AC-005] 0.1 publishes no bin and no config directory', () => {
   assert.equal(V01_PACKAGE.files.includes('config'), false)
   assert.equal(fs.existsSync(path.join(V01, 'config', 'cliworker.example.json')), true)
 })
+
+test('[fixed] [AC-025] the live package ships bin and the config example but no spec or golden', () => {
+  const pkg = JSON.parse(fs.readFileSync(new URL('../../../package.json', import.meta.url), 'utf8'))
+  assert.equal(pkg.bin.cliworker, 'bin/cliworker.mjs')
+  assert.ok(pkg.files.includes('bin'))
+  assert.ok(pkg.files.includes('config/cliworker.example.json'))
+  for (const entry of ['config', 'contracts', 'contracts/spec', 'contracts/golden']) {
+    assert.equal(pkg.files.includes(entry), false, `${entry} must not be a whitelist entry`)
+  }
+})

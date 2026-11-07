@@ -1,0 +1,14 @@
+{
+  "task": "T-009",
+  "milestone": "M1",
+  "entries": [
+    {
+      "ac": "AC-025",
+      "status": "covered",
+      "files": [
+        "test/integration/pack.test.mjs",
+        "test/characterization/defects/a2-pack.test.mjs"
+      ]
+    }
+  ]
+}
