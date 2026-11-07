@@ -1,9 +1,0 @@
-{
-  "question": "T-005 的验收（AC-012 的 `cliworker paths --config X`、brief 里的 `node bin/cliworker.mjs paths --config config/cliworker.example.json`、`init` 命令、AC-014 要求的 CLI 输出 ok:false + E_CONFIG + 退出码 3）都必须经过 lib/cli.mjs 的命令路由与错误输出，但 brief 的 write_scope 没有包含 lib/cli.mjs（bin/cliworker.mjs 和 lib/commands/_util.mjs 也不在内）。现有 lib/cli.mjs 只路由 providers/models/usage，且错误一律以文本写 stderr、退出码取 e.exitCode ?? 1；统一 JSON 错误体与退出码映射属于下游 T-008（它依赖 T-005）。不改 lib/cli.mjs，paths/init 无法通过 CLI 到达，AC-012/013/014 的 CLI 级验收无法成立。T-005 应如何处理？",
-  "options": [
-    "A：把 lib/cli.mjs 加入 T-005 的 write_scope，仅做最小改动：注册 paths、init 两条路由（paths/init 不先调用 loadConfig），并让配置类错误（E_CONFIG/E_CONFIG_EXAMPLE/E_CONFIG_EXISTS）输出 {ok:false,error:{code,message,retryable,retry_after}} 到 stdout 且退出码 3；通用错误体重构仍留给 T-008。lib/commands/_util.mjs 与 bin/cliworker.mjs 保持不动（usage 路径通过 loadConfig 把 config._home 设为 state_dir 解决）。",
-    "B：保持 write_scope 不变，只交付 lib/paths.mjs、lib/config.mjs、commands/paths.mjs、commands/init.mjs 以及模块级 / main(argv, ctx) 级测试；CLI 路由与 JSON 错误体全部留给 T-008，并把 AC-012/013/014 中依赖 CLI 入口的部分降级为模块级验收（brief 的 paths 命令验收方向不再适用）。",
-    "C：把 T-005 中依赖 CLI 入口的验收（paths-entries 集成测试、CLI 退出码 3 与 JSON 错误体）整体移交给 T-008，T-005 只验收 lib 级行为。"
-  ],
-  "default": "A"
-}

@@ -2,7 +2,7 @@
 
 规格来源：同目录 `design.md`（实现必须逐字照写其中的码名、路径、测试标题和输出字段）与 `brief.md`。brief 没有给基准 commit。实现前在本工作区执行 `node scripts/check-traceability.mjs` 的输出是 `check-traceability: ok (covered=14 planned=60)`；T-005 把 AC-012、AC-013、AC-014 标成 covered 之后应为 `covered=17 planned=57`。
 
-继承：保留候选 #1 的 `design.md`。该文件顶部已有 `write_scope` front matter，列出的就是 developer 允许修改的全部路径（brief 的 write_scope，加上 design §7 所必需的 `lib/cli.mjs`）。正文已经按 brief 与 interfaces 把路径、配置错误、gitignore 和测试标题写成可执行规格，所以不改 design.md。本文件只补验收。`attention.json` 仍未答复；在答复到达前，CLI 的路由与 JSON 错误体按 design §0 的默认 A / §7 验收。doctor 命令属 T-024，本任务只验收 `legacyUsageWarnings` 与 `paths` 结果里的 `W_LEGACY_USAGE`。
+继承：保留候选 #1 的 `design.md` 正文（§1–§13）和本文件 AC-012 A-1 至 AC-014 C-1 的命令。那些命令已经按当时的默认选项 A 验收路径、配置错误和 gitignore。人工已确认选项 A，与该默认一致，所以这些命令保持原样，只改本段说明，并新增 AC-013 E-1。确认后的规则：`write_scope` 含 `lib/cli.mjs`；`paths` 与 `init` 不先调用 `loadConfig`；配置错误向 stdout 写 `{ok:false,error:{code,message,retryable,retry_after}}`，退出码 3；通用错误体仍属 T-008；`bin/cliworker.mjs` 与 `lib/commands/_util.mjs` 不改。doctor 命令属 T-024，本任务只验收 `legacyUsageWarnings` 与 `paths` 结果里的 `W_LEGACY_USAGE`。brief 没有给基准 commit，也没有既有验收报告路径。
 
 执行约定：
 
@@ -519,6 +519,58 @@ if ($e -ne 0) { exit $e }
 - 期望: 重新缩进且去掉 `_example` 的副本，以及 `_example: true` 但内容不同的文件，都以 `E_CONFIG_EXAMPLE` 失败。`message` 以 `cannot load CLIWorker config <绝对路径>: ` 开头，并含 `this is the bundled example; copy it and edit it`。改掉一个字段并去掉标记后可以加载。
 - 期望: 目标已存在时 `init` 返回退出码 3，stdout 为 `{ ok: false, error: { code: E_CONFIG_EXISTS, message, retryable: false, retry_after: null } }`，stderr 为空，文件内容不变。目标不存在时退出码 0，写入随包示例原文，`warnings` 为 `[]`。
 - 期望: 加载示例副本时 CLI 同样把 `E_CONFIG_EXAMPLE` 打到 stdout，退出码 3，stderr 为空。最后一行是 `AC-013 OK`。
+
+## AC-013 E-1 bin 与 _util 不改
+
+```powershell
+$tmp = Join-Path ([System.IO.Path]::GetTempPath()) ((New-Guid).Guid + '.mjs')
+$code = @'
+import fs from 'node:fs'
+import assert from 'node:assert/strict'
+
+function lines(file) {
+  const text = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n')
+  const all = text.split('\n')
+  if (all.length > 0 && all[all.length - 1] === '') all.pop()
+  return all
+}
+
+assert.deepEqual(lines('bin/cliworker.mjs'), [
+  '#!/usr/bin/env node',
+  "import { main } from '../lib/cli.mjs'",
+  "import { createContext } from '../lib/context.mjs'",
+  '',
+  'const { exitCode } = await main(process.argv.slice(2), createContext())',
+  'process.exitCode = exitCode',
+])
+assert.deepEqual(lines('lib/commands/_util.mjs'), [
+  "import path from 'node:path'",
+  "import { defaultHome } from '../config.mjs'",
+  '',
+  'export function arg(argv, name, fallback) {',
+  '  const i = argv.indexOf(name)',
+  '  return i >= 0 ? argv[i + 1] : fallback',
+  '}',
+  '',
+  'export function flag(argv, name) {',
+  '  return argv.includes(name)',
+  '}',
+  '',
+  'export function usageFile(config, ctx) {',
+  "  return path.join(config._home || defaultHome(ctx.env), 'usage.jsonl')",
+  '}',
+])
+console.log('AC-013 OK')
+'@
+[System.IO.File]::WriteAllText($tmp, $code, (New-Object System.Text.UTF8Encoding $false))
+& node $tmp
+$e = $LASTEXITCODE
+Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
+if ($e -ne 0) { exit $e }
+```
+
+- 期望: `bin/cliworker.mjs` 仍只调用 `lib/cli.mjs` 的 `main`，没有 `paths`、`init` 或 `loadConfig`。`lib/commands/_util.mjs` 的 `usageFile` 仍读 `config._home`。
+- 期望: 最后一行是 `AC-013 OK`。
 
 ## AC-014 A-1 测试入口
 

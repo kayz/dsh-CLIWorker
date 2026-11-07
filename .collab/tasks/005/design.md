@@ -22,11 +22,12 @@ write_scope:
 
 本文是实现规格。凡本文给出字面值（码名、文件名、测试标题、输出字段），实现必须逐字照写。本文没有写的字段，不要加。
 
-## 0. 前提与待确认项
+## 0. 前提与确认结果
 
-- 基线：分支 `task/005`，起点提交 `588a697`。T-001～T-004 已合并：已有 `scripts/run-tests.mjs`、`check-fast.mjs`、`check-defects.mjs`、`check-seams.mjs`、`check-traceability.mjs`，`lib/context.mjs`（`ctx.fs/env/platform/stdout/stderr/clock`），`contracts/registry.snapshot.json`，`test/helpers/ctx.mjs`（`createFakeContext`、`fakeFs`）。
-- **待确认项（写入范围多出一项 `lib/cli.mjs`）**：brief 的 write_scope 不含 `lib/cli.mjs`，但 `cliworker paths`、`init`、以及 AC-014 的「CLI 输出 ok:false、退出码 3」只能经 `lib/cli.mjs` 到达。`.collab/tasks/005/attention.json` 已就此提问（选项 A/B/C，默认 A），截至本文写成尚无人工答复。本文按默认 A 设计：`lib/cli.mjs` 只做 §7 列出的最小改动；通用 JSON 错误体与全部退出码映射仍属 T-008。若人工答复 B 或 C，须重出设计；`lib/cli.mjs` 之外的内容不受影响。
-- `lib/commands/_util.mjs`、`bin/cliworker.mjs` 不改。用量文件仍由 `_util.usageFile(config)` 取 `config._home`，所以 `loadConfig` 把 `config._home` 设为 `state_dir` 即可让用量写到 state_dir（§4）。
+- 继承：保留候选 #1 已写好的 §1–§13，以及同目录 `acceptance.md` 里 AC-012 A-1 至 AC-014 C-1 的命令。那些字面值（码名、路径规则、错误原因、gitignore 五行、测试标题、追溯分片）已经按 brief、interfaces 第 11 节和注册表写完，并且按当时的默认选项 A 规定了 `lib/cli.mjs` 的最小路由。人工答复就是选项 A，与该默认一致，所以不推翻这些规格，只把「尚无答复」改成已确认，并补上「两个文件不得改」的验收命令。工作区里 T-005 的任务图已经加入 `lib/cli.mjs`（主仓与本工作区都已改好）。调度器的 state、ledger、notice 不是本角色产物，不改、不回滚。
+- 基线：分支 `task/005`，起点提交 `588a697`。T-001～T-004 已合并：已有 `scripts/run-tests.mjs`、`check-fast.mjs`、`check-defects.mjs`、`check-seams.mjs`、`check-traceability.mjs`，`lib/context.mjs`（`ctx.fs/env/platform/stdout/stderr/clock`），`contracts/registry.snapshot.json`，`test/helpers/ctx.mjs`（`createFakeContext`、`fakeFs`）。brief 没有给基准 commit，也没有既有验收报告路径。
+- **已确认（选项 A）**：顶部 `write_scope` 在 brief 的清单上增加 `lib/cli.mjs`。该文件只做 §7：为 `paths` 与 `init` 增加路由，这两条不先调用 `loadConfig`；`E_CONFIG`、`E_CONFIG_EXAMPLE`、`E_CONFIG_EXISTS` 向 stdout 写 `{ok:false,error:{code,message,retryable,retry_after}}`，退出码 3。`retryable` 取注册表的 `false`，`retry_after` 为 `null`。通用 JSON 错误体与其余退出码映射仍属 T-008，本任务不建 `lib/output.mjs`。
+- `lib/commands/_util.mjs`、`bin/cliworker.mjs` 不改。任务图的 write_scope 还列了 `bin/cliworker.mjs`；本文件顶部的 write_scope 故意不含它，也不含 `_util.mjs`。`bin/cliworker.mjs` 只调用 `lib/cli.mjs` 的 `main`，路由改在 `lib/cli.mjs` 就能到达 CLI。用量文件仍由 `_util.usageFile(config)` 取 `config._home`，所以 `loadConfig` 把 `config._home` 设为 `state_dir` 即可让用量写到 state_dir（§4）。
 - 运行时不读 `.collab`、不读 `contracts/golden|spec`。码名与退出码取自 `contracts/registry.snapshot.json`：`E_CONFIG`、`E_CONFIG_EXAMPLE`、`E_CONFIG_EXISTS` 的 exit 均为 3；`W_LEGACY_USAGE` 是已登记的警告码。
 - `check-seams` 只扫 `lib/`：`lib/` 下除 `context.mjs`、`store.mjs`、`fsx.mjs`、`exec.mjs` 外不得 import `node:fs` / `node:child_process`。所有读写文件一律走 `ctx.fs`。测试文件不受此限。
 - `run-tests --ac AC-xxx` 按源码中的字面量 `[AC-xxx]` 选文件，所以每个测试标题必须含对应的 `[AC-xxx]`。
@@ -109,7 +110,7 @@ export async function run({ argv, ctx }) // 不接收 config，不调用 loadCon
 - 返回 `{ ok: true, config: <abs>, state_dir: <abs>, warnings: [] }`（`state_dir` 用不带 `stateDir` 的 `resolvePaths`）。
 - 刚 init 出的文件带 `_example: true`，所以其它命令加载它会得到 `E_CONFIG_EXAMPLE`；这是预期行为，用户编辑后才能用。
 
-## 7. `lib/cli.mjs`（最小改动，对应待确认项选项 A）
+## 7. `lib/cli.mjs`（已确认的最小改动）
 
 - `import * as paths from './commands/paths.mjs'`、`import * as init from './commands/init.mjs'`；`ROUTES` 增加 `{ cmd: 'paths', sub: null, module: paths }`、`{ cmd: 'init', sub: null, module: init }`；`resolveRoute` 对 `paths`、`init` 与 `providers` 一样把 `sub` 置 `null`。`USAGE` 增加 `init | paths`。
 - `main`：路由是 `paths` 或 `init` 时不调用 `loadConfig`，以 `config: null` 调 `route.run({ argv, ctx, config: null })`；其它路由照旧先 `loadConfig`。

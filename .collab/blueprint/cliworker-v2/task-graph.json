@@ -884,7 +884,9 @@
         "test/integration/paths-entries.test.mjs",
         "test/characterization/defects/a4-paths.test.mjs",
         "test/characterization/defects/a4-null-config.test.mjs",
-        "test/traceability/T-005.json"
+        "test/traceability/T-005.json",
+        "lib/cli.mjs",
+        "bin/cliworker.mjs"
       ],
       "acceptance": [
         "AC-012",
