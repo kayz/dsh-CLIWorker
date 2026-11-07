@@ -1,0 +1,36 @@
+{
+  "verdict": "needs_revision",
+  "sha": "b64262dd3f3f3e3306892084aff98b02aee4b306",
+  "passed": 4,
+  "total": 5,
+  "evidence": [
+    "SHA 核验（只读）：.git 指针 -> C:/git/dsh-CLIWorker/.git/worktrees/003/HEAD = ref: refs/heads/task/003；refs/heads/task/003 = b64262dd3f3f3e3306892084aff98b02aee4b306，与会话开头 git log 首行 b64262d（stage(dev): task 003）一致。未执行 git 命令。",
+    "CI 来源 .collab/tasks/003/ci-results.json:5-7：passed=4, total=4, ok=true，ranAt=2026-11-08T01:44:26+08:00；AC-006/007/008/072 各 passed=true、exitCode=0（lastLine 分别为 usage 错误行、PROBE-OK seams-real-tree、PROBE-OK handlers、run-tests: filtered 2 files）。AC-072 输出 14 条 ✔ [AC-072]、fail 0（ci-results.json:43）。",
+    "ci-results.json 只有 4 条 AC 级结果，不含总体回归 V-R-1 到 V-R-6。V-R-1（check-fast）无 CI 证据，评审按只读检查补跑 node scripts/check-fast.mjs（与 check-fast.ps1:1-2 的唯一动作相同）：106 tests、pass 105、fail 1，末行 'check-fast: FAILED step npm test (exit 1)'，退出码 1。失败项：test/unit/traceability.test.mjs:158 断言 merged.acs['AC-006'] === 'planned'，实际 'covered'。与 impl.md §4 自述一致。",
+    "V-R-2/R-3/R-4 补跑：check-traceability: ok (covered=10 planned=64)；check-test-discovery: ok；check-frozen-files: ok (8 files)；V-007-2 check-seams: ok (files=15)。",
+    "V-R-5（git diff 写域检查）需要 git 命令，评审禁止执行，无法确认。独立核对：impl.md §1 的新增/修改清单全部落在 design write_scope 内，且 impl.md 声明未改 test/unit/traceability.test.mjs 与 lib/select.mjs；该项不作为本轮失败依据。",
+    "实现与规格逐项核对（只读读文件）：lib/cli.mjs:39-55 main(argv, ctx) 先 resolveRoute 后 loadConfig，返回 {exitCode}，错误只写 ctx.stderr，无 process 退出；:31-37 W_TEST_CLOCK 仅在 env 变量为非空字符串且成功时追加，已有 warnings 数组则 push。lib/context.mjs:12-40 真实时钟 now() 每次重新 readFileSync，数字或 Date.parse，非法内容抛含 CLIWORKER_TEST_CLOCK_FILE 的 Error，且不含环境变量值；真实时钟仅五个方法；:42-61 createContext 成员恰十个，now 默认 () => clock.now()。lib/index.js:37-98 createPlugin 返回实时 {registered, errors}，单条路由 try/catch，inject 失败记 path:null，stderr 提示附加；getRegistration 未调用时返回 failed/plugin not applied；:100-109 apply strict 抛 'cliworker: route registration failed: …' 并挂 error.registration。scripts/check-seams.mjs:13-24 允许清单按相对路径精确匹配，:54-106 掩码保留换行，:162-179 十条规则；:199-222 scanRoot；:266-269 仅直接运行才执行；参数错误退出 2。",
+    "未修改 brief/design/acceptance/impl/state/run 或任何被评审代码；brief 未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [
+    {
+      "severity": "P1",
+      "title": "V-R-1 check-fast 失败：既有 AC-004 测试与新增 T-003 追踪分片冲突",
+      "file": "test/unit/traceability.test.mjs",
+      "line": 158,
+      "detail": "acceptance V-R-1 要求 check-fast 退出码 0、'ℹ fail 0'、末行 'check-fast: ok'。实测 node scripts/check-fast.mjs 退出码 1：106 tests、pass 105、fail 1，失败项为 '[AC-004] mergeShards treats ACs without a shard as planned'，原因是第 158 行硬编码 assert.equal(merged.acs['AC-006'], 'planned')，而本任务按 design §10 提交的 test/traceability/T-003.json 把 AC-006 记为 covered，且 V-R-2 又要求 'covered=10 planned=64'（AC-006 必须 covered）。两条验收互斥，实现者无法在 write_scope 内同时满足；impl.md §4 已如实报告并未擅自改动该文件，做法正确。需要任务级裁决后修复：（a）把 write_scope 扩到 test/unit/traceability.test.mjs，并把第 158 行改为 assert.equal(merged.acs['AC-006'], 'covered')（或改断言一个仍无分片的 AC，如 AC-009；注意 AC-007/008/072 在这个测试里没有被断言，不受影响）；同时 acceptance V-R-5 的 globs 要同步加入该文件；或（b）由设计方裁决。在该测试被改成与 T-003 一致之前，完整检查不可能为绿。"
+    }
+  ],
+  "checks": [
+    { "id": "V-006", "passed": true, "evidence": "ci-results.json AC-006 passed=true exitCode=0；cli.mjs:39-55 返回 {exitCode}、输出进 ctx.stdout；lib 下 process.exit 字样由 check-seams 的 seams.process_exit 与 V-007-6 同类探针覆盖，check-seams ok (files=15)。" },
+    { "id": "V-007", "passed": true, "evidence": "ci-results.json AC-007 passed=true（PROBE-OK seams-real-tree）；独立运行 check-seams: ok (files=15)；check-seams.mjs:13-24 允许清单精确路径。" },
+    { "id": "V-008", "passed": true, "evidence": "ci-results.json AC-008 passed=true（PROBE-OK handlers）；index.js:37-109 errors 实时对象、getRegistration 的 failed/ok、strict 抛错均与 design §6 一致。" },
+    { "id": "V-072", "passed": true, "evidence": "ci-results.json AC-072 passed=true，14 条 ✔ [AC-072]，fail 0；context.mjs:12-61。" },
+    { "id": "V-R-1", "passed": false, "evidence": "node scripts/check-fast.mjs 退出 1，pass 105 / fail 1，失败测试 traceability.test.mjs:158（见 findings）。" },
+    { "id": "V-R-2", "passed": true, "evidence": "check-traceability: ok (covered=10 planned=64)。" },
+    { "id": "V-R-3", "passed": true, "evidence": "check-test-discovery: ok。" },
+    { "id": "V-R-4", "passed": true, "evidence": "check-frozen-files: ok (8 files)。" },
+    { "id": "V-R-5", "passed": true, "evidence": "无法用 git 命令确认；按 impl.md 清单与 design write_scope 逐项对照，未发现范围外改动。不计入失败。" },
+    { "id": "V-R-6", "passed": true, "evidence": "impl.md §3 声明 PROBE-OK no-secrets；评审读取的 lib/cli.mjs、lib/index.js、lib/context.mjs、scripts/check-seams.mjs 中无密钥形态字符串。" }
+  ]
+}

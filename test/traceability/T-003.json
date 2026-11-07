@@ -1,0 +1,10 @@
+{
+  "task": "T-003",
+  "milestone": "M1",
+  "entries": [
+    { "ac": "AC-006", "status": "covered", "files": ["test/unit/import-safe.test.mjs"] },
+    { "ac": "AC-007", "status": "covered", "files": ["test/unit/seams.test.mjs"] },
+    { "ac": "AC-008", "status": "covered", "files": ["test/contract/host-stub.test.mjs", "test/integration/registration.test.mjs"] },
+    { "ac": "AC-072", "status": "covered", "files": ["test/unit/clock.test.mjs", "test/contract/context.test.mjs"] }
+  ]
+}

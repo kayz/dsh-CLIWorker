@@ -1,0 +1,24 @@
+{
+  "contract": "dsh-host",
+  "version": 1,
+  "host_ctx": {
+    "inject": {
+      "params": ["services", "callback"],
+      "callback_arg": "httpCtx",
+      "callback_timing": "synchronous when the services are present"
+    }
+  },
+  "http_ctx": {
+    "effect": { "params": ["fn", "name"], "returns": "result of fn", "on_error": "propagates" },
+    "webServer": { "register": { "params": ["registration"], "on_error": "throws" } }
+  },
+  "registration": { "kind": ["exact"], "path": "string starting with /", "handler": "function(req, res)" },
+  "request": { "required": ["socket.remoteAddress", "headers"], "optional": ["method", "url"] },
+  "response": { "required": ["statusCode", "setHeader", "end"] },
+  "stub_controllable_inputs": ["remoteAddress", "host", "origin"],
+  "plugin_exports": {
+    "createPlugin": { "returns": ["registered", "errors"] },
+    "getRegistration": { "returns": ["status", "registered", "errors"], "status": ["ok", "failed"] },
+    "apply": { "strict_throws_on_errors": true }
+  }
+}
