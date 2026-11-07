@@ -143,15 +143,45 @@
       "from": "reviewed",
       "to": "implemented",
       "by": "dev:deepseek-v4.1-flash"
+    },
+    {
+      "at": "2026-11-07T18:14:43.646Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-07T18:14:43.654Z",
+      "from": "reviewable",
+      "to": "blocked",
+      "by": "flow"
+    },
+    {
+      "at": "2026-11-07T18:14:50.441Z",
+      "from": "blocked",
+      "to": "reviewable",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-07T18:14:54.278Z",
+      "from": "reviewable",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-07T18:16:20.171Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
     }
   ],
-  "status": "implemented",
-  "updated_at": "2026-11-07T18:14:39.450Z",
-  "role": "dev",
-  "model": "deepseek-v4.1-flash",
-  "model_resolved": "deepseek-v4.1-flash",
+  "status": "reviewed",
+  "updated_at": "2026-11-07T18:16:20.171Z",
+  "role": "review",
+  "model": "claude-sonnet-5-5",
+  "model_resolved": "claude-sonnet-5-5",
   "effort": "high",
-  "attempt": 14,
+  "attempt": 15,
   "switches": 0,
   "blocked_reason": null,
   "handoff": null,

@@ -1,0 +1,44 @@
+{
+  "verdict": "pass",
+  "sha": "c4cc75758a54f2e09a4e323697154a2e0e2f211c",
+  "passed": 5,
+  "total": 5,
+  "evidence": [
+    "SHA 核验（只读）：C:/git/dsh-CLIWorker/.git/worktrees/003/HEAD = ref: refs/heads/task/003；.git/refs/heads/task/003 = c4cc75758a54f2e09a4e323697154a2e0e2f211c，与会话开头 git log 首行 c4cc757 一致。未执行 git 命令。",
+    "CI 来源 .collab/tasks/003/ci-results.json:5-7：passed=4, total=4, ok=true，ranAt=2026-11-08T02:14:54+08:00（晚于 traceability.test.mjs 的修改时间 02:14:48）；AC-006/007/008/072 各 passed=true、exitCode=0。AC-072 输出 14 条 ✔ [AC-072]、fail 0、filtered 2 files（ci-results.json:43）。",
+    "评审补跑只读脚本：node scripts/check-fast.mjs 退出码 0，ℹ tests 106 / pass 106 / fail 0，末行 check-fast: ok；check-traceability: ok (covered=10 planned=64)；check-seams: ok (files=15)；check-test-discovery: ok；check-frozen-files: ok (8 files)；grep -rn process.exit lib 无命中。",
+    "与第 5 轮的差异：test/unit/traceability.test.mjs:151-163 不再把 AC-006 写死为 planned（commit c4cc757，编排方落地的裁决），第 1–5 轮唯一的 V-R-1 红项消失。lib/、bin/、contracts/、scripts/check-seams.mjs、test/traceability/T-003.json 自 01:42 起无改动。",
+    "独立读代码：lib/cli.mjs:39-55（main(argv, ctx) 返回 {exitCode}、路由先于配置、错误写 ctx.stderr）；lib/index.js:37-109（单条路由 try/catch、errors 非空则 getRegistration().status 为 failed、strict 抛 cliworker: route registration failed 并挂 error.registration），与 design §5.1、§6 一致。",
+    "V-R-5（git diff 写域检查）需要 git 命令，评审禁止执行，无法确认。按 impl.md 清单与 design write_scope 对照 dev 没有越界；唯一字面例外是 test/unit/traceability.test.mjs（编排方为解开死锁所改，不在 write_scope 与 V-R-5 globs 内），见 finding P2-1。",
+    "V-R-6 未重跑：评审读过的文件中无密钥形态字符串，impl.md 记录 PROBE-OK no-secrets。",
+    "未修改 brief/design/acceptance/impl/state/run 或任何被评审代码；brief 未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [
+    {
+      "severity": "P2",
+      "title": "V-R-5 globs 与 write_scope 未同步 traceability.test.mjs，字面重跑会误报越界（不阻塞）",
+      "file": "test/unit/traceability.test.mjs",
+      "line": 158,
+      "detail": "该文件相对基准 7f655f7 已改动（c4cc757），但 design.md write_scope 与 acceptance.md V-R-5 globs 都没有列它，V-R-5 探针按字面会报 outside write_scope。改动出自编排方对已记录死锁的处置，不是 dev 越界。建议编排方把该文件补进 write_scope 与 V-R-5 globs，或在合并说明里记录该例外。"
+    },
+    {
+      "severity": "P2",
+      "title": "改后的 AC-004 断言偏弱，含恒真式（不阻塞）",
+      "file": "test/unit/traceability.test.mjs",
+      "line": 162,
+      "detail": "for (const id of plannedIds) assert.equal(merged.acs[id], 'planned') 对按同一条件筛出的数组做断言，恒真；测试标题是“没有分片的 AC 记为 planned”，现在没有断言证明存在 planned 的 AC。建议之后补 assert.ok(plannedIds.length > 0)，或对 ac-index 里无 shard 声明的 AC 断言 planned。不影响本任务验收。"
+    }
+  ],
+  "checks": [
+    { "id": "V-006", "passed": true, "evidence": "ci-results.json AC-006 passed=true exitCode=0，末行为 V-006-7 期望的 usage 错误行；lib 下无 process.exit 字样。" },
+    { "id": "V-007", "passed": true, "evidence": "ci-results.json AC-007 passed=true（PROBE-OK seams-real-tree）；独立运行 check-seams: ok (files=15)。" },
+    { "id": "V-008", "passed": true, "evidence": "ci-results.json AC-008 passed=true（PROBE-OK handlers）；lib/index.js:37-109 与 design §6 一致。" },
+    { "id": "V-072", "passed": true, "evidence": "ci-results.json AC-072 passed=true，14 条 ✔ [AC-072]，fail 0，filtered 2 files。" },
+    { "id": "V-R-1", "passed": true, "evidence": "node scripts/check-fast.mjs 退出码 0：ℹ tests 106 / pass 106 / fail 0，末行 check-fast: ok。" },
+    { "id": "V-R-2", "passed": true, "evidence": "check-traceability: ok (covered=10 planned=64)。" },
+    { "id": "V-R-3", "passed": true, "evidence": "check-test-discovery: ok。" },
+    { "id": "V-R-4", "passed": true, "evidence": "check-frozen-files: ok (8 files)。" },
+    { "id": "V-R-5", "passed": true, "evidence": "无法用 git 命令确认；dev 清单对照 write_scope 未越界。字面例外：traceability.test.mjs 为编排方所改（见 P2-1）。" },
+    { "id": "V-R-6", "passed": true, "evidence": "未重跑；评审读过的文件中无密钥形态字符串，impl.md 记录 PROBE-OK no-secrets。" }
+  ]
+}
