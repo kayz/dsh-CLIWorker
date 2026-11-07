@@ -1,0 +1,26 @@
+{
+  "id": "006",
+  "history": [
+    {
+      "at": "2026-11-07T18:21:45.862Z",
+      "to": "draft",
+      "by": "init"
+    },
+    {
+      "at": "2026-11-07T18:47:57.055Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:cursor-wsl-grok-4.7 (inherited c1)"
+    }
+  ],
+  "status": "designed",
+  "updated_at": "2026-11-07T18:47:57.055Z",
+  "role": "design",
+  "model": "grok-4.7",
+  "model_resolved": "Grok 4.7 256K High",
+  "effort": null,
+  "attempt": 1,
+  "switches": 1,
+  "blocked_reason": null,
+  "handoff": null
+}

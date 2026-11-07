@@ -1,0 +1,78 @@
+[
+  {
+    "task": "006",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-07T18:21:45.873Z",
+    "ended_at": "2026-11-07T18:28:26.029Z",
+    "duration_ms": 400156,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 50,
+      "output": 49697,
+      "cache_read": 2364822,
+      "cache_write": 136573,
+      "cost_usd": 1.2798442
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/006/logs/design-r1-1.log",
+    "error": "You've hit your session limit · resets 4:20am (Asia/Shanghai)",
+    "handoff": {
+      "file": "handoff/design-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/006/design-r1-c1",
+      "sha": "9f28196c01e7208398220f75c60c0c9c086b4ea0"
+    }
+  },
+  {
+    "task": "006",
+    "role": "design",
+    "round": 1,
+    "candidate": 2,
+    "backend": "cursor-wsl",
+    "model_requested": "grok-4.7",
+    "model_resolved": "Grok 4.7 256K High",
+    "provider": "cursor-wsl",
+    "effort": null,
+    "started_at": "2026-11-07T18:28:28.096Z",
+    "ended_at": "2026-11-07T18:47:56.864Z",
+    "duration_ms": 1168768,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": null,
+      "output": null,
+      "cache_read": null,
+      "cache_write": null,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/006/logs/design-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "claude-sonnet-5-5",
+      "file": "handoff/design-r1-c1-to-c2.md"
+    }
+  }
+]
