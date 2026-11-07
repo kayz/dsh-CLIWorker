@@ -1,0 +1,36 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "policy",
+  "description": "Selection order across plan, unknown and paid pools",
+  "cases": [
+    {
+      "id": "p1-order",
+      "fn": "select_policy",
+      "input": {
+        "est_mtok": 1,
+        "count": 3,
+        "importance": "high",
+        "policy": { "unknown_policy": "after_known", "reserve_fraction_for_high": 0.15 },
+        "reserve_mtok": 0,
+        "pools": [
+          { "id": "A", "funding": "plan", "remaining_mtok": 3, "cap_mtok": 10, "reset_in_h": 1 },
+          { "id": "B", "funding": "plan", "remaining_mtok": 8, "cap_mtok": 10, "reset_in_h": 4 },
+          { "id": "C", "funding": "paid", "remaining_mtok": 100, "cap_mtok": 100, "reset_in_h": null }
+        ],
+        "candidates": [
+          { "key": "mA", "pool_ids": ["A"], "price": 2, "identity_group": null },
+          { "key": "mB", "pool_ids": ["B"], "price": 1, "identity_group": null },
+          { "key": "mC", "pool_ids": ["C"], "price": 3, "identity_group": null }
+        ]
+      },
+      "expected": {
+        "selected": [
+          { "key": "mA", "funding": "plan" },
+          { "key": "mB", "funding": "plan" },
+          { "key": "mC", "funding": "paid" }
+        ],
+        "rejected": []
+      }
+    }
+  ]
+}

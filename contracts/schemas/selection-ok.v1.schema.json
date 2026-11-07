@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "selection-ok.v1.schema.json",
+  "title": "cliworker.selection/v1 ok",
+  "type": "object",
+  "required": [
+    "schema",
+    "ok",
+    "request_id",
+    "level",
+    "usage",
+    "count_requested",
+    "count_returned",
+    "truncated",
+    "shortfall",
+    "models",
+    "calls",
+    "rejected",
+    "warnings",
+    "error",
+    "generated_at"
+  ],
+  "properties": {
+    "schema": { "const": "cliworker.selection/v1" },
+    "ok": { "const": true },
+    "request_id": { "type": "string" },
+    "level": { "enum": ["Top", "High", "Middle", "Quick"] },
+    "usage": { "enum": ["Heavy", "Normal", "Light"] },
+    "count_requested": { "type": "integer", "minimum": 0 },
+    "count_returned": { "type": "integer", "minimum": 0 },
+    "truncated": { "type": "boolean" },
+    "shortfall": { "type": "integer", "minimum": 0 },
+    "models": {
+      "type": "array",
+      "items": { "$ref": "handle.v1.schema.json" }
+    },
+    "calls": {
+      "type": "array",
+      "items": { "$ref": "handle.v1.schema.json#/$defs/call" }
+    },
+    "rejected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ref", "reason"],
+        "properties": {
+          "ref": { "type": "string" },
+          "reason": {
+            "enum": [
+              "excluded",
+              "level_mismatch",
+              "level_unassigned",
+              "availability_unverified",
+              "availability_blocked",
+              "availability_unavailable",
+              "availability_stale",
+              "deprecated",
+              "identity_unverified",
+              "identity_mismatch",
+              "readonly_unavailable",
+              "adapter_unverified",
+              "quota_low",
+              "quota_unknown_policy",
+              "reserve_protected"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code"],
+        "properties": {
+          "code": {
+            "enum": [
+              "W_FIELD_IGNORED",
+              "W_FIELD_DEPRECATED",
+              "W_CONFIG_V1",
+              "W_STALE_DATA",
+              "W_DRAFT_DEPRECATED",
+              "W_MODELS_MANUAL_REQUIRED",
+              "W_LEGACY_USAGE",
+              "W_TEST_CLOCK"
+            ]
+          },
+          "ref": { "type": "string" },
+          "field": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "error": { "const": null },
+    "generated_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    }
+  },
+  "additionalProperties": false
+}

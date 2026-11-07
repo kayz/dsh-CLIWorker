@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forecast.v1.schema.json",
+  "title": "cliworker.forecast/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "model",
+    "remaining_mtok",
+    "remaining_fraction",
+    "pools",
+    "tokens_per_task",
+    "tasks_left",
+    "tasks_left_basis",
+    "tasks_left_assumed",
+    "burn_mtok_per_hour",
+    "eta_exhaust_at",
+    "exhausts_before_reset",
+    "risk",
+    "risk_basis",
+    "confidence",
+    "reason",
+    "burn_per_task",
+    "samples"
+  ],
+  "properties": {
+    "schema": { "const": "cliworker.forecast/v1" },
+    "status": { "enum": ["known", "unknown"] },
+    "model": { "type": "string" },
+    "remaining_mtok": { "type": ["number", "null"] },
+    "remaining_fraction": { "type": ["number", "null"] },
+    "pools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pool_id", "remaining_mtok", "remaining_fraction", "reset_at", "reset_in_h", "reset_source"],
+        "properties": {
+          "pool_id": { "type": "string" },
+          "remaining_mtok": { "type": ["number", "null"] },
+          "remaining_fraction": { "type": ["number", "null"] },
+          "reset_at": { "type": ["string", "null"] },
+          "reset_in_h": { "type": ["number", "null"] },
+          "reset_source": { "enum": ["cli", "config", "estimated", "unknown"] }
+        }
+      }
+    },
+    "tokens_per_task": {
+      "type": ["object", "null"],
+      "required": ["p25", "p50", "p90", "n"],
+      "properties": {
+        "p25": { "type": ["number", "null"] },
+        "p50": { "type": ["number", "null"] },
+        "p90": { "type": ["number", "null"] },
+        "n": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "tasks_left": { "type": ["integer", "null"], "minimum": 0 },
+    "tasks_left_basis": { "enum": ["tasks", "usd", "none"] },
+    "tasks_left_assumed": { "type": ["integer", "null"], "minimum": 0 },
+    "burn_mtok_per_hour": { "type": ["number", "null"] },
+    "eta_exhaust_at": { "type": ["string", "null"] },
+    "exhausts_before_reset": { "type": ["boolean", "null"] },
+    "risk": { "enum": ["ok", "low_reserve", "critical", "exhausted", "unknown"] },
+    "risk_basis": { "enum": ["tasks", "usd", "fraction", "none"] },
+    "confidence": { "enum": ["none", "low", "medium", "high"] },
+    "reason": {
+      "enum": [
+        null,
+        "no_samples",
+        "capacity_unknown",
+        "ledger_capacity_unknown",
+        "credits_conversion_missing",
+        "usd_samples_missing",
+        "reading_stale",
+        "window_unknown"
+      ]
+    },
+    "burn_per_task": { "type": ["number", "null"] },
+    "samples": { "type": "integer", "minimum": 0 }
+  },
+  "additionalProperties": true
+}

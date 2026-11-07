@@ -1,0 +1,8 @@
+{
+  "expect": { "path": "/count", "keyword": "minimum" },
+  "document": {
+    "schema": "cliworker.request/v1",
+    "level": "Top",
+    "count": 0
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "quota-shapes",
+  "description": "Quota shape readings turn into remaining fraction, tasks left and risk",
+  "cases": [
+    {
+      "id": "q-pct-5",
+      "input": { "quota": { "remaining_pct": 5 }, "samples": [], "usage": "Normal" },
+      "expected": { "remaining_fraction": 0.05, "remaining_mtok": null, "risk": "low_reserve", "risk_basis": "fraction" }
+    },
+    {
+      "id": "q-pct-4",
+      "input": { "quota": { "remaining_pct": 4 }, "samples": [], "usage": "Normal" },
+      "expected": { "remaining_fraction": 0.04, "risk": "critical", "risk_basis": "fraction" }
+    },
+    {
+      "id": "q-pct-0",
+      "input": { "quota": { "remaining_pct": 0 }, "samples": [], "usage": "Normal" },
+      "expected": { "remaining_fraction": 0, "risk": "exhausted", "risk_basis": "fraction" }
+    },
+    {
+      "id": "q-pct-15",
+      "input": { "quota": { "remaining_pct": 15 }, "samples": [], "usage": "Normal" },
+      "expected": { "remaining_fraction": 0.15, "risk": "ok", "risk_basis": "fraction" }
+    },
+    {
+      "id": "q-credits-no-rate",
+      "input": { "quota": { "remaining": 1, "unit": "credits" }, "samples": [], "usage": "Normal" },
+      "expected": { "risk": "unknown", "risk_basis": "none", "reason": "credits_conversion_missing" }
+    },
+    {
+      "id": "q-credits-zero",
+      "input": { "quota": { "remaining": 0, "unit": "credits" }, "samples": [], "usage": "Normal" },
+      "expected": { "risk": "exhausted" }
+    },
+    {
+      "id": "q-credits-rate",
+      "input": {
+        "quota": { "remaining": 1, "unit": "credits", "credits_per_mtok": 1000 },
+        "samples": [
+          { "mtok": 0.2, "cost_usd": null },
+          { "mtok": 0.2, "cost_usd": null },
+          { "mtok": 0.2, "cost_usd": null }
+        ],
+        "usage": "Normal"
+      },
+      "expected": {
+        "remaining_mtok": 0.001,
+        "tasks_left": 0,
+        "tasks_left_basis": "tasks",
+        "risk": "exhausted",
+        "risk_basis": "tasks"
+      }
+    },
+    {
+      "id": "q-tokens",
+      "input": { "quota": { "remaining": 2000000, "unit": "tokens" }, "samples": [], "usage": "Normal" },
+      "expected": { "remaining_mtok": 2 }
+    },
+    {
+      "id": "q-usd",
+      "input": {
+        "quota": { "remaining_usd": 3 },
+        "samples": [
+          { "mtok": null, "cost_usd": 0.5 },
+          { "mtok": null, "cost_usd": 0.5 },
+          { "mtok": null, "cost_usd": 0.5 }
+        ],
+        "usage": "Normal"
+      },
+      "expected": { "tasks_left": 6, "tasks_left_basis": "usd", "risk": "ok", "risk_basis": "usd" }
+    }
+  ]
+}

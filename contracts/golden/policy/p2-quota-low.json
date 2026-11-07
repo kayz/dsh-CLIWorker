@@ -1,0 +1,30 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "policy",
+  "description": "A plan candidate below the estimate is rejected as quota_low",
+  "cases": [
+    {
+      "id": "p2-quota-low",
+      "fn": "select_policy",
+      "input": {
+        "est_mtok": 1,
+        "count": 1,
+        "importance": "high",
+        "policy": { "unknown_policy": "after_known", "reserve_fraction_for_high": 0.15 },
+        "reserve_mtok": 0,
+        "pools": [
+          { "id": "A", "funding": "plan", "remaining_mtok": 0.5, "cap_mtok": 10, "reset_in_h": 1 },
+          { "id": "C", "funding": "paid", "remaining_mtok": 100, "cap_mtok": 100, "reset_in_h": null }
+        ],
+        "candidates": [
+          { "key": "mA", "pool_ids": ["A"], "price": 1, "identity_group": null },
+          { "key": "mC", "pool_ids": ["C"], "price": 3, "identity_group": null }
+        ]
+      },
+      "expected": {
+        "selected": [{ "key": "mC", "funding": "paid" }],
+        "rejected": [{ "key": "mA", "reason": "quota_low" }]
+      }
+    }
+  ]
+}

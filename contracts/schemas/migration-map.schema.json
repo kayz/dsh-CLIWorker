@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "migration-map.schema.json",
+  "title": "cliworker.migration-map/v1",
+  "type": "object",
+  "required": ["schema", "draft_to_v1", "config_v1_to_v2"],
+  "properties": {
+    "schema": { "const": "cliworker.migration-map/v1" },
+    "draft_to_v1": {
+      "type": "object",
+      "required": ["reasons", "fields"],
+      "properties": {
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "draft", "v1"],
+            "properties": {
+              "id": { "type": "string" },
+              "draft": { "type": "string" },
+              "v1": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "from", "to", "note"],
+            "properties": {
+              "id": { "type": "string" },
+              "from": { "type": "string" },
+              "to": { "type": "array", "items": { "type": "string" } },
+              "note": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "config_v1_to_v2": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "from", "to", "note"],
+        "properties": {
+          "id": { "type": "string" },
+          "from": { "type": "string" },
+          "to": { "type": "array", "items": { "type": "string" } },
+          "note": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

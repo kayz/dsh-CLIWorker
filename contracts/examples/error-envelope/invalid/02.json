@@ -1,0 +1,11 @@
+{
+  "expect": { "path": "/error/retryable", "keyword": "required" },
+  "document": {
+    "ok": false,
+    "error": {
+      "code": "E_CSRF",
+      "message": "csrf header missing",
+      "retry_after": null
+    }
+  }
+}

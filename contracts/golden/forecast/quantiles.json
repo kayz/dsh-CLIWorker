@@ -1,0 +1,22 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "forecast-quantiles",
+  "description": "Nearest rank quantiles per usage class",
+  "cases": [
+    { "id": "n3-heavy", "fn": "quantile_for_usage", "input": { "samples": [0.1, 0.2, 0.3], "usage": "Heavy" }, "expected": { "value": 0.3 } },
+    { "id": "n3-normal", "fn": "quantile_for_usage", "input": { "samples": [0.1, 0.2, 0.3], "usage": "Normal" }, "expected": { "value": 0.2 } },
+    { "id": "n3-light", "fn": "quantile_for_usage", "input": { "samples": [0.1, 0.2, 0.3], "usage": "Light" }, "expected": { "value": 0.1 } },
+    { "id": "n4-unsorted-heavy", "fn": "quantile_for_usage", "input": { "samples": [0.4, 0.1, 0.3, 0.2], "usage": "Heavy" }, "expected": { "value": 0.4 } },
+    { "id": "n4-unsorted-normal", "fn": "quantile_for_usage", "input": { "samples": [0.4, 0.1, 0.3, 0.2], "usage": "Normal" }, "expected": { "value": 0.2 } },
+    { "id": "n4-unsorted-light", "fn": "quantile_for_usage", "input": { "samples": [0.4, 0.1, 0.3, 0.2], "usage": "Light" }, "expected": { "value": 0.1 } },
+    { "id": "n12-heavy", "fn": "quantile_for_usage", "input": { "samples": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "usage": "Heavy" }, "expected": { "value": 11 } },
+    { "id": "n12-normal", "fn": "quantile_for_usage", "input": { "samples": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "usage": "Normal" }, "expected": { "value": 6 } },
+    { "id": "n12-light", "fn": "quantile_for_usage", "input": { "samples": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "usage": "Light" }, "expected": { "value": 3 } },
+    { "id": "n20-heavy", "fn": "quantile_for_usage", "input": { "samples": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], "usage": "Heavy" }, "expected": { "value": 18 } },
+    { "id": "n20-normal", "fn": "quantile_for_usage", "input": { "samples": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], "usage": "Normal" }, "expected": { "value": 10 } },
+    { "id": "n20-light", "fn": "quantile_for_usage", "input": { "samples": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], "usage": "Light" }, "expected": { "value": 5 } },
+    { "id": "n2-invalid", "fn": "quantile_for_usage", "input": { "samples": [0.1, 0.2], "usage": "Normal" }, "expected": { "value": null } },
+    { "id": "n1-invalid", "fn": "quantile_for_usage", "input": { "samples": [0.5], "usage": "Normal" }, "expected": { "value": null } },
+    { "id": "n0-invalid", "fn": "quantile_for_usage", "input": { "samples": [], "usage": "Normal" }, "expected": { "value": null } }
+  ]
+}

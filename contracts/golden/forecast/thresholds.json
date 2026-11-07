@@ -1,0 +1,28 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "forecast-thresholds",
+  "description": "Risk classification from tasks left or remaining fraction",
+  "cases": [
+    { "id": "tasks-minus1", "fn": "classify_risk", "input": { "tasks_left": -1, "tasks_left_basis": "tasks", "remaining_fraction": null }, "expected": { "risk": "exhausted", "risk_basis": "tasks" } },
+    { "id": "tasks-0", "fn": "classify_risk", "input": { "tasks_left": 0, "tasks_left_basis": "tasks", "remaining_fraction": null }, "expected": { "risk": "exhausted", "risk_basis": "tasks" } },
+    { "id": "tasks-1", "fn": "classify_risk", "input": { "tasks_left": 1, "tasks_left_basis": "tasks", "remaining_fraction": null }, "expected": { "risk": "critical", "risk_basis": "tasks" } },
+    { "id": "tasks-2", "fn": "classify_risk", "input": { "tasks_left": 2, "tasks_left_basis": "tasks", "remaining_fraction": null }, "expected": { "risk": "critical", "risk_basis": "tasks" } },
+    { "id": "tasks-3", "fn": "classify_risk", "input": { "tasks_left": 3, "tasks_left_basis": "tasks", "remaining_fraction": null }, "expected": { "risk": "low_reserve", "risk_basis": "tasks" } },
+    { "id": "tasks-5", "fn": "classify_risk", "input": { "tasks_left": 5, "tasks_left_basis": "tasks", "remaining_fraction": null }, "expected": { "risk": "low_reserve", "risk_basis": "tasks" } },
+    { "id": "tasks-6", "fn": "classify_risk", "input": { "tasks_left": 6, "tasks_left_basis": "tasks", "remaining_fraction": null }, "expected": { "risk": "ok", "risk_basis": "tasks" } },
+    { "id": "tasks-100", "fn": "classify_risk", "input": { "tasks_left": 100, "tasks_left_basis": "tasks", "remaining_fraction": null }, "expected": { "risk": "ok", "risk_basis": "tasks" } },
+    { "id": "usd-0", "fn": "classify_risk", "input": { "tasks_left": 0, "tasks_left_basis": "usd", "remaining_fraction": null }, "expected": { "risk": "exhausted", "risk_basis": "usd" } },
+    { "id": "usd-2", "fn": "classify_risk", "input": { "tasks_left": 2, "tasks_left_basis": "usd", "remaining_fraction": null }, "expected": { "risk": "critical", "risk_basis": "usd" } },
+    { "id": "usd-6", "fn": "classify_risk", "input": { "tasks_left": 6, "tasks_left_basis": "usd", "remaining_fraction": null }, "expected": { "risk": "ok", "risk_basis": "usd" } },
+    { "id": "frac-0", "fn": "classify_risk", "input": { "tasks_left": null, "tasks_left_basis": "none", "remaining_fraction": 0 }, "expected": { "risk": "exhausted", "risk_basis": "fraction" } },
+    { "id": "frac-0.0001", "fn": "classify_risk", "input": { "tasks_left": null, "tasks_left_basis": "none", "remaining_fraction": 0.0001 }, "expected": { "risk": "critical", "risk_basis": "fraction" } },
+    { "id": "frac-0.049", "fn": "classify_risk", "input": { "tasks_left": null, "tasks_left_basis": "none", "remaining_fraction": 0.049 }, "expected": { "risk": "critical", "risk_basis": "fraction" } },
+    { "id": "frac-0.05", "fn": "classify_risk", "input": { "tasks_left": null, "tasks_left_basis": "none", "remaining_fraction": 0.05 }, "expected": { "risk": "low_reserve", "risk_basis": "fraction" } },
+    { "id": "frac-0.149", "fn": "classify_risk", "input": { "tasks_left": null, "tasks_left_basis": "none", "remaining_fraction": 0.149 }, "expected": { "risk": "low_reserve", "risk_basis": "fraction" } },
+    { "id": "frac-0.15", "fn": "classify_risk", "input": { "tasks_left": null, "tasks_left_basis": "none", "remaining_fraction": 0.15 }, "expected": { "risk": "ok", "risk_basis": "fraction" } },
+    { "id": "frac-1", "fn": "classify_risk", "input": { "tasks_left": null, "tasks_left_basis": "none", "remaining_fraction": 1 }, "expected": { "risk": "ok", "risk_basis": "fraction" } },
+    { "id": "priority-tasks-over-fraction", "fn": "classify_risk", "input": { "tasks_left": 10, "tasks_left_basis": "tasks", "remaining_fraction": 0.01 }, "expected": { "risk": "ok", "risk_basis": "tasks" } },
+    { "id": "priority-usd-over-fraction", "fn": "classify_risk", "input": { "tasks_left": 1, "tasks_left_basis": "usd", "remaining_fraction": 0.9 }, "expected": { "risk": "critical", "risk_basis": "usd" } },
+    { "id": "unknown-none", "fn": "classify_risk", "input": { "tasks_left": null, "tasks_left_basis": "none", "remaining_fraction": null }, "expected": { "risk": "unknown", "risk_basis": "none" } }
+  ]
+}

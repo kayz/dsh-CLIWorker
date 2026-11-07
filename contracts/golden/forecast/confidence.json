@@ -1,0 +1,18 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "forecast-confidence",
+  "description": "Confidence from sample count and coefficient of variation",
+  "cases": [
+    { "id": "n0", "fn": "confidence", "input": { "n": 0, "cv": null }, "expected": { "confidence": "none" } },
+    { "id": "n1", "fn": "confidence", "input": { "n": 1, "cv": null }, "expected": { "confidence": "low" } },
+    { "id": "n4", "fn": "confidence", "input": { "n": 4, "cv": null }, "expected": { "confidence": "low" } },
+    { "id": "n5", "fn": "confidence", "input": { "n": 5, "cv": null }, "expected": { "confidence": "medium" } },
+    { "id": "n19", "fn": "confidence", "input": { "n": 19, "cv": null }, "expected": { "confidence": "medium" } },
+    { "id": "n20-cv0.5", "fn": "confidence", "input": { "n": 20, "cv": 0.5 }, "expected": { "confidence": "high" } },
+    { "id": "n20-cv1", "fn": "confidence", "input": { "n": 20, "cv": 1 }, "expected": { "confidence": "high" } },
+    { "id": "n20-cv1.01", "fn": "confidence", "input": { "n": 20, "cv": 1.01 }, "expected": { "confidence": "medium" } },
+    { "id": "n50-cv2", "fn": "confidence", "input": { "n": 50, "cv": 2 }, "expected": { "confidence": "medium" } },
+    { "id": "n10-cv3", "fn": "confidence", "input": { "n": 10, "cv": 3 }, "expected": { "confidence": "medium" } },
+    { "id": "n3-cv5", "fn": "confidence", "input": { "n": 3, "cv": 5 }, "expected": { "confidence": "low" } }
+  ]
+}

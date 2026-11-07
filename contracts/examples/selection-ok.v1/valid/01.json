@@ -1,0 +1,62 @@
+{
+  "schema": "cliworker.selection/v1",
+  "ok": true,
+  "request_id": "r-001",
+  "level": "Top",
+  "usage": "Heavy",
+  "count_requested": 2,
+  "count_returned": 1,
+  "truncated": true,
+  "shortfall": 1,
+  "models": [
+    {
+      "schema": "cliworker.handle/v1",
+      "handle_id": "h_9f2c",
+      "lease_id": "l_7d1e",
+      "level": "Top",
+      "label": "Top-1",
+      "readonly": true,
+      "expires_at": "2026-11-07T12:00:00Z",
+      "call": {
+        "command": "C:/Program Files/nodejs/node.exe",
+        "args": [
+          "C:/pkg/bin/cliworker.mjs",
+          "run",
+          "--lease",
+          "l_7d1e",
+          "--state-dir",
+          "C:/state",
+          "--config",
+          "C:/config/cliworker.json"
+        ],
+        "cwd": "C:/work/repo",
+        "input": "stdin",
+        "output": "cliworker.event/v1",
+        "timeout_ms": 1800000
+      }
+    }
+  ],
+  "calls": [
+    {
+      "command": "C:/Program Files/nodejs/node.exe",
+      "args": [
+        "C:/pkg/bin/cliworker.mjs",
+        "run",
+        "--lease",
+        "l_7d1e",
+        "--state-dir",
+        "C:/state",
+        "--config",
+        "C:/config/cliworker.json"
+      ],
+      "cwd": "C:/work/repo",
+      "input": "stdin",
+      "output": "cliworker.event/v1",
+      "timeout_ms": 1800000
+    }
+  ],
+  "rejected": [{ "ref": "c3", "reason": "quota_low" }],
+  "warnings": [{ "code": "W_STALE_DATA", "ref": "c2" }],
+  "error": null,
+  "generated_at": "2026-11-07T10:00:00Z"
+}

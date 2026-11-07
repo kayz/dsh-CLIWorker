@@ -1,0 +1,24 @@
+{
+  "expect": { "path": "/risk", "keyword": "enum" },
+  "document": {
+    "schema": "cliworker.forecast/v1",
+    "status": "known",
+    "model": "claude:claude-sonnet-5-5",
+    "remaining_mtok": 5,
+    "remaining_fraction": 0.5,
+    "pools": [],
+    "tokens_per_task": null,
+    "tasks_left": 5,
+    "tasks_left_basis": "tasks",
+    "tasks_left_assumed": null,
+    "burn_mtok_per_hour": 1.1,
+    "eta_exhaust_at": null,
+    "exhausts_before_reset": null,
+    "risk": "fine",
+    "risk_basis": "tasks",
+    "confidence": "medium",
+    "reason": null,
+    "burn_per_task": 0.42,
+    "samples": 12
+  }
+}

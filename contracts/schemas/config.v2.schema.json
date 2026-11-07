@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "config.v2.schema.json",
+  "title": "cliworker.config/v2",
+  "type": "object",
+  "required": ["schema", "state_dir", "secrets", "discovery", "catalog", "pools", "policy"],
+  "properties": {
+    "schema": { "const": "cliworker.config/v2" },
+    "_example": { "type": "boolean" },
+    "state_dir": { "type": "string" },
+    "secrets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["ref"],
+        "properties": {
+          "ref": { "type": "string", "pattern": "^[a-z]+:.+$" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "discovery": {
+      "type": "object",
+      "required": ["extra_dirs", "wsl", "probe_unknown", "unknown_patterns", "cli_overrides"],
+      "properties": {
+        "extra_dirs": { "type": "array", "items": { "type": "string" } },
+        "wsl": { "type": "boolean" },
+        "probe_unknown": { "type": "boolean" },
+        "unknown_patterns": { "type": "array", "items": { "type": "string" } },
+        "cli_overrides": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "catalog": {
+      "type": "object",
+      "required": ["allow", "levels", "aliases", "deprecated", "manual"],
+      "properties": {
+        "allow": { "type": "array", "items": { "type": "string" } },
+        "levels": { "type": "object" },
+        "aliases": { "type": "object" },
+        "deprecated": { "type": "object" },
+        "manual": { "type": "array" }
+      },
+      "additionalProperties": false
+    },
+    "pools": {
+      "type": "array",
+      "items": { "$ref": "pool.schema.json" }
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "probe_ttl_s",
+        "lease_ttl_s",
+        "reading_ttl_s",
+        "lock_stale_ms",
+        "lock_wait_ms",
+        "lock_poll_ms",
+        "session_ttl_s",
+        "reserve_fraction_for_high",
+        "unknown_policy",
+        "usage_estimate_mtok",
+        "cache_read_weight",
+        "probe_schedule"
+      ],
+      "properties": {
+        "probe_ttl_s": { "type": "integer", "minimum": 0 },
+        "lease_ttl_s": { "type": "integer", "minimum": 0 },
+        "reading_ttl_s": { "type": "integer", "minimum": 0 },
+        "lock_stale_ms": { "type": "integer", "minimum": 0 },
+        "lock_wait_ms": { "type": "integer", "minimum": 0 },
+        "lock_poll_ms": { "type": "integer", "minimum": 0 },
+        "session_ttl_s": { "type": "integer", "minimum": 0 },
+        "reserve_fraction_for_high": { "type": "number", "minimum": 0, "maximum": 1 },
+        "unknown_policy": { "enum": ["after_known", "reject"] },
+        "usage_estimate_mtok": {
+          "type": "object",
+          "required": ["Heavy", "Normal", "Light"],
+          "properties": {
+            "Heavy": { "type": "number", "minimum": 0 },
+            "Normal": { "type": "number", "minimum": 0 },
+            "Light": { "type": "number", "minimum": 0 }
+          }
+        },
+        "cache_read_weight": { "type": "number", "minimum": 0 },
+        "probe_schedule": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "error-envelope.schema.json",
+  "title": "cliworker.error envelope",
+  "type": "object",
+  "required": ["ok", "error"],
+  "properties": {
+    "ok": { "const": false },
+    "error": {
+      "type": "object",
+      "required": ["code", "message", "retryable", "retry_after"],
+      "properties": {
+        "code": {
+          "enum": [
+            "E_INTERNAL",
+            "E_REQUEST_INVALID",
+            "E_LEVEL_REQUIRED",
+            "E_LEVEL_UNKNOWN",
+            "E_SCHEMA_UNSUPPORTED",
+            "E_UNSAFE_ARG",
+            "E_UNKNOWN_COMMAND",
+            "E_VIEW_FORBIDDEN",
+            "E_CONFIG",
+            "E_CONFIG_EXAMPLE",
+            "E_CONFIG_EXISTS",
+            "E_CONFIG_SECRET_INLINE",
+            "E_SECRET_BACKEND",
+            "E_STATE_LOCKED",
+            "E_TIMEOUT",
+            "E_NO_CANDIDATE",
+            "E_INSUFFICIENT_QUOTA",
+            "E_LEASE_UNKNOWN",
+            "E_LEASE_EXPIRED",
+            "E_LEASE_CONSUMED",
+            "E_LEASE_CONFIG_MISMATCH",
+            "E_PROVIDER_AUTH",
+            "E_PROVIDER_QUOTA",
+            "E_PROVIDER_FAILED",
+            "E_ADMIN_REQUIRED",
+            "E_LOOPBACK_ONLY",
+            "E_READONLY",
+            "E_CSRF",
+            "E_HEALTH_DEGRADED",
+            "E_SMOKE_DISABLED"
+          ]
+        },
+        "message": { "type": "string" },
+        "retryable": { "type": "boolean" },
+        "retry_after": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

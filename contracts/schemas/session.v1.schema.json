@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "session.v1.schema.json",
+  "title": "cliworker.session/v1",
+  "type": "object",
+  "required": ["schema", "session", "csrf", "expires_at"],
+  "properties": {
+    "schema": { "const": "cliworker.session/v1" },
+    "session": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$", "minLength": 20 },
+    "csrf": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$", "minLength": 20 },
+    "expires_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    }
+  },
+  "additionalProperties": false
+}

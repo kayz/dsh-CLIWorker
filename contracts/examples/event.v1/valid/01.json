@@ -1,0 +1,11 @@
+{
+  "schema": "cliworker.event/v1",
+  "seq": 4,
+  "lease_id": "l_7d1e",
+  "type": "result",
+  "at": "2026-11-07T10:01:00Z",
+  "ok": true,
+  "exit_code": 0,
+  "text": "done",
+  "usage": { "input_tokens": 1200, "output_tokens": 300 }
+}

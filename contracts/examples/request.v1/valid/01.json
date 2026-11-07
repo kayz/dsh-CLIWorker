@@ -1,0 +1,12 @@
+{
+  "schema": "cliworker.request/v1",
+  "request_id": "r-001",
+  "level": "Top",
+  "count": 2,
+  "usage": "Heavy",
+  "importance": "normal",
+  "require_readonly": true,
+  "cwd": "C:/work/repo",
+  "timeout_ms": 1800000,
+  "exclude_handles": ["h_1a2b"]
+}

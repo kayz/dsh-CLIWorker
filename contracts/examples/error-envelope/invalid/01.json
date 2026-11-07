@@ -1,0 +1,12 @@
+{
+  "expect": { "path": "/ok", "keyword": "const" },
+  "document": {
+    "ok": true,
+    "error": {
+      "code": "E_CSRF",
+      "message": "csrf header missing",
+      "retryable": false,
+      "retry_after": null
+    }
+  }
+}

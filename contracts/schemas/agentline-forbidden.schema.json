@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agentline-forbidden.schema.json",
+  "title": "cliworker.agentline-forbidden/v1",
+  "type": "object",
+  "required": ["schema", "keys", "call"],
+  "properties": {
+    "schema": { "const": "cliworker.agentline-forbidden/v1" },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+    },
+    "call": {
+      "type": "object",
+      "required": ["keys", "input", "output", "args"],
+      "properties": {
+        "keys": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "input": { "const": "stdin" },
+        "output": { "const": "cliworker.event/v1" },
+        "args": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

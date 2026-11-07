@@ -1,0 +1,61 @@
+{
+  "schema": "cliworker.golden/v1",
+  "kind": "forecast-burn-eta",
+  "description": "Burn rate, exhaustion time and three decimal rounding",
+  "cases": [
+    { "id": "burn-5.5-over-5h", "fn": "burn_mtok_per_hour", "input": { "used_mtok": 5.5, "hours_since_window_start": 5 }, "expected": { "value": 1.1 } },
+    { "id": "burn-clamp-zero-hours", "fn": "burn_mtok_per_hour", "input": { "used_mtok": 0.3, "hours_since_window_start": 0 }, "expected": { "value": 18 } },
+    { "id": "burn-clamp-tiny-hours", "fn": "burn_mtok_per_hour", "input": { "used_mtok": 1, "hours_since_window_start": 0.001 }, "expected": { "value": 60 } },
+    { "id": "burn-rounding", "fn": "burn_mtok_per_hour", "input": { "used_mtok": 2, "hours_since_window_start": 3 }, "expected": { "value": 0.667 } },
+    { "id": "burn-zero-used", "fn": "burn_mtok_per_hour", "input": { "used_mtok": 0, "hours_since_window_start": 4 }, "expected": { "value": 0 } },
+    {
+      "id": "eta-after-reset",
+      "fn": "eta_exhaust",
+      "input": {
+        "now": "2026-11-07T10:00:00.000Z",
+        "remaining_mtok": 5,
+        "burn_mtok_per_hour": 2,
+        "reset_at": "2026-11-07T12:00:00.000Z"
+      },
+      "expected": { "eta_exhaust_at": "2026-11-07T12:30:00.000Z", "exhausts_before_reset": false }
+    },
+    {
+      "id": "eta-before-reset",
+      "fn": "eta_exhaust",
+      "input": {
+        "now": "2026-11-07T10:00:00.000Z",
+        "remaining_mtok": 1,
+        "burn_mtok_per_hour": 2,
+        "reset_at": "2026-11-07T12:00:00.000Z"
+      },
+      "expected": { "eta_exhaust_at": "2026-11-07T10:30:00.000Z", "exhausts_before_reset": true }
+    },
+    {
+      "id": "eta-equal-reset",
+      "fn": "eta_exhaust",
+      "input": {
+        "now": "2026-11-07T10:00:00.000Z",
+        "remaining_mtok": 1,
+        "burn_mtok_per_hour": 0.5,
+        "reset_at": "2026-11-07T12:00:00.000Z"
+      },
+      "expected": { "eta_exhaust_at": "2026-11-07T12:00:00.000Z", "exhausts_before_reset": false }
+    },
+    {
+      "id": "eta-empty",
+      "fn": "eta_exhaust",
+      "input": {
+        "now": "2026-11-07T10:00:00.000Z",
+        "remaining_mtok": 0,
+        "burn_mtok_per_hour": 2,
+        "reset_at": "2026-11-07T12:00:00.000Z"
+      },
+      "expected": { "eta_exhaust_at": "2026-11-07T10:00:00.000Z", "exhausts_before_reset": true }
+    },
+    { "id": "round3-0.0625", "fn": "round3", "input": { "value": 0.0625 }, "expected": { "value": 0.063 } },
+    { "id": "round3-0.1875", "fn": "round3", "input": { "value": 0.1875 }, "expected": { "value": 0.188 } },
+    { "id": "round3-negative", "fn": "round3", "input": { "value": -0.0625 }, "expected": { "value": -0.063 } },
+    { "id": "round3-down", "fn": "round3", "input": { "value": 1.2344 }, "expected": { "value": 1.234 } },
+    { "id": "round3-zero", "fn": "round3", "input": { "value": 0 }, "expected": { "value": 0 } }
+  ]
+}

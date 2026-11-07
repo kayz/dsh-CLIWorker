@@ -1,0 +1,7 @@
+{
+  "expect": { "path": "/level", "keyword": "required" },
+  "document": {
+    "schema": "cliworker.request/v1",
+    "count": 1
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "cliworker.selection/v1",
+  "ok": false,
+  "request_id": "r-001",
+  "models": [],
+  "calls": [],
+  "truncated": false,
+  "shortfall": 2,
+  "rejected": [],
+  "error": {
+    "code": "E_INSUFFICIENT_QUOTA",
+    "message": "every candidate passed the filters but was quota rejected",
+    "retryable": true,
+    "retry_after": "2026-11-07T15:00:00Z"
+  }
+}

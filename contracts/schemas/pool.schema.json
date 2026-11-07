@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pool.schema.json",
+  "title": "cliworker.pool",
+  "type": "object",
+  "required": ["id", "cli", "kind", "funding", "window", "capacity_mtok", "used_fraction", "credits_per_mtok"],
+  "properties": {
+    "id": { "type": "string" },
+    "cli": { "type": "string" },
+    "kind": { "enum": ["plan_window", "plan_weekly", "credits", "prepaid_usd"] },
+    "funding": { "enum": ["plan", "paid"] },
+    "window": {
+      "type": ["object", "null"],
+      "required": ["length_s", "anchor", "start_at", "reset_at", "reset_source"],
+      "properties": {
+        "length_s": { "type": "integer", "minimum": 1 },
+        "anchor": { "type": "string" },
+        "start_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+        },
+        "reset_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+        },
+        "reset_source": { "enum": ["cli", "config", "estimated", "unknown"] }
+      },
+      "additionalProperties": false
+    },
+    "capacity_mtok": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value", "source"],
+        "properties": {
+          "value": { "type": "number", "minimum": 0 },
+          "source": { "type": "string" },
+          "confidence": { "enum": ["low", "medium", "high"] }
+        }
+      }
+    },
+    "used_fraction": {
+      "type": ["object", "null"],
+      "required": ["value", "source", "at"],
+      "properties": {
+        "value": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "type": "string" },
+        "at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "credits_per_mtok": { "type": ["number", "null"], "minimum": 0 }
+  },
+  "additionalProperties": false
+}
