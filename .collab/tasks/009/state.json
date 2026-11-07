@@ -53,10 +53,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:hy4free"
+    },
+    {
+      "at": "2026-11-07T23:44:56.985Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-07T23:44:57.134Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-07T23:44:56.633Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-07T23:44:57.134Z",
   "role": "review",
   "model": "hy4free",
   "model_resolved": "hy4free",
@@ -65,5 +77,49 @@
   "switches": 0,
   "blocked_reason": null,
   "handoff": null,
-  "interrupted": null
+  "interrupted": null,
+  "pr": {
+    "branch": "task/009",
+    "state": "open",
+    "files": [
+      ".collab/tasks/009/acceptance.md",
+      ".collab/tasks/009/ci-results.json",
+      ".collab/tasks/009/design.md",
+      ".collab/tasks/009/impl.md",
+      ".collab/tasks/009/notice.json",
+      ".collab/tasks/009/review.md",
+      ".collab/tasks/009/run.json",
+      ".collab/tasks/009/state.json",
+      ".collab/tasks/009/verdict.json",
+      "package.json",
+      "scripts/check-pack.mjs",
+      "test/characterization/defects/a2-pack.test.mjs",
+      "test/integration/pack.test.mjs",
+      "test/traceability/T-009.json"
+    ],
+    "sha": "37775926852ae7f72fd7ca2f82d3004bc60adab6"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "low",
+    "reasons": [],
+    "metrics": {
+      "files": 5,
+      "lines": 420,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 6
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-07T23:44:57.090Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
