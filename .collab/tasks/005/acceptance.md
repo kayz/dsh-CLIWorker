@@ -523,54 +523,10 @@ if ($e -ne 0) { exit $e }
 ## AC-013 E-1 bin 与 _util 不改
 
 ```powershell
-$tmp = Join-Path ([System.IO.Path]::GetTempPath()) ((New-Guid).Guid + '.mjs')
-$code = @'
-import fs from 'node:fs'
-import assert from 'node:assert/strict'
-
-function lines(file) {
-  const text = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n')
-  const all = text.split('\n')
-  if (all.length > 0 && all[all.length - 1] === '') all.pop()
-  return all
-}
-
-assert.deepEqual(lines('C:/git/dsh-CLIWorker/.collab/worktrees/005/bin/cliworker.mjs'), [
-  '#!/usr/bin/env node',
-  "import { main } from '../lib/cli.mjs'",
-  "import { createContext } from '../lib/context.mjs'",
-  '',
-  'const { exitCode } = await main(process.argv.slice(2), createContext())',
-  'process.exitCode = exitCode',
-])
-assert.deepEqual(lines('C:/git/dsh-CLIWorker/.collab/worktrees/005/lib/commands/_util.mjs'), [
-  "import path from 'node:path'",
-  "import { defaultHome } from 'file:///C:/git/dsh-CLIWorker/.collab/worktrees/005/config.mjs'",
-  '',
-  'export function arg(argv, name, fallback) {',
-  '  const i = argv.indexOf(name)',
-  '  return i >= 0 ? argv[i + 1] : fallback',
-  '}',
-  '',
-  'export function flag(argv, name) {',
-  '  return argv.includes(name)',
-  '}',
-  '',
-  'export function usageFile(config, ctx) {',
-  "  return path.join(config._home || defaultHome(ctx.env), 'usage.jsonl')",
-  '}',
-])
-console.log('AC-013 OK')
-'@
-[System.IO.File]::WriteAllText($tmp, $code, (New-Object System.Text.UTF8Encoding $false))
-& node $tmp
-$e = $LASTEXITCODE
-Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
-if ($e -ne 0) { exit $e }
+$d = git diff --name-only main -- bin/cliworker.mjs lib/commands/_util.mjs; if ($d) { throw "modified files: $d" }; Write-Output 'AC-013 OK'
 ```
 
-- 期望: `bin/cliworker.mjs` 仍只调用 `lib/cli.mjs` 的 `main`，没有 `paths`、`init` 或 `loadConfig`。`lib/commands/_util.mjs` 的 `usageFile` 仍读 `config._home`。
-- 期望: 最后一行是 `AC-013 OK`。
+- 期望: 输出最后一行是 `AC-013 OK`，且这两个文件相对 main 没有任何改动。
 
 ## AC-014 A-1 测试入口
 
