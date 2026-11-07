@@ -1,0 +1,36 @@
+{
+  "verdict": "needs_revision",
+  "sha": "1e8b952bdd0d687de72779d9e5318b06eaaeba91",
+  "passed": 4,
+  "total": 5,
+  "evidence": [
+    "SHA 核验（只读）：.git 指针 -> C:/git/dsh-CLIWorker/.git/worktrees/003/HEAD = ref: refs/heads/task/003；refs/heads/task/003 = 1e8b952bdd0d687de72779d9e5318b06eaaeba91，与会话开头 git log 首行 1e8b952（fix(dev-r2)）一致。未执行 git 命令。",
+    "CI 来源 .collab/tasks/003/ci-results.json:5-7：passed=4, total=4, ok=true，ranAt=2026-11-08T01:48:49+08:00；AC-006/007/008/072 各 passed=true、exitCode=0（lastLine 分别为 usage 错误行、PROBE-OK seams-real-tree、PROBE-OK handlers、run-tests: filtered 2 files）。AC-072 输出 14 条 ✔ [AC-072]、fail 0（ci-results.json:43）。",
+    "ci-results.json 不含总体回归 V-R-1 至 V-R-6。评审只读补跑 node scripts/check-fast.mjs：退出码 1，ℹ tests 106 / pass 105 / fail 1，末行 'check-fast: FAILED step npm test (exit 1)'。失败项 '[AC-004] mergeShards treats ACs without a shard as planned'，堆栈 test/unit/traceability.test.mjs:158:10。",
+    "第 158 行仍为 assert.equal(merged.acs['AC-006'], 'planned')（文件 mtime 01:25，dev-r2 未改）；design.md/acceptance.md mtime 01:35，早于第 1 轮评审，write_scope 与 V-R-5 globs 的裁决未落地。impl.md §6 自述本轮未改任何实现/测试文件，与上述事实一致。",
+    "补跑：check-traceability: ok (covered=10 planned=64)；check-seams: ok (files=15)；check-test-discovery: ok；check-frozen-files: ok (8 files)。",
+    "V-R-5（git diff 写域检查）需要 git 命令，评审禁止执行，无法确认；按 impl.md §1 清单与 design write_scope 对照未见越界，不作为失败依据。",
+    "未修改 brief/design/acceptance/impl/state/run 或任何被评审代码；brief 未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [
+    {
+      "severity": "P1",
+      "title": "V-R-1 check-fast 失败：既有 AC-004 测试与 T-003 追踪分片互斥（第 1 轮遗留）",
+      "file": "test/unit/traceability.test.mjs",
+      "line": 158,
+      "detail": "node scripts/check-fast.mjs 退出码 1（106 tests / pass 105 / fail 1）。第 158 行硬编码 AC-006 为 'planned'，而 test/traceability/T-003.json（design §10）使 AC-006 为 covered，且 V-R-2 要求 covered=10 planned=64。两条验收在当前仓库状态下互斥；修复文件不在 write_scope，改它还会使 V-R-5 变红。dev 如实报告并未越界，做法正确，但验收未过。需要任务级裁决：design.md write_scope 与 acceptance.md V-R-5 globs 同时加入 test/unit/traceability.test.mjs，并把第 158 行改为断言仍无分片的 AC（如 AC-009）或 'covered'；或由设计方在 T-001 归属下处理。落地后重跑 pwsh -NoProfile -File scripts/check-fast.ps1，期望退出码 0、ℹ fail 0、末行 check-fast: ok。除此之外未发现代码问题。"
+    }
+  ],
+  "checks": [
+    { "id": "V-006", "passed": true, "evidence": "ci-results.json AC-006 passed=true exitCode=0，末行为 V-006-7 期望的 usage 错误行；impl.md §6.1 记录 V-006-2/3/4/5/6 探针 PROBE-OK。" },
+    { "id": "V-007", "passed": true, "evidence": "ci-results.json AC-007 passed=true（PROBE-OK seams-real-tree）；独立运行 check-seams: ok (files=15)。" },
+    { "id": "V-008", "passed": true, "evidence": "ci-results.json AC-008 passed=true（PROBE-OK handlers）。" },
+    { "id": "V-072", "passed": true, "evidence": "ci-results.json AC-072 passed=true，14 条 ✔ [AC-072]，fail 0，filtered 2 files。" },
+    { "id": "V-R-1", "passed": false, "evidence": "node scripts/check-fast.mjs 退出 1，pass 105 / fail 1，失败测试 traceability.test.mjs:158（见 findings）。" },
+    { "id": "V-R-2", "passed": true, "evidence": "check-traceability: ok (covered=10 planned=64)。" },
+    { "id": "V-R-3", "passed": true, "evidence": "check-test-discovery: ok。" },
+    { "id": "V-R-4", "passed": true, "evidence": "check-frozen-files: ok (8 files)。" },
+    { "id": "V-R-5", "passed": true, "evidence": "无法用 git 命令确认；按 impl.md 清单与 design write_scope 对照，未发现范围外改动。不计入失败。" },
+    { "id": "V-R-6", "passed": true, "evidence": "impl.md §6.1 声明 PROBE-OK no-secrets；评审读过的文件中无密钥形态字符串。" }
+  ]
+}

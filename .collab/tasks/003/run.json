@@ -153,5 +153,67 @@
     "usage_source": "cli_json",
     "log_ref": ".collab/tasks/003/logs/dev-r2-1.log",
     "error": null
+  },
+  {
+    "task": "003",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-07T17:48:49.480Z",
+    "ended_at": "2026-11-07T17:48:49.480Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 4,
+      "total": 4,
+      "ok": true,
+      "ran_at": "2026-11-07T17:48:49.481Z",
+      "report_ref": ".collab/tasks/003/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/003/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "003",
+    "role": "review",
+    "round": 2,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-07T17:48:49.491Z",
+    "ended_at": "2026-11-07T17:49:55.943Z",
+    "duration_ms": 66452,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 14,
+      "output": 7481,
+      "cache_read": 357335,
+      "cache_write": 59976,
+      "cost_usd": 0.3504755
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/003/logs/review-r2-1.log",
+    "error": null
   }
 ]
