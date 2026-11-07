@@ -1,0 +1,144 @@
+[
+  {
+    "id": "Q-1",
+    "text": "codex 只有 cli_flag/asserted 级身份证据时，能否担任评审和仲裁角色？这决定它是可被整体排除，还是能以 provisional 结果参与并在失败时切换。",
+    "blocking": true,
+    "options": [
+      "允许 asserted 参与所有角色，结果标 provisional，失败或身份冲突即切换并完整审计；unknown 不得静默通过",
+      "评审和仲裁必须 verified，仅设计与实现接受 asserted；codex 仍不能承担评审和仲裁"
+    ],
+    "default": "允许 asserted 参与所有角色，结果标 provisional，失败或身份冲突即切换并完整审计；unknown 不得静默通过",
+    "kind": "discussion",
+    "status": "default_adopted",
+    "rounds_used": 0,
+    "user_action": {
+      "kind": "default",
+      "text": "允许 asserted 参与所有角色，结果标 provisional，失败或身份冲突即切换并完整审计；unknown 不得静默通过",
+      "at": "2026-11-07T13:13:40.740Z",
+      "channel": "cli"
+    },
+    "created_at": "2026-11-07T13:02:38.760Z"
+  },
+  {
+    "id": "Q-2",
+    "text": "AC-070 与部分 AC 无法在当前 CI/本机产生 pass 的矛盾如何收口？",
+    "blocking": true,
+    "options": [
+      "同时引入 manual-baseline 和 environment-blocked：前者凭真机 smoke 签收，后者必须附环境证据；两者均不计 pass，豁免单独列出",
+      "仅增加 environment-blocked，所有可执行 AC 仍必须在 baseline 至少真实 pass 一次",
+      "维持 AC-070 原文，不允许豁免，补齐所有环境后再通过评审"
+    ],
+    "default": "同时引入 manual-baseline 和 environment-blocked：前者凭真机 smoke 签收，后者必须附环境证据；两者均不计 pass，豁免单独列出",
+    "kind": "discussion",
+    "status": "default_adopted",
+    "rounds_used": 0,
+    "user_action": {
+      "kind": "default",
+      "text": "同时引入 manual-baseline 和 environment-blocked：前者凭真机 smoke 签收，后者必须附环境证据；两者均不计 pass，豁免单独列出",
+      "at": "2026-11-07T13:13:40.840Z",
+      "channel": "cli"
+    },
+    "created_at": "2026-11-07T13:02:38.761Z"
+  },
+  {
+    "id": "Q-3",
+    "text": "AC-005 的 sha256 冻结范围应采用哪种口径，才能避免阻断 M1 对 package.json、bin/ 和 config/ 的修复？",
+    "blocking": true,
+    "options": [
+      "仅冻结 contracts/ 内版本化契约及注册表快照，并覆盖 schema 键名和事件类型；不冻结 lib/、bin/、config/，M1 行为另测",
+      "只冻结旧实现副本的 sha256，当前实现完全由行为测试约束",
+      "不冻结文件哈希，只钉住 schema 键名和事件类型"
+    ],
+    "default": "仅冻结 contracts/ 内版本化契约及注册表快照，并覆盖 schema 键名和事件类型；不冻结 lib/、bin/、config/，M1 行为另测",
+    "kind": "discussion",
+    "status": "default_adopted",
+    "rounds_used": 0,
+    "user_action": {
+      "kind": "default",
+      "text": "仅冻结 contracts/ 内版本化契约及注册表快照，并覆盖 schema 键名和事件类型；不冻结 lib/、bin/、config/，M1 行为另测",
+      "at": "2026-11-07T13:13:40.931Z",
+      "channel": "cli"
+    },
+    "created_at": "2026-11-07T13:02:38.761Z"
+  },
+  {
+    "id": "Q-4",
+    "text": "M1 之后的里程碑采用哪种组织结构？",
+    "blocking": true,
+    "options": [
+      "M1 独立发布，M2–M6 合并为发现与目录、额度与预测、选模与界面三个里程碑",
+      "M1 独立发布，M2–M6 压缩为两个里程碑",
+      "保留六个里程碑用于追踪，但不要求六次发布，仅确保 M1 独立合入"
+    ],
+    "default": "M1 独立发布，M2–M6 合并为发现与目录、额度与预测、选模与界面三个里程碑",
+    "kind": "discussion",
+    "status": "default_adopted",
+    "rounds_used": 0,
+    "user_action": {
+      "kind": "default",
+      "text": "M1 独立发布，M2–M6 合并为发现与目录、额度与预测、选模与界面三个里程碑",
+      "at": "2026-11-07T13:13:41.024Z",
+      "channel": "cli"
+    },
+    "created_at": "2026-11-07T13:02:38.761Z"
+  },
+  {
+    "id": "Q-5",
+    "text": "70+ 条验收是正式裁减，还是保留追踪并合并执行载体？",
+    "blocking": true,
+    "options": [
+      "保留全部 AC 编号与追踪关系，归并为约 30 个可执行检查，公式和枚举走契约测试，仅约 5 条主链路保留 E2E",
+      "正式裁减为约 30 条 AC，删除或合并其余验收编号",
+      "保留 70+ 条且每条继续作为独立可执行验收"
+    ],
+    "default": "保留全部 AC 编号与追踪关系，归并为约 30 个可执行检查，公式和枚举走契约测试，仅约 5 条主链路保留 E2E",
+    "kind": "discussion",
+    "status": "default_adopted",
+    "rounds_used": 0,
+    "user_action": {
+      "kind": "default",
+      "text": "保留全部 AC 编号与追踪关系，归并为约 30 个可执行检查，公式和枚举走契约测试，仅约 5 条主链路保留 E2E",
+      "at": "2026-11-07T13:13:41.115Z",
+      "channel": "cli"
+    },
+    "created_at": "2026-11-07T13:02:38.761Z"
+  },
+  {
+    "id": "Q-6",
+    "text": "专家 专家 C 拒绝：不能按现状收口，反对以「剩余 4 条 blocking 已处置」为前提确认。\n\n1) 基线过期，且此前被略过的 blocking 仍未闭环。仓库内除 v1/v2 还有 .collab/blueprint/cliworker-v2/review-v3.verdict.json（round 3，revise）：7 条 open，其中 F-02、F-05 为 blocking——F-02 指出 contracts/golden/** 与 contracts/spec/** 无逐文件 sha256 清单、check-golden-frozen 未进 check-fast、无检查器强制 write_scope；F-05 指出 [repro] 段无变异 canary 且不受哈希保护。纪要通篇未提 v3，Q3 只处置了原 4 条中的 AC-070 与 AC-005；可推进时钟(D-4)、仓库内单一真源(D-3) 仍是草稿，从未提交用户确认，却与「已解决」混同。在 F-02/F-05 open 时确认收口，等于把两条 blocking 静默丢弃。\n\n2) Q-3 的已确认口径与蓝图现状正面冲突，无法直接实施。Q-3 采纳的是「冻结 contracts/ 契约与注册表快照，覆盖 schema 键名与事件类型，不冻结 lib/bin/config」，并明确否决「只冻结旧实现副本」；但 design.md:28 与 design.md:126-127 的 AC-005 恰是只冻结 v0.1 副本与 stable.test.mjs、清单外路径直接失败，v3 的 F-08 也把「只冻结 0.1 副本」记为已解决。实现方无法同时满足。须先裁定：contracts/spec+golden 走逐文件哈希守护；contracts/registry.snapshot.json 只做版本化 + compareRegistry + snapshot_version 递增，不得哈希冻结，否则 M2 发现新模型即被守护测试卡死；v0.1 副本仅作回归夹具。\n\n3) 4.1-1 超出 Q-1 的原文授权。Q-1 答复只覆盖「asserted 可参与所有角色、结果标 provisional、失败或身份冲突即切换、unknown 不得静默通过」；「身份证据统一由 CLIWorker 输出、AgentLine 不再重复硬判」属 D-1 默认项，仍是草稿。把 D-1 内容写进「用户已确认」，会让 requested/reported/selected、source、strength、observed_at 这套字段以未经确认的形式被冻结。\n\n4) 其余四项我无异议：Q-1/Q-2/Q-4/Q-5 与我的立场一致或为可接受超集（三里程碑的粒度争议可容忍；全部 AC 编号保留、约 30 个可执行检查、5 条主链路 E2E 可行）。但 Q-2 需补可执行的收口条件：manual-baseline 与 environment-blocked 必须单独成表，并由 CI 校验「既不计 pass 也不计 fail、skip 不得折算 pass」，否则 AC-070 会被 skip 消解。\n\n5) D-5 前提经核实成立：package.json 无 scripts，files 仅 lib、cordis.patch.yml、dsh.plugin.json、README.md，确缺 bin/ 与 config/，M1 独立先合可行。但 M1 若仍按 v3 的 AC-005 口径（只冻结 0.1 副本）执行，将与 Q-3 冲突，须先改 test-strategy 再进 M1。\n\n处理建议：暂不以本纪要收口。重发纪要需 (a) 补入 v3 的 2 条 blocking 与 5 条 major，逐条给出处置或显式豁免；(b) 将 D-3、D-4、D-7、D-8 提交用户确认，其中 D-4（advance/setNow 伪时钟）是 AC-028/029 的可测性前提，不宜留作草稿；(c) 修正 4.1-1 的授权范围；(d) 按第 2 点改写 Q-3 冻结口径并与 design.md:28、design.md:126-127 对齐。",
+    "blocking": true,
+    "options": [],
+    "default": null,
+    "kind": "expert_reject",
+    "expert": "expert_c",
+    "decision": null,
+    "status": "answered",
+    "rounds_used": 1,
+    "user_action": {
+      "kind": "answer",
+      "text": "基线更正：Blueprint 已完成第 3 轮（非第 2 轮），当前剩余 2 条 blocking（F-02 金标 oracle 可静默漂移、F-05 缺陷档案缺变异 canary），testability 尚余 6 条 open blocker。之前纪要引用的「剩余 4 条 blocking」是过期基线，特此更正。用户已决定：接受现有设计直接进入 Build，这 2 条 blocking 不作为设计收口前提，而是作为 M1 任务的强制验收项带入实现阶段（对应 AC-073 与 AC-005）；其余 testability blocker 按 Q-2 选定的 manual-baseline / environment-blocked 口径记录，均不计 pass。请据此重新评估是否确认纪要。",
+      "at": "2026-11-07T13:20:06.543Z",
+      "channel": "cli"
+    },
+    "created_at": "2026-11-07T13:19:41.717Z"
+  },
+  {
+    "id": "Q-7",
+    "text": "专家 专家 C 拒绝：方向（先进 Build、把 F-02/F-05 降为 M1 强制验收）可以接受，但当前映射与冻结口径仍不自洽，按现状确认会第二次把 blocking 静默消解，故暂不确认。已核验：.collab/blueprint/cliworker-v2/review-v3.verdict.json 存在，round 3 为 revise，F-02/F-05 status=open 且 severity=blocking，F-01/F-03/F-04/F-06/F-07 为 open major；testability.json 的 TB-1..TB-6 全部 open，与「6 条 testability blocker」一致；package.json 无 scripts、files 仅 lib/cordis.patch.yml/dsh.plugin.json/README.md，D-5 前提成立；contracts/ 目录尚不存在（Q-3 的冻结对象还不存在，AC-073/AC-005 无从落地）。必须处理：1) F-02→AC-073、F-05→AC-005 的映射不成立。AC-073 原文只校验 git 跟踪 + 各自 schema + check-no-collab + docs/contract.md 逐字节一致 + snapshot 内容，没有 contracts/golden/** 与 contracts/spec/** 的逐文件 sha256 清单，没有 check-golden-frozen 纳入 check-fast，没有检查器强制 write_scope——这正是 F-02 认定的缺口；AC-005 原文只要求 [repro] 对副本断言缺陷存在并通过，无变异 canary，且 [repro] 段不受任何哈希保护——这正是 F-05 认定的缺口。这两条以现有文本进 M1 无法失败，mandatory 验收项形同虚设，等于换一种方式丢弃 blocking。须在纪要或 test-strategy 中直接写出加强后的可判据：golden/spec 逐文件哈希清单 + check-golden-frozen 进 check-fast + write_scope 强制者；每条缺陷一类变异 canary（用已修复的 v0.1 变体跑 repro 必须失败）+ repro 与 fixed 分离或 [repro] 段登记哈希由 check-defects 校验。2) Q-3 与 AC-005 文本正面冲突，实现方无法同时满足。design.md:26-28 与 task-graph AC-005 明写 frozen-files.json 只登记 test/fixtures/characterization/v0.1/ 与 stable.test.mjs，且「清单出现任何其他路径（包括 lib 下路径）时直接失败」，因此无法把 contracts/ 纳入冻结清单；须同步改写 AC-005 与 check-frozen-files 的允许集合为「v0.1 副本 + stable.test.mjs + contracts/spec/** + contracts/golden/**」，并把 lib/bin/config 明确列为禁止登记，否则 M1 要么违反 Q-3，要么违反 AC-005。3) 「冻结注册表快照」需显式豁免哈希。registry.snapshot.json 若做 sha256 冻结，M2 一发现新模型即被守护测试卡死，与 F-02 要求的 snapshot_version 递增/compareRegistry 语义冲突；建议写成「spec+golden 逐文件冻结，registry.snapshot.json 只版本化 + compareRegistry + snapshot_version 递增，不冻结哈希，v0.1 副本仅作回归夹具」，并注明该例外优先于 Q-3 的字面表述。4) 把 TB-1/TB-3/TB-4/TB-6 归入 manual-baseline / environment-blocked 是分类错误，属把可修复的规格缺陷永久豁免：这些都不是环境不足（时钟变量双语义与 health/doctor 判定、全跳过文件导致集合相等在三 OS 必失败、a1-quota 双属主同写 test/characterization/defects 且 write_scope 重叠、ac-index 属主三处矛盾、T-002 缺 T-004 依赖）。其中 F-04 的写冲突与 F-07 的依赖缺失会直接阻断 M1 执行，F-03 会让 ubuntu/macos 完整运行必然失败；必须在 M1 前修 task-graph 与 test-strategy，只有 WSL 真机 discover、probe 之类才适用 Q-2 豁免，且豁免仍需单独成表并由 CI 校验「既不计 pass 也不计 fail、skip 不得折算 pass」。5) D-1 的字段集（requested_model/reported_model/selected_model/source/strength/observed_at）仍只是默认项：Q-1 授权的是「asserted 可参与所有角色、结果标 provisional、失败或身份冲突即切换、unknown 不得静默通过」这一行为规则，不覆盖字段冻结；纪要若要固化字段，须单列确认或明确标注为默认采纳，不得并入「用户已确认」。6) D-7（估计 reset_at 不得直接清零）与 D-8（Top 档必须有非 claude 跨厂商兜底）仍为草稿且我在 design.md 未找到锚点（grep reset_at/used_fraction/E_TIER_EXHAUSTED/allow_downgrade 在 design.md 无实质命中，仅 registry 表提到 identity 枚举）；D-2 的 degrade/E_TIER_EXHAUSTED 与 D-4 的可推进时钟已在 design（AC-007/AC-072、F-08 已判 resolved）落地，可按事实采纳。转为 accept 的最小条件：把上述 1-4 的加强文本写进 AC-005/AC-073 与 test-strategy，明确 registry 快照豁免哈希，修好 F-04/F-07 的图冲突，并把 TB 豁免重新分类；这四项是文本与图内可完成的修改，不需要重跑蓝图评审。",
+    "blocking": true,
+    "options": [],
+    "default": null,
+    "kind": "expert_reject",
+    "expert": "expert_c",
+    "decision": null,
+    "status": "answered",
+    "rounds_used": 1,
+    "user_action": {
+      "kind": "answer",
+      "text": "六条已按可判据改造完成（改的是图与策略，没有重跑蓝图评审）：1) AC-005 重写：冻结允许集合恰为 v0.1 副本 + stable.test.mjs + contracts/spec/** + contracts/golden/**，lib/、bin/、config/、scripts/ 明列为禁止登记；新增每条缺陷的变异 canary（用已修复 v0.1 变体跑 repro 必须失败，否则 check-defects 失败），[repro] 与 [fixed] 分离且 [repro] 段 sha256 登记。2) AC-073 重写：contracts/golden/manifest.json 逐文件 sha256，check-golden-frozen 纳入 check-fast，新增 check-write-scope 报出登记清单外与 write_scope 外的变更。3) contracts/registry.snapshot.json 明确豁免哈希，只做 snapshot_version 递增 + compareRegistry，该例外优先于字面冻结。4) F-04 写冲突已解：a1-quota.test.mjs 单一属主为 T-002，T-006/T-007 的 write_scope 与 outputs 已移除该路径；F-07 已修：T-002 依赖补入 T-004。5) 豁免重分类写入 test-strategy.md 第 6 节：manual-baseline / environment-blocked 只适用于真实环境限制，TB-1/3/4/6 属规格缺陷必须 M1 前修图，不归入环境豁免；豁免单独成表且 skip 不折算 pass。6) D-1 字段集、D-7 估计刷新、D-8 Top 档兜底已作为第 10 节锚点写入 design.md。task-graph.json 仍通过 graph_schema、graph_acyclic、task_fields_complete、matrix_consistent 校验。",
+      "at": "2026-11-07T13:25:02.563Z",
+      "channel": "cli"
+    },
+    "created_at": "2026-11-07T13:22:11.665Z"
+  }
+]

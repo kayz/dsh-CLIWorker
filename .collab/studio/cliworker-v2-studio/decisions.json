@@ -1,0 +1,130 @@
+[
+  {
+    "id": "D-1",
+    "title": "身份证据统一归 CLIWorker",
+    "detail": "统一输出 requested_model、reported_model、selected_model、source、strength 和观测时间；strength 采用 verified/asserted/unknown。缺失证据不直接把整个 provider 判死，明确身份冲突才拒绝；AgentLine 按角色策略消费，失败触发 fallback，并将证据及 provisional 状态写入 calls[].identity。",
+    "default": "采用统一证据对象和候选级 fallback，不再由 AgentLine 对“未提供身份”重复硬判",
+    "status": "default_adopted",
+    "rounds_used": 2,
+    "confirmed_by_user": {
+      "kind": "default",
+      "text": "采用统一证据对象和候选级 fallback，不再由 AgentLine 对“未提供身份”重复硬判",
+      "at": "2026-11-07T13:20:06.642Z",
+      "channel": "cli",
+      "content_hash": "sha256:016ab738473a9b35d996966df6a67f3393faa48cae2f6038b363ca8d2028ead5"
+    },
+    "created_at": "2026-11-07T13:17:46.200Z"
+  },
+  {
+    "id": "D-2",
+    "title": "梯度替换放在池层",
+    "detail": "白名单只负责准入，目录保存事实与档位元数据，池保存 tier 到有序 candidates 的映射及替换策略。同档替换属于正常替换但仍须记录；跨档必须预先 allow_downgrade=true，并返回 degrade 事件、tier_from、tier_to、reason、downgraded_from，否则返回 E_TIER_EXHAUSTED。",
+    "default": "同档可替换、跨档显式授权且可审计，禁止静默降级",
+    "status": "default_adopted",
+    "rounds_used": 2,
+    "confirmed_by_user": {
+      "kind": "default",
+      "text": "同档可替换、跨档显式授权且可审计，禁止静默降级",
+      "at": "2026-11-07T13:20:06.730Z",
+      "channel": "cli",
+      "content_hash": "sha256:75a3ac86c59dc3e52539322e6568c5f7a04516c65185d27a8af83d1a5b3a1e6b"
+    },
+    "created_at": "2026-11-07T13:17:46.201Z"
+  },
+  {
+    "id": "D-3",
+    "title": "建立仓库内单一契约真源",
+    "detail": "将 interfaces 锚点、金标、映射和冻结注册表迁入版本化的 contracts/*.json，blueprint 仅作历史引用；运行时和测试不得依赖 .collab/，并以守护测试校验契约及哈希。",
+    "default": "contracts/ 是唯一权威来源，不以 src/ 或 .collab/ 另建平行真源",
+    "status": "default_adopted",
+    "rounds_used": 2,
+    "confirmed_by_user": {
+      "kind": "default",
+      "text": "contracts/ 是唯一权威来源，不以 src/ 或 .collab/ 另建平行真源",
+      "at": "2026-11-07T13:20:06.821Z",
+      "channel": "cli",
+      "content_hash": "sha256:f72b7868c80b2644c4d88c853ac144680c0318373c7cfbba8bd2cd4dc3524b7e"
+    },
+    "created_at": "2026-11-07T13:17:46.201Z"
+  },
+  {
+    "id": "D-4",
+    "title": "时钟必须可推进且覆盖定时器",
+    "detail": "ctx.clock 提供 advance、setNow 和可控定时器，生产代码只能通过 ctx.now() 读取时间；reset_at 跨越测试必须由伪时钟推进完成。",
+    "default": "仅支持替换时钟不满足验收",
+    "status": "default_adopted",
+    "rounds_used": 2,
+    "confirmed_by_user": {
+      "kind": "default",
+      "text": "仅支持替换时钟不满足验收",
+      "at": "2026-11-07T13:20:06.912Z",
+      "channel": "cli",
+      "content_hash": "sha256:946951d7554644f700eec01ba3c6fc9f63a2329860f267e515b73ba442078120"
+    },
+    "created_at": "2026-11-07T13:17:46.201Z"
+  },
+  {
+    "id": "D-5",
+    "title": "M1 作为独立缺陷修复版本",
+    "detail": "先修复配额形状、打包遗漏、测试 scripts、usage 配置路径和 .gitignore，并独立合入发布；后续目录、预测和界面重构不得成为 M1 的前置依赖。",
+    "default": "M1 单独验收和发布，不等候后续里程碑",
+    "status": "default_adopted",
+    "rounds_used": 2,
+    "confirmed_by_user": {
+      "kind": "default",
+      "text": "M1 单独验收和发布，不等候后续里程碑",
+      "at": "2026-11-07T13:20:07.010Z",
+      "channel": "cli",
+      "content_hash": "sha256:4c9e455fbb8cd3e653be11b6a490ffc877248eaf3d462d4da9719cb9ee55b740"
+    },
+    "created_at": "2026-11-07T13:17:46.201Z"
+  },
+  {
+    "id": "D-6",
+    "title": "集成与 E2E 只保留真实边界",
+    "detail": "打包、跨进程调用、真机发现与 probe、平台/WSL、鉴权、reset_at 推进和端到端选模保留集成或 E2E；其余公式、枚举、排序及降级规则优先降为单元或契约测试。",
+    "default": "保留完整验收追踪，但不把全部验收都做成高成本 E2E",
+    "status": "default_adopted",
+    "rounds_used": 2,
+    "confirmed_by_user": {
+      "kind": "default",
+      "text": "保留完整验收追踪，但不把全部验收都做成高成本 E2E",
+      "at": "2026-11-07T13:20:07.104Z",
+      "channel": "cli",
+      "content_hash": "sha256:6f112d981d23daa52da23fb27c416e8f8d20bdd1963352a5e30c3310db6bcf71"
+    },
+    "created_at": "2026-11-07T13:17:46.201Z"
+  },
+  {
+    "id": "D-7",
+    "title": "估计 reset_at 不得直接清零",
+    "detail": "只有来源明确且已确认的额度刷新才能将 used_fraction 归零；估计刷新时刻到达后应重新读取或标为 unknown/stale，避免虚增可用额度。",
+    "default": "确认刷新才清零，估计刷新只触发复核",
+    "status": "default_adopted",
+    "rounds_used": 2,
+    "confirmed_by_user": {
+      "kind": "default",
+      "text": "确认刷新才清零，估计刷新只触发复核",
+      "at": "2026-11-07T13:20:07.194Z",
+      "channel": "cli",
+      "content_hash": "sha256:0aede1e4394037e44f308c654fe84008a0102e268299f16996c7e96443517509"
+    },
+    "created_at": "2026-11-07T13:17:46.201Z"
+  },
+  {
+    "id": "D-8",
+    "title": "Top 档按真实三-provider 池设计",
+    "detail": "当前只读白名单实际仅覆盖 claude、codebuddy、codex，不纳入 cursor 系，也不按 11 个已安装 provider 假设容量；claude 7 天额度已用 78% 且 overage 禁用，Top 档不得只有 claude/opus，至少配置 codex 或 codebuddy 的跨厂商候选。",
+    "default": "Top 档必须有非 claude 兜底，并优先控制 claude 配额消耗",
+    "status": "default_adopted",
+    "rounds_used": 2,
+    "confirmed_by_user": {
+      "kind": "default",
+      "text": "Top 档必须有非 claude 兜底，并优先控制 claude 配额消耗",
+      "at": "2026-11-07T13:20:07.287Z",
+      "channel": "cli",
+      "content_hash": "sha256:7e433615d4e96d6ecf573f9414385ff8df67e8ab49522566d5ca8d1f82e9ad32"
+    },
+    "created_at": "2026-11-07T13:17:46.201Z"
+  }
+]

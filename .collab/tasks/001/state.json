@@ -133,10 +133,16 @@
       "from": "reviewed",
       "to": "pr_open",
       "by": "agentline"
+    },
+    {
+      "at": "2026-11-07T15:30:46.495Z",
+      "from": "pr_open",
+      "to": "merged",
+      "by": "human"
     }
   ],
-  "status": "pr_open",
-  "updated_at": "2026-11-07T15:29:32.064Z",
+  "status": "merged",
+  "updated_at": "2026-11-07T15:30:46.495Z",
   "role": "review",
   "model": "hy4std",
   "model_resolved": "hy4std",
@@ -148,7 +154,7 @@
   "interrupted": null,
   "pr": {
     "branch": "task/001",
-    "state": "open",
+    "state": "merged",
     "files": [
       ".collab/tasks/001/acceptance.md",
       ".collab/tasks/001/ci-results.json",
@@ -238,7 +244,11 @@
       "test/unit/select.test.mjs",
       "test/unit/traceability.test.mjs"
     ],
-    "sha": "14072d75eb4836184ea52259bea1f3f23fcc71a6"
+    "sha": "4f2c881f6f20cd6702965becb5567727d2aac81d",
+    "merged_at": "2026-11-07T15:30:46.494Z",
+    "permission": "允许合并",
+    "permission_kind": "explicit",
+    "grant_id": null
   },
   "merge_gate": {
     "requires_human_permission": true,
@@ -262,8 +272,8 @@
       "maxFiles": 8,
       "maxLines": 3000
     },
-    "assessed_at": "2026-11-07T15:29:32.008Z",
+    "assessed_at": "2026-11-07T15:30:45.853Z",
     "base": "main",
-    "head": "HEAD"
+    "head": "task/001"
   }
 }

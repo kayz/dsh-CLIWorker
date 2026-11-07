@@ -1,0 +1,10 @@
+{
+  "expert": "expert_c",
+  "step": "confirm_c",
+  "verdict": "accept_with_notes",
+  "notes": "已核验并认可：AC-005 的冻结允许集合（v0.1 副本 + stable.test.mjs + contracts/spec/** + contracts/golden/**，lib/bin/config/scripts 禁止登记）、变异 canary、[repro] 段 sha256 均已写入 task-graph；AC-073 的 manifest.json 逐文件 sha256、check-golden-frozen 纳入 check-fast、check-write-scope 与 registry.snapshot.json 哈希豁免均已写入；T-002 的 depends_on 已补 T-004；T-006/T-007 的 write_scope 已移除 a1-quota.test.mjs；test-strategy 第 6 节已完成豁免重分类；design 第 10 节已有 D-1/D-7/D-8 锚点。D-1..D-8 的决策本身（身份证据、池层梯度替换、contracts/ 单一真源、可推进时钟、M1 独立发布、E2E 边界、估计 reset_at 只触发复核、Top 档非 claude 兜底）我接受。但以下五项必须在 M1 动工前闭合，不能视为已改造完成：1）F-04 未真正闭环：T-006/T-007 的 outputs 仍写「defects/a1-quota 的预测部分/draft 部分 [fixed]」，而该文件已不在其 write_scope；design.md:143 仍是 T-006/T-007 双属主，defects.json 仍是单 owner_task，check-defects 仍只查 [fixed] 是否存在。须拆成两条缺陷或按 owner_task 分子段并校验，同时删掉 outputs 中该路径或给出可写范围，否则 check-write-scope 会与 outputs 直接冲突。2）TB-1 未闭环：AC-061 仍把设置 CLIWORKER_TEST_CLOCK_FILE 当降级故障（E_HEALTH_DEGRADED），AC-072 又当正常跨进程夹具；文件时钟 now() 虚拟、定时器真实与伪时钟 advance 的互斥、finally 恢复、无泄漏 canary 均未写入 AC/设计，test-strategy 仍停留在「须写明」。3）TB-3 未闭环：AC-001/AC-002 仍未定义 files-executed.json 是否包含全跳过文件，ubuntu/macos 完整运行会因集合不等而必然失败，这是 M1 自己的 AC-001。4）TB-6 未闭环：design.md:18 仍称 contracts/spec 全部由 T-004 写入，与 design.md:107 的 ac-index.json 由 T-001 写入矛盾。5）AC-073 的 check-write-scope 没有 write_scope 数据源：它不能读 .collab（否则违反 check-no-collab），须先落一份随仓提交的 write-scope 清单，否则该检查只能空跑或违约。另有记录性问题：Q-4 的 M1+3 里程碑未落到任务图（现为 M1..M5 共 5 个）；AC-070 只实现 real-smoke waiver，未见 environment-blocked 状态；纪要 4.1-1 仍把 D-1 字段集记为 Q-1 用户确认，4.1-3 仍写「冻结注册表快照」，均与本次答复的豁免口径冲突，应改为默认采纳并注明 registry 快照只版本化；纪要 4.2 与 decisions.json 的状态（草稿 vs default_adopted）也须统一。以上均为文本与图内可完成的修改，不需重跑评审；完成即可进入 M1。",
+  "model": "deepseek-v4.1-flash",
+  "model_id": "deepseek-v4.1-flash",
+  "at": "2026-11-07T13:30:07.088Z",
+  "content_hash": "sha256:a306438865172cba36d9cd60cf4e46eac42259574b084f1c3334f6ddd549027a"
+}

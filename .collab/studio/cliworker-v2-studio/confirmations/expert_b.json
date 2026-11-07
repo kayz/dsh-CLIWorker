@@ -1,0 +1,10 @@
+{
+  "expert": "expert_b",
+  "step": "confirm_b",
+  "verdict": "accept_with_notes",
+  "notes": "接受按 Q-7 修订后的决策进入 Build。只读核对确认：AC-005 已加入冻结允许集合、repro 哈希与变异 canary；AC-073 已加入逐文件哈希、check-fast 和 write_scope 检查及注册表快照豁免；T-002 已依赖 T-004，T-006/T-007 已移除 a1-quota 写域。备注：本次接受是设计放行，不代表 F-02/F-05 或 M1 验收已通过，两项必须凭实现检查结果关闭。TB-1/3/4/6 仍须按最新答复在 M1 前修正，不得归入环境豁免。旧正文及 AC-019 的无条件跨 reset_at 清零表述应与 D-7 对齐，以最新决策为准。D-1 中 selected_model 只证明选模意图，不能单独提升为 verified；D-8 的三-provider 限制仅适用于当前只读角色候选池，不缩减既定多 CLI 发现范围。全程未修改、创建或删除文件。",
+  "model": "gpt-6-astra",
+  "model_id": "gpt-6-astra",
+  "at": "2026-11-07T13:27:38.356Z",
+  "content_hash": "sha256:a306438865172cba36d9cd60cf4e46eac42259574b084f1c3334f6ddd549027a"
+}

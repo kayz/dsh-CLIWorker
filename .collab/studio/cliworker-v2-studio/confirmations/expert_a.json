@@ -1,0 +1,10 @@
+{
+  "expert": "expert_a",
+  "step": "confirm_a",
+  "verdict": "accept_with_notes",
+  "notes": "接受纪要中 Q-1~Q-7 的用户裁定，以及 D-1~D-8 的方向。我此前主张评审和仲裁只接受 verified 身份，这一点已被 Q-1 否决，我服从该裁定。只读核验确认了以下几项：AC-005 与 AC-073 已按可判据重写，加入了冻结允许集合、变异 canary、[repro] 段的 sha256、golden/manifest.json、check-golden-frozen、check-write-scope，以及 registry.snapshot.json 不做哈希冻结的例外；T-002 的依赖已补入 T-004；design.md 第 10 节已写入 D-1、D-7、D-8。出问题时这些检查会直接报失败，不会让 blocking 被悄悄绕过，所以我不 reject。以下几项须作为 M1 开工前的硬前置条件，不能留到实现阶段处理：(1) a1-quota 的 [fixed] 段没有任何任务可以合法写入。现在只有 T-002 的 write_scope 包含这个文件，但 T-006 的 outputs 仍写着「a1-quota 的预测部分 [fixed]」，T-007 的 outputs 仍写着「a1-quota 的 draft 部分 [fixed]」。T-002 排在 T-006 之前，无法写 live 侧的 [fixed]。结果是 T-006/T-007 写这个文件时 check-write-scope 报错，不写则 check-defects --milestone M1 报错，M1 闸门必然失败。答复中「outputs 已移除该路径」与图中实际内容不符。修法二选一：按其余缺陷的做法，T-002 只写 [repro]，T-006/T-007 写 [fixed]，并把该文件加回它们的 write_scope；或者把 a1-quota 拆成 repro 和 fixed 两个文件。另外，其余 9 个缺陷文件（a3-runner 除外）现在都由 T-002 和各自的 fix 任务同写，这依赖段落分离加 [repro] 哈希。应在 check-write-scope 中写明按段落划分写入权，否则这些文件会被误报。(2) design.md 第 0 节第 4 条和第 5 节第 125~127 行仍然写着「只冻结 0.1 副本，清单出现其他路径就失败」，与新 AC-005 直接矛盾，需要改成新口径，以 AC 为准。(3) contracts/spec/** 和 contracts/golden/** 现在同时登记在 frozen-files.json（AC-005）和 golden/manifest.json（AC-073）两份哈希清单里。manifest.json 本身也在 contracts/golden/** 下，会出现自己登记自己哈希的问题。应该只保留一份清单，并把 manifest.json 本身排除在外。(4) task-graph 现在仍是 M1~M5 共五个里程碑，没有按 Q-4 改成「M1，加上发现与目录、额度与预测、选模与界面三个里程碑」。需要重新映射里程碑、milestone-gate 和缺陷的 owner_milestone，并同步 contracts/spec/ac-index.json。这个文件已在冻结范围内，必须在 T-002 冻结之前改好。(5) testability.json 中 TB-1~TB-6 仍全部是 open。test-strategy 已注明规格缺陷必须在 M1 前修图，开工前应把它们逐条关闭，或改成有证据的状态。(6) D-2（同档替换须记录；跨档需要 allow_downgrade，并返回 degrade、tier_from、tier_to、reason、downgraded_from，否则返回 E_TIER_EXHAUSTED）在 interfaces、task-graph 和 test-strategy 中都没有对应内容，只有 design.md 第 10.3 节提到一次。它仍是未经用户确认的草稿，应补一条 AC 并归入「选模与界面」里程碑。(7) 风险提醒：claude 的 7 天额度已用 78%，且 overage 被禁用。D-8 要求 Top 档池配一个非 claude 候选，这一点应在 M1 之后的第一个可用版本就写进默认配置。",
+  "model": "claude-opus-5-5",
+  "model_id": "claude-opus-5-5",
+  "at": "2026-11-07T13:26:18.595Z",
+  "content_hash": "sha256:a306438865172cba36d9cd60cf4e46eac42259574b084f1c3334f6ddd549027a"
+}
