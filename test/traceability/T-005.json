@@ -1,0 +1,9 @@
+{
+  "task": "T-005",
+  "milestone": "M1",
+  "entries": [
+    { "ac": "AC-012", "status": "covered", "files": ["test/unit/paths.test.mjs", "test/integration/paths-entries.test.mjs", "test/characterization/defects/a4-paths.test.mjs"] },
+    { "ac": "AC-013", "status": "covered", "files": ["test/unit/config.test.mjs", "test/unit/gitignore.test.mjs"] },
+    { "ac": "AC-014", "status": "covered", "files": ["test/unit/config.test.mjs", "test/characterization/defects/a4-null-config.test.mjs"] }
+  ]
+}

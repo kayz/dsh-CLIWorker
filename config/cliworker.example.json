@@ -1,4 +1,6 @@
 {
+  "_example": true,
+  "schema": "cliworker.config/v1",
   "providers": {
     "claude": {
       "cli": "claude",
@@ -260,7 +262,8 @@
     "codebuddy": {
       "window": "credits",
       "remaining": 1000,
-      "unit": "credits"
+      "unit": "credits",
+      "credits_per_mtok": 1000
     }
   }
 }
