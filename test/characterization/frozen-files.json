@@ -1,0 +1,37 @@
+{
+  "source_commit": "f75bb76",
+  "files": [
+    {
+      "path": "test/fixtures/characterization/v0.1/lib/availability.mjs",
+      "sha256": "810b8da2a7139e94a9f466154a6914bdf6151852ba87bcadad72ee71b31d3ce0"
+    },
+    {
+      "path": "test/fixtures/characterization/v0.1/lib/cli.mjs",
+      "sha256": "5bd7866bc0c0f5f319c22c2c888b5ead1efc953692fc547b2623d8bafab3e8ee"
+    },
+    {
+      "path": "test/fixtures/characterization/v0.1/lib/config.mjs",
+      "sha256": "5f28fe4e0442986625d6672caedeb43f351df12e9c5ab2a752b9e477ae1bcf36"
+    },
+    {
+      "path": "test/fixtures/characterization/v0.1/lib/forecast.mjs",
+      "sha256": "63a19e84b126105bb6e0502888e8cf0821076d7c14899231b4ad0f254f96346c"
+    },
+    {
+      "path": "test/fixtures/characterization/v0.1/lib/index.js",
+      "sha256": "716714a9b0b15ae00021f7a1c48aef72becd4a2885c7476bd6a98eda1855e4dc"
+    },
+    {
+      "path": "test/fixtures/characterization/v0.1/lib/select.mjs",
+      "sha256": "7b25dd98b1a38768d70d0be03dd5939b0373aac86b94be26d193940bcf944c69"
+    },
+    {
+      "path": "test/fixtures/characterization/v0.1/config/cliworker.example.json",
+      "sha256": "d263ad78bfabd34fa0148e955ea39f5b6b6ee5ab313dc30deb321817735da47c"
+    },
+    {
+      "path": "test/characterization/stable.test.mjs",
+      "sha256": "700dae73e34eebc5f244aa67a705ad5f6a31780a24a9b30e8dbbbe024ac943ee"
+    }
+  ]
+}

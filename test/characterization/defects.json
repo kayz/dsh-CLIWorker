@@ -1,0 +1,81 @@
+{
+  "defects": [
+    {
+      "id": "a1-quota",
+      "owner_task": "T-006",
+      "owner_milestone": "M1",
+      "ac": "AC-015",
+      "repro_sha256": "1dd92cf708089283f8e3790273c02ac77c63e0965c6c9d38489c2f236bbdf1ec"
+    },
+    {
+      "id": "a2-pack",
+      "owner_task": "T-009",
+      "owner_milestone": "M1",
+      "ac": "AC-025",
+      "repro_sha256": "f520198675d74dc94fd4be7bd120a0f7f5168e0058e85369bcc618100dbd9c93"
+    },
+    {
+      "id": "a3-runner",
+      "owner_task": "T-001",
+      "owner_milestone": "M1",
+      "ac": "AC-001",
+      "repro_sha256": "b123f16483dc317f59cda752ae9bf6c5d5805ddb07acf4ea1e23ad76aff616d4"
+    },
+    {
+      "id": "a4-paths",
+      "owner_task": "T-005",
+      "owner_milestone": "M1",
+      "ac": "AC-012",
+      "repro_sha256": "273f88f0740905284224ea142d248e3fc7fb9c0d77db3e3d7f909e14deaf990a"
+    },
+    {
+      "id": "a4-null-config",
+      "owner_task": "T-005",
+      "owner_milestone": "M1",
+      "ac": "AC-014",
+      "repro_sha256": "ab58f310e6e67b78709ec243a00cf43495fb53f296697f72e0949971caaf3650"
+    },
+    {
+      "id": "a5-dup-call",
+      "owner_task": "T-007",
+      "owner_milestone": "M1",
+      "ac": "AC-020",
+      "repro_sha256": "3688c4284520eecf27cc92597521e0ae552d1cebff23fbf4e0652ca1143bde5c"
+    },
+    {
+      "id": "a5-forecast-x3",
+      "owner_task": "T-007",
+      "owner_milestone": "M1",
+      "ac": "AC-020",
+      "repro_sha256": "db3e10e134b3dd1b83cceb2ca237873f748f3433fc3206915d96a870fd3cf99c"
+    },
+    {
+      "id": "a5-unused",
+      "owner_task": "T-007",
+      "owner_milestone": "M1",
+      "ac": "AC-022",
+      "repro_sha256": "565f3cd525208fb9fe2203468ce5a2db6b26eb63e1797c4d5bb34643b5c0bc89"
+    },
+    {
+      "id": "a5-ignored-fields",
+      "owner_task": "T-008",
+      "owner_milestone": "M1",
+      "ac": "AC-024",
+      "repro_sha256": "ea537e6df09eb0d1a362b8eea314946af7cba467ccbf1fee961bb1d2682ce8ca"
+    },
+    {
+      "id": "a5-shell",
+      "owner_task": "T-010",
+      "owner_milestone": "M2",
+      "ac": "AC-026",
+      "repro_sha256": "3e2896c799db13a45e72a9d74879b4e4fd5e0ba07cb4261342f720b5a7071e2c"
+    },
+    {
+      "id": "a5-nocache",
+      "owner_task": "T-022",
+      "owner_milestone": "M4",
+      "ac": "AC-055",
+      "repro_sha256": "2b8cb6bb8ad728ded14f7d848cfb58c1498aa311d6da665e5526483c48a25922"
+    }
+  ]
+}

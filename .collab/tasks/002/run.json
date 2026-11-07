@@ -29,5 +29,36 @@
     "usage_source": "cli_json",
     "log_ref": ".collab/tasks/002/logs/design-r1-1.log",
     "error": null
+  },
+  {
+    "task": "002",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-07T16:44:28.283Z",
+    "ended_at": "2026-11-07T16:52:49.783Z",
+    "duration_ms": 501500,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 6642969,
+      "output": 79796,
+      "cache_read": 6548992,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/002/logs/dev-r1-1.log",
+    "error": null
   }
 ]

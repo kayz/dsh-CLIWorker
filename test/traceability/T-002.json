@@ -1,0 +1,11 @@
+{
+  "task": "T-002",
+  "milestone": "M1",
+  "entries": [
+    {
+      "ac": "AC-005",
+      "status": "covered",
+      "files": ["test/characterization/stable.test.mjs", "test/unit/frozen-files.test.mjs"]
+    }
+  ]
+}
