@@ -8,6 +8,12 @@
     ".": "./lib/index.js",
     "./package.json": "./package.json"
   },
+  "scripts": {
+    "test": "node scripts/run-tests.mjs",
+    "check": "node scripts/check-fast.mjs",
+    "perf": "node scripts/run-tests.mjs --perf",
+    "snapshot:update": "node scripts/run-tests.mjs --update-snapshots"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"

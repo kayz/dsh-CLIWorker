@@ -68,5 +68,36 @@
       "model": "gpt-6.1-sol",
       "file": "handoff/design-r1-c1-to-c2.md"
     }
+  },
+  {
+    "task": "001",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-07T13:56:34.432Z",
+    "ended_at": "2026-11-07T14:08:34.415Z",
+    "duration_ms": 719983,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 11455044,
+      "output": 132777,
+      "cache_read": 11327744,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/001/logs/dev-r1-1.log",
+    "error": null
   }
 ]

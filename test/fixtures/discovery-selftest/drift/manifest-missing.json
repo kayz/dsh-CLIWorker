@@ -1,0 +1,9 @@
+{
+  "mode": "full",
+  "filter": null,
+  "files": [
+    "test/unit/a.test.mjs"
+  ],
+  "platform": "linux",
+  "node": "v20.0.0"
+}

@@ -1,0 +1,7 @@
+{
+  "schema": "cliworker.ac-index/v1",
+  "acs": [
+    { "ac": "AC-001", "owner": "T-001", "milestone": "M1", "levels": ["unit"], "baseline": ["darwin", "linux", "win32"] },
+    { "ac": "AC-026", "owner": "T-010", "milestone": "M2", "levels": ["unit"], "baseline": ["darwin", "linux", "win32"] }
+  ]
+}

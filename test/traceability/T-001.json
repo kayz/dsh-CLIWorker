@@ -1,0 +1,11 @@
+{
+  "task": "T-001",
+  "milestone": "M1",
+  "entries": [
+    { "ac": "AC-001", "status": "covered", "files": ["test/unit/runner-selftest.test.mjs"] },
+    { "ac": "AC-002", "status": "covered", "files": ["test/unit/runner-selftest.test.mjs"] },
+    { "ac": "AC-003", "status": "covered", "files": ["test/unit/runner-selftest.test.mjs"] },
+    { "ac": "AC-004", "status": "covered", "files": ["test/unit/traceability.test.mjs"] },
+    { "ac": "AC-074", "status": "covered", "files": ["test/unit/milestone-gate.test.mjs"] }
+  ]
+}

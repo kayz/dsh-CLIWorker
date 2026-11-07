@@ -1,0 +1,13 @@
+{
+  "task": "T-018",
+  "milestone": "M3",
+  "entries": [
+    {
+      "ac": "AC-043",
+      "status": "covered",
+      "files": [
+        "test/unit/gate-043.test.mjs"
+      ]
+    }
+  ]
+}
