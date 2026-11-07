@@ -78,3 +78,4 @@
 | AC-074 | unit | T-001 | T-001:integration,unit |
 | AC-075 | contract,unit | T-031 | T-031:contract,unit |
 | AC-076 | contract,integration,unit | T-032 | T-032:contract,integration,unit |
+| AC-077 | integration | T-025 | T-025:integration,unit |

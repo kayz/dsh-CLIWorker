@@ -566,6 +566,13 @@
         "unit",
         "integration"
       ]
+    },
+    {
+      "id": "AC-077",
+      "text": "问题优先页：CLI 在处理中自报的问题（阻塞、权限被拒、工具失败、契约不满足、额度不足、恢复失败等）必须出现在模型管理界面的首个标签页，而不是只写进日志。每条问题至少含：任务 ID、角色、模型与 provider、发生时间、错误码或问题分类、一句话摘要、可点开的详情（原始输出片段、证据路径、建议动作）。多个任务并发时，问题按严重度（blocking > major > minor）与时间倒序排序，支持按任务、角色、严重度筛选；同一任务同一问题的重复出现必须合并计数而不是刷屏。问题必须在状态文件变化后 5 秒内出现在前端（沿用 SSE），且详情链接可直接跳到对应任务的 sessions/ 与 logs/ 证据。客户端自报“无法完成”但 flow 仍继续的情况必须单独标为「未闭环」，不允许因为流程继续而让问题在界面上消失。",
+      "levels": [
+        "integration"
+      ]
     }
   ],
   "tasks": [
@@ -1764,11 +1771,13 @@
         "test/unit/ui-render.test.mjs",
         "test/integration/ui-snapshot.test.mjs",
         "test/fixtures/ui/**",
-        "test/traceability/T-025.json"
+        "test/traceability/T-025.json",
+        "lib/http/issues-api.mjs"
       ],
       "acceptance": [
         "AC-062",
-        "AC-063"
+        "AC-063",
+        "AC-077"
       ],
       "acceptance_direction": [
         "node scripts/run-tests.mjs --ac AC-062",
