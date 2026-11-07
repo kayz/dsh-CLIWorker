@@ -573,6 +573,14 @@
       "levels": [
         "integration"
       ]
+    },
+    {
+      "id": "AC-078",
+      "text": "HTTP 直连 provider：CLIWorker 支持 transport=http 的 OpenAI 兼容渠道（首个为 DeepSeek 官网 https://api.deepseek.com/chat/completions，model 名以服务端受支持清单为准，如 deepseek-flash）。身份来自响应自带的 model 字段，记 verified；用量来自 usage.prompt_tokens / completion_tokens，记入账本且与 CLI 渠道区分来源（同一模型两个来源必须分别记账、不可混池）。鉴权只接受凭据引用（env 或 vault），不得落明文；请求失败按 HTTP 状态码映射到既有错误码，429/5xx 可重试，401/403 立即 E_SECRET_MISSING 或 E_AUTH。provider 描述符统一覆盖 transport=cli 与 transport=http，调用方式生成、身份证据与用量采集在两条链路语义一致。",
+      "levels": [
+        "contract",
+        "integration"
+      ]
     }
   ],
   "tasks": [
@@ -2089,6 +2097,45 @@
       "test_levels": [
         "contract",
         "unit",
+        "integration"
+      ]
+    },
+    {
+      "id": "T-033",
+      "title": "HTTP 直连 provider：DeepSeek 官网接入、身份与用量、凭据引用",
+      "milestone": "M3",
+      "inputs": [
+        "~/.workbuddy/models.json 的官网配置",
+        "lib/providers/call.mjs",
+        "lib/secrets.mjs",
+        "T-031 的身份证据对象"
+      ],
+      "outputs": [
+        "lib/providers/http-openai.mjs",
+        "lib/providers/registry.mjs",
+        "lib/usage/ledger.mjs",
+        "test/contract/http-provider.test.mjs",
+        "test/unit/http-usage.test.mjs"
+      ],
+      "depends_on": [
+        "T-009",
+        "T-015"
+      ],
+      "write_scope": [
+        "lib/providers/http-openai.mjs",
+        "lib/providers/registry.mjs",
+        "lib/usage/ledger.mjs",
+        "test/contract/http-provider.test.mjs",
+        "test/unit/http-usage.test.mjs"
+      ],
+      "acceptance": [
+        "AC-078"
+      ],
+      "acceptance_direction": [
+        "node --test test/contract/http-provider.test.mjs test/unit/http-usage.test.mjs"
+      ],
+      "test_levels": [
+        "contract",
         "integration"
       ]
     }
