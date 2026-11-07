@@ -1,0 +1,11 @@
+{
+  "name": "@agentline/cliworker",
+  "version": "0.1.0",
+  "description": "Independent CLI/model layer for AgentLine: providers, models, availability, selection and cost forecast.",
+  "type": "module",
+  "bin": { "cliworker": "./bin/cliworker.mjs" },
+  "exports": { ".": "./lib/index.mjs" },
+  "scripts": { "test": "node --test" },
+  "engines": { "node": ">=20" },
+  "license": "MIT"
+}
