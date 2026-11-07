@@ -1,0 +1,1991 @@
+{
+  "schema": "agentline.taskgraph/v1",
+  "milestones": [
+    {
+      "id": "M1",
+      "title": "基线：工程化、特征化档案、注入缝与可推进时钟、规格与金标入库冻结、修复 M1 归属的 A 缺陷（A1、A2、A3、A4，A5 的重复输出、重复 forecast、未使用、被忽略字段）"
+    },
+    {
+      "id": "M2",
+      "title": "基础设施：安全执行（修复 A5 shell 问题）、状态存储、泄露检查 harness、密钥、配置 v2、provider 夹具"
+    },
+    {
+      "id": "M3",
+      "title": "Provider 层：发现、模型枚举、适配器、目录、真实探测"
+    },
+    {
+      "id": "M4",
+      "title": "用量与选模：账本与读数、选模策略与租约（修复 A5 无缓存）、执行器"
+    },
+    {
+      "id": "M5",
+      "title": "插件与交付：路由分级与会话自举、健康检查、界面、跨进程 e2e、安装回滚、文档、smoke、发布门禁；A 节缺陷全部翻转的判定点"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC-001",
+      "text": "npm test 以 0 退出。run-tests 枚举 test 下 unit、integration、contract、e2e、smoke、characterization、flows 中的 *.test.mjs，排除 test/fixtures、test/helpers、test/perf。完整运行写 files-executed.json（mode:'full'），并当场断言枚举集合与 reporter 实际执行集合相等；--ac 过滤运行只写 mode:'filtered'，不做相等比较。check-test-discovery 用夹具自测：能检出不一致；filtered 清单不能满足完整校验；放在 test/fixtures 下的 x.test.mjs 不会被执行。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-002",
+      "text": "check-ci 校验 .github/workflows/ci.yml 是由 scripts/ci-matrix.json 生成的最新版本；矩阵含 os ubuntu、windows、macos 与 node 20、22，每格运行 npm run check 并上传 files-executed.json 与 skips.jsonl；perf 作业单独存在且标为不阻断。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-003",
+      "text": "node scripts/check-fast.mjs 按字母序执行 scripts/check-*.mjs（不含自身），最后执行完整 npm test；任一步非 0 时立即停止，输出该步名称并以该步退出码退出。pwsh -NoProfile -File scripts/check-fast.ps1 只包一层 node 调用，并原样传递 $LASTEXITCODE。自测：注入一个失败步骤，两个入口以同一个非 0 码退出。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-004",
+      "text": "check-traceability：contracts/spec/ac-index.json 恰含 AC-001..AC-074，每条有唯一 owner、milestone、levels、baseline，levels 与任务图一致，baseline 与层级相容（unit、contract、integration、e2e 只能取 linux、win32、darwin；smoke 只能取 linux 或 real-smoke）。合并 test/traceability/*.json：同一 AC 出现在两个分片，或出现在非属主分片时失败；分片不得声明 baseline；没有分片的 AC 视为 planned；status 为 covered 的条目，其文件必须存在，且至少一个测试标题含对应的 [AC-xxx]。夹具覆盖重复、非属主、缺文件、缺标题四种失败。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-005",
+      "text": "特征化与冻结口径（与 Q-3 对齐）：test/fixtures/characterization/v0.1/ 是提交 f75bb76 的 lib 与 example 的逐字节副本；stable.test.mjs 只 import 该副本，锁定 contracts/spec/surfaces.json 列出的保留面（弃用与未验证不入候选、等级过滤、exclude 原因、四个 schema 名）。frozen-files.json 的允许集合恰为：v0.1 副本文件、stable.test.mjs、contracts/spec/**、contracts/golden/** 的 sha256；出现集合外的路径（含 lib/、bin/、config/、scripts/）即失败，且 lib/、bin/、config/ 明列为禁止登记路径。check-frozen-files 在任一登记文件哈希变化时失败，并由 check-fast 执行。defects.json 登记 11 条缺陷及 owner_task、owner_milestone，以及每条 [repro] 段的 sha256；[repro] 与 [fixed] 段落分离。每条缺陷必须有变异 canary：check-defects 用「已修复的 v0.1 变体」跑该缺陷的 repro，必须失败；若 canary 通过（说明 repro 恒真或已失效）则 check-defects 失败，不得静默通过。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-006",
+      "text": "在子进程中 import lib/cli.mjs 与 lib/index.js：stdout 和 stderr 都是 0 字节，退出码 0。main(argv, ctx) 返回 {exitCode}，输出写入 ctx.stdout。lib 下没有任何 process.exit。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-007",
+      "text": "check-seams 断言：lib 下只有 lib/exec.mjs 导入 node:child_process；只有 lib/context.mjs、lib/store.mjs、lib/fsx.mjs 导入 node:fs；不带参数的 Date.now、new Date、全局 setTimeout、setInterval、setImmediate 与 node:timers 只出现在 lib/context.mjs。test/fixtures/seams 下每类违规样例都被报出。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-008",
+      "text": "宿主 stub 通过 contracts/host/dsh-host.v1.json 的契约测试。createPlugin 返回已注册路径列表。stub 的 register 抛错时：report.errors 非空，getRegistration().status 为 failed；strict:true 时 apply 抛出；任何情况下都不能只把错误写进 console 就当通过。",
+      "levels": [
+        "contract",
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-009",
+      "text": "lib/contract/registry.mjs 与 contracts/registry.snapshot.json 深相等；每个码都有 exit、http_status、retryable、trigger_id、trigger，trigger_id 全表唯一，不存在两个码共用一个触发条件；E_VIEW_FORBIDDEN、E_LOOPBACK_ONLY、E_ADMIN_REQUIRED、E_READONLY、E_CSRF 的触发互斥，写路由判定顺序登记为会话、readonly、csrf、请求体。contracts/examples 下的正例全部通过校验；每个反例都失败，且错误路径与样例声明一致。",
+      "levels": [
+        "contract"
+      ]
+    },
+    {
+      "id": "AC-010",
+      "text": "冻结规则测试：在注册表副本上删除一项、改名一项，compareRegistry 分别报告 removed、removed+added，测试失败；只新增但快照未更新时失败；snapshot:update 后 snapshot_version 必须加 1，否则失败。拒选原因、risk 阈值、可用性、警告码、draft 映射、semantic_change 都在快照中。",
+      "levels": [
+        "contract"
+      ]
+    },
+    {
+      "id": "AC-011",
+      "text": "视图扫描器：禁用键在任意深度（对象、数组、warnings、error、rejected 内）都被检出，大小写不敏感精确匹配；禁用值按切词后的整词匹配目录里的模型 id、key 和 CLI 可执行名；call 子树不做值扫描，但必须逐项等于包装模板。canary：每个禁用键和值在深度 1 和 3 注入后都被检出；干净样例 0 命中；cliworker、config、dsh-CLIWorker 不会误报。",
+      "levels": [
+        "contract",
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-012",
+      "text": "resolvePaths 规则按 interfaces 第 11 节。cliworker paths --config X 与 createPlugin 使用 configPath X 时，报告完全相同的 config 绝对路径和 state_dir；两份不同的配置得到不相交的 state_dir；usage 写到该 state_dir；存在旧的 ~/.cliworker/usage.jsonl 时，doctor 给出 W_LEGACY_USAGE。defects/a4-paths 的 [fixed] 部分通过。",
+      "levels": [
+        "integration",
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-013",
+      "text": "git check-ignore -v 命中 config/a.local.json、state/x、a.jsonl、.collab/x，不命中 config/cliworker.example.json。加载带 _example:true 的配置返回 E_CONFIG_EXAMPLE、退出码 3；加载重新缩进过的 example 副本（无该标记）同样返回 E_CONFIG_EXAMPLE。init 遇到已存在的目标文件时返回 E_CONFIG_EXISTS，且文件不变。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-014",
+      "text": "配置根为 null、[]、42、非 JSON，或缺 providers、缺 models 时，CLI 输出 ok:false、error.code 为 E_CONFIG、退出码 3，message 含配置文件绝对路径和原因；stderr 中没有 TypeError。defects/a4-null-config 的 [fixed] 部分通过。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-015",
+      "text": "额度形状金标 contracts/golden/quota-shapes.json：{remaining_pct:5} 且无容量时 remaining_fraction 0.05、remaining_mtok null、risk low_reserve、risk_basis fraction；pct 为 4 时 critical，0 时 exhausted，15 时 ok。{remaining:1, unit:credits} 无换算率时 risk unknown、reason credits_conversion_missing；remaining 为 0 时 exhausted。{remaining:1, unit:credits, credits_per_mtok:1000} 加 3 个各 0.2 Mtok 的样本、usage Normal 时 remaining_mtok 0.001、tasks_left 0、risk exhausted、basis tasks。{remaining:2000000, unit:tokens} 时 remaining_mtok 2。{remaining_usd:3} 加每任务 0.5 USD 的样本时 tasks_left 6、basis usd。实际输出与金标深相等。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-016",
+      "text": "B.4.4 金标 contracts/golden/b44.json：5h 池 opus 容量 2、sonnet 容量 10；used 为 0 时剩余 2 和 10，读数 0.5 时剩余 1 和 5；账本窗口内有 sonnet 的 1,000,000 tokens 时 used 0.1，剩余 1.8 和 9；读数 0.5 之后再有 1,000,000 tokens 时剩余 0.8 和 4；窗口内有容量未知模型的行时为 unknown(ledger_capacity_unknown)；一个模型挂两个池时取最小值；输出保留 3 位小数。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-017",
+      "text": "contracts/golden/forecast/*.json 的输入在伪时钟 setNow 指定的 now 下，输出与 expected 深相等，覆盖：tasks 与 fraction 两张阈值表的全部边界值；nearest-rank 分位数且 n<3 时无效；置信度的全部区间与变异系数降级；burn_mtok_per_hour、eta_exhaust_at、exhausts_before_reset；Heavy、Normal、Light 分别取 p90、p50、p25。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-018",
+      "text": "unknown 语义：没有样本时 tasks_left 为 null，tasks_left_assumed 按 usage_estimate_mtok 算出，basis 为 assumed，confidence 为 none；此时有剩余比例则 risk 只取 fraction 依据，否则为 unknown；任何测试都不能从 assumed 得到 ok、critical 等 risk。既无容量也无比例时 status 与 risk 都为 unknown，reason 属于注册表枚举。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-019",
+      "text": "reset_at 按 cli > config > estimated（滚动窗口为最早样本 + 窗口长度）> unknown 取值并标注 reset_source。同一测试内用伪时钟 setNow 先置于 reset_at 前 1 秒，断言 used_fraction 保持；再 advance 2 秒，断言 used_fraction 归零。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-020",
+      "text": "draft handle 只有 call，没有 cli 键。在 12 个模型的夹具上，注入的 forecast 计数器（统计调用次数）等于通过前置过滤的模型数，与排序比较器的调用次数无关。defects/a5-dup-call 与 a5-forecast-x3 的 [fixed] 部分通过。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-021",
+      "text": "draft 视图在 usage 为 Heavy 时，用 AC-015 的金标输入，risk 为 exhausted、critical 或 low_reserve 的模型全部进入 rejected，原因为 E_FORECAST_EXHAUSTION；Normal 和 Light 不因此拒选。只断言拒选集合与原因，不断言排序。defects/a1-quota 的 [fixed] 部分通过。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-022",
+      "text": "check-unused 对 lib 报告 0 个未使用的导入和顶层函数；对 test/fixtures/unused 恰好报告其中声明的未使用导入和未使用函数。defects/a5-unused 的 [fixed] 部分通过。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-023",
+      "text": "除 run 外，每个 CLI 命令的完整 stdout 都能被 JSON.parse 解析为单个值。表驱动覆盖 CLI 可触发的注册表错误码（E_REQUEST_INVALID、E_LEVEL_REQUIRED、E_LEVEL_UNKNOWN、E_UNKNOWN_COMMAND、E_CONFIG、E_CONFIG_EXAMPLE、E_VIEW_FORBIDDEN），每个都是 ok:false、对应 error.code、注册表规定的退出码。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-024",
+      "text": "请求解析：--request、--request-file、--level/--count/--usage/--importance/--request-id 三种写法得到等价的请求；role 产生 W_FIELD_IGNORED 且 field 为 role；tier 产生 W_FIELD_DEPRECATED；importance 非法时返回 E_REQUEST_INVALID。README 中所有请求示例交给解析器后 warnings 都为空。defects/a5-ignored-fields 的 [fixed] 部分通过。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-025",
+      "text": "check-pack 解析 npm pack --dry-run --json：包含 bin/cliworker.mjs、config/cliworker.example.json、lib 下文件、contracts/registry.snapshot.json、contracts/schemas、contracts/host、contracts/context、contracts/agentline-forbidden.json；package.json 的 bin.cliworker 为 bin/cliworker.mjs；不含 config/*.local.json、state/、*.jsonl、test/、scripts/、.collab/、contracts/golden、contracts/spec；dsh.plugin.json 的 version 与 package.json 一致。defects/a2-pack 的 [fixed] 部分通过。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-026",
+      "text": "exec 层每次 spawn 都是 shell:false（由注入的 spawn 记录断言）。10 个敌意参数（& | ; ^ % ! 空格 双引号 换行 反引号）在直接执行时原样传递，在 cmd 回退路径上返回 E_UNSAFE_ARG。npm v6、npm v7+、pnpm、bun 四种 .cmd 垫片夹具都能解析出 {node, script}；注入的 spawn 对 .cmd 抛 EINVAL 时转入解析路径。全部为纯单测，三平台都跑。defects/a5-shell 的 [fixed] 部分通过。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-027",
+      "text": "win32 原生用例（baseline win32，其他平台写跳过记录）：测试在临时目录自行生成 npm v7+ 形态的 .cmd 垫片指向夹具 node 脚本，不依赖 runner 已安装的垫片；带 a&b 与空格参数调用时，exec 解析垫片后直接用 node 执行，脚本记录到的 argv 与传入完全一致，且全程未调用 cmd.exe。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-028",
+      "text": "超时：exec 的超时定时器经 ctx.clock 注册。夹具脚本派生孙进程并写出 pid 屏障文件；测试等到屏障文件出现后对伪时钟 advance(timeout_ms)，得到 E_TIMEOUT；随后轮询（上限 5 秒）对子进程和孙进程 process.kill(pid,0) 都抛 ESRCH。并发上限 4 时运行 10 个任务：用 wx 计数文件观测到的最大并发 <= 4，且 10 个全部完成。不断言墙钟时间。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-029",
+      "text": "20 个进程各追加 50 行后，1000 行全部可解析且 id 唯一。ctx.fs 在改名前抛错时原文件字节不变。伪时钟下：持有 pid 已死的锁立即被回收；活锁在 advance 超过 lock_stale_ms 后被回收；活锁且未陈旧时，等锁循环在虚拟耗时达到 lock_wait_ms 后返回 E_STATE_LOCKED，重试次数等于 ceil(lock_wait_ms/lock_poll_ms)。不使用 sleep。",
+      "levels": [
+        "integration",
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-030",
+      "text": "redact 对 sk- 前缀、Bearer、三段 base64url 形状的 JWT、已登记的密钥值（包括嵌套对象和 error.message 里的）全部打码。audit.jsonl 每行有 at、entry（cli 或 http）、action、result；select、lease、run、probe、白名单与等级变更、密钥设置各写一行；用 leak-scan 检查不含已登记的密钥。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-031",
+      "text": "leak-scan 的 canary 测试：把哨兵分别放进 stdout、stderr、state_dir 下深层文件、audit、HTTP 响应体、子进程 argv，每处都被检出并报告位置；干净运行 0 命中。flows 测试自动发现 test/flows/steps/*.mjs，在同一个临时 state_dir 中用 env 提供哨兵，依次运行全部已有步骤。",
+      "levels": [
+        "integration",
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-032",
+      "text": "flows 的 auth 步骤：auth set kimi --from-env SENTINEL 与从 stdin 设置两种方式都成功；fake-cli 记录显示令牌只出现在适配器声明的环境变量里（sha256 一致），argv 中没有；leak-scan 在所有位置都 0 命中。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-033",
+      "text": "配置中键名匹配 token、api_key、secret、password（不区分大小写）且值为字符串而非 SecretRef 时返回 E_CONFIG_SECRET_INLINE。注入的 exec 让 secret-tool、security、pwsh 返回 ENOENT 时，对应后端返回 E_SECRET_BACKEND，state_dir 文件列表不变。auth status 只输出 set 或 unset。三个平台后端的命令构造为纯单测（baseline linux）；原生后端用例按平台门控，只作附加。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-034",
+      "text": "无 schema 和 schema 为 v1 的配置都在内存中迁移为 v2，并给 W_CONFIG_V1。config migrate 生成的 v2 文件按 contracts/spec/migration-map.json：models 转为 catalog.manual、allow 和 levels（level_source 为 config）；quotas 映射为 pools；providers 转为 cli_overrides。同一夹具迁移前后，在注入可用性的情况下 draft 选模结果深相等。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-035",
+      "text": "fake-cli 生成器在当前平台为 11 个已知 CLI 和 1 个未知 CLI 生成可执行垫片（win32 为 .cmd 加 node，posix 为带 shebang 的脚本）；支持 ok、auth、quota、timeout、deprecated、mismatch 六种模式；--help、--version、模型列表输出可配置；把 argv、环境变量名以及值的 sha256 写到记录目录。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-036",
+      "text": "在夹具 PATH 与已知安装目录下发现 11 个已知 CLI，每个记录 path、realpath、version、platform、evidence；未知 CLI 标为 recognized:false，对它的 exec 计数为 0；只有 --probe-unknown 时才执行它的 --version。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-037",
+      "text": "平台识别表（process.platform、/proc/version、WSL_DISTRO_NAME 均注入）判定正确。wsl -l -q 的 UTF-16LE 夹具（含 BOM、CRLF、NUL、默认发行版标记）解析出发行版列表；每个发行版生成 platform 为 wsl:<d> 的独立条目；每个发行版调用的 args 与常量模板深相等，不含插值。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-038",
+      "text": "原生 WSL 跨发行版枚举（levels smoke，baseline real-smoke）：smoke-real 的 wsl-discover 步骤（ac:['AC-038']）在 win32 且装有 WSL 的主机上以 real 模式运行，列出的发行版与 wsl.exe -l -q 的结果一致，每个发行版都生成 wsl:<d> 条目，步骤状态为 pass。dry-run 中同名步骤使用夹具，其 pass 不计入 real-smoke 基线。",
+      "levels": [
+        "smoke"
+      ]
+    },
+    {
+      "id": "AC-039",
+      "text": "第二次运行 discover 时，指纹不变且在 TTL 内的条目 exec 计数为 0；被删除的 CLI 标为 gone 且条目保留；--full 重新执行；inventory.json 通过 inventory/v1 校验。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-040",
+      "text": "discover 全程对拒读清单路径的 fsx 访问探针计数为 0；evidence 中只有 digest 和脱敏摘要，leak-scan 检查原始输出哨兵 0 命中。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-041",
+      "text": "每个已知 CLI 的枚举器至少有一种策略（子命令、--help、缓存、API）的夹具测试；所有策略都失败时回退为 source.kind manual，并给 W_MODELS_MANUAL_REQUIRED；models add 录入后可以列出；归一字段 id、cli、vendor、capabilities、source.kind、source.at 齐全。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-042",
+      "text": "check-no-model-table 对 lib 报告 0 个模型 id 字面量表，对 test/fixtures/model-table 下的违规样例报出。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-043",
+      "text": "每个已知 CLI 在 win32、darwin、linux、wsl:Ubuntu 上的 buildCall 输出与 test/fixtures/adapters/golden 深相等；cwd 含空格和单引号时结果正确；wsl 用 --cd 与 --exec，任何参数都不同时含 cd 和 &&；cli resolve 返回带模型的 direct_call，以及 pwsh 和 posix 两种展示串，posix 展示串经纯函数解析后与 args 一致。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-044",
+      "text": "参数形态未确认的 CLI，buildCall 返回 call:null 和 adapter_unverified；在选模夹具中，这类模型只出现在 rejected 里，models 和 calls 中没有对应的 handle。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-045",
+      "text": "不在白名单的模型不出现在候选、AgentLine 视图的 rejected、探测队列和 forecast 输入中（注入计数器为 0）；管理视图中可见，标为 not_allowed。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-046",
+      "text": "等级来源优先级 config > measured > cli，并记录 level_source 的 kind、ref、at；白名单中没有等级的模型以 level_unassigned 拒选；别名解析到同一个 key；弃用模型可用性为 deprecated，并以 deprecated 拒选。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-047",
+      "text": "fake-cli 各模式的探测结果：ok 为 callable，auth 为 blocked(auth)，quota 为 blocked(quota)，timeout 与 enoent 为 unavailable，deprecated 为 deprecated，mismatch 为 identity mismatch 且 blocked。只有 timeout 时 exec 计数为 2，其他都为 1。evidence 字段齐全并带 nonce_ok。伪时钟 advance 超过 probe_ttl_s 后，该 callable 在选模时以 availability_stale 拒选。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-048",
+      "text": "只有白名单模型被探测；每次探测写一行 kind 为 probe、幂等键为 probe:<probe_id> 的用量记录，并计入所属池的 used；同一次探测重放不会重复计入。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-049",
+      "text": "同一 idempotency_key 写入两次返回同一个 id，读取只计一次。codex 会话文件夹具和 claude 事件夹具解析出 {used_fraction, reset_at, source:cli, at}；伪时钟 advance 超过 reading_ttl_s 后读数视为过期，forecast 改用账本计算并给 W_STALE_DATA。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-050",
+      "text": "容量学习金标 contracts/golden/capacity.json：Δfraction<0.01 的读数对被丢弃；cap=sum(tokens)/sum(Δfraction)/1e6；k 为 2、3、10 时置信度分别为 low、medium、high；source 为 measured；输出与 expected 深相等。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-051",
+      "text": "策略金标 contracts/golden/policy/*.json 的输出顺序与 expected 深相等。P1：计划内池 A 剩余 3、1 小时后重置，计划内池 B 剩余 8、4 小时后重置，付费池 C，est=1，顺序为 A、B、C，C 标 funding paid。P2：A 剩余 0.5<est，A 以 quota_low 拒选，选中 C。P3：计划内剩余未知、策略 after_known 时排在已知可完成的之后，策略 reject 时以 quota_unknown_policy 拒选。P4：count=2 时优先选不同的 identity_group。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-052",
+      "text": "储备：cap 10、reserve_fraction 0.15、remaining 2、est 1 时，normal 以 reserve_protected 拒选，high 被选中；储备比例取自配置。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-053",
+      "text": "可用数小于 count 时返回 ok:true、truncated:true，shortfall 等于差额。一个都没有时，按 interfaces 第 2 节规则返回 E_INSUFFICIENT_QUOTA 或 E_NO_CANDIDATE（两个夹具各对应唯一结果），retry_after 等于被额度拒选的池中最早的 reset_at。models 与 calls 一一对应且深相等。每个 handle 都满足：call 非空、callable 未过 TTL、额度通过。",
+      "levels": [
+        "contract",
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-054",
+      "text": "50 个进程等文件屏障打开后同时选模：每个池的有效预留之和 <= 剩余量；用相同 request_id 重放返回深相等的 handle，预留不增加；用 exclude_handles 再次申请能补足数量且不重复。全程不用 sleep。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-055",
+      "text": "在 50 个白名单模型的夹具上，选模过程中注入的 exec 与 fetch 计数都为 0。defects/a5-nocache 的 [fixed] 部分通过。p95 只由 npm run perf 测量并作为报告产出，不作门禁。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-056",
+      "text": "所有 contracts/examples，以及 AC-051..053 各夹具在 AgentLine 视图下的实际输出，经 lib/contract/scan.mjs 检查都是 0 命中；models select 带 view:full 返回 E_VIEW_FORBIDDEN（退出码 2）；admin select 返回含 detail 的完整视图；CLI 的 compat:draft 返回 draft 形状并带 W_DRAFT_DEPRECATED。",
+      "levels": [
+        "contract"
+      ]
+    },
+    {
+      "id": "AC-057",
+      "text": "run --lease 的 stdout 每行都通过 event/v1 校验，最后一行是带 usage 的 result；账本有 <lease>:pre 和 <lease>:post 两行并带池读数；stdin 透传给 fake-cli，fake-cli 记录的 cwd 等于 handle 的 cwd。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-058",
+      "text": "已成功的租约再次 run 返回 E_LEASE_CONSUMED、退出码 6，账本行数不变。fake-cli 为 auth 或 quota 模式时返回 E_PROVIDER_AUTH 或 E_PROVIDER_QUOTA，可用性置为 blocked，下一次选模以 availability_blocked 拒选。timeout 模式时整棵进程树被杀并返回 E_TIMEOUT。伪时钟 setNow 越过 expires_at 后，未开始的租约返回 E_LEASE_EXPIRED。--config 与租约记录的配置摘要不一致时返回 E_LEASE_CONFIG_MISMATCH。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-059",
+      "text": "用宿主 stub 加载插件，按表逐行断言唯一状态与码：POST /cliworker/select 无 view 返回 200 AgentLine ���图且 scan 0 命中；POST select 带 view:'full' 或 compat:'draft' 无会话返回 403 E_VIEW_FORBIDDEN；有效会话时返回 200 完整或 draft 视图；GET api/session 与 GET ui 在非 loopback 远端、非 loopback Host、非 loopback Origin 三种伪造下各返回 403 E_LOOPBACK_ONLY；loopback 时 api/session 返回 200 且含 session、csrf、expires_at；GET providers、models、forecast、api/snapshot、api/jobs/<id> 无会话或会话过期（伪时钟 advance 超过 session_ttl_s）返回 403 E_ADMIN_REQUIRED；带有效会话返回 200。HTTP 响应与 CLI 输出用同一个 scan 函数检查。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-060",
+      "text": "管理写路由的判定顺序：无会话返回 403 E_ADMIN_REQUIRED（即使 readonly 且缺 csrf）；会话有效且 readonly 返回 403 E_READONLY（即使缺 csrf）；会话有效、可写、缺 csrf 或 csrf 不匹配返回 403 E_CSRF；用同一次 api/session 响应中的 session 和 csrf 发出的首个写请求成功。flows 的 http-select 与 http-admin 步骤中，leak-scan 对 HTTP 响应体的哨兵检查 0 命中。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-061",
+      "text": "doctor 与 /cliworker/health 都报告：配置有效性、state_dir 是否可写、锁状态、密钥后端、清单年龄、过期探测数量、注册状态、test_clock。注入任一故障（含设置 CLIWORKER_TEST_CLOCK_FILE）时，doctor 以 E_HEALTH_DEGRADED 退出（退出码 9），health 返回 status degraded 并列出故障项。",
+      "levels": [
+        "integration",
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-062",
+      "text": "ui/render.mjs 的纯函数测试：六列齐全；缺失或过期的值显示 unknown 或 stale，并附 source 和 at；输出中不出现由缺失数据生成的 0 或 100%；assumed 渲染为「unknown（估计 N，assumed）」。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-063",
+      "text": "界面外壳先请求 api/session，再带会话头轮询 api/snapshot，期间 exec 计数为 0；会话失效时收到 E_ADMIN_REQUIRED 并重新签发；刷新和探测走 job 接口并返回 job_id；job 失败时，snapshot 中该项保留上次的值、标为 stale，并给出 last_error 和 at。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-064",
+      "text": "跨进程端到端：用宿主 stub 和 HTTP 选模，在新进程中按 calls[0] 的 command、args、cwd、stdin 原样执行（子进程 env 带 CLIWORKER_TEST_CLOCK_FILE），得到 event/v1 流和 ok 的 result；再执行一次得到 E_LEASE_CONSUMED。用 CLI 选模走同样流程，结果相同。count=3 时，测试把时钟文件依次写为 selected_at+lease_ttl_s+i*timeout_s-1s 后执行 calls[i]，三个租约都未过期；另一组把时钟写为 calls[2] 的 expires_at+1s 后执行，返回 E_LEASE_EXPIRED。插件与 CLI 对同一配置给出的 --config 和 --state-dir 相同。",
+      "levels": [
+        "e2e"
+      ]
+    },
+    {
+      "id": "AC-065",
+      "text": "npm pack 后安装到临时目录：cliworker --version 成功；cliworker doctor --config <临时配置> 成功；import 包入口，用宿主 stub 注册后 getRegistration().status 为 ok；安装目录中不存在 contracts/golden、contracts/spec、.collab。",
+      "levels": [
+        "e2e"
+      ]
+    },
+    {
+      "id": "AC-066",
+      "text": "升级时自动生成 backup-<ver>-<ts>，state/VERSION 被迁移；state restore 后与备份逐字节一致；kill -9 后重启，未过期的租约、账本、探测状态完整，过期租约被释放，陈旧锁被回收。",
+      "levels": [
+        "e2e",
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-067",
+      "text": "check-docs 针对夹具配置执行 README 和 docs 中标为可运行的命令，全部成功；README 中没有会被忽略的字段；docs/migration.md 为 contracts/registry.snapshot.json 中每个 semantic_change 项都有对应段落，并包含 contracts/spec/migration-map.json 中 draft 到 v1 与 config v1 到 v2 的每个映射项。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-068",
+      "text": "docs/agentline-integration.md 只描述 level、count、usage、importance、按顺序执行 calls、再申请、错误码与流程状态；用 agentline-forbidden 键表对它做整词扫描，0 命中。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-069",
+      "text": "smoke-real --dry-run 在 fake-cli 环境下依次运行 discover、wsl-discover（夹具）、enumerate、probe、select、run 极小提示、http-select，每个步骤声明 ac 字段，全部 pass，生成通过 cliworker.smoke/v1 校验的报告（mode dry-run），leak-scan 0 命中。未设置 CLIWORKER_SMOKE=1 时运行 real 模式返回 E_SMOKE_DISABLED。",
+      "levels": [
+        "smoke"
+      ]
+    },
+    {
+      "id": "AC-070",
+      "text": "release-gate 的夹具测试：全部通过时放行；任一 fail 阻断；某条 AC 在 ac-index 声明的 baseline 上只有 skip 时阻断；CI 基线按 OS 取 files-executed.json 与 reporter 结果；real-smoke 基线只认 mode real、redacted:true、version 等于 package 版本的报告中声明该 AC 的 pass 步骤，dry-run 报告不能满足；release/waivers.json 中 version 匹配的 real-smoke AC 单列为 waived，对非 real-smoke AC 的豁免条目导致阻断；mandatory smoke 步骤为 skip 时阻断；有 planned 的 AC 时阻断；real 报告缺失且无豁免时阻断。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-071",
+      "text": "flows 发现的步骤集合恰为 auth, doctor, discover, enumerate, probe, select, run, http-select, http-admin，每个步骤的 introduced_by 与产出任务一致，整条流程在同一个哨兵下 leak-scan 0 命中，令牌只出现在 env 中。",
+      "levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "AC-072",
+      "text": "时钟：contracts/context/context.v1.json 描述 ctx 接口面，test/helpers/ctx.mjs 与 createContext 都符合它。伪时钟：advance(1000) 前后两次 now() 恰差 1000；setNow 可前后设置；经 clock.setTimeout 注册的回调按到期时间、相同时按注册顺序在 advance 中触发，未到期的不触发，pending() 计数正确；clock.sleep 只在 advance 后完成。真实 createContext 在设置 CLIWORKER_TEST_CLOCK_FILE 时 now() 返回文件中的值，且每次调用都重新读取；此时 main() 输出的 warnings 含 W_TEST_CLOCK；未设置时不出现该警告。",
+      "levels": [
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-073",
+      "text": "权威规格自包含且可判据（F-02 加强）：contracts/registry.snapshot.json、contracts/spec/*.json、contracts/golden/** 均被 git 跟踪（git ls-files 列出）并通过各自 schema 校验；contracts/spec/** 与 contracts/golden/** 由 contracts/golden/manifest.json 逐文件登记 sha256，check-golden-frozen 在任一文件增删改时失败，且该检查已纳入 check-fast；check-write-scope 报出登记清单之外的 golden/spec 文件，以及落在任务 write_scope 之外的变更。例外：contracts/registry.snapshot.json 不做哈希冻结，只做 snapshot_version 递增 + compareRegistry 语义比较，v0.1 副本仅作回归夹具；该例外优先于任何字面冻结要求。check-no-collab 对 lib、scripts、test、contracts、docs、package.json 报告 0 处 .collab 引用，对 test/fixtures/no-collab 下的违规样例报出；gen-contract-doc 重新生成的 docs/contract.md 与已提交版本逐字节一致；registry.snapshot.json 含 interfaces 第 5 节的全部码、触发、阈值、原因、映射与 semantic_change。",
+      "levels": [
+        "contract",
+        "unit"
+      ]
+    },
+    {
+      "id": "AC-074",
+      "text": "milestone-gate 与 check-defects 的夹具测试：milestone-gate --milestone Mx 只要求属主里程碑 <= Mx 的 AC 为 covered 并在完整运行中通过，以及 owner_milestone <= Mx 的缺陷具备 [fixed] 部分；夹具中 M2 的 AC-026 为 planned、a5-shell 无 [fixed] 时，M1 门通过、M2 门阻断；a5-nocache 无 [fixed] 时，M3 门通过、M4 门阻断。check-defects 默认模式只要求属主分片已为 covered 的缺陷具备 [fixed]，不会提前误报。",
+      "levels": [
+        "unit"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-001",
+      "title": "测试运行器、完整与过滤两种模式、CI 矩阵、check-fast、AC 索引、追踪合并、里程碑门与缺陷检查（A3）",
+      "inputs": [
+        "package.json",
+        "test/select.test.mjs",
+        "本蓝图 AC 列表与任务属主"
+      ],
+      "outputs": [
+        "package.json 的 scripts（test、check、perf、snapshot:update）",
+        "scripts/run-tests.mjs 与 reporters/files.mjs（files-executed.json，mode full 或 filtered）",
+        "scripts/check-test-discovery.mjs、check-fast.mjs、check-fast.ps1、check-traceability.mjs、check-ci.mjs、gen-ci.mjs、ci-matrix.json",
+        "scripts/milestone-gate.mjs、check-defects.mjs",
+        "contracts/spec/ac-index.json（AC-001..AC-074 的属主、里程碑、层级、baseline）",
+        ".github/workflows/ci.yml",
+        "package-lock.json",
+        "test/unit/select.test.mjs（迁入）",
+        "test/helpers/platform-gate.mjs",
+        "defects/a3-runner 的 [fixed] 部分"
+      ],
+      "depends_on": [],
+      "write_scope": [
+        "package.json",
+        "package-lock.json",
+        "scripts/run-tests.mjs",
+        "scripts/reporters/**",
+        "scripts/check-test-discovery.mjs",
+        "scripts/check-fast.mjs",
+        "scripts/check-fast.ps1",
+        "scripts/check-traceability.mjs",
+        "scripts/check-ci.mjs",
+        "scripts/gen-ci.mjs",
+        "scripts/ci-matrix.json",
+        "scripts/milestone-gate.mjs",
+        "scripts/check-defects.mjs",
+        "contracts/spec/ac-index.json",
+        ".github/workflows/**",
+        "test/select.test.mjs",
+        "test/unit/select.test.mjs",
+        "test/unit/runner-selftest.test.mjs",
+        "test/unit/traceability.test.mjs",
+        "test/unit/milestone-gate.test.mjs",
+        "test/helpers/platform-gate.mjs",
+        "test/fixtures/discovery-selftest/**",
+        "test/fixtures/traceability/**",
+        "test/fixtures/milestone-gate/**",
+        "test/characterization/defects/a3-runner.test.mjs",
+        "test/traceability/T-001.json"
+      ],
+      "acceptance": [
+        "AC-001",
+        "AC-002",
+        "AC-003",
+        "AC-004",
+        "AC-074"
+      ],
+      "acceptance_direction": [
+        "npm test",
+        "node scripts/check-test-discovery.mjs",
+        "node scripts/check-ci.mjs",
+        "pwsh -NoProfile -File scripts/check-fast.ps1",
+        "node scripts/check-traceability.mjs",
+        "node scripts/run-tests.mjs --ac AC-074"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M1"
+    },
+    {
+      "id": "T-002",
+      "title": "特征化：0.1 副本冻结、保留面测试、缺陷账本与 repro 档案",
+      "inputs": [
+        "git show f75bb76 下的 lib 与 config/cliworker.example.json",
+        "contracts/spec/surfaces.json 的保留面清单（与 T-004 共同约定，由 T-004 写入）",
+        "第 2 节勘误"
+      ],
+      "outputs": [
+        "test/fixtures/characterization/v0.1/**（逐字节副本）",
+        "test/characterization/stable.test.mjs（只 import 副本）",
+        "test/characterization/defects.json（11 条，含 owner_task、owner_milestone）",
+        "test/characterization/defects/<id>.test.mjs 的 [repro] 部分",
+        "test/characterization/frozen-files.json",
+        "scripts/check-frozen-files.mjs"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-004"
+      ],
+      "write_scope": [
+        "test/fixtures/characterization/**",
+        "test/characterization/stable.test.mjs",
+        "test/characterization/defects.json",
+        "test/characterization/frozen-files.json",
+        "test/characterization/defects/a1-quota.test.mjs",
+        "test/characterization/defects/a2-pack.test.mjs",
+        "test/characterization/defects/a4-paths.test.mjs",
+        "test/characterization/defects/a4-null-config.test.mjs",
+        "test/characterization/defects/a5-dup-call.test.mjs",
+        "test/characterization/defects/a5-forecast-x3.test.mjs",
+        "test/characterization/defects/a5-unused.test.mjs",
+        "test/characterization/defects/a5-shell.test.mjs",
+        "test/characterization/defects/a5-nocache.test.mjs",
+        "test/characterization/defects/a5-ignored-fields.test.mjs",
+        "test/unit/frozen-files.test.mjs",
+        "scripts/check-frozen-files.mjs",
+        "test/traceability/T-002.json",
+        "scripts/check-defects.mjs",
+        "test/characterization/canary/**"
+      ],
+      "acceptance": [
+        "AC-005"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-005",
+        "node scripts/check-frozen-files.mjs",
+        "node scripts/check-defects.mjs"
+      ],
+      "test_levels": [
+        "unit"
+      ],
+      "milestone": "M1"
+    },
+    {
+      "id": "T-003",
+      "title": "可注入缝与可推进时钟、import-safe 入口、命令路由骨架、宿主与上下文契约",
+      "inputs": [
+        "lib/cli.mjs",
+        "bin/cliworker.mjs",
+        "lib/index.js",
+        "lib/availability.mjs",
+        "lib/config.mjs",
+        "lib/forecast.mjs",
+        "review-v2 F-01"
+      ],
+      "outputs": [
+        "lib/context.mjs（createContext、真实 clock、CLIWORKER_TEST_CLOCK_FILE）",
+        "lib/exec.mjs（迁入现有 spawn，安全化在 T-010）",
+        "lib/cli.mjs 导出 main(argv, ctx)，含 W_TEST_CLOCK",
+        "lib/commands/<cmd>/<sub>.mjs（迁入现有命令）",
+        "lib/index.js 的 createPlugin、getRegistration、strict",
+        "contracts/host/dsh-host.v1.json",
+        "contracts/context/context.v1.json",
+        "test/helpers/ctx.mjs、clock.mjs、host-stub.mjs",
+        "scripts/check-seams.mjs（含定时器规则）"
+      ],
+      "depends_on": [
+        "T-001"
+      ],
+      "write_scope": [
+        "lib/context.mjs",
+        "lib/exec.mjs",
+        "lib/cli.mjs",
+        "lib/commands/**",
+        "bin/cliworker.mjs",
+        "lib/index.js",
+        "lib/availability.mjs",
+        "lib/config.mjs",
+        "lib/forecast.mjs",
+        "contracts/host/**",
+        "contracts/context/**",
+        "test/helpers/ctx.mjs",
+        "test/helpers/clock.mjs",
+        "test/helpers/host-stub.mjs",
+        "scripts/check-seams.mjs",
+        "test/fixtures/seams/**",
+        "test/unit/seams.test.mjs",
+        "test/unit/import-safe.test.mjs",
+        "test/unit/clock.test.mjs",
+        "test/contract/host-stub.test.mjs",
+        "test/contract/context.test.mjs",
+        "test/integration/registration.test.mjs",
+        "test/traceability/T-003.json"
+      ],
+      "acceptance": [
+        "AC-006",
+        "AC-007",
+        "AC-008",
+        "AC-072"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-006",
+        "node scripts/check-seams.mjs",
+        "node scripts/run-tests.mjs --ac AC-008",
+        "node scripts/run-tests.mjs --ac AC-072"
+      ],
+      "test_levels": [
+        "contract",
+        "integration",
+        "unit"
+      ],
+      "milestone": "M1"
+    },
+    {
+      "id": "T-004",
+      "title": "契约冻结：自包含注册表、仓库内规格与金标、示例、校验器、视图扫描器、禁止引用 .collab",
+      "inputs": [
+        "本蓝图 interfaces 第 1～17 节（一次性转写为仓库文件后不再引用外部来源）",
+        "review-v2 F-02、F-08"
+      ],
+      "outputs": [
+        "lib/contract/registry.mjs、validate.mjs、views.mjs、scan.mjs",
+        "contracts/registry.snapshot.json（码含 trigger_id、http_status）",
+        "contracts/spec/surfaces.json、migration-map.json",
+        "contracts/golden/quota-shapes.json、b44.json、forecast/*.json、capacity.json、policy/*.json",
+        "contracts/examples/**、contracts/schemas/**、contracts/agentline-forbidden.json",
+        "scripts/snapshot-update.mjs、gen-contract-doc.mjs、check-contract-doc.mjs、check-no-collab.mjs",
+        "docs/contract.md（生成）"
+      ],
+      "depends_on": [
+        "T-001"
+      ],
+      "write_scope": [
+        "lib/contract/**",
+        "contracts/registry.snapshot.json",
+        "contracts/spec/surfaces.json",
+        "contracts/spec/migration-map.json",
+        "contracts/golden/**",
+        "contracts/examples/**",
+        "contracts/schemas/**",
+        "contracts/agentline-forbidden.json",
+        "scripts/snapshot-update.mjs",
+        "scripts/gen-contract-doc.mjs",
+        "scripts/check-contract-doc.mjs",
+        "scripts/check-no-collab.mjs",
+        "docs/contract.md",
+        "test/fixtures/no-collab/**",
+        "test/contract/registry.test.mjs",
+        "test/contract/examples.test.mjs",
+        "test/contract/freeze.test.mjs",
+        "test/contract/scan-canary.test.mjs",
+        "test/contract/spec-tracked.test.mjs",
+        "test/traceability/T-004.json",
+        "contracts/golden/manifest.json",
+        "scripts/check-golden-frozen.mjs",
+        "scripts/check-write-scope.mjs"
+      ],
+      "acceptance": [
+        "AC-009",
+        "AC-010",
+        "AC-011",
+        "AC-073"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-009",
+        "node scripts/run-tests.mjs --ac AC-010",
+        "node scripts/run-tests.mjs --ac AC-011",
+        "node scripts/check-no-collab.mjs",
+        "node scripts/check-contract-doc.mjs",
+        "node scripts/run-tests.mjs --ac AC-073"
+      ],
+      "test_levels": [
+        "contract",
+        "unit"
+      ],
+      "milestone": "M1"
+    },
+    {
+      "id": "T-005",
+      "title": "路径统一与配置健壮性：resolvePaths、state_dir、.gitignore（含 .collab/）、示例识别、null 配置（A4）",
+      "inputs": [
+        "lib/config.mjs",
+        "lib/index.js",
+        "lib/commands/usage/**",
+        ".gitignore",
+        "config/cliworker.example.json",
+        "第 2 节勘误第 1、2、4 条"
+      ],
+      "outputs": [
+        "lib/paths.mjs",
+        "lib/config.mjs（所有错误补 E_CONFIG，_example 与深相等识别）",
+        "lib/commands/paths.mjs、init.mjs",
+        ".gitignore 通配规则",
+        "example 带 _example、schema 与 credits_per_mtok",
+        "defects/a4-paths 与 a4-null-config 的 [fixed] 部分"
+      ],
+      "depends_on": [
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "write_scope": [
+        "lib/paths.mjs",
+        "lib/config.mjs",
+        "lib/index.js",
+        "lib/commands/paths.mjs",
+        "lib/commands/init.mjs",
+        "lib/commands/usage/**",
+        ".gitignore",
+        "config/cliworker.example.json",
+        "test/unit/paths.test.mjs",
+        "test/unit/config.test.mjs",
+        "test/unit/gitignore.test.mjs",
+        "test/integration/paths-entries.test.mjs",
+        "test/characterization/defects/a4-paths.test.mjs",
+        "test/characterization/defects/a4-null-config.test.mjs",
+        "test/traceability/T-005.json"
+      ],
+      "acceptance": [
+        "AC-012",
+        "AC-013",
+        "AC-014"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-012",
+        "node scripts/run-tests.mjs --ac AC-013",
+        "node scripts/run-tests.mjs --ac AC-014",
+        "node bin/cliworker.mjs paths --config config/cliworker.example.json"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M1"
+    },
+    {
+      "id": "T-006",
+      "title": "额度池归一与预测引擎定稿（A1，纯函数，最终公式，以仓库金标为预期值）",
+      "inputs": [
+        "lib/forecast.mjs",
+        "contracts/registry.snapshot.json",
+        "contracts/golden/quota-shapes.json、b44.json、forecast/*.json（只读）",
+        "test/helpers/clock.mjs"
+      ],
+      "outputs": [
+        "lib/pools.mjs（四种形状归一、多池、重置时间优先级）",
+        "lib/forecast.mjs（remaining、used、分位数、阈值表、置信度、burn、eta、assumed 语义，只经 ctx.clock 取时）",
+        "defects/a1-quota 的预测部分 [fixed]"
+      ],
+      "depends_on": [
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "write_scope": [
+        "lib/pools.mjs",
+        "lib/forecast.mjs",
+        "test/unit/pools.test.mjs",
+        "test/unit/forecast-engine.test.mjs",
+        "test/unit/forecast-unknown.test.mjs",
+        "test/unit/reset.test.mjs",
+        "test/traceability/T-006.json"
+      ],
+      "acceptance": [
+        "AC-015",
+        "AC-016",
+        "AC-017",
+        "AC-018",
+        "AC-019"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-015",
+        "node scripts/run-tests.mjs --ac AC-016",
+        "node scripts/run-tests.mjs --ac AC-017",
+        "node scripts/run-tests.mjs --ac AC-018",
+        "node scripts/run-tests.mjs --ac AC-019"
+      ],
+      "test_levels": [
+        "unit"
+      ],
+      "milestone": "M1"
+    },
+    {
+      "id": "T-007",
+      "title": "选模卫生与 draft 兼容：去掉重复 cli、forecast 记忆化、Heavy 拒选、check-unused（A1、A5）",
+      "inputs": [
+        "lib/select.mjs",
+        "lib/forecast.mjs（T-006 定稿）",
+        "contracts/spec/migration-map.json 的 draft 原因"
+      ],
+      "outputs": [
+        "lib/select.mjs（按模型记忆化，forecast 经 ctx 调用）",
+        "lib/select-draft.mjs（draft 视图与 Heavy 拒选）",
+        "scripts/check-unused.mjs 及自测夹具",
+        "defects/a5-dup-call、a5-forecast-x3、a5-unused 的 [fixed] 部分，a1-quota 的 draft 部分 [fixed]"
+      ],
+      "depends_on": [
+        "T-005",
+        "T-006"
+      ],
+      "write_scope": [
+        "lib/select.mjs",
+        "lib/select-draft.mjs",
+        "scripts/check-unused.mjs",
+        "test/fixtures/unused/**",
+        "test/unit/select-draft.test.mjs",
+        "test/unit/check-unused.test.mjs",
+        "test/characterization/defects/a5-dup-call.test.mjs",
+        "test/characterization/defects/a5-forecast-x3.test.mjs",
+        "test/characterization/defects/a5-unused.test.mjs",
+        "test/traceability/T-007.json"
+      ],
+      "acceptance": [
+        "AC-020",
+        "AC-021",
+        "AC-022"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-020",
+        "node scripts/run-tests.mjs --ac AC-021",
+        "node scripts/check-unused.mjs"
+      ],
+      "test_levels": [
+        "unit"
+      ],
+      "milestone": "M1"
+    },
+    {
+      "id": "T-008",
+      "title": "CLI 统一 JSON 错误体、退出码与请求解析（A5 被忽略字段），修正 README 示例",
+      "inputs": [
+        "lib/cli.mjs",
+        "contracts/registry.snapshot.json 的退出码",
+        "README.md"
+      ],
+      "outputs": [
+        "lib/output.mjs（错误体与退出码映射）",
+        "lib/request.mjs（request/v1 解析、警告、view 门控）",
+        "lib/commands/models/select.mjs",
+        "README.md 示例修正",
+        "defects/a5-ignored-fields 的 [fixed] 部分"
+      ],
+      "depends_on": [
+        "T-003",
+        "T-004",
+        "T-005",
+        "T-007"
+      ],
+      "write_scope": [
+        "lib/cli.mjs",
+        "lib/output.mjs",
+        "lib/request.mjs",
+        "lib/commands/models/select.mjs",
+        "README.md",
+        "test/integration/cli-envelope.test.mjs",
+        "test/unit/request.test.mjs",
+        "test/characterization/defects/a5-ignored-fields.test.mjs",
+        "test/traceability/T-008.json"
+      ],
+      "acceptance": [
+        "AC-023",
+        "AC-024"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-023",
+        "node scripts/run-tests.mjs --ac AC-024",
+        "node bin/cliworker.mjs models select --level Top --count 1"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M1"
+    },
+    {
+      "id": "T-009",
+      "title": "打包清单与 bin 入口（A2），规格与金标不进包",
+      "inputs": [
+        "package.json",
+        "dsh.plugin.json",
+        "bin/cliworker.mjs",
+        "contracts 目录布局"
+      ],
+      "outputs": [
+        "package.json 的 bin 与 files（contracts 白名单子路径）",
+        "dsh.plugin.json 版本对齐",
+        "scripts/check-pack.mjs",
+        "defects/a2-pack 的 [fixed] 部分"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-003",
+        "T-004"
+      ],
+      "write_scope": [
+        "package.json",
+        "dsh.plugin.json",
+        "scripts/check-pack.mjs",
+        "test/integration/pack.test.mjs",
+        "test/characterization/defects/a2-pack.test.mjs",
+        "test/traceability/T-009.json"
+      ],
+      "acceptance": [
+        "AC-025"
+      ],
+      "acceptance_direction": [
+        "node scripts/check-pack.mjs",
+        "node scripts/run-tests.mjs --ac AC-025",
+        "node scripts/milestone-gate.mjs --milestone M1"
+      ],
+      "test_levels": [
+        "integration"
+      ],
+      "milestone": "M1"
+    },
+    {
+      "id": "T-010",
+      "title": "安全进程执行层：去掉 shell、win32 垫片解析、参数白名单、ctx 时钟超时、杀进程树、并发上限（A5 shell 问题）",
+      "inputs": [
+        "lib/exec.mjs（T-003 迁入版）",
+        "lib/availability.mjs",
+        "lib/context.mjs 的 clock",
+        "风险 R5、R17"
+      ],
+      "outputs": [
+        "lib/exec.mjs 安全版（超时经 ctx.clock）",
+        "lib/availability.mjs 改为经 exec 调用",
+        "test/fixtures/exec/**（垫片样本、派生孙进程并写屏障文件的脚本）",
+        "defects/a5-shell 的 [fixed] 部分"
+      ],
+      "depends_on": [
+        "T-003"
+      ],
+      "write_scope": [
+        "lib/exec.mjs",
+        "lib/availability.mjs",
+        "test/unit/exec.test.mjs",
+        "test/integration/exec-native.test.mjs",
+        "test/integration/exec-tree.test.mjs",
+        "test/fixtures/exec/**",
+        "test/characterization/defects/a5-shell.test.mjs",
+        "test/traceability/T-010.json"
+      ],
+      "acceptance": [
+        "AC-026",
+        "AC-027",
+        "AC-028"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-026",
+        "node scripts/run-tests.mjs --ac AC-027",
+        "node scripts/run-tests.mjs --ac AC-028"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M2"
+    },
+    {
+      "id": "T-011",
+      "title": "状态存储、文件锁（伪时钟可测）、审计日志与脱敏",
+      "inputs": [
+        "lib/paths.mjs",
+        "lib/context.mjs 的 clock 与 sleep"
+      ],
+      "outputs": [
+        "lib/store.mjs（原子写、JSONL 追加）",
+        "lib/lock.mjs（等锁循环经 ctx.clock.sleep）",
+        "lib/audit.mjs",
+        "lib/redact.mjs"
+      ],
+      "depends_on": [
+        "T-003",
+        "T-005"
+      ],
+      "write_scope": [
+        "lib/store.mjs",
+        "lib/lock.mjs",
+        "lib/audit.mjs",
+        "lib/redact.mjs",
+        "test/unit/store.test.mjs",
+        "test/unit/lock.test.mjs",
+        "test/unit/redact.test.mjs",
+        "test/unit/audit.test.mjs",
+        "test/integration/store-concurrency.test.mjs",
+        "test/fixtures/store/**",
+        "test/traceability/T-011.json"
+      ],
+      "acceptance": [
+        "AC-029",
+        "AC-030"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-029",
+        "node scripts/run-tests.mjs --ac AC-030"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M2"
+    },
+    {
+      "id": "T-012",
+      "title": "泄露检查共享 harness 与全流程测试框架（自动发现步骤，带 canary）",
+      "inputs": [
+        "lib/contract/scan.mjs",
+        "lib/store.mjs"
+      ],
+      "outputs": [
+        "test/helpers/leak-scan.mjs",
+        "test/helpers/flow.mjs",
+        "test/flows/flow.test.mjs",
+        "test/flows/steps/select.mjs、doctor.mjs（最小版）",
+        "test/unit/leak-scan-canary.test.mjs"
+      ],
+      "depends_on": [
+        "T-004",
+        "T-011"
+      ],
+      "write_scope": [
+        "test/helpers/leak-scan.mjs",
+        "test/helpers/flow.mjs",
+        "test/flows/flow.test.mjs",
+        "test/flows/steps/select.mjs",
+        "test/flows/steps/doctor.mjs",
+        "test/unit/leak-scan-canary.test.mjs",
+        "test/traceability/T-012.json"
+      ],
+      "acceptance": [
+        "AC-031"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-031",
+        "node --test test/flows/flow.test.mjs"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M2"
+    },
+    {
+      "id": "T-013",
+      "title": "用户提供令牌的密钥管理：SecretRef、OS 后端、只经 env 注入",
+      "inputs": [
+        "lib/config.mjs",
+        "lib/exec.mjs",
+        "lib/redact.mjs",
+        "test/helpers/leak-scan.mjs"
+      ],
+      "outputs": [
+        "lib/secrets/**（env、keychain：DPAPI 经 pwsh、security、secret-tool；session）",
+        "lib/commands/auth/**",
+        "lib/config.mjs 明文令牌检测",
+        "test/flows/steps/auth.mjs"
+      ],
+      "depends_on": [
+        "T-005",
+        "T-010",
+        "T-011",
+        "T-012"
+      ],
+      "write_scope": [
+        "lib/secrets/**",
+        "lib/commands/auth/**",
+        "lib/config.mjs",
+        "test/unit/secrets.test.mjs",
+        "test/integration/secrets-native.test.mjs",
+        "test/flows/steps/auth.mjs",
+        "test/traceability/T-013.json"
+      ],
+      "acceptance": [
+        "AC-032",
+        "AC-033"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-032",
+        "node scripts/run-tests.mjs --ac AC-033"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M2"
+    },
+    {
+      "id": "T-014",
+      "title": "配置 v2 与 v1 迁移（按仓库内迁移映射，quotas 映射为 pools）",
+      "inputs": [
+        "lib/config.mjs",
+        "contracts/spec/migration-map.json（只读）",
+        "interfaces 第 6、11 节"
+      ],
+      "outputs": [
+        "lib/config-migrate.mjs",
+        "lib/commands/config/**",
+        "test/fixtures/config/**"
+      ],
+      "depends_on": [
+        "T-004",
+        "T-005",
+        "T-013"
+      ],
+      "write_scope": [
+        "lib/config.mjs",
+        "lib/config-migrate.mjs",
+        "lib/commands/config/**",
+        "test/unit/config-v2.test.mjs",
+        "test/fixtures/config/**",
+        "test/traceability/T-014.json"
+      ],
+      "acceptance": [
+        "AC-034"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-034",
+        "node bin/cliworker.mjs config migrate --in test/fixtures/config/v1.json --out <临时文件>",
+        "node scripts/milestone-gate.mjs --milestone M2"
+      ],
+      "test_levels": [
+        "unit"
+      ],
+      "milestone": "M2"
+    },
+    {
+      "id": "T-015",
+      "title": "Provider 夹具：fake-cli 生成器（11 个已知、1 个未知、6 种模式）",
+      "inputs": [
+        "lib/exec.mjs",
+        "识别规则表草案"
+      ],
+      "outputs": [
+        "test/fixtures/fake-cli/**",
+        "test/helpers/fake-cli.mjs（生成垫片、读取记录）"
+      ],
+      "depends_on": [
+        "T-010"
+      ],
+      "write_scope": [
+        "test/fixtures/fake-cli/**",
+        "test/helpers/fake-cli.mjs",
+        "test/integration/fake-cli.test.mjs",
+        "test/traceability/T-015.json"
+      ],
+      "acceptance": [
+        "AC-035"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-035"
+      ],
+      "test_levels": [
+        "integration"
+      ],
+      "milestone": "M2"
+    },
+    {
+      "id": "T-016",
+      "title": "平台识别与本地 CLI 发现：WSL 跨发行版解析、拒读清单、增量清单",
+      "inputs": [
+        "lib/exec.mjs",
+        "lib/store.mjs",
+        "lib/config.mjs（v2 的 discovery 段）",
+        "fake-cli"
+      ],
+      "outputs": [
+        "lib/discovery/**（platform、rules、scan、wsl、inventory）",
+        "lib/fsx.mjs",
+        "lib/commands/discover.mjs",
+        "test/flows/steps/discover.mjs"
+      ],
+      "depends_on": [
+        "T-010",
+        "T-011",
+        "T-014",
+        "T-015"
+      ],
+      "write_scope": [
+        "lib/discovery/**",
+        "lib/fsx.mjs",
+        "lib/commands/discover.mjs",
+        "test/unit/discovery/**",
+        "test/integration/discovery.test.mjs",
+        "test/integration/discovery-incremental.test.mjs",
+        "test/integration/discovery-deny.test.mjs",
+        "test/fixtures/discovery/**",
+        "test/flows/steps/discover.mjs",
+        "test/traceability/T-016.json"
+      ],
+      "acceptance": [
+        "AC-036",
+        "AC-037",
+        "AC-039",
+        "AC-040"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-036",
+        "node scripts/run-tests.mjs --ac AC-037",
+        "node scripts/run-tests.mjs --ac AC-039",
+        "node scripts/run-tests.mjs --ac AC-040"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M3"
+    },
+    {
+      "id": "T-017",
+      "title": "按 CLI 分别实现模型枚举，失败时回退到手工补录，禁止写死模型表",
+      "inputs": [
+        "inventory.json",
+        "lib/secrets/**",
+        "fake-cli"
+      ],
+      "outputs": [
+        "lib/models/**（每个 CLI 一个枚举器，另有 normalize）",
+        "lib/commands/models/enumerate.mjs、add.mjs",
+        "scripts/check-no-model-table.mjs",
+        "test/flows/steps/enumerate.mjs"
+      ],
+      "depends_on": [
+        "T-013",
+        "T-016"
+      ],
+      "write_scope": [
+        "lib/models/**",
+        "lib/commands/models/enumerate.mjs",
+        "lib/commands/models/add.mjs",
+        "scripts/check-no-model-table.mjs",
+        "test/unit/enumerators.test.mjs",
+        "test/unit/check-no-model-table.test.mjs",
+        "test/fixtures/enumerators/**",
+        "test/fixtures/model-table/**",
+        "test/flows/steps/enumerate.mjs",
+        "test/traceability/T-017.json"
+      ],
+      "acceptance": [
+        "AC-041",
+        "AC-042"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-041",
+        "node scripts/check-no-model-table.mjs"
+      ],
+      "test_levels": [
+        "unit"
+      ],
+      "milestone": "M3"
+    },
+    {
+      "id": "T-018",
+      "title": "调用适配器：按平台和 CLI 生成调用（只读、cwd、stdin、WSL）、事件解析、cli resolve",
+      "inputs": [
+        "lib/discovery/rules",
+        "lib/contract（event/v1）",
+        "真机 --help 采集"
+      ],
+      "outputs": [
+        "lib/adapters/**（buildCall、parseEvent、展示串引用）",
+        "lib/commands/cli/**",
+        "test/fixtures/adapters/golden/**"
+      ],
+      "depends_on": [
+        "T-004",
+        "T-016"
+      ],
+      "write_scope": [
+        "lib/adapters/**",
+        "lib/commands/cli/**",
+        "test/unit/adapters.test.mjs",
+        "test/unit/adapters-unverified.test.mjs",
+        "test/fixtures/adapters/**",
+        "test/traceability/T-018.json"
+      ],
+      "acceptance": [
+        "AC-043",
+        "AC-044"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-043",
+        "node scripts/run-tests.mjs --ac AC-044",
+        "node bin/cliworker.mjs cli resolve --model <key> --cwd . --platform linux --config <夹具配置>"
+      ],
+      "test_levels": [
+        "unit"
+      ],
+      "milestone": "M3"
+    },
+    {
+      "id": "T-019",
+      "title": "模型目录：白名单、四档等级与来源、别名、弃用、能力、价格",
+      "inputs": [
+        "lib/models/**",
+        "配置 v2 的 catalog 段"
+      ],
+      "outputs": [
+        "lib/catalog.mjs",
+        "lib/commands/models/list.mjs、allow.mjs、deny.mjs、level.mjs、alias.mjs"
+      ],
+      "depends_on": [
+        "T-014",
+        "T-017"
+      ],
+      "write_scope": [
+        "lib/catalog.mjs",
+        "lib/commands/models/list.mjs",
+        "lib/commands/models/allow.mjs",
+        "lib/commands/models/deny.mjs",
+        "lib/commands/models/level.mjs",
+        "lib/commands/models/alias.mjs",
+        "test/unit/catalog.test.mjs",
+        "test/unit/catalog-levels.test.mjs",
+        "test/traceability/T-019.json"
+      ],
+      "acceptance": [
+        "AC-045",
+        "AC-046"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-045",
+        "node scripts/run-tests.mjs --ac AC-046"
+      ],
+      "test_levels": [
+        "unit"
+      ],
+      "milestone": "M3"
+    },
+    {
+      "id": "T-020",
+      "title": "小 token 真实探测与可用性状态机（TTL 经 ctx.clock，探测消耗入账）",
+      "inputs": [
+        "lib/adapters/**",
+        "lib/catalog.mjs",
+        "fake-cli",
+        "lib/store.mjs"
+      ],
+      "outputs": [
+        "lib/probe.mjs",
+        "lib/availability.mjs（状态机与缓存）",
+        "lib/commands/models/probe.mjs",
+        "test/flows/steps/probe.mjs"
+      ],
+      "depends_on": [
+        "T-015",
+        "T-018",
+        "T-019"
+      ],
+      "write_scope": [
+        "lib/probe.mjs",
+        "lib/availability.mjs",
+        "lib/commands/models/probe.mjs",
+        "test/integration/probe.test.mjs",
+        "test/integration/probe-ledger.test.mjs",
+        "test/flows/steps/probe.mjs",
+        "test/traceability/T-020.json"
+      ],
+      "acceptance": [
+        "AC-047",
+        "AC-048"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-047",
+        "node scripts/run-tests.mjs --ac AC-048",
+        "node scripts/milestone-gate.mjs --milestone M3"
+      ],
+      "test_levels": [
+        "integration"
+      ],
+      "milestone": "M3"
+    },
+    {
+      "id": "T-021",
+      "title": "用量账本、CLI 额度读数、容量学习（只提供数据，不改预测公式）",
+      "inputs": [
+        "lib/pools.mjs",
+        "lib/forecast.mjs（只读）",
+        "lib/store.mjs",
+        "lib/catalog.mjs",
+        "contracts/golden/capacity.json（只读）"
+      ],
+      "outputs": [
+        "lib/usage.mjs（幂等账本）",
+        "lib/usage-readers/**（codex、claude 等）",
+        "lib/capacity.mjs",
+        "lib/commands/usage/**、pools/**、models/forecast.mjs"
+      ],
+      "depends_on": [
+        "T-006",
+        "T-011",
+        "T-019"
+      ],
+      "write_scope": [
+        "lib/usage.mjs",
+        "lib/usage-readers/**",
+        "lib/capacity.mjs",
+        "lib/commands/usage/**",
+        "lib/commands/pools/**",
+        "lib/commands/models/forecast.mjs",
+        "test/unit/usage-ledger.test.mjs",
+        "test/unit/usage-readers.test.mjs",
+        "test/unit/capacity.test.mjs",
+        "test/fixtures/usage/**",
+        "test/traceability/T-021.json"
+      ],
+      "acceptance": [
+        "AC-049",
+        "AC-050"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-049",
+        "node scripts/run-tests.mjs --ac AC-050"
+      ],
+      "test_levels": [
+        "unit"
+      ],
+      "milestone": "M4"
+    },
+    {
+      "id": "T-022",
+      "title": "选模策略与租约：计划内优先、付费兜底、用足窗口、储备、truncated、并发与幂等、AgentLine 视图（A5 无缓存）",
+      "inputs": [
+        "lib/select.mjs",
+        "lib/select-draft.mjs",
+        "lib/availability.mjs",
+        "lib/usage.mjs",
+        "lib/pools.mjs",
+        "lib/contract/views.mjs",
+        "contracts/golden/policy/*.json（只读）"
+      ],
+      "outputs": [
+        "lib/policy.mjs",
+        "lib/leases.mjs（expires_at 按位置递延，经 ctx.clock）",
+        "lib/select.mjs（v1 编排，只读缓存）",
+        "lib/commands/admin/select.mjs",
+        "lib/commands/models/select.mjs（视图门控）",
+        "test/perf/select.perf.mjs",
+        "test/flows/steps/select.mjs（换成 v1 版）",
+        "defects/a5-nocache 的 [fixed] 部分"
+      ],
+      "depends_on": [
+        "T-007",
+        "T-008",
+        "T-020",
+        "T-021"
+      ],
+      "write_scope": [
+        "lib/policy.mjs",
+        "lib/leases.mjs",
+        "lib/select.mjs",
+        "lib/commands/admin/**",
+        "lib/commands/models/select.mjs",
+        "test/unit/select-policy.test.mjs",
+        "test/unit/select-reserve.test.mjs",
+        "test/unit/select-noexec.test.mjs",
+        "test/contract/selection-shape.test.mjs",
+        "test/contract/selection-view.test.mjs",
+        "test/integration/select-concurrency.test.mjs",
+        "test/perf/**",
+        "test/flows/steps/select.mjs",
+        "test/characterization/defects/a5-nocache.test.mjs",
+        "test/traceability/T-022.json"
+      ],
+      "acceptance": [
+        "AC-051",
+        "AC-052",
+        "AC-053",
+        "AC-054",
+        "AC-055",
+        "AC-056"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-051",
+        "node scripts/run-tests.mjs --ac AC-052",
+        "node scripts/run-tests.mjs --ac AC-053",
+        "node scripts/run-tests.mjs --ac AC-054",
+        "node scripts/run-tests.mjs --ac AC-055",
+        "node scripts/run-tests.mjs --ac AC-056",
+        "npm run perf"
+      ],
+      "test_levels": [
+        "contract",
+        "integration",
+        "unit"
+      ],
+      "milestone": "M4"
+    },
+    {
+      "id": "T-023",
+      "title": "执行器 run --lease：注入令牌、归一事件、前后记账、幂等、超时、失败回写、配置核对",
+      "inputs": [
+        "lib/leases.mjs",
+        "lib/adapters/**",
+        "lib/secrets/**",
+        "lib/usage.mjs",
+        "lib/exec.mjs"
+      ],
+      "outputs": [
+        "lib/runner.mjs",
+        "lib/events.mjs",
+        "lib/commands/run.mjs",
+        "test/flows/steps/run.mjs"
+      ],
+      "depends_on": [
+        "T-013",
+        "T-018",
+        "T-022"
+      ],
+      "write_scope": [
+        "lib/runner.mjs",
+        "lib/events.mjs",
+        "lib/commands/run.mjs",
+        "test/integration/runner.test.mjs",
+        "test/integration/runner-errors.test.mjs",
+        "test/flows/steps/run.mjs",
+        "test/traceability/T-023.json"
+      ],
+      "acceptance": [
+        "AC-057",
+        "AC-058"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-057",
+        "node scripts/run-tests.mjs --ac AC-058",
+        "node scripts/milestone-gate.mjs --milestone M4"
+      ],
+      "test_levels": [
+        "integration"
+      ],
+      "milestone": "M4"
+    },
+    {
+      "id": "T-024",
+      "title": "DSH 插件路由分级、会话自举（loopback 例外）、csrf 签发、固定判定顺序、健康检查与 doctor",
+      "inputs": [
+        "lib/index.js",
+        "lib/select.mjs",
+        "lib/contract/scan.mjs",
+        "contracts/registry.snapshot.json 的 403 触发表",
+        "test/helpers/host-stub.mjs",
+        "test/helpers/leak-scan.mjs",
+        "review-v2 F-07、F-08"
+      ],
+      "outputs": [
+        "lib/http/**（路由表、loopback 校验、会话与 csrf、只读门控、判定顺序）",
+        "lib/health.mjs",
+        "lib/commands/doctor.mjs",
+        "lib/index.js 接入",
+        "test/flows/steps/http-select.mjs、http-admin.mjs",
+        "test/flows/steps/doctor.mjs（完整版）"
+      ],
+      "depends_on": [
+        "T-012",
+        "T-013",
+        "T-022",
+        "T-023"
+      ],
+      "write_scope": [
+        "lib/index.js",
+        "lib/http/**",
+        "lib/health.mjs",
+        "lib/commands/doctor.mjs",
+        "test/integration/plugin-routes.test.mjs",
+        "test/integration/plugin-guard.test.mjs",
+        "test/integration/plugin-session.test.mjs",
+        "test/integration/health.test.mjs",
+        "test/unit/health.test.mjs",
+        "test/flows/steps/http-select.mjs",
+        "test/flows/steps/http-admin.mjs",
+        "test/flows/steps/doctor.mjs",
+        "test/traceability/T-024.json"
+      ],
+      "acceptance": [
+        "AC-059",
+        "AC-060",
+        "AC-061"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-059",
+        "node scripts/run-tests.mjs --ac AC-060",
+        "node scripts/run-tests.mjs --ac AC-061",
+        "node bin/cliworker.mjs doctor --config <夹具配置>"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M5"
+    },
+    {
+      "id": "T-025",
+      "title": "模型管理界面（白名单、等级、可用性、余量、刷新时间、实测证据）与实时数据",
+      "inputs": [
+        "lib/http/**（session、snapshot、jobs）",
+        "forecast/v1、model/v1"
+      ],
+      "outputs": [
+        "ui/index.html（静态外壳）",
+        "ui/app.mjs（先签发会话再轮询）",
+        "ui/render.mjs（纯函数）",
+        "lib/http/snapshot.mjs",
+        "lib/http/jobs.mjs"
+      ],
+      "depends_on": [
+        "T-024"
+      ],
+      "write_scope": [
+        "ui/**",
+        "lib/http/snapshot.mjs",
+        "lib/http/jobs.mjs",
+        "test/unit/ui-render.test.mjs",
+        "test/integration/ui-snapshot.test.mjs",
+        "test/fixtures/ui/**",
+        "test/traceability/T-025.json"
+      ],
+      "acceptance": [
+        "AC-062",
+        "AC-063"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-062",
+        "node scripts/run-tests.mjs --ac AC-063"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M5"
+    },
+    {
+      "id": "T-026",
+      "title": "跨进程选模到执行的端到端（HTTP 与 CLI 两个入口，共享时钟文件，租约按位置递延）",
+      "inputs": [
+        "lib/http/**",
+        "lib/runner.mjs",
+        "lib/paths.mjs",
+        "lib/context.mjs 的 CLIWORKER_TEST_CLOCK_FILE",
+        "fake-cli"
+      ],
+      "outputs": [
+        "test/e2e/select-run.test.mjs",
+        "test/e2e/select-run-sequence.test.mjs"
+      ],
+      "depends_on": [
+        "T-023",
+        "T-024"
+      ],
+      "write_scope": [
+        "test/e2e/select-run.test.mjs",
+        "test/e2e/select-run-sequence.test.mjs",
+        "test/traceability/T-026.json"
+      ],
+      "acceptance": [
+        "AC-064"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-064"
+      ],
+      "test_levels": [
+        "e2e"
+      ],
+      "milestone": "M5"
+    },
+    {
+      "id": "T-027",
+      "title": "安装、升级、回滚、state 迁移与重启恢复",
+      "inputs": [
+        "package.json",
+        "lib/store.mjs",
+        "lib/leases.mjs",
+        "scripts/check-pack.mjs"
+      ],
+      "outputs": [
+        "lib/migrate.mjs",
+        "lib/commands/state/**",
+        "scripts/e2e-install.mjs",
+        "test/e2e/install.test.mjs",
+        "test/integration/restart-recovery.test.mjs"
+      ],
+      "depends_on": [
+        "T-009",
+        "T-023",
+        "T-024"
+      ],
+      "write_scope": [
+        "lib/migrate.mjs",
+        "lib/commands/state/**",
+        "scripts/e2e-install.mjs",
+        "test/e2e/install.test.mjs",
+        "test/e2e/upgrade.test.mjs",
+        "test/integration/restart-recovery.test.mjs",
+        "test/traceability/T-027.json"
+      ],
+      "acceptance": [
+        "AC-065",
+        "AC-066"
+      ],
+      "acceptance_direction": [
+        "node scripts/e2e-install.mjs",
+        "node scripts/run-tests.mjs --ac AC-065",
+        "node scripts/run-tests.mjs --ac AC-066"
+      ],
+      "test_levels": [
+        "e2e",
+        "integration"
+      ],
+      "milestone": "M5"
+    },
+    {
+      "id": "T-028",
+      "title": "文档：AgentLine 集成（只含契约与错误语义）、迁移（含语义变更与映射）、界面与会话、平台、宿主契约",
+      "inputs": [
+        "contracts/registry.snapshot.json",
+        "contracts/spec/migration-map.json",
+        "README.md"
+      ],
+      "outputs": [
+        "README.md",
+        "docs/agentline-integration.md",
+        "docs/migration.md",
+        "docs/ui.md",
+        "docs/platforms.md",
+        "docs/host-contract.md",
+        "scripts/check-docs.mjs"
+      ],
+      "depends_on": [
+        "T-024",
+        "T-025",
+        "T-026",
+        "T-027"
+      ],
+      "write_scope": [
+        "README.md",
+        "docs/agentline-integration.md",
+        "docs/migration.md",
+        "docs/ui.md",
+        "docs/platforms.md",
+        "docs/host-contract.md",
+        "scripts/check-docs.mjs",
+        "test/integration/docs.test.mjs",
+        "test/unit/agentline-doc.test.mjs",
+        "test/traceability/T-028.json"
+      ],
+      "acceptance": [
+        "AC-067",
+        "AC-068"
+      ],
+      "acceptance_direction": [
+        "node scripts/check-docs.mjs",
+        "node scripts/run-tests.mjs --ac AC-067",
+        "node scripts/run-tests.mjs --ac AC-068"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M5"
+    },
+    {
+      "id": "T-029",
+      "title": "发布前冒烟：smoke-real（步骤带 ac 映射，含 wsl-discover；real 模式由维护者真机运行，dry-run 在 CI 运行）",
+      "inputs": [
+        "全部 CLI 命令",
+        "lib/discovery/wsl",
+        "fake-cli",
+        "test/helpers/leak-scan.mjs"
+      ],
+      "outputs": [
+        "scripts/smoke-real.mjs（步骤 discover、wsl-discover、enumerate、probe、select、run、http-select，各带 ac）",
+        "test/smoke/smoke-dry-run.test.mjs",
+        "test/smoke/wsl-discover.test.mjs（报告条目校验）",
+        "docs/release-checklist.md（real 模式与 wsl-discover 的真机要求）"
+      ],
+      "depends_on": [
+        "T-016",
+        "T-026",
+        "T-027",
+        "T-028"
+      ],
+      "write_scope": [
+        "scripts/smoke-real.mjs",
+        "test/smoke/**",
+        "docs/release-checklist.md",
+        "test/traceability/T-029.json"
+      ],
+      "acceptance": [
+        "AC-038",
+        "AC-069"
+      ],
+      "acceptance_direction": [
+        "node scripts/smoke-real.mjs --dry-run",
+        "node scripts/run-tests.mjs --ac AC-069",
+        "CLIWORKER_SMOKE=1 node scripts/smoke-real.mjs --out <报告文件>（维护者在装有 WSL 的 Windows 真机上运行，pwsh 中先设 $env:CLIWORKER_SMOKE='1'）"
+      ],
+      "test_levels": [
+        "smoke"
+      ],
+      "milestone": "M5"
+    },
+    {
+      "id": "T-030",
+      "title": "发布门禁与全流程完整性：baseline 来源、real-smoke 映射、豁免单列、skip 不算通过、追踪全部 covered",
+      "inputs": [
+        "CI 产物（files-executed.json、reporter 结果、skips.jsonl）",
+        "smoke 报告（dry-run 与 real）",
+        "contracts/spec/ac-index.json",
+        "test/traceability/*.json",
+        "test/flows/steps/*",
+        "release/waivers.json"
+      ],
+      "outputs": [
+        "scripts/release-gate.mjs",
+        "release/waivers.json（初始为空列表）",
+        "test/unit/release-gate.test.mjs",
+        "test/fixtures/release-gate/**",
+        "test/integration/flow-complete.test.mjs"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-012",
+        "T-013",
+        "T-016",
+        "T-017",
+        "T-020",
+        "T-022",
+        "T-023",
+        "T-024",
+        "T-029"
+      ],
+      "write_scope": [
+        "scripts/release-gate.mjs",
+        "release/**",
+        "test/unit/release-gate.test.mjs",
+        "test/fixtures/release-gate/**",
+        "test/integration/flow-complete.test.mjs",
+        "test/traceability/T-030.json"
+      ],
+      "acceptance": [
+        "AC-070",
+        "AC-071"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-070",
+        "node scripts/run-tests.mjs --ac AC-071",
+        "node scripts/milestone-gate.mjs --milestone M5",
+        "node scripts/release-gate.mjs --ci-artifacts <dir> --smoke-report <file> --waivers release/waivers.json"
+      ],
+      "test_levels": [
+        "integration",
+        "unit"
+      ],
+      "milestone": "M5"
+    }
+  ]
+}

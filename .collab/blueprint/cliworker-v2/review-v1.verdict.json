@@ -1,0 +1,117 @@
+{
+  "round": 1,
+  "reviewer": {
+    "model": "hy4std",
+    "id": "hy4std",
+    "model_resolved": "hy4std",
+    "identity": "verified",
+    "vendor": "tencent"
+  },
+  "input_digests": {
+    "design_digest": "sha256:2476e9bd91ed1c0b0e1b969c886b12ff622b015215e136279cff8891fb034621",
+    "graph_digest": "sha256:b28309dee505a8d228c97bbf38ccb864c2f354c0c85a02958766e9afaef89763",
+    "strategy_digest": "sha256:48ffb59dea4ca1d01a6114a87810e74ea997818c426580dfc5d106324e89b8c1",
+    "testability_digest": "sha256:f0ea942cbc74ecf9b6c2be43b7eafe036a906dfe56703c84ffa376cc7399f8f2",
+    "gate_hash": null
+  },
+  "model_output_sha256": "sha256:017f7e1cfcd968b16b18c6e64ffc042bb4b450d471e9c36a3f0188b36f2f497c",
+  "verdict": "revise",
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "blocking",
+      "status": "open",
+      "text": "可注入缝缺失，约 12 个 AC 无法落地（确认 TB-1）。已核对：bin/cliworker.mjs:2 仅 import lib/cli.mjs，而 lib/cli.mjs:65 在 import 时自动执行 main()、:9 的 fail() 调 process.exit；lib/availability.mjs:1 直接 import spawnSync；lib/index.js:72-74 把 apply() 的注册异常吞进 console.error，伪 webServer 测试会空过。AC-009/018/019/022/026/046 所需的 exec 探针、fs 探针、计数器、fake CLI、伪 ctx 均无处注入。须在 M2 定稿统一 createContext（exec/fs/now/fetch/env 可替换）+ import-safe 入口 + 注册结果可观测，并补 dsh.plugin.json 主机 stub 契约，否则只能靠脆弱 monkey-patch 或假通过。"
+    },
+    {
+      "id": "F-02",
+      "severity": "blocking",
+      "status": "open",
+      "text": "契约冻结晚于依赖它的测试，M4 必然返工（确认 TB-6）。T-004 建 quota.mjs/forecast，T-017 又重写两者并加 forecast/v1 字段；T-005 建 errors.mjs 初版，T-006 才换成注册表与快照，而 AC-011/041/043/045/039 都依赖后者。同时 AC-007/009/010 绑定 M1 任务，却断言会被 M4（T-018）替换的行为（见 F-08）。须在 T-006 一次性冻结 contracts/examples、error-codes.snapshot.json、AgentLine 禁用词表，此后只能加字段，并写测试：删除或改名必须 bump 快照且令 AC-011 失败；M1 测试只断言冻结面、不 import 内部形状。另 T-001~005 未含 A 系列缺陷的 characterization/golden 测试（test-strategy 第二节），重构缺回归锚点。"
+    },
+    {
+      "id": "F-03",
+      "severity": "blocking",
+      "status": "open",
+      "text": "判定值与公式未定义，测试无唯一 oracle（确认 TB-2）。AC-007 允许 critical 或 exhausted 两解、AC-008/039 只说给出 reason、AC-038 置信度无公式与容差、AC-035 未定义 Mtok 单位与 cap×(1−used) 取整及账本按 tokens/容量加权累加的精确算法、AC-041 允许 E_NO_CANDIDATE 或 E_INSUFFICIENT_QUOTA。须统一 reason 枚举并纳入 error-codes.snapshot.json（与 AC-011 共用真源），补齐阈值表、置信度公式、取整规则后再冻结 AC。"
+    },
+    {
+      "id": "F-04",
+      "severity": "blocking",
+      "status": "open",
+      "text": "墙钟阈值在 CI 不可复现且无 CI 承载双 Node（确认 TB-3/TB-4）。AC-017 的 N/4+1 秒、AC-018 的 p95<300ms 依赖机器负载，AC-042/013 并发若用 sleep 会 flaky；AC-001 要求 Node 20 与 22 双版本，但任务图无任何 CI 配置或任务。CI 断言应改为结构不变量（exec 计数 0、预留≤剩余、1000 行全可解析、request_id 重放幂等），绝对耗时移入独立 perf 作业且不作合并门禁；另需补 lockfile 与 CI 矩阵任务，并确认 pwsh 或给等价回退（AC-002/AC-055 的验收方向均假定 pwsh）。"
+    },
+    {
+      "id": "F-05",
+      "severity": "major",
+      "status": "open",
+      "text": "边界 D 与兼容路由冲突未调和。D 要求对 AgentLine 隐藏 provider 细节，但设计「保留四条兼容路由」，而现状 lib/index.js:50-70 的 providers/models/select/forecast 直接返回 provider、vendor、prices、模型 id、forecast；AC-046 又要求 select 路由输出与 CLI 一致，AC-043 的禁用词扫描只覆盖 CLI 默认视图。后果：要么兼容路由把细节泄漏给任意 HTTP 调用方，要么 select 改成默认视图后旧 UI 消费者（依赖 model key）失效。须明确每条路由的消费者与鉴权或门控、view:'full' 仅管理入口可达，并补一条对 HTTP 响应做同样递归扫描的契约测试。"
+    },
+    {
+      "id": "F-06",
+      "severity": "major",
+      "status": "open",
+      "text": "包装调用 run --lease 的跨进程与租约生命周期缺口。calls[] 固定为 node cliworker.mjs run --lease <id> --config <cfg>，使选模到执行变为有状态：新进程须从 state_dir 解析租约。未定义且未验收：(a) handle 里的 --config 必须等于选模进程的生效配置路径——HTTP 插件用 lib/index.js:20 自带默认或 CLIWORKER_CONFIG，CLI 用 --config，二者可不一致，租约会找不到；(b) expires_at/lease_ttl 与 D 的「按顺序调用」在 count>1 时可能调用间过期；(c) 无 AC 覆盖跨进程 select 到 run 全链路（AC-044/045 只测 runner、AC-046 只测路由、AC-051 只测 --version/doctor）。须补端到端 AC：HTTP select、新进程执行 calls[]、输出 event/v1、再次执行得 E_LEASE_CONSUMED。"
+    },
+    {
+      "id": "F-07",
+      "severity": "major",
+      "status": "open",
+      "text": "unknown 语义自相矛盾。AC-008 要求「缺容量或缺样本时 risk 保持 unknown，不会用默认值算出 ok」，但第 6 节规定 tasks_left 在无样本时取 policy.usage_estimate_mtok 并标 assumed，第 9 节又要求「缺样本一律显示 unknown，不显示 0 或 100%」，E4 与 C 要求 unknown 不伪造。一旦 tasks_left 由配置估计得出，现行 risk 由 tasks_left 推导便会给出 ok 或 critical，直接违背 AC-008。须钉死：assumed 的 tasks_left 是否仍强制 risk:'unknown'、status 与 confidence 如何取值，以及 assumed 与第 9 节 UI 显示的映射。"
+    },
+    {
+      "id": "F-08",
+      "severity": "major",
+      "status": "open",
+      "text": "M1 AC 的 oracle 与最终选模策略漂移（含 TB-7 第 3 点）。AC-007 要求 Heavy 以 E_FORECAST_EXHAUSTION 拒选、按剩余任务数排序生效，但 interfaces 第 5 节规定该码只在 draft 视图、第 2 节 rejected.reason 枚举无此项，第 7 节最终策略用 quota_low/reserve_protected 且按 剩余量/距重置小时数 排序而非 tasks_left；AC-007/009 只绑定 T-004/T-005，T-018 改写 select.mjs 后无 AC 重验或退役它们，M1 通过但交付行为已变。另 AC-009「每模型 forecast 只算一次」低估现状：已核对 select.mjs:94/102/116 三处调用，且 rank 位于 :109 的 sort 比较器内，实为 O(n log n) 次；修复须按模型记忆化，注入计数器须计调用次数而非调用点。"
+    },
+    {
+      "id": "F-09",
+      "severity": "major",
+      "status": "open",
+      "text": "第 1 节现状判断需勘误，否则 AC 修复点错位（确认 TB-7 的 1/2/4）。(1) 已核对 config.mjs:19：!raw || 会短路 raw.schema &&，TypeError 实际来自 throw 模板字面量里对 raw.schema 的插值，不是 && 条件；且 :19-21 三个校验 throw 均未设 error.code='E_CONFIG'，AC-006 的「返回 E_CONFIG」需一并补码。(2) .gitignore 现仅字面 config/cliworker.local.json 与 usage.jsonl，无 config/*.local.json 通配、state/、*.jsonl，AC-005 的 git check-ignore 断言须按通配行为写。(3) run --lease、resolve、包装调用当前不存在，是 v2 目标，AC-044/045 属新功能，须另立金标而非当回归。建议先勘误再冻结 AC。"
+    },
+    {
+      "id": "F-10",
+      "severity": "major",
+      "status": "open",
+      "text": "累计型 harness 无单一归属，扫描器缺 canary（确认 TB-8）。AC-019 哨兵跨 T-009 到 T-019 到 T-020 增量构建，若各阶段各写局部扫描，后续不重跑全流程，HTTP 泄露会漏网；AC-043 递归扫描器若无「故意塞入 provider 字段必须被抓到」的元测试，自身失效不可见；check-docs（AC-053）与 smoke 报告（AC-055）应复用同一扫描器。另禁用词表含 cli，与强制包装命令里 cliworker 与 config 的子串冲突，AC-043 须定义扫描语义（字段名或整词匹配加包装器白名单），否则按字面无法满足。须指定一个共享 helper 拥有递归字节扫描（stdout、stderr、state_dir 全文件、audit、HTTP）与 env-only 非 argv 断言，并规定每里程碑重跑全流程。"
+    },
+    {
+      "id": "F-11",
+      "severity": "major",
+      "status": "open",
+      "text": "跨平台跳过与发布门禁语义未定（确认 TB-5/TB-9/TB-10）。AC-016/024/020/029 在单 OS CI 无法原生跑，「跳过并记录原因」无结构化格式与基线平台，skip 可能与 pass 混淆；AC-055 依赖真机配置、凭据、DSH host 不可 CI 化，却要求每步 pass 或带原因 skip 且任何 fail 阻断发布，skip 是否阻断、由谁触发、报告脱敏如何机读验证均未定义，且 levels 含 smoke 却无 test/smoke/ 目录、无 fake-cli dry-run 让流水线执行。须拆全平台纯解析单测加平台门控原生用例、结构化 skip 清单永不满足发布门禁、建立 level 到目录映射与 AC 到测试文件 traceability 矩阵，并让 check-test-discovery 用集合相等（而非 AC-001 的「执行数与文件数一致」计数相等）校验。"
+    },
+    {
+      "id": "F-12",
+      "severity": "minor",
+      "status": "open",
+      "text": "配置分类与 state_dir 纯度缺口。已核对 config/cliworker.example.json 无 schema 字段、无 _example:true；AC-021 的 v1 到 v2 迁移未说明无 schema 配置如何归类；AC-005 的 E_CONFIG_EXAMPLE 用「与 example 逐字节相同」判定，空白差异即可绕过，机制脆弱。AC-004 要求 state_dir 是 --config 的纯函数，但 CLI 与插件入口各自计算默认路径（lib/index.js:20 自带默认），须统一到同一 resolveStateDir 并显式验证两入口对同一配置得到同一 state_dir，否则跨入口租约与账本串扰（与 F-06 相关）。"
+    },
+    {
+      "id": "F-13",
+      "severity": "minor",
+      "status": "open",
+      "text": "工具链与打包细节待定（确认 TB-4）。AC-002/AC-055 验收方向假定 pwsh，而本机仅暴露 Windows PowerShell 5.1（powershell.exe），须确认 pwsh 或给等价回退；AC-009 的 check-unused 要求「0 个未使用导入和顶层函数」但零依赖仓库无静态分析工具，须决策固定版本 devDependency 还是窄范围 AST 检查加自检；check-test-discovery 须显式排除 test/fixtures/ 与 test/helpers/ 并做集合相等断言；T-002 的 files 清单含 ui/contracts 但未含 docs/ 与 scripts/，AC-053 的 check-docs 与 doctor 需说明仅从仓库运行；AC-003 还需确认 bin 字段指向 bin/cliworker.mjs 且 npm pack 不含 config/*.local.json、state/、*.jsonl。"
+    },
+    {
+      "id": "F-14",
+      "severity": "minor",
+      "status": "open",
+      "text": "「forecast/v1 只加字段」并非纯增量。第 6 节把 tasks_left、burn_per_task、risk 的输入从 USD/cost 改为 Mtok 与 p90/p50/p25 分位数，字段虽未删但取值语义变了；C 要求沿用现有契约，须在 docs/migration.md 说明语义变更并给 draft 映射，否则旧消费者按同名同数字段解读会得到不同结论。另 README.md:21 的 role/importance 被静默忽略已由 AC-010/AC-053 覆盖，确认无误。"
+    },
+    {
+      "id": "F-15",
+      "severity": "minor",
+      "status": "resolved",
+      "text": "已核验成立、无需改动的部分：第 1 节对 A1 的诊断准确——example 的 quotas 为 remaining_pct 或 remaining+unit:'credits'，均不满足 forecast.mjs:34 的 remaining_usd 与 :37 的 unit==='tokens' 分支，故 risk 恒 unknown；select.mjs:49 的 cursor-wsl 把 cwd 拼进 bash -lc、:123 同时输出 cli 与 call、cli.mjs:12 的 usageFile 与 --config 无关，均已在代码中确认。设计侧：固定 now 加样本使预测确定、缺样本或缺容量保持 unknown 给 reason（AC-008 意图）、只探测白名单且消耗以 kind=probe 入账本（AC-033/034）、假 handle 三约束（call 非空、callable 未过 TTL、额度通过）均可判定，确认 TB-11/12/13 已消除。任务图 24 任务、5 里程碑、55 AC，depends_on 无环且 ID 均存在，AC 双向覆盖完整。"
+    },
+    {
+      "id": "F-16",
+      "severity": "minor",
+      "status": "disputed",
+      "text": "TB-10 列举的「levels 与 task_levels 不完全对齐」被夸大为不一致：逐行核对验收矩阵，每个 AC 的 levels 都是其任务 test_levels 并集的子集（如 AC-024 unit 包含于 T-012 integration,unit；AC-043 contract 包含于 T-018 contract,integration,unit；AC-001 unit 包含于 T-001 unit），矩阵本身自洽。其真正诉求（level 到目录规范映射、AC 到测试文件 traceability 矩阵、集合相等发现校验）有效且应保留，但属流程增强，应降为 minor，不应作为阻断性不一致处理。"
+    }
+  ]
+}

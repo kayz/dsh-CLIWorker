@@ -1,0 +1,43 @@
+{
+  "schema": "agentline.roleslock/v1",
+  "stage": "blueprint",
+  "locked_at": "2026-11-07T10:42:17.592Z",
+  "roles": {
+    "designer": {
+      "candidates": [
+        {
+          "key": "claude-opus-5-5",
+          "id": "claude-opus-5-5",
+          "identity_group": "anthropic-opus-5-5",
+          "vendor": "anthropic",
+          "tier": "top",
+          "identity": "verified"
+        }
+      ]
+    },
+    "reviewer": {
+      "candidates": [
+        {
+          "key": "hy4std",
+          "id": "hy4std",
+          "identity_group": "hy4-std",
+          "vendor": "tencent",
+          "tier": "top",
+          "identity": "verified"
+        }
+      ]
+    },
+    "test_architect": {
+      "candidates": [
+        {
+          "key": "hy4free",
+          "id": "hy4free",
+          "identity_group": "hy4-free",
+          "vendor": "tencent",
+          "tier": "top",
+          "identity": "verified"
+        }
+      ]
+    }
+  }
+}

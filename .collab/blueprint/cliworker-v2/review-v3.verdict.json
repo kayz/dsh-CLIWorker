@@ -1,0 +1,69 @@
+{
+  "round": 3,
+  "reviewer": {
+    "model": "hy4std",
+    "id": "hy4std",
+    "model_resolved": "hy4std",
+    "identity": "verified",
+    "vendor": "tencent"
+  },
+  "input_digests": {
+    "design_digest": "sha256:16d2066a575fee80ebaa20356ccb1dfe65aa21561b598c33e5d6fb34c842b81b",
+    "graph_digest": "sha256:62d2766c404e3e41ca19a936f6d7ca008fd68977dffa00a125307e9d3789669f",
+    "strategy_digest": "sha256:dd6d666e5b6cb935d0728ce55400dcdf3ca36e84de3b1168e2debfbc0725dd48",
+    "testability_digest": "sha256:6ebe9105f48c9d1b183a4ecf39900cdea2b53e2e58b8d19b15d714d7707d305e",
+    "gate_hash": null
+  },
+  "model_output_sha256": "sha256:03b7c90c18c3c46e3f82f909ab21489b896912b19e76dc592389615e4c10b59d",
+  "verdict": "revise",
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "major",
+      "status": "open",
+      "text": "确认 TB-1（时钟夹具与降级故障未钉死）：§0.1/§3 规定设置 CLIWORKER_TEST_CLOCK_FILE 时 main() 每个输出追加 W_TEST_CLOCK、health 报告 test_clock，且 now() 读文件而定时器仍走真实时间；但 AC-061 把「设置该变量」列为注入故障，要求 doctor 退出 E_HEALTH_DEGRADED(9)、health 返回 degraded，AC-072 又在进程内设置/撤销它验证重读与警告，AC-064 只在子进程 env 设置。同一变量既是正常跨进程夹具又是降级故障，health/doctor 是否应判 degraded 未澄清；§3 未声明它与伪时钟模式互斥、未禁止混用，也未写明文件模式只提供虚拟 now()+真实定时器、不支持 advance/sleep 的虚拟推进（AC-028/029 依赖 advance）。另外 W_TEST_CLOCK 进入「每个输出」叠加进程级 env 泄漏：AC-072 若不在 finally 恢复，check-fast 末尾那次完整 npm test 的深相等断言会被污染，设计无泄漏 canary。须钉死该变量对 health/doctor 的语义、只在子进程 env 注入并 finally 恢复、补无泄漏 canary、写明两种时钟模式互斥。"
+    },
+    {
+      "id": "F-02",
+      "severity": "blocking",
+      "status": "open",
+      "text": "确认 TB-2（金标 oracle 可静默漂移）：§4 称金标由 T-004 一次写定、后续 write_scope 不含 contracts/golden、改动须走蓝图变更并递增 snapshot_version，但 AC-073 只校验 git 跟踪 + 各自 schema + check-no-collab + docs/contract.md 逐字节一致，AC-010 的 compareRegistry 与 snapshot_version 递增只覆盖 registry.snapshot.json；既无 contracts/golden/** 与 contracts/spec/** 的逐文件 sha256 冻结清单，也无 check-golden-frozen 纳入 check-fast，更无检查器强制 write_scope。后续任务可直接改金标 input/expected 让 AC-015/016/017/050/051 的深相等断言「通过」而无人察觉，正好架空 F-02 的权威规格入库。须补随仓库提交的逐文件哈希清单、纳入 check-fast 的校验器，明确 snapshot_version 对全部规格文件递增，并钉死由哪个 check 强制 write_scope。"
+    },
+    {
+      "id": "F-03",
+      "severity": "major",
+      "status": "open",
+      "text": "确认 TB-3（完整运行集合相等在三 OS 矩阵上未定义全跳过文件）：AC-001 要求完整运行写 files-executed.json(mode:full) 并当场断言「枚举集合 == reporter 实际执行集合」，AC-002 把 skips.jsonl 单独上传却未定义二者关系；AC-027 非 win32 写跳过记录、AC-033 原生后端按平台门控、AC-038 dry-run 等会产生「文件已枚举但用例全 skip」。若 reporter 的「实际执行集合」不含全跳过文件，ubuntu/macos 的完整运行必然因集合不等失败，而 check-test-discovery 的夹具只覆盖不一致检出、filtered 不能顶替、fixtures 下 x.test.mjs 不执行，无全跳过 canary。须明确 files-executed.json 记录的是「已加载的测试文件」、skip 只进 skips.jsonl，并补全跳过文件 canary，否则 F-06 的集合相等不可实现。"
+    },
+    {
+      "id": "F-04",
+      "severity": "major",
+      "status": "open",
+      "text": "确认 TB-4（a1-quota 双属主令里程碑翻转误判）：§5 把 a1-quota 记为 T-006/T-007 两个属主，T-006 写「预测部分 [fixed]」、T-007 写「draft 部分 [fixed]」，两者 write_scope 都含 test/characterization/defects/a1-quota.test.mjs（写冲突），AC-021 也要求该文件 [fixed] 通过；但 defects.json 每条只有一个 owner_task，§5 的缺陷文件只有单一 [repro]/[fixed] 两段，check-defects 与 AC-074/milestone-gate 只检查「具备 [fixed] 部分」是否存在。任一任务先补分段，即便另一半（预测公式或 Heavy 拒选）无断言，M1 门也会判已翻转。须把 a1-quota 拆成两条缺陷，或把 [fixed] 按 owner_task 分子段并让 check-defects/milestone-gate 校验每个属主分段都存在且含对应 [AC-xxx] 标题，同时消除两任务写同一文件的冲突。"
+    },
+    {
+      "id": "F-05",
+      "severity": "blocking",
+      "status": "open",
+      "text": "确认 TB-5（缺陷档案可静默架空）：AC-005/§5 要求 [repro]「永远运行、永远应当通过」，但没有变异 canary（用已修复的 v0.1 副本变体跑每条 repro 必须失败）证明它真能检出缺陷——恒真、删空或改成无关断言都不会被发现；且 T-002 写 [repro]、后续属主任务在同一文件追加 [fixed]，而 frozen-files.json/check-frozen-files 只登记 v0.1/ 与 stable.test.mjs 的 sha256，[repro] 段不受任何哈希校验，可被顺手改写。于是 M5「11 条全部具备 [fixed]」也可能以空断言达成，F-04 的保留面锁定与 F-05 的翻转门禁同时失去回归价值。须为每类缺陷补变异 canary，并把 repro 与 fixed 拆成两个文件（或给 [repro] 段登记哈希由 check-defects 校验）。"
+    },
+    {
+      "id": "F-06",
+      "severity": "major",
+      "status": "open",
+      "text": "确认 TB-6（ac-index.json 属主三处矛盾）：§0 第 2 条写「contracts/spec/ 放 AC 索引、保留面…这些文件都由 T-004 在 M1 写入并提交，实现任务只读不写」，把 ac-index.json 也归 T-004；但 §4 表格与任务图/验收矩阵把 contracts/spec/ac-index.json 钉给 T-001（T-001 write_scope 含它，T-004 只有 surfaces.json、migration-map.json 与 golden/**），AC-001/004/070/074 与 F-06 的「单一 AC 索引、baseline 唯一声明」全依赖唯一写入者。照 §0 理解由 T-004 再写一份，或实现任务按「只读不写」反向去写，都会破坏单一事实来源。须把属主钉死为 T-001，统一 §0/§4/任务图三处表述并显式声明 T-004 不写该文件。"
+    },
+    {
+      "id": "F-07",
+      "severity": "major",
+      "status": "open",
+      "text": "新增（T-002 缺 T-004 依赖，与 F-06 同类的依赖闭合遗漏）：T-002 的 inputs 明列「contracts/spec/surfaces.json 的保留面清单（由 T-004 写入）」，AC-005 也要求 stable.test.mjs 锁定 surfaces.json 列出的保留面，§0 第 4 条同样把该文件归 T-004 写入；但 T-002 depends_on 只有 T-001，T-004 也只依赖 T-001，二者同属 M1 且无传递路径，按 ID 序或并行执行时 surfaces.json 尚未生成 T-002 就要跑 AC-005。T-030 的依赖已按 F-06 补齐，T-002 这一处仍漏。须给 T-002 增加 depends_on T-004，并复核其余消费 contracts/spec 与 contracts/golden 的任务是否都有到 T-004 的依赖路径。"
+    },
+    {
+      "id": "F-08",
+      "severity": "minor",
+      "status": "resolved",
+      "text": "已核验、核心处理成立：上一轮 8 条意见的核心机制均已在第三轮稿、任务图与验收矩阵实质落地——可推进时钟与 check-seams（AC-072、手段表）、自包含 registry.snapshot.json 与 contracts/spec+golden 入库（AC-073、AC-015/016/017/051 读金标、check-no-collab）、real-smoke 基线与 wsl-discover 步骤 ac 映射/豁免（AC-038/069/070）、只冻结 0.1 副本（AC-005）、M1 改名与 milestone-gate（AC-074）、单一 ac-index 与仅完整运行做集合比较（AC-001/004）、session/ui 例外与 csrf 随会话签发（AC-059/060）、trigger_id 唯一与 E_LOOPBACK_ONLY 及单码路由表（AC-009）。本轮 revise 仅针对 F-01..F-07 列举的新增残留/遗漏缺口，不是对整体修订的否定。"
+    }
+  ]
+}

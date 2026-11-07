@@ -1,0 +1,75 @@
+{
+  "round": 2,
+  "reviewer": {
+    "model": "hy4std",
+    "id": "hy4std",
+    "model_resolved": "hy4std",
+    "identity": "verified",
+    "vendor": "tencent"
+  },
+  "input_digests": {
+    "design_digest": "sha256:cf62a17c676043e7ab0fb82c5919ed8102871f892e532bbfb3b7b60ae38c1ff5",
+    "graph_digest": "sha256:d193f0b0e46e79f40eaa6b29e71499026ea6e0a544f6c9b31e70b64d8dd148cc",
+    "strategy_digest": "sha256:3ac2d5cd08d6e22567afa15f1391bffe746b199160b83a41d48ee2e7d5dc1886",
+    "testability_digest": "sha256:b7b4f40ddad4b12de8406b09c1360ac25ff979f0c3043a4a7a9efdfb2de235d0",
+    "gate_hash": null
+  },
+  "model_output_sha256": "sha256:c930c0e9e09024efd935824b3bc10db268139da1b06a2098f5be1b189f7ad104",
+  "verdict": "revise",
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "blocking",
+      "status": "open",
+      "text": "确认 TB-1：注入时钟必须是可推进/可设置的伪时钟，而 §4/T-003 只给『固定时钟』。已核对 §0.2『可替换 now』与 §4『固定时钟』只保证可替换、不保证可推进，但 AC-019（now>reset_at 后 used_fraction 归零）、AC-028（lock_wait_ms）、AC-029（lock_stale_ms）、AC-047（callable 过 TTL→availability_stale）、AC-049（reading_ttl_s→W_STALE_DATA）、AC-058（E_LEASE_EXPIRED）、AC-064（count=3 在注入时钟下顺序执行、三租约均不过期）以及 §0.6 的 expires_at=selected_at+lease_ttl_s+i×timeout_s，共 ≥8 条 AC 需在单进程内推进时间；设计又明令『用文件屏障代替 sleep』『注入时钟加屏障，不用 sleep』且 AC-028 不断言墙钟时间。固定时钟下这些 AC 只能靠 sleep 变 flaky，或退化成恒真的假通过。须在 M1 的 T-003、contracts/host、check-seams 一次定死：ctx.now() 从可变值读取、暴露 ctx.clock.advance(ms)/setNow(t)、所有生产模块只经 ctx.now() 取时（check-seams 已禁裸 Date.now/new Date 于 context.mjs 之外）。"
+    },
+    {
+      "id": "F-02",
+      "severity": "blocking",
+      "status": "open",
+      "text": "确认 TB-6：冻结注册表的权威 oracle 仍只存在于 .collab/blueprint/cliworker-v2/（interfaces.md【1】..【15】节、designer.log/state.json 的 B.4.4 金标、review-v1.verdict.json、task-graph.json）。已核实这些文件确在该目录，但 .gitignore 无 .collab/ 规则、package.json 的 files 白名单为 [lib,cordis.patch.yml,dsh.plugin.json,README.md] 不含 .collab/，且 AC-025 明确要求 npm pack 不含 .collab/——即权威规格既不随包发布、也未声明为版本化随仓库提交的机读产物。T-004 输入是『interfaces 第 1～15 节』，AC-016 标 B.4.4，AC-010/AC-015 唯一预期值与 AC-067 的 semantic_change 清单都从这些节推导；干净 CI checkout 无此目录时，冻结/比较/金标/迁移文档测试缺稳定真源。contracts/registry.snapshot.json 只登记码与枚举，并非公式、阈值表、B.4.4 金标与 draft→v1 映射的真源。须在 M1 前把权威规格提升为 contracts/ 下版本化、提交、机读的 artifacts（并入 T-004 输出的 docs/contract.md），令 registry.snapshot.json 自包含、运行时不读 .collab/，并明确 AC-015/016/017/051 各金标对应哪个仓库内文件。"
+    },
+    {
+      "id": "F-03",
+      "severity": "blocking",
+      "status": "open",
+      "text": "确认 TB-2：AC-070 的『每条 AC 在 baseline 至少一次 pass、skip 永不算 pass』与 ci-matrix 无法为部分 AC 产出 pass。AC-038 levels=[integration] 却 baseline=smoke，正文又说『由真机 smoke 的 wsl-discover 步骤承担』；WSL 带发行版不在 ubuntu/windows/macos 任一 runner，real 模式仅 CLIWORKER_SMOKE=1 由维护者真机执行（AC-069/T-029），而 AC-069 的 dry-run 步骤（发现/枚举/探测/选模/run/http-select）与 AC-071 的 9 步 flows 中均无 wsl-discover，T-030 的 inputs/outputs/acceptance_direction 也未定义 real smoke 报告如何把一次 pass 记到某 AC 的 baseline。结果要么门禁永久阻断，要么 AC-038 结构性无法 pass。须统一 AC-038 的 levels 与 baseline、列出原生专属 AC 及其 pass 来源产物、在 release-gate 定义报告条目→AC ID 的映射或明确豁免规则，并复核 AC-027 在 windows runner 缺 .cmd 垫片时是否稳定。"
+    },
+    {
+      "id": "F-04",
+      "severity": "blocking",
+      "status": "open",
+      "text": "确认 TB-4：AC-005 的 sha256/check-frozen-files 覆盖对象未钉死，与 M1 重构直接冲突。AC-005 说 stable.test.mjs『通过 0.1 的库导出（selectModels、listModels、forecast、estimateCost）锁定保留行为』并把 sha256 写进 frozen-files.json，check-frozen-files『在文件被修改时失败』；但 T-005/T-006/T-007/T-008（M1）与 T-022（M4）会改写 lib/config.mjs、lib/forecast.mjs、lib/pools.mjs、lib/select.mjs、lib/cli.mjs、lib/index.js，且 AC-003 的 check-fast 在每个 npm run check / npm test 都跑全部 check-*。若哈希或 stable.test.mjs 的 import 指向 live lib，从 T-005 起全流程恒失败。另 AC-005 锁定的『schema 名』与预测行为会被 F-14/T-006/T-014 的预期语义变更（forecast/v1 新增 tasks_left_basis/risk_basis、draft→v1 映射、config v1→v2）打破。须显式规定：哈希只覆盖 test/fixtures/characterization/ 下不可变的 0.1 库副本、stable.test.mjs 针对该副本运行、check-frozen-files 永不哈希 live lib，并划分『保留面』与『预期语义变更面』。"
+    },
+    {
+      "id": "F-05",
+      "severity": "major",
+      "status": "open",
+      "text": "确认 TB-3：M1 标题『修复 A 节全部缺陷』与缺陷归属/翻转时点矛盾。§16 的 A 节缺陷表把 A5-shell 交给 T-010（M2，AC-026/027）、A5-无缓存交给 T-022（M4，AC-055），AC-005 又明确『A1..A5 每条缺陷各一个 defects 文件，在 M5 结束时全部断言已修复的行为』。若里程碑门或发布门禁按 M1 标题推导『A 节全绿』，M1 必然失败，且 T-010/T-022 会被误判为回归而非新功能金标（与 §2 勘误第 3 条『run --lease/resolve/包装调用是新功能』一致）。须把 M1 措辞改为『建特征化档案并修复 M1 归属的 A 缺陷』、把缺陷全部翻转的判定时点统一钉在 M5，并让各里程碑门只校验本 M 拥有的 AC。"
+    },
+    {
+      "id": "F-06",
+      "severity": "major",
+      "status": "open",
+      "text": "确认 TB-5：追踪分片合并语义与任务依赖未闭合。AC-004 要求合并 test/traceability/*.json 后 AC 集合恰为 AC-001..AC-071，而 T-001 输出 T-001.json『列出全部 AC，初始为 planned』，§15 又要求每个任务写自己的分片把其 AC 标为 covered；朴素合并会产生重复 ID 与 planned/covered 冲突，也可能多个分片同时声明同一 [AC-xxx] 标题。须定义去重优先级（covered>planned）、每条 AC 恰有一个属主分片（文件存在 + 含 [AC-xxx] 标题 + baseline 单处声明）、T-001 骨架被逐条取代。另 T-030 depends_on 只列 T-001/T-012/T-029，但 AC-071 断言的 9 个 flows 步骤由 T-013/016/017/020/022/023/024 直接产出（仅经 T-029→T-028→T-024 间接可达），并行/部分执行时 flow-complete.test.mjs 会早于步骤存在而跑；check-test-discovery 的集合相等还须规定只对完整 npm test 的 reporter 校验，不能对 run-tests --ac 的过滤结果校验，否则过滤运行恒失败。"
+    },
+    {
+      "id": "F-07",
+      "severity": "major",
+      "status": "open",
+      "text": "新增：管理会话签发存在自举死锁，§6 路由表自身矛盾。路由表把 /cliworker/api/* 列为管理级、需要 x-cliworker-session，但同节又规定『会话令牌由 GET /cliworker/api/session 签发，只对 loopback 来源签发』，AC-059 也要求『伪造非 loopback 来源请求 session 时返回 403』『loopback 会话可以访问』——签发令牌的端点落在 /api/* 通配内，等于要先有令牌才能拿令牌，管理流程无法自举。§6『写接口还需要 x-cliworker-csrf』与 AC-060 的 E_CSRF 也未定义 csrf 令牌从何取得、首个写请求如何授权。M1 冻结的路由表必须显式把 /cliworker/api/session 列为例外（仅 loopback 校验）、定义 csrf 令牌签发/派生与首次写授权，否则 AC-059/AC-060 的前置条件互斥。"
+    },
+    {
+      "id": "F-08",
+      "severity": "major",
+      "status": "open",
+      "text": "新增：E_ADMIN_REQUIRED 与 E_VIEW_FORBIDDEN 仍二义，F-03『每条 AC 唯一预期值』未完全落实。§0.5 把『select 的 view:full 或 compat:draft』归入管理级并写『否则返回 E_ADMIN_REQUIRED』；§6 路由表与 AC-056 对同一条件（无会话带 view:full）规定 403 E_VIEW_FORBIDDEN；AC-059 更写『带 view 的 select 都返回 403 和 E_ADMIN_REQUIRED 或 E_VIEW_FORBIDDEN』，对同一触发条件允许两个码。T-004 的冻结（AC-009/AC-010）要求错误码与触发条件一一对应，AC-059 因此没有唯一 oracle，§1 声称 F-03 已处理只覆盖了阈值/公式、未覆盖此处。须给每个条件指派唯一码、把两码以不同触发条件写进 registry.snapshot.json、把 AC-059 改为每条路由单一预期码，并让 HTTP 响应与 CLI 输出共用同一扫描器（§0.5/AC-059）。"
+    },
+    {
+      "id": "F-09",
+      "severity": "minor",
+      "status": "resolved",
+      "text": "已核验、无需改动：第 2 节现状勘误准确——lib/config.mjs:19 的 TypeError 来自 throw 模板字面量对 raw.schema 的插值（!raw 短路使 && 不求值），:19-21 三个 throw 均未设 error.code='E_CONFIG'；.gitignore 现仅字面 config/cliworker.local.json、usage.jsonl 与 node_modules/，确无 config/*.local.json、state/、*.jsonl 通配；lib/select.mjs 有 :94、:102、:116 三处 forecast 调用，:102 位于 :109 的 sort 比较器内实为 O(n log n)，:123 同时输出 cli 与 call。§1 对 review-v1 的 F-01..F-14 处理（契约与注入缝提前到 M1 的 T-003/T-004、公式在 T-006 定稿、unknown 语义、路由分级、跨进程租约、测试体系配齐）实质有效，F-15 确认成立、F-16 降 minor 接受合理。本轮 revise 仅针对 TB-1..TB-6 与 F-07/F-08，不是对整体设计的否定。"
+    }
+  ]
+}

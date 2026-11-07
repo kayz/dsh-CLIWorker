@@ -1,3 +1,4 @@
 config/cliworker.local.json
 usage.jsonl
 node_modules/
+.collab/worktrees/

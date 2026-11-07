@@ -1,0 +1,46 @@
+{
+  "round": 3,
+  "role": "test_architect",
+  "model": "hy4free",
+  "id": "hy4free",
+  "model_resolved": "hy4free",
+  "identity": "verified",
+  "vendor": "tencent",
+  "input_digests": {
+    "design_digest": "sha256:16d2066a575fee80ebaa20356ccb1dfe65aa21561b598c33e5d6fb34c842b81b",
+    "graph_digest": "sha256:62d2766c404e3e41ca19a936f6d7ca008fd68977dffa00a125307e9d3789669f",
+    "strategy_digest": "sha256:dd6d666e5b6cb935d0728ce55400dcdf3ca36e84de3b1168e2debfbc0725dd48"
+  },
+  "blockers": [
+    {
+      "id": "TB-1",
+      "status": "open",
+      "text": "F-01 规定一旦设置 CLIWORKER_TEST_CLOCK_FILE，main() 每个输出追加 W_TEST_CLOCK、health 报告 test_clock；但 AC-061 把「设置该变量」列为注入故障，要求 doctor 以 E_HEALTH_DEGRADED（退出码 9）退出、health 返回 degraded，AC-072 又要求在进程内设置它验证 createContext 每次 now() 重读，AC-064 只在子进程 env 设置它。同一变量既是正常测试夹具又是降级故障，对 health/doctor 给出相反结论，设计未澄清。且 §3 明确该模式「定时器仍用真实时间」而 now() 虚拟：文件时钟模式与伪时钟模式的定时器语义不一致，却没有禁止在同一测试或同一 run 混用，AC-028 的 timeout 定时器、AC-029 的等锁 sleep 若误落在该模式会挂在真实定时器上。另外进程级环境变量需隔离：AC-072 同一测试文件里「设置」用例若不 finally 恢复，其后的「未设置时不出现 W_TEST_CLOCK」用例必然失败，而 check-fast 末尾是一次完整 npm test。需：钉死该变量对 health/doctor 的语义、规定只在子进程 env 注入且 finally 恢复并补无泄漏 canary、写明两种时钟模式互斥且文件模式不支持 advance/sleep 的虚拟推进。"
+    },
+    {
+      "id": "TB-2",
+      "status": "open",
+      "text": "§4 规定金标由 T-004 一次写定、后续任务 write_scope 不含 contracts/golden、改金标须走蓝图变更并递增 snapshot_version；但 AC-073 只校验 git 跟踪 + 各自 schema + check-no-collab + docs/contract.md 逐字节一致，AC-010 的 compareRegistry 与 snapshot_version 递增只覆盖 registry.snapshot.json。没有任何对 contracts/golden/** 与 contracts/spec/** 的哈希清单或 check-golden-frozen 进入 check-fast，也没有检查器强制 write_scope。于是后续任务可静默改金标的 input 或 expected 让失败 AC「通过」，且无人能发现——正是金标驱动测试最典型的 oracle 漂移，会架空 AC-015/016/017/050/051 的全部深相等断言。需补一份随仓库提交的逐文件 sha256 冻结清单、一个纳入 check-fast 的校验器，并明确 snapshot_version 对全部规格文件（不仅是注册表）递增、以及 write_scope 由哪个 check 强制。"
+    },
+    {
+      "id": "TB-3",
+      "status": "open",
+      "text": "AC-001 要求完整运行「枚举集合与 reporter 实际执行集合相等」，但 AC-027 在非 win32 基线写跳过记录、AC-033 原生后端按平台门控、AC-038 dry-run 等会产生「文件被枚举但全部用例 skip」的情形；AC-001/AC-002 把 skips.jsonl 单独上传，却未定义 files-executed.json 是否包含全跳过文件。若 reporter 的「实际执行集合」不含全跳过文件，ubuntu 与 macos 两个 CI 基线的完整运行会直接因集合不等而失败；而 check-test-discovery 的夹具只覆盖「能检出不一致」「filtered 清单不能顶替完整校验」「fixtures 下的 x.test.mjs 不执行」，未覆盖全跳过文件。需明确 files-executed.json 记录的是「已加载的测试文件」、skip 只进 skips.jsonl，并补一条全跳过文件的 canary，否则 F-06 的完整运行集合相等在 3 OS 矩阵上不可实现。"
+    },
+    {
+      "id": "TB-4",
+      "status": "open",
+      "text": "§5 缺陷账本把 a1-quota 记为「T-006/T-007」两个属主，T-006 输出「defects/a1-quota 的预测部分 [fixed]」、T-007 输出「a1-quota 的 draft 部分 [fixed]」，两者 write_scope 都含 test/characterization/defects/a1-quota.test.mjs，AC-021（T-007）也引用「defects/a1-quota 的 [fixed] 部分通过」。但 defects.json 每条只有一个 owner_task、§5 的缺陷文件只分 [repro] 与 [fixed] 两段，check-defects 与 milestone-gate 只检查「具备 [fixed] 部分」是否存在。若只有其中一个任务补了分段，[fixed] 已存在，--milestone M1 就会误判该缺陷已翻转，另一半修复（预测公式或 draft Heavy 拒选）没有任何断言守护。需把 a1-quota 拆成两条缺陷，或把 [fixed] 按 owner_task 分子段并让 check-defects/milestone-gate 校验每个属主分段都存在且含对应 [AC-xxx] 标题。"
+    },
+    {
+      "id": "TB-5",
+      "status": "open",
+      "text": "AC-005 要求 [repro]「永远运行、永远应当通过」，但一条恒真断言被削弱、删空或改成断言无关行为都不会被发现：设计里没有变异 canary（用「已修复」的 v0.1 副本变体跑每条 repro，必须失败）来证明它真的能检出缺陷。同时 T-002 写 [repro]、后续属主任务在同一文件追加 [fixed]，而 check-frozen-files 只覆盖 v0.1/ 与 stable.test.mjs，没有任何机制校验 [repro] 段保持字节不变——缺陷档案可被架空，M5「11 条全部具备 [fixed]」也可能以空断言达成，F-04 的保留面锁定与 F-05 的翻转门禁同时失去回归价值。需为每类缺陷补变异 canary，并把 repro 与 fixed 拆成两个文件（或给 [repro] 段登记哈希并由 check-defects 校验）。"
+    },
+    {
+      "id": "TB-6",
+      "status": "open",
+      "text": "§0 F-02 写「contracts/spec/ 放 AC 索引、保留面与语义变更面、迁移映射；这些文件都由 T-004 在 M1 写入并提交，实现任务只读不写」，即把 ac-index.json 也归给 T-004；但 §4 表格明确标注 ac-index.json「（由 T-001 写入）」，任务图也把 contracts/spec/ac-index.json 放进 T-001 的 write_scope，而 T-004 的 write_scope 只有 surfaces.json、migration-map.json 与 golden/**。F-06/AC-004/AC-073 的全部追踪、baseline 唯一声明、里程碑门都依赖「单一 AC 索引且唯一写入者」，若按 §0 理解由 T-004 再写一份、或实现任务照「实现任务只读不写」反向去写，两个任务写同一文件会直接破坏单一事实来源。需把 ac-index.json 的属主钉死为 T-001、统一 §0/§4/任务图三处表述，并显式声明 T-004 不写该文件。"
+    }
+  ]
+}
