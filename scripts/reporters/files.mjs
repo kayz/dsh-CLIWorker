@@ -28,7 +28,11 @@ export default async function* filesReporter(source) {
   const files = new Set()
   for await (const event of source) {
     const file = toFilePath(event?.data?.file)
-    if (file) files.add(relativize(root, file))
+    // A test registered by a helper (test/helpers/platform-gate.mjs) is reported against the
+    // helper module, because node:test attributes every test to the file that called test().
+    // The manifest describes test files, and every enumerated file ends in .test.mjs, so
+    // anything else is attribution noise rather than an executed test file.
+    if (file && file.endsWith('.test.mjs')) files.add(relativize(root, file))
   }
 
   const payload = {

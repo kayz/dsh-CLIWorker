@@ -175,7 +175,12 @@ function parseArgs(argv) {
 
 function runNode(args, spawnOptions) {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, args, spawnOptions)
+    // A nested `node --test` refuses to run its files when it inherits NODE_TEST_CONTEXT from
+    // the parent test process. Nested runs are legitimate here (self-tests and the milestone
+    // gate spawn run-tests), so the child must look like a top-level run.
+    const env = { ...(spawnOptions.env ?? process.env) }
+    delete env.NODE_TEST_CONTEXT
+    const child = spawn(process.execPath, args, { ...spawnOptions, env })
     child.on('error', () => resolve({ code: null, signal: null }))
     child.on('close', (code, signal) => resolve({ code, signal }))
   })

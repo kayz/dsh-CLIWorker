@@ -12,12 +12,26 @@ function pathExtensions() {
 
 function which(binary) {
   const dirs = (process.env.PATH || '').split(path.delimiter)
-  const extensions = pathExtensions()
+  const candidates = new Set([binary.toLowerCase()])
+  for (const ext of pathExtensions()) candidates.add(`${binary}${ext}`.toLowerCase())
+
   for (const dir of dirs) {
     if (!dir) continue
-    for (const ext of extensions) {
-      const candidate = path.join(dir, process.platform === 'win32' ? `${binary}${ext}` : binary)
+    for (const name of candidates) {
+      const candidate = path.join(dir, name)
       if (fs.existsSync(candidate)) return candidate
+    }
+    // Windows app execution aliases (for example the PowerShell store alias) are reparse
+    // points that reject stat with EACCES, so existsSync cannot see them; the directory
+    // listing still can. This keeps the probe child-process free.
+    let entries
+    try {
+      entries = fs.readdirSync(dir)
+    } catch {
+      continue
+    }
+    for (const entry of entries) {
+      if (candidates.has(entry.toLowerCase())) return path.join(dir, entry)
     }
   }
   return null
