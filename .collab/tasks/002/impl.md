@@ -14,7 +14,7 @@
 | `test/characterization/defects/*.test.mjs` | 新建 10 个（`a3-runner` 保持 T-001 原样未改），每个文件一个 `[repro]` 段，无 `[fixed]` 段 |
 | `test/characterization/canary/<id>/canary.json` | 11 个；9 个用 overlay，`a2-pack` / `a3-runner` 用 `repro_edits` |
 | `test/characterization/canary/<id>/overlay/lib/*` | 9 组 0.1 的最小「已修复变体」，扩展名 `.mjs`，无 `*.test.mjs` |
-| `test/unit/frozen-files.test.mjs` | design §6 的 15 条用例（9 条 frozen + 6 条 defects） |
+| `test/unit/frozen-files.test.mjs` | design §6 的 15 条用例（9 条 frozen + 6 条 defects）；r5 追加第 16 条严格模式用例（见 §10.2） |
 | `test/traceability/T-002.json` | AC-005 covered，两个测试文件 |
 | `scripts/check-frozen-files.mjs` | 新建；导出 `checkFrozenFiles`、`contentHash`、`classifyPath` |
 | `scripts/check-defects.mjs` | 追加 `extractReproSection`、`reproSha256`、`checkRepros` 与 `--strict`；原有导出与默认行为不变 |
@@ -298,4 +298,59 @@ pwsh -NoProfile -File <tools>/ci-runner.ps1 -RepoRoot <repo> -TaskDir .collab\ta
 
 `node scripts/run-tests.mjs --ac AC-005` 复核仍为 `run-tests: filtered 12 files`、31/31 pass；
 `check-frozen-files: ok (8 files)`、`check-defects: ok`、`check-fast: ok` 均未受影响。
+
+## 10. r5：修复 `review-r1.md` 的 P1（严格模式下账本缺失会静默通过）
+
+`review-r1.md` 的 25 条验收用例全部通过，唯一 finding 是设计 §5.6 与 AC-005「不得静默通过」未落实：
+真实仓库（`check-fast` 的调用方式，不带 `--root`）若 `test/characterization/defects.json` 不存在，
+`check-defects` 打印 `defects.json absent, nothing to check` 并以 0 退出，11 条 repro 与 canary 校验全部失效。
+本轮只改两处，均在 write_scope 内。
+
+### 10.1 `scripts/check-defects.mjs` — 严格模式把「账本缺失」当错误
+
+- 改法（`main()`）：在原有 `if (strictMode && !absent)` 之前加一个分支——
+  `strictMode && absent` 时追加 `{ id: 'defects.file_missing', detail: 'test/characterization/defects.json' }`
+  （若 `checkDefects` 因 `--milestone` 已加过同 id 则不重复）；并把跳过分支的条件从
+  `absent && !milestone` 收紧为 `absent && errors.length === 0 && !milestone`，
+  于是有错误时不再走「nothing to check」，而是落到统一的 `FAIL ... / FAILED (n errors)` 出口并以 1 退出。
+- 为什么：design §5.6 明确「不带 `--root` 必须严格」「真实仓库不会静默跳过」，账本 id 集合也「不论是否带
+  `--milestone`」都要恰为 11 个；账本被删时这些检查连入口都没有，等于全部失效。这是唯一能在 AC-005
+  判据之外绕过整个缺陷账本的口子。
+- 边界：`checkDefects({ root, index, milestone })` 的签名、返回值、`absent` 语义、错误 id 集合全部未动；
+  `milestone-gate.mjs` 直接调用 `checkDefects`（不进 `main()`），行为零变化；非严格模式
+  （带 `--root`、不带 `--strict`）在账本缺失时仍打印 `absent` 并退出 0，T-001 的
+  `test/unit/milestone-gate.test.mjs` 6 条保持全绿（D7）。
+
+### 10.2 `test/unit/frozen-files.test.mjs` — 补第 16 条用例
+
+- 新增 `[AC-005] defects: strict mode fails when the ledger is missing`：在 `os.tmpdir()` 建空根，
+  用 `spawnSync` 跑两次 CLI —— `--root <tmp> --strict` 必须退出 1 且输出
+  `FAIL defects.file_missing test/characterization/defects.json`、不含 `absent`；
+  `--root <tmp>`（无 `--strict`）必须退出 0 且仍打印 `check-defects: defects.json absent, nothing to check`。
+  后一半同时锁住 T-001 的向后兼容。
+- 为什么放在这个文件：design §6 已把 `check-defects` 的行为测试归到这里，且该文件不在
+  `frozen-files.json` 登记中，增删用例不会动任何已冻结哈希。
+- 边界：只新增 `node:child_process`、`node:url` 两个内置 import 和一条用例，原有 15 条断言未动（E-3 仍为 `ok`）。
+
+### 10.3 r5 自测（Windows，Node v22，仅本机真实仓库）
+
+| 项 | 命令 | 实测 |
+|---|---|---|
+| A1 | `node scripts/run-tests.mjs --ac AC-005` | exit 0，`run-tests: filtered 12 files`，**32** tests / 32 pass / 0 fail（原 31 + 新用例），10 条 `[repro] [AC-005]` |
+| A2 | `node scripts/check-frozen-files.mjs` | exit 0，`check-frozen-files: ok (8 files)` |
+| A3 | `node scripts/check-defects.mjs` | exit 0，`check-defects: ok`（严格模式，11 条 canary 全部命中，无 `FAIL` / `absent`） |
+| A4 | `node scripts/check-fast.mjs` | exit 0，含 `==> check-defects.mjs`、`==> check-frozen-files.mjs`、`==> npm test`，末行 `check-fast: ok` |
+| A5 | `node scripts/run-tests.mjs` | exit 0，`run-tests: full 17 files`，**70** tests / 70 pass / 0 fail；含 `[repro] 0.1 has no test script` 与 10 条 `[repro] [AC-005]` |
+| D4 | 临时根篡改 `[repro]` 段 + `--strict` | exit 1，含 `FAIL defects.repro_changed a5-dup-call` |
+| D5 | 临时根把 a5-dup-call overlay 换回 0.1 原文 | exit 1，`defects.canary_survived` 恰好 1 条且只属于 a5-dup-call |
+| D6 | 临时根删 `canary/a4-paths` | exit 1，含 `FAIL defects.canary_missing a4-paths` |
+| D7 | `node --test test/unit/milestone-gate.test.mjs` | 6 tests / 6 pass / 0 fail |
+| E1 | `node scripts/check-traceability.mjs` | `check-traceability: ok (covered=6 planned=68)` |
+| E3 | 四个文件的 import / 令牌扫描 | `ok` |
+| 新用例 | `node --test test/unit/frozen-files.test.mjs` | 16 tests / 16 pass / 0 fail |
+| P1 复现 | `mktemp -d` 空根 + `node scripts/check-defects.mjs --root <tmp> --strict` | `FAIL defects.file_missing test/characterization/defects.json` + `check-defects: FAILED (1 errors)`，exit 1；去掉 `--strict` 仍为 `absent` + exit 0 |
+
+范围：本轮只写了 `scripts/check-defects.mjs`、`test/unit/frozen-files.test.mjs` 与本文件；
+`brief.md` / `design.md` / `acceptance.md` / `review*` / `verdict*` / `state.json` / `run.json` 未触碰，
+未执行任何 git 命令。
 

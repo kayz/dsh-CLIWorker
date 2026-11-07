@@ -4,10 +4,14 @@ import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 
 import { checkFrozenFiles } from '../../scripts/check-frozen-files.mjs'
 import { checkRepros, reproSha256 } from '../../scripts/check-defects.mjs'
 
+const HERE = path.dirname(fileURLToPath(import.meta.url))
+const CHECK_DEFECTS = path.join(HERE, '..', '..', 'scripts', 'check-defects.mjs')
 const COPY = 'test/fixtures/characterization/v0.1/'
 const STABLE = 'test/characterization/stable.test.mjs'
 const SELECT = `${COPY}lib/select.mjs`
@@ -301,6 +305,24 @@ test('[AC-005] defects: a repro that cannot even load is not counted as a canary
       ['defects.canary_survived', 'defects.canary_error'].includes(errors[0].id),
       `unexpected ${errors[0].id}`
     )
+  } finally {
+    clean(root)
+  }
+})
+
+test('[AC-005] defects: strict mode fails when the ledger is missing', () => {
+  const root = tempRoot()
+  try {
+    const strict = spawnSync(process.execPath, [CHECK_DEFECTS, '--root', root, '--strict'], { encoding: 'utf8' })
+    const strictOut = `${strict.stdout ?? ''}${strict.stderr ?? ''}`
+    assert.equal(strict.status, 1, strictOut)
+    assert.match(strictOut, /FAIL defects\.file_missing test\/characterization\/defects\.json/)
+    assert.doesNotMatch(strictOut, /absent/)
+
+    const lenient = spawnSync(process.execPath, [CHECK_DEFECTS, '--root', root], { encoding: 'utf8' })
+    const lenientOut = `${lenient.stdout ?? ''}${lenient.stderr ?? ''}`
+    assert.equal(lenient.status, 0, lenientOut)
+    assert.match(lenientOut, /check-defects: defects\.json absent, nothing to check/)
   } finally {
     clean(root)
   }

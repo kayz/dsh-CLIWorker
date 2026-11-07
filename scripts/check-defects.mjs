@@ -479,6 +479,11 @@ function main() {
   const absent = checked.absent
   const errors = [...checked.errors]
 
+  // Strict mode must never skip silently: a missing ledger is a failure, not "nothing to check".
+  if (strictMode && absent && !errors.some((error) => error.id === 'defects.file_missing')) {
+    errors.push({ id: 'defects.file_missing', detail: 'test/characterization/defects.json' })
+  }
+
   if (strictMode && !absent) {
     const ledger = readLedger(root)
     const list = ledger && Array.isArray(ledger.defects) ? ledger.defects : null
@@ -494,7 +499,7 @@ function main() {
     }
   }
 
-  if (absent && !milestone) {
+  if (absent && errors.length === 0 && !milestone) {
     process.stdout.write('check-defects: defects.json absent, nothing to check\n')
     process.exitCode = 0
     return
