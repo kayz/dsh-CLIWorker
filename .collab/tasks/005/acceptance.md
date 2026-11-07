@@ -28,7 +28,7 @@ $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ((New-Guid).Guid + '.mjs')
 $code = @'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
-import { reproSha256 } from './scripts/check-defects.mjs'
+import { reproSha256 } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/scripts/check-defects.mjs'
 
 const groups = {
   'test/unit/paths.test.mjs': [
@@ -588,7 +588,7 @@ $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ((New-Guid).Guid + '.mjs')
 $code = @'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
-import { reproSha256 } from './scripts/check-defects.mjs'
+import { reproSha256 } from 'C:/git/dsh-CLIWorker/.collab/worktrees/005/scripts/check-defects.mjs'
 
 const groups = {
   'test/unit/config.test.mjs': [
