@@ -1,132 +1,22 @@
 # Task 009 验收标准（AC-025）
 
-规格来源：`.collab/blueprint/cliworker-v2/task-graph.json` T-009，`contracts/spec/ac-index.json` AC-025。缺陷登记：`test/characterization/defects.json` 的 `a2-pack`（`repro_sha256` = `f520198675d74dc94fd4be7bd120a0f7f5168e0058e85369bcc618100dbd9c93`，不得变化）。
+规格来源：`.collab/blueprint/cliworker-v2/task-graph.json` T-009，`contracts/spec/ac-index.json` AC-025（levels: integration）。缺陷登记：`test/characterization/defects.json` 的 `a2-pack`（`repro_sha256` = `f520198675d74dc94fd4be7bd120a0f7f5168e0058e85369bcc618100dbd9c93`，不得变化）。
 
-所有命令在仓库根（worktree 根）用 `pwsh` 执行。「通过」指退出码 0 且 stdout 含期望文本。
+本文件按 CI 契约（`tools/ci-runner.ps1`）书写：每个 AC 一个以 AC id 开头的二级小节，`- 命令:` 为单行命令，`- 期望:` 说明判定条件。命令可能在临时目录下执行，因此全部使用绝对路径（含 `file:///C:/...` 形式，若需要 ESM 导入）。
 
-## A. 清单字段
+## AC-025 打包清单与 bin 入口（bin/files/版本对齐/包内容白名单）
 
-**A1** `package.json` 的 bin
-- 命令：`node -p "require('./package.json').bin.cliworker"`
-- 期望：stdout 为 `bin/cliworker.mjs`，退出码 0。
+- 命令: `$r='C:/git/dsh-CLIWorker/.collab/worktrees/009'; node "$r/scripts/check-pack.mjs"; $a=$LASTEXITCODE; node --test --test-reporter=tap "$r/test/integration/pack.test.mjs" "$r/test/characterization/defects/a2-pack.test.mjs" *> $null; $b=$LASTEXITCODE; node "$r/scripts/check-defects.mjs" *> $null; $c=$LASTEXITCODE; if ($a -eq 0 -and $b -eq 0 -and $c -eq 0) { 'AC-025 OK' } else { "AC-025 FAILED check-pack=$a tests=$b defects=$c"; exit 1 }`
+- 期望: 退出码 0，stdout 同时含 `check-pack: ok` 与 `AC-025 OK`。该命令按顺序验证下列内容，任一环节失败即打印 `AC-025 FAILED check-pack=<n> tests=<n> defects=<n>` 并以非 0 退出。
 
-**A2** `files` 含必需条目
-- 命令：`node -p "const f=require('./package.json').files; ['bin','lib','config/cliworker.example.json','contracts/registry.snapshot.json','contracts/agentline-forbidden.json','contracts/schemas','contracts/host','contracts/context'].every(x=>f.includes(x))"`
-- 期望：stdout 为 `true`。
+覆盖范围（逐条对应本任务的可验收事实，均由上面那一条命令验证）：
 
-**A3** `files` 不含目录级放行或规格金标
-- 命令：`node -p "const f=require('./package.json').files; ['config','contracts','contracts/spec','contracts/golden','contracts/examples','test','scripts'].some(x=>f.includes(x))"`
-- 期望：stdout 为 `false`。
+- `package.json` 的 `bin.cliworker` 为 `bin/cliworker.mjs`；`dsh.plugin.json` 的 `version` 与 `package.json` 的 `version` 一致（`check-pack` 的 `pack.bin_mismatch` / `pack.version_mismatch` 规则）。
+- `package.json` 的 `files` 为精确白名单：含 `bin`、`lib`、`config/cliworker.example.json`、`contracts/registry.snapshot.json`、`contracts/agentline-forbidden.json`、`contracts/schemas`、`contracts/host`、`contracts/context`、`cordis.patch.yml`、`dsh.plugin.json`、`README.md`；不含 `config`、`contracts`、`contracts/spec`、`contracts/golden`、`contracts/examples`、`test`、`scripts` 这类目录级或规格金标条目（`a2-pack.test.mjs` 的 `[fixed]` 段）。
+- 真实 `npm pack --dry-run --json` 清单含 `bin/cliworker.mjs`、`config/cliworker.example.json`、`lib/` 全部文件、`contracts/registry.snapshot.json`、`contracts/agentline-forbidden.json`，以及 `contracts/schemas/`、`contracts/host/`、`contracts/context/` 下各至少一个文件（`pack.missing_required` + 集成测试第 2 条）。
+- 清单不含 `test/`、`scripts/`、`state/`、`contracts/golden/`、`contracts/spec/`、`contracts/examples/`、`.collab/`、`config/*.local.json`、`*.jsonl`（`pack.forbidden_present` + 集成测试第 3 条）。
+- 负向行为：缺必需文件报 `pack.missing_required`；各类禁入路径各报 `pack.forbidden_present`；`bin` 缺失或带 `./` 前缀报 `pack.bin_mismatch`；版本不一致报 `pack.version_mismatch`；`contracts/` 下非白名单路径报 `pack.not_whitelisted`（集成测试第 4–7 条）。
+- 缺陷登记 `a2-pack`：`[repro]` 块字节未变（`repro_sha256` 等于登记值）、canary 变体上 repro 失败、`[fixed]` 段存在且在真实 `package.json` 上通过（`scripts/check-defects.mjs` 与 `a2-pack.test.mjs`）。
+- 追溯：`test/traceability/T-009.json` 以 `AC-025` / `covered` 指向 `test/integration/pack.test.mjs` 与 `test/characterization/defects/a2-pack.test.mjs`（由 `node scripts/check-traceability.mjs` 在仓库门禁中校验）。
 
-**A4** 版本对齐
-- 命令：`node -p "require('./dsh.plugin.json').version===require('./package.json').version"`
-- 期望：stdout 为 `true`。
-
-**A5** 零第三方依赖
-- 命令：`node -p "const p=require('./package.json'); Object.keys({...p.dependencies,...p.devDependencies,...p.optionalDependencies,...p.peerDependencies}).length"`
-- 期望：stdout 为 `0`。
-
-## B. 真实打包结果
-
-**B1** check-pack 通过
-- 命令：`node scripts/check-pack.mjs`
-- 期望：stdout 为 `check-pack: ok`，退出码 0。
-
-**B2** npm pack 清单含必需文件
-- 命令：`$j = npm pack --dry-run --json --ignore-scripts | ConvertFrom-Json; $p = $j[0].files.path; ('bin/cliworker.mjs','config/cliworker.example.json','contracts/registry.snapshot.json','contracts/agentline-forbidden.json','lib/index.js','dsh.plugin.json','package.json') | ForEach-Object { "$_ " + ($p -contains $_) }`
-- 期望：七行，全部以 ` True` 结尾。
-
-**B3** 清单含三个 contracts 子目录
-- 命令：`$j = npm pack --dry-run --json --ignore-scripts | ConvertFrom-Json; $p = $j[0].files.path; foreach ($d in 'contracts/schemas/','contracts/host/','contracts/context/') { "$d " + (@($p | Where-Object { $_.StartsWith($d) }).Count -gt 0) }`
-- 期望：三行，全部以 ` True` 结尾。
-
-**B4** 清单不含禁入路径
-- 命令：`$j = npm pack --dry-run --json --ignore-scripts | ConvertFrom-Json; $j[0].files.path | Where-Object { $_ -match '^(test|scripts|state|contracts/golden|contracts/spec|contracts/examples)/' -or $_ -match '^\.collab/' -or $_ -match '^config/.*\.local\.json$' -or $_ -match '\.jsonl$' }`
-- 期望：无任何输出。
-
-**B5** 每个 lib 文件都在包里
-- 命令：`$j = npm pack --dry-run --json --ignore-scripts | ConvertFrom-Json; $p = $j[0].files.path; Get-ChildItem lib -Recurse -File | ForEach-Object { 'lib/' + [IO.Path]::GetRelativePath((Resolve-Path lib), $_.FullName).Replace('\','/') } | Where-Object { $p -notcontains $_ }`
-- 期望：无任何输出。
-
-## C. check-pack 负向行为（由测试覆盖）
-
-**C1** 集成测试全部通过
-- 命令：`node --test --test-reporter=tap test/integration/pack.test.mjs`
-- 期望：退出码 0；输出含 `# fail 0`；且以下七个标题各有一行 `ok`：
-  - `ok N - [AC-025] check-pack passes against the real package`
-  - `ok N - [AC-025] npm pack lists the required runtime files`
-  - `ok N - [AC-025] npm pack lists no forbidden paths`
-  - `ok N - [AC-025] evaluatePack rejects a missing required file`
-  - `ok N - [AC-025] evaluatePack rejects each forbidden path class`
-  - `ok N - [AC-025] evaluatePack rejects a bin or version mismatch`
-  - `ok N - [AC-025] evaluatePack rejects a non-whitelisted contracts path`
-
-**C2** CLI 参数错误
-- 命令：`node scripts/check-pack.mjs --bogus; "exit=$LASTEXITCODE"`
-- 期望：stderr 含 `unknown argument` 与 `usage`；最后输出 `exit=2`。
-
-**C3** 包内容缺失时 CLI 失败（用临时目录，不碰仓库）
-- 命令：`$d = Join-Path ([IO.Path]::GetTempPath()) ("cp-" + [guid]::NewGuid()); New-Item -ItemType Directory $d | Out-Null; Copy-Item package.json, dsh.plugin.json, cordis.patch.yml, README.md $d; node scripts/check-pack.mjs --root $d; "exit=$LASTEXITCODE"; Remove-Item -Recurse -Force $d`
-- 期望：输出含 `FAIL pack.missing_required`（临时目录没有 `bin/`、`lib/`、`config/`、`contracts/`），不含 `pack.bin_mismatch` 与 `pack.version_mismatch`，含 `check-pack: FAILED`，最后输出 `exit=1`。
-
-## D. 缺陷 a2-pack
-
-**D1** repro 块未被改动、canary 有效、[fixed] 段存在
-- 命令：`node scripts/check-defects.mjs`
-- 期望：stdout 为 `check-defects: ok`，退出码 0。（覆盖 sha256 校验、`[repro]` 在 v0.1 副本上通过、canary 变体上失败、`a2-pack` 有 `[fixed]` 段。）
-
-**D2** M1 口径
-- 命令：`node scripts/check-defects.mjs --milestone M1`
-- 期望：stdout 为 `check-defects: ok`，退出码 0。
-
-**D3** `[fixed]` 测试通过
-- 命令：`node --test --test-reporter=tap --test-name-pattern="\[fixed\]" test/characterization/defects/a2-pack.test.mjs`
-- 期望：退出码 0；输出含 `ok 1 - [fixed] [AC-025] the live package ships bin and the config example but no spec or golden`，且 `# fail 0`。
-
-**D4** repro 块 sha256 未变
-- 命令：`node -e "import('./scripts/check-defects.mjs').then(m=>console.log(m.reproSha256(require('fs').readFileSync('test/characterization/defects/a2-pack.test.mjs','utf8'))))"`
-- 期望：stdout 为 `f520198675d74dc94fd4be7bd120a0f7f5168e0058e85369bcc618100dbd9c93`。
-
-## E. 追溯与里程碑
-
-**E1** 按 AC 运行
-- 命令：`node scripts/run-tests.mjs --ac AC-025`
-- 期望：退出码 0；无 `FAIL run.no_match AC-025`；pack.test.mjs 与 a2-pack.test.mjs 的相关测试均被执行并通过。
-
-**E2** traceability 分片
-- 命令：`node -p "const t=require('./test/traceability/T-009.json'); JSON.stringify([t.task,t.milestone,t.entries.length,t.entries[0].ac,t.entries[0].status,t.entries[0].files.slice().sort()])"`
-- 期望：stdout 为 `["T-009","M1",1,"AC-025","covered",["test/characterization/defects/a2-pack.test.mjs","test/integration/pack.test.mjs"]]`。
-
-**E3** traceability 检查
-- 命令：`node scripts/check-traceability.mjs`
-- 期望：退出码 0，无 `FAIL` 行（不应出现 `shard.missing_file`、`shard.missing_title`）。
-
-**E4** 里程碑门
-- 命令：`node scripts/milestone-gate.mjs --milestone M1`
-- 期望：stdout 含 `milestone-gate M1: PASS`，退出码 0。若失败原因仅是其它 M1 任务（如 T-008）尚未合并而 AC 为 `planned`，记录原因并以 E1–E3 为准，不算本任务失败；若失败涉及 AC-025 或 `a2-pack`，则本任务失败。
-
-## F. 全局质量与范围
-
-**F1** 无 `.collab` 引用
-- 命令：`node scripts/check-no-collab.mjs`
-- 期望：退出码 0，无 `FAIL` 行。
-
-**F2** 无未使用代码
-- 命令：`node scripts/check-unused.mjs`
-- 期望：退出码 0，无报告项。
-
-**F3** 完整快速检查
-- 命令：`pwsh -NoProfile -File scripts/check-fast.ps1`
-- 期望：退出码 0；输出中没有 `check-fast: FAILED`。
-
-**F4** 写入范围
-- 命令：`git diff --name-only main...HEAD | Where-Object { $_ -notlike '.collab/*' -and $_ -notin @('package.json','dsh.plugin.json','scripts/check-pack.mjs','test/integration/pack.test.mjs','test/characterization/defects/a2-pack.test.mjs','test/traceability/T-009.json') }`
-- 期望：无任何输出。
-
-**F5** `[repro]` 之外 canary 查找串唯一
-- 命令：`(Select-String -Path test/characterization/defects/a2-pack.test.mjs -Pattern 'bin: null' -SimpleMatch).Count`
-- 期望：stdout 为 `1`。
-
-**F6** 仓库内无令牌
-- 命令：`git diff main...HEAD -- . ':!.collab' | Select-String -Pattern 'sk-[A-Za-z0-9]{10,}|ghp_[A-Za-z0-9]{10,}|Bearer [A-Za-z0-9]'`
-- 期望：无任何输出。
+说明：`check-no-collab`、`check-unused`、`check-fast` 等全局门禁不属于 AC-025，由仓库自身的 `scripts/check-fast.ps1` 承担，不并入本 AC 的判定；其当前失败项来自其它任务的 `test/unit/gitignore.test.mjs` 与 `a5-ignored-fields` 缺陷登记，不在本任务写域内。

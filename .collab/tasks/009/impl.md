@@ -122,3 +122,25 @@ pwsh -NoProfile -File scripts/check-fast.ps1   # 当前会停在 check-no-collab
 - E4：`milestone-gate M1: BLOCKED (3 errors)`，全是 `AC-023 is planned`、`AC-024 is planned`、`a5-ignored-fields` 缺 `[fixed]`，不涉及 AC-025 / `a2-pack`。
 - F1：`FAIL no_collab test/unit/gitignore.test.mjs:13`、`:18`；F3 因此停在 `check-no-collab` 步。
 - 全量 `node scripts/run-tests.mjs`：`tests 312 / pass 309 / fail 3`，失败为 `[AC-073] check-no-collab ...`、`[AC-013] git check-ignore ...`、`[AC-006] failures are reported on ctx.stderr ...`（`test/unit/import-safe.test.mjs:70`），均属基线中其他任务的写域。
+
+## 7. 本轮修正：acceptance.md 改为 CI 可抽取的 AC 小节形状（attempt 3）
+
+上一轮被阻塞的原因是 `ci_failed` 且 CI 未产出任何命令：`tools/ci-runner.ps1` 只识别以 AC id 开头的二级标题（`## AC-025 ...`）+ 紧随其后的 `- 命令:` 单行命令 + `- 期望:`，且命令必须打印 `AC-025 OK`、退出码 0。原 `acceptance.md` 用 `## A. 清单字段` / `**A1**` 这类分节，抽取结果为 0 条命令，CI 直接 exit 2。本轮按收到的 note 重写了该文件（一次性整文件重写，未逐行 patch）。
+
+改动：
+
+- 文件只保留一个 AC 小节：`## AC-025 打包清单与 bin 入口（bin/files/版本对齐/包内容白名单）`，下挂一条单行命令与一条期望说明。标题、`- 命令:`、`- 期望:` 三个字段名完全照 note 的规定，没有新造字段。
+- 命令从任意工作目录（含临时目录）可执行，全部使用绝对路径 `$r='C:/git/dsh-CLIWorker/.collab/worktrees/009'`，不需要 `cd`、不依赖 `file:///` 以外的导入。命令串联三步并要求全部退出 0：
+  1. `node "$r/scripts/check-pack.mjs"` —— bin 对齐、版本对齐、pack 清单的必需项/禁入项、lib 全覆盖；
+  2. `node --test --test-reporter=tap "$r/test/integration/pack.test.mjs" "$r/test/characterization/defects/a2-pack.test.mjs"` —— AC-025 的 7 个集成测试与缺陷文件的 `[repro]`/`[fixed]` 两段；
+  3. `node "$r/scripts/check-defects.mjs"` —— `repro_sha256` 校验、canary 变体必须失败、`a2-pack` 必须有 `[fixed]` 段。
+  三步全绿才打印 `AC-025 OK`；否则打印 `AC-025 FAILED check-pack=<n> tests=<n> defects=<n>` 并 `exit 1`，便于定位是哪一步坏了。
+- 原有 A1–F6 的判定事实一条没丢，只是从「标题」降级为 AC 小节内的覆盖说明列表（抽取器会忽略非 AC 标题，因此这些内容不会再被当成命令）。全局门禁（`check-no-collab` / `check-unused` / `check-fast`）本来就不是 AC-025 的判定内容，明确写在文件末尾，避免把其他任务的缺陷算到本 AC 头上。
+
+这是本轮唯一落在原 write_scope 之外的写入：note 明确要求由本角色整文件重写 `acceptance.md`，除此之外没有触碰 `brief.md`、`design.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`、`contracts/**`、`lib/**`、`bin/**`、`config/**`、`.gitignore`、`test/characterization/defects.json`。
+
+自测（模拟 CI，从一个新建的临时目录执行，工作目录不在仓库内）：
+
+- 抽取形状：`## ` 标题 1 条且以 `AC-025` 开头；`- 命令:` 1 条；命令首尾各一个反引号，内部不含反引号。
+- 执行抽取出的命令：stdout 为 `check-pack: ok` → `AC-025 OK`，退出码 0。
+- 代码与测试本轮未再改动：6 个交付文件已满足 `design.md`（A1–A5、B1–B5、C1–C3、D1、D3、D4、E1–E3、F2、F5 均通过），§4 列出的 D2 / E4 / F1 / F3 阻塞项依旧是其他任务写域内的基线缺陷，本轮复跑现象一致。
