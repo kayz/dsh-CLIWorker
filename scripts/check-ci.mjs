@@ -77,7 +77,7 @@ export function checkCi(root = REPO_ROOT) {
   }
 
   const expected = renderCi(matrix)
-  if (actual !== expected) {
+  if (actual.replace(/\r\n/g, '\n') !== expected.replace(/\r\n/g, '\n')) {
     errors.push({ id: 'ci.stale', detail: '.github/workflows/ci.yml is not the current generated output' })
   }
 

@@ -155,7 +155,7 @@ test('[AC-004] mergeShards treats ACs without a shard as planned', () => {
   assert.equal(merged.acs['AC-001'], 'covered')
   assert.equal(merged.acs['AC-004'], 'covered')
   assert.equal(merged.acs['AC-074'], 'covered')
-  assert.equal(merged.acs['AC-005'], 'planned')
+  assert.equal(merged.acs['AC-006'], 'planned')
 })
 
 test('[AC-004] extractTitles ignores skipped titles and still reads platformTest titles', () => {

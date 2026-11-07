@@ -109,9 +109,10 @@ B-3–B-6、C-2、D-4–D-6 用 bash 的 `mktemp -d` + `cp -r` 复现 pwsh 脚�
 | E-2 | 写域检查 | 通过：改动只在 write_scope 内（+ `.collab/tasks/002/impl.md`） |
 | E-3 | 无第三方依赖 / 无令牌 | 通过：`ok` |
 
-## 4. 未通过项与根因
+## 4. 未通过项与根因（r3 已全部修复，见 §8）
 
-这两项都不在本任务写域内，改动它们会同时破坏 E-2，因此保持原样并在此记录。
+这两项在 r1/r2 时不在写域内，r3 经批准把 `scripts/check-ci.mjs`、`test/unit/traceability.test.mjs`
+扩进写域后按「各改一行」修掉，详见 §8。以下保留原始诊断。
 
 ### 4.1 check-ci 因 CRLF 检出失败（阻塞 A-4，并使 A-5 少一条）
 
@@ -195,3 +196,62 @@ node scripts/run-tests.mjs
 与 `ci.yml` 内容、与本任务实现都无关。
 
 范围：本轮只重写了本文件；`git status --porcelain` 里落在写域外的只有 `.collab/tasks/002/` 编排产物。
+
+## 8. r3：两个阻塞点的最小修复
+
+r3 的用户输入把 `scripts/check-ci.mjs`、`test/unit/traceability.test.mjs`、`.gitattributes` 扩进写域，
+并要求「只应用已识别的两处一行修复、不改其它文件」。因此本轮只改前两个文件，各一行；`.gitattributes`
+**没有创建**：`check-ci` 在比较前已自行归一化 CRLF，再加仓库级 `eol` 策略会改到全仓文件的检出行为，
+超出「两处一行修复」的授权范围，也会给其它任务的冻结哈希引入无关噪声。
+
+### 8.1 `scripts/check-ci.mjs:80` — 比较前归一化 CRLF
+
+- 改法：`if (actual !== expected)` → `if (actual.replace(/\r\n/g, '\n') !== expected.replace(/\r\n/g, '\n'))`。
+- 为什么：本机 `core.autocrlf=true`，`.github/workflows/ci.yml` 检出为 CRLF（57 处），而 `renderCi()`
+  产出 LF；两者内容逐字符相同，仅换行不同，于是误报 `ci.stale`，并连锁阻塞 `check-fast`（A-4）与
+  `runner-selftest` 的 `[AC-002] check-ci accepts the committed workflow`。
+- 边界：只放宽换行差异，任何实际内容差异仍然报 `ci.stale`；`ci.matrix_invalid` / `ci.missing` /
+  `ci.perf_blocking` 判定完全未动；CLI 参数与退出码未动。
+
+### 8.2 `test/unit/traceability.test.mjs:158` — 样例 AC 换成 AC-006
+
+- 改法：`assert.equal(merged.acs['AC-005'], 'planned')` → `assert.equal(merged.acs['AC-006'], 'planned')`。
+- 为什么：该用例（AC-004「没有分片的 AC 视为 planned」）原先拿 AC-005 当样例；本任务按 design §7 /
+  验收 E-1 提交 `test/traceability/T-002.json` 把 AC-005 标成 `covered` 后，断言必然变红。AC-006 在
+  `contracts/spec/ac-index.json` 中存在且不被任何分片（`T-001.json`、`T-002.json`）声明，因此仍是
+  「无分片」的合法样例。
+- 边界：只换样例常量，不改 `mergeShards`、不改同一用例里已 covered 的三条断言、不改其它用例。
+
+### 8.3 r3 全量验收实测（Windows，Node v22）
+
+| 项 | 命令 | 实测 |
+|---|---|---|
+| A-1 | `node scripts/run-tests.mjs --ac AC-005` | exit 0，`run-tests: filtered 12 files`，31 tests / 31 pass / 0 fail，无 `FAIL`/`✖` |
+| A-2 | `node scripts/check-frozen-files.mjs` | exit 0，`check-frozen-files: ok (8 files)` |
+| A-3 | `node scripts/check-defects.mjs` | exit 0，`check-defects: ok`（严格模式，11 条 canary 全命中） |
+| A-4 | `node scripts/check-fast.mjs` | exit 0，含 `==> check-ci.mjs`、`==> check-defects.mjs`、`==> check-frozen-files.mjs`、`==> npm test`，末行 `check-fast: ok` |
+| A-5 | `node scripts/run-tests.mjs` | exit 0，`run-tests: full 17 files`，69 tests / 69 pass / 0 fail；含 `[repro] 0.1 has no test script` 与 10 条 `[repro] [AC-005]` |
+| B-1 | 7 个 blob 逐字节对比 | `ok 7` |
+| B-2 | frozen-files 形状 | `ok 8` |
+| B-3 | 篡改一个登记字节（临时根） | `FAIL frozen.hash_mismatch .../v0.1/lib/select.mjs` + `FAILED (1 errors)`，exit 1 |
+| B-4 | 登记 lib/bin/config/scripts（临时根） | 3×`frozen.forbidden_path` + `FAIL frozen.outside_allowed scripts/run-tests.mjs` + `FAILED (4 errors)`，exit 1 |
+| B-5 | 副本多一个未登记文件（临时根） | `FAIL frozen.unregistered .../v0.1/README.md`，exit 1 |
+| B-6 | `--bogus` | exit 2 |
+| C-1 | 相对 import 全指向副本 | `ok 2` |
+| C-2 | 改坏副本 `reason: 'excluded'`（临时根） | `not ok 4 - [AC-005] stable: exclude wins and reports excluded`，fail 1 |
+| D-1 / D-2 / D-3 | 账本 / canary / `[repro]` 分离 | `ok 11` / `ok` / `ok 10` |
+| D-4 | 篡改 `[repro]` 段（临时根，`--strict`） | 含 `FAIL defects.repro_changed a5-dup-call`，exit 1 |
+| D-5 | canary 覆盖文件换回 0.1 原文 | 含 `FAIL defects.canary_survived a5-dup-call`，无其它 `canary_survived`，exit 1 |
+| D-6 | 删掉 `canary/a4-paths` | 含 `FAIL defects.canary_missing a4-paths`，exit 1 |
+| D-7 | `node --test test/unit/milestone-gate.test.mjs` | 6 tests / 6 pass / 0 fail |
+| E-1 | `check-traceability` + T-002 形状 | `check-traceability: ok (covered=6 planned=68)`、`ok` |
+| E-3 | 无第三方依赖 | `ok` |
+| F | 11 个 repro 逐个 `--test-name-pattern="\[repro\]"` | 每条 exit 0、`# pass 1 / # fail 0`（含 a3-runner） |
+
+E-2（`git diff` / `git status` 的写域核对）由编排侧执行：本轮只写了 `scripts/check-ci.mjs`、
+`test/unit/traceability.test.mjs` 两个文件与本文件，未触碰 `brief.md` / `design.md` / `acceptance.md` /
+`review*` / `verdict*` / `state.json` / `run.json`。
+
+D-4/D-5/D-6 仍会出现一条 `FAIL defects.repro_baseline_failed a3-runner`：临时根按要求只复制
+`test/` + `contracts/`，a3-runner 的 repro 依赖 `../../../scripts/run-tests.mjs` 因而无法加载。
+验收判据只要求出现目标行、且 D-5 不得有其它 `canary_survived`，均满足；真实仓库（A-3）无此噪声。
