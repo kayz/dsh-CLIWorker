@@ -76,3 +76,5 @@
 | AC-072 | unit | T-003 | T-003:contract,integration,unit |
 | AC-073 | contract,unit | T-004 | T-004:contract,unit |
 | AC-074 | unit | T-001 | T-001:integration,unit |
+| AC-075 | contract,unit | T-031 | T-031:contract,unit |
+| AC-076 | contract,integration,unit | T-032 | T-032:contract,integration,unit |
