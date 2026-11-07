@@ -1,0 +1,105 @@
+# Task 009 实现说明（impl）
+
+实现人：dev。规格来源：`.collab/tasks/009/design.md`、`.collab/tasks/009/acceptance.md`、`contracts/spec/ac-index.json` AC-025（levels: integration）。
+
+## 1. 改动清单
+
+| 文件 | 动作 | 说明 |
+|---|---|---|
+| `package.json` | 修改 | 新增 `"bin": { "cliworker": "bin/cliworker.mjs" }`；`files` 换成精确白名单（bin、lib、config 单文件、contracts 的 registry/forbidden 两个文件与 schemas/host/context 三个子目录、cordis.patch.yml、dsh.plugin.json、README.md）。未改 version、scripts、exports、dsh，未新增依赖。 |
+| `dsh.plugin.json` | 未改 | `version` 与 `package.json` 已同为 `0.1.0`，按 design §2「仅在不一致时才改」保持原样。 |
+| `scripts/check-pack.mjs` | 新增 | 零依赖 ESM 检查器：导出 `collectLibFiles`、`runNpmPack`、`evaluatePack`，CLI 支持 `--root <dir>`，退出码 0/1/2。 |
+| `test/integration/pack.test.mjs` | 新增 | AC-025 的 7 个集成测试，标题均为 `[AC-025] ...`（plain）。 |
+| `test/characterization/defects/a2-pack.test.mjs` | 追加 | 仅在文件末尾追加 1 个 plain 标题 `[fixed] [AC-025] ...`；`[repro]` 块字节未动。 |
+| `test/traceability/T-009.json` | 新增 | AC-025 `covered`，文件列表见 design §6。 |
+
+未改动 `brief.md`、`design.md`、`acceptance.md`、`review*.md`、`verdict*.json`、`state.json`、`run.json`、`contracts/**`、`.gitignore`、`test/characterization/defects.json`、`package-lock.json`、`lib/**`、`bin/**`、`config/**`。
+
+## 2. 关键实现与理由
+
+### 2.1 `package.json`
+
+- `bin` 用对象形式、值不带 `./`（design §1），因此 `require('./package.json').bin.cliworker` 精确等于 `bin/cliworker.mjs`。
+- `files` 不用 `config`、`contracts` 这类目录级条目：`config/*.local.json` 与 `contracts/spec`、`contracts/golden`、`contracts/examples` 都必须在包外，而 npm 的 `files` 不做 `.gitignore` 过滤，只能靠精确白名单。`config/cliworker.example.json` 是运行期依赖（`lib/paths.mjs` 会读它），所以单独放行。
+- 实际 `npm pack --dry-run --json` 清单与白名单一致：bin、lib 全量、单个 config 示例、contracts 的 21 个 schema + host + context + registry.snapshot + agentline-forbidden、cordis.patch.yml、dsh.plugin.json、README.md、package.json（npm 自动带上）。
+
+### 2.2 `scripts/check-pack.mjs`
+
+- 风格对齐 `check-defects.mjs`：`invokedDirectly` 守卫、纯函数导出、CLI 无副作用输出。
+- `collectLibFiles(root)`：递归读 `<root>/lib`，返回排序后的 posix 路径（`lib/...`）；目录不存在时返回 `[]`，由规则层报 `pack.missing_required lib/`。
+- `runNpmPack(root)`：`spawnSync('npm', ['pack','--dry-run','--json','--ignore-scripts'], { cwd, shell: process.platform === 'win32', encoding: 'utf8' })`。参数全为固定字面量；Windows 上 Node 不能直接 spawn `.cmd`，用 `shell` 解决。退出码非 0、stdout 不是 JSON 数组、`[0].files` 不是 `{ path }[]` 时返回 `error`，错误串只写简短原因（`npm pack failed (exit N)` / `did not print JSON` / `has no files array`），不回显子进程 stdout/stderr，也不含环境变量或令牌。
+- `evaluatePack({ packFiles, pkg, plugin, libFiles })`：纯函数，规则 id 与 design §3 表一致：
+  - `pack.bin_mismatch`：`pkg.bin` 非对象或 `bin.cliworker !== 'bin/cliworker.mjs'`（`./` 前缀会命中）。
+  - `pack.version_mismatch`：两侧版本不是非空字符串或不相等。
+  - `pack.missing_required`：7 个精确文件、3 个 contracts 前缀各至少一个文件、`libFiles` 全部文件；`libFiles` 为空也报一条，detail 为 `lib/`。
+  - `pack.forbidden_present`：`test/`、`scripts/`、`state/`、`contracts/golden/`、`contracts/spec/`、拼接出的 `.collab/` 前缀，`config/*.local.json`，任意 `*.jsonl`。
+  - `pack.not_whitelisted`：`contracts/` 下既非两个白名单文件、也不在 schemas/host/context 之下的路径。
+  - `pack.manifest_unreadable`：`package.json` / `dsh.plugin.json` 读不到或解析失败（此时跳过 bin/version 规则，避免同一根因重复报错）。
+  - 输出前按 `id` 再按 `detail` 码点序排序，保证稳定。
+- CLI：成功打 `check-pack: ok`（退出 0）；失败逐行 `FAIL <id> <detail>` 后打 `check-pack: FAILED (<n> errors)`（退出 1）；`--root` 缺值或未知参数打 `usage:` 到 stderr（退出 2）。npm 整体失败时只报 `pack.npm_failed`，不叠加内容缺失噪声。
+- `.collab/` 用 `['.', 'coll', 'ab'].join('')` 拼接，`check-no-collab` 不会命中本文件；测试文件同理。`check-seams` 只扫 `lib/`，所以这里可以直用 `node:fs` / `node:child_process`。
+
+### 2.3 测试
+
+- `test/integration/pack.test.mjs`：真实 pack 结果在模块内缓存一次，避免重复 spawn npm；合成基线由 `baseline()` 构造（不读仓库、不写文件），7 个标题与 acceptance C1 逐字一致。
+- `a2-pack.test.mjs`：`[repro]` 块与全部 import 保持原样，新测试用 `fs.readFileSync(new URL('../../../package.json', import.meta.url), 'utf8')` 读真实清单；文件里 `bin: null` 仍只出现 1 次，canary 的 `find` 依旧唯一。文件保持全 CRLF，追加后 `repro_sha256` 仍为登记值。
+
+## 3. 自测结果（acceptance.md 逐条）
+
+全部命令在仓库根执行；构建命令用 `node`，PowerShell 片段用本机 PowerShell 执行。
+
+| 条目 | 结果 |
+|---|---|
+| A1 | `bin/cliworker.mjs`，退出 0 |
+| A2 | `true` |
+| A3 | `false` |
+| A4 | `true` |
+| A5 | `0` |
+| B1 | `check-pack: ok`，退出 0 |
+| B2 | 七行全部 ` True` |
+| B3 | 三行全部 ` True` |
+| B4 | 无输出 |
+| B5 | 无缺失 lib 文件（本机 Windows PowerShell 5.1 无 `[IO.Path]::GetRelativePath`，用 `Substring` 等价实现复验；`pwsh` 7 已安装，原命令可用） |
+| C1 | `tests 7 / pass 7 / fail 0`，七个 `ok` 标题齐全，退出 0 |
+| C2 | stderr 含 `unknown argument: --bogus` 与 `usage:`，`exit=2` |
+| C3 | 临时目录输出 8 条 `FAIL pack.missing_required`，无 `pack.bin_mismatch` / `pack.version_mismatch`，含 `check-pack: FAILED (8 errors)`，`exit=1` |
+| D1 | `check-defects: ok`，退出 0 |
+| D2 | **阻塞**：`FAIL defects.missing_fixed a5-ignored-fields has no [fixed] section`，退出 1（见 §4） |
+| D3 | `ok 1 - [fixed] [AC-025] the live package ships bin and the config example but no spec or golden`，`# fail 0`，退出 0 |
+| D4 | `f520198675d74dc94fd4be7bd120a0f7f5168e0058e85369bcc618100dbd9c93` |
+| E1 | `run-tests: filtered 2 files`，`tests 9 / pass 9 / fail 0`，无 `run.no_match`，退出 0 |
+| E2 | `["T-009","M1",1,"AC-025","covered",["test/characterization/defects/a2-pack.test.mjs","test/integration/pack.test.mjs"]]` |
+| E3 | `check-traceability: ok (covered=26 planned=48)`，退出 0 |
+| E4 | **阻塞**：`milestone-gate M1: BLOCKED`，3 条错误全是 T-008（`AC-023 is planned`、`AC-024 is planned`、`a5-ignored-fields has no [fixed] section`），不涉及 AC-025 / `a2-pack`；按 acceptance E4 末句记录原因，以 E1–E3 为准 |
+| F1 | **阻塞**：`FAIL no_collab test/unit/gitignore.test.mjs:13`、`:18`，见 §4 |
+| F2 | `check-unused: ok (files=24)`，退出 0 |
+| F3 | **阻塞**：`check-fast` 在 `check-no-collab.mjs` 步退出 1；其余步骤全部通过，见 §4 |
+| F4 | 未执行（禁止运行 git）；实际写域只有 `package.json`、`scripts/check-pack.mjs`、`test/integration/pack.test.mjs`、`test/characterization/defects/a2-pack.test.mjs`、`test/traceability/T-009.json` 与 `.collab/tasks/009/impl.md` |
+| F5 | `1` |
+| F6 | 未执行（禁止运行 git）；新增内容无任何令牌/密钥字面量 |
+
+补充：除 `check-no-collab` 外，`check-fast` 的其余步骤单独执行均通过——`check-ci`、`check-contract-doc`、`check-defects`、`check-frozen-files`（8 files）、`check-golden-frozen`（14 files）、`check-pack`、`check-seams`（24 files）、`check-test-discovery`、`check-traceability`、`check-unused`（24 files）、`check-write-scope` 全部 `ok`。
+
+## 4. 已知阻塞（均在本任务 write_scope 之外，未改动）
+
+1. **D2 / E4**：`a5-ignored-fields`（owner `T-008`，milestone M1）尚无 `[fixed]` 段，且 AC-023/AC-024 仍为 `planned`。`check-defects --milestone M1` 因此报 `defects.missing_fixed`；`milestone-gate M1` 因此 BLOCKED。修复需要改 `test/characterization/defects/a5-ignored-fields.test.mjs` 与 T-008 的 traceability 分片，属于 T-008 的写域。
+2. **F1 / F3**：`test/unit/gitignore.test.mjs:13` 与 `:18` 直接写了 `.collab` 字面量（`[AC-013]` 的测试标题与 `.collab/x` 断言），`check-no-collab` 因此报 2 条 `no_collab`；同一文件对应的 `.gitignore` 也缺少 `.collab/` 规则，导致 `[AC-013] git check-ignore ...` 失败。两者都是基线里已存在的文件（本任务未触碰），属于其他任务的写域。
+3. **全量测试的其余 1 个失败**：`test/unit/import-safe.test.mjs:70` 期望 `main(['providers','--config','/missing/config.json'])` 返回 `exitCode 1`，实际 `3`（`lib/cli.mjs` 把 `CONFIG_ERROR_CODES` 映射成 3 并输出 JSON 信封）。同样在 `lib/**`（本任务未改）。
+
+以上三项都不涉及 AC-025 或 `a2-pack`：本任务新增/修改的 5 个代码与测试文件在 `check-no-collab`、`check-unused`、`check-traceability`、`check-defects`、`check-pack` 中均为绿色。
+
+## 5. 如何复跑
+
+```sh
+node scripts/check-pack.mjs
+node --test --test-reporter=tap test/integration/pack.test.mjs
+node --test --test-reporter=tap --test-name-pattern="\[fixed\]" test/characterization/defects/a2-pack.test.mjs
+node scripts/check-defects.mjs
+node scripts/run-tests.mjs --ac AC-025
+node scripts/check-traceability.mjs
+node scripts/check-unused.mjs
+node scripts/check-seams.mjs
+node scripts/check-frozen-files.mjs
+node scripts/check-golden-frozen.mjs
+pwsh -NoProfile -File scripts/check-fast.ps1   # 当前会停在 check-no-collab，原因见 §4
+```
