@@ -144,10 +144,10 @@ foreach ($c in @(@('manifest-ok.json',0,$null), @('manifest-missing.json',1,'dis
 
 期望（四行，顺序一致）：
 ```
-manifest-ok.json exit=0 ok=True
-manifest-missing.json exit=1 ok=True
-manifest-extra.json exit=1 ok=True
-manifest-filtered.json exit=1 ok=True
+# manifest-ok.json exit=0 ok=True
+# manifest-missing.json exit=1 ok=True
+# manifest-extra.json exit=1 ok=True
+# manifest-filtered.json exit=1 ok=True
 ```
 
 ### A1-10 `--ac AC-001` 命中自测文件
@@ -350,12 +350,12 @@ foreach ($c in @(@('ok',0,$null), @('duplicate',1,'shard\.duplicate'), @('not-ow
 
 期望（六行）：
 ```
-ok exit=0 ok=True
-duplicate exit=1 ok=True
-not-owner exit=1 ok=True
-missing-file exit=1 ok=True
-missing-title exit=1 ok=True
-baseline-in-shard exit=1 ok=True
+# ok exit=0 ok=True
+# duplicate exit=1 ok=True
+# not-owner exit=1 ok=True
+# missing-file exit=1 ok=True
+# missing-title exit=1 ok=True
+# baseline-in-shard exit=1 ok=True
 ```
 
 ### A4-06 `--json` 输出结构
@@ -405,8 +405,8 @@ $r = Run scripts/milestone-gate.mjs --milestone M2 --root $f; "M2 exit=$($r.Exit
 
 期望：
 ```
-M1 exit=0 pass=True
-M2 exit=1 blocked=True ac=True defect=True
+# M1 exit=0 pass=True
+# M2 exit=1 blocked=True ac=True defect=True
 ```
 
 ### A74-03 夹具 `m4-nocache`：M3 通过，M4 阻断且只因缺陷
@@ -419,8 +419,8 @@ $r = Run scripts/milestone-gate.mjs --milestone M4 --root $f; "M4 exit=$($r.Exit
 
 期望：
 ```
-M3 exit=0 pass=True
-M4 exit=1 blocked=True defect=True noac=True
+# M3 exit=0 pass=True
+# M4 exit=1 blocked=True defect=True noac=True
 ```
 
 ### A74-04 check-defects 默认模式不提前误报
@@ -432,8 +432,8 @@ $r = Run scripts/check-defects.mjs --root test/fixtures/milestone-gate/m4-nocach
 
 期望：
 ```
-m2-planned default exit=0
-m4-nocache default exit=1 missing=True
+# m2-planned default exit=0
+# m4-nocache default exit=1 missing=True
 ```
 （前者的 AC-026 仍是 planned，所以 a5-shell 不要求 `[fixed]`；后者的 AC-055 已 covered，却没有 `[fixed]`。）
 
@@ -447,10 +447,10 @@ $r = Run scripts/check-defects.mjs --milestone M9 --root $f; "M9 exit=$($r.Exit)
 
 期望：
 ```
-M1 exit=0 set=False missing=False
-M2 exit=1 set=False missing=True
-M5 exit=1 set=True missing=True
-M9 exit=2
+# M1 exit=0 set=False missing=False
+# M2 exit=1 set=False missing=True
+# M5 exit=1 set=True missing=True
+# M9 exit=2
 ```
 
 ### A74-06 门禁必须给 `--milestone`
@@ -470,7 +470,7 @@ if (-not (Test-Path test/characterization/defects.json)) {
 } else { 'n/a' }
 ```
 
-期望：账本不存在时输出 `default exit=0` 与 `M1 exit=1 file=True`；账本已存在时输出 `n/a`。
+# 期望：账本不存在时输出 `default exit=0` 与 `M1 exit=1 file=True`；账本已存在时输出 `n/a`。
 
 ### A74-08 a3-runner 的缺陷文件
 
