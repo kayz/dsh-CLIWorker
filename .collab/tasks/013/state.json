@@ -233,10 +233,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:hy4free"
+    },
+    {
+      "at": "2026-11-08T07:56:58.270Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T07:56:58.474Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-08T07:56:57.842Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-08T07:56:58.474Z",
   "role": "review",
   "model": "hy4free",
   "model_resolved": "hy4free",
@@ -245,5 +257,71 @@
   "switches": 10,
   "blocked_reason": null,
   "handoff": null,
-  "interrupted": null
+  "interrupted": null,
+  "pr": {
+    "branch": "task/013",
+    "state": "open",
+    "files": [
+      ".collab/blueprint/cliworker-v2/task-graph.json",
+      ".collab/tasks/013/acceptance.md",
+      ".collab/tasks/013/ci-results.json",
+      ".collab/tasks/013/design.md",
+      ".collab/tasks/013/handoff/dev-r1-c1-to-c2.md",
+      ".collab/tasks/013/handoff/dev-r2-c1-to-c2.md",
+      ".collab/tasks/013/handoff/dev-r3-c1-to-c2.md",
+      ".collab/tasks/013/handoff/dev-r4-c1-to-c2.md",
+      ".collab/tasks/013/impl.md",
+      ".collab/tasks/013/notice.json",
+      ".collab/tasks/013/review-r1.md",
+      ".collab/tasks/013/review-r2.md",
+      ".collab/tasks/013/review-r3.md",
+      ".collab/tasks/013/review.md",
+      ".collab/tasks/013/run.json",
+      ".collab/tasks/013/state.json",
+      ".collab/tasks/013/verdict-r1.json",
+      ".collab/tasks/013/verdict-r2.json",
+      ".collab/tasks/013/verdict-r3.json",
+      ".collab/tasks/013/verdict.json",
+      "lib/cli.mjs",
+      "lib/commands/auth/_common.mjs",
+      "lib/commands/auth/clear.mjs",
+      "lib/commands/auth/set.mjs",
+      "lib/commands/auth/status.mjs",
+      "lib/config.mjs",
+      "lib/exec.mjs",
+      "lib/secrets/index.mjs",
+      "test/flows/steps/auth.mjs",
+      "test/integration/secrets-native.test.mjs",
+      "test/traceability/T-013.json",
+      "test/unit/secrets.test.mjs"
+    ],
+    "sha": "5b928106c72b768139c7191351bfd118ff6b205c"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "confirm",
+    "reasons": [
+      "评审 4 轮，超过 3 轮",
+      "1 个文件在 write_scope 之外：.collab/blueprint/cliworker-v2/task-graph.json",
+      "改动 13 个文件，超过 8 个"
+    ],
+    "metrics": {
+      "files": 13,
+      "lines": 1215,
+      "review_rounds": 4,
+      "out_of_scope": 1,
+      "write_scope": 9
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T07:56:58.412Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
