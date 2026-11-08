@@ -35,10 +35,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:hy4free"
+    },
+    {
+      "at": "2026-11-08T01:24:01.923Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T01:24:02.071Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-08T01:24:01.556Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-08T01:24:02.071Z",
   "role": "review",
   "model": "hy4free",
   "model_resolved": "hy4free",
@@ -46,5 +58,63 @@
   "attempt": 4,
   "switches": 0,
   "blocked_reason": null,
-  "handoff": null
+  "handoff": null,
+  "pr": {
+    "branch": "task/010",
+    "state": "open",
+    "files": [
+      ".collab/tasks/010/acceptance.md",
+      ".collab/tasks/010/ci-results.json",
+      ".collab/tasks/010/design.md",
+      ".collab/tasks/010/impl.md",
+      ".collab/tasks/010/review-r1.md",
+      ".collab/tasks/010/review.md",
+      ".collab/tasks/010/run.json",
+      ".collab/tasks/010/state.json",
+      ".collab/tasks/010/verdict-r1.json",
+      ".collab/tasks/010/verdict.json",
+      "lib/availability.mjs",
+      "lib/exec.mjs",
+      "test/characterization/defects/a5-shell.test.mjs",
+      "test/fixtures/exec/argv-recorder.mjs",
+      "test/fixtures/exec/shims/bun.cmd.txt",
+      "test/fixtures/exec/shims/npm-v6.cmd.txt",
+      "test/fixtures/exec/shims/npm-v7.cmd.txt",
+      "test/fixtures/exec/shims/plain-batch.cmd.txt",
+      "test/fixtures/exec/shims/pnpm.cmd.txt",
+      "test/fixtures/exec/sleep-forever.mjs",
+      "test/fixtures/exec/slot-task.mjs",
+      "test/fixtures/exec/spawn-grandchild.mjs",
+      "test/integration/exec-native.test.mjs",
+      "test/integration/exec-tree.test.mjs",
+      "test/traceability/T-010.json",
+      "test/unit/exec.test.mjs"
+    ],
+    "sha": "bf433a8f53f178a822b3ebef4a33eb84092053b3"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "confirm",
+    "reasons": [
+      "改动 16 个文件，超过 8 个"
+    ],
+    "metrics": {
+      "files": 16,
+      "lines": 1288,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 8
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T01:24:02.027Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
