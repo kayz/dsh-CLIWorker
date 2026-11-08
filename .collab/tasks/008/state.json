@@ -1,0 +1,105 @@
+{
+  "id": "008",
+  "history": [
+    {
+      "at": "2026-11-08T00:15:12.187Z",
+      "to": "draft",
+      "by": "init"
+    },
+    {
+      "at": "2026-11-08T00:23:43.902Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T00:29:05.715Z",
+      "from": "designed",
+      "to": "implemented",
+      "by": "dev:deepseek-v4.1-flash"
+    },
+    {
+      "at": "2026-11-08T00:29:27.110Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T00:47:49.129Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:hy4free"
+    },
+    {
+      "at": "2026-11-08T00:47:49.489Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T00:47:49.633Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
+    }
+  ],
+  "status": "pr_open",
+  "updated_at": "2026-11-08T00:47:49.633Z",
+  "role": "review",
+  "model": "hy4free",
+  "model_resolved": "hy4free",
+  "effort": "high",
+  "attempt": 3,
+  "switches": 0,
+  "blocked_reason": null,
+  "handoff": null,
+  "pr": {
+    "branch": "task/008",
+    "state": "open",
+    "files": [
+      ".collab/tasks/008/acceptance.md",
+      ".collab/tasks/008/ci-results.json",
+      ".collab/tasks/008/design.md",
+      ".collab/tasks/008/impl.md",
+      ".collab/tasks/008/review.md",
+      ".collab/tasks/008/run.json",
+      ".collab/tasks/008/state.json",
+      ".collab/tasks/008/verdict.json",
+      "README.md",
+      "lib/cli.mjs",
+      "lib/commands/models/select.mjs",
+      "lib/output.mjs",
+      "lib/request.mjs",
+      "test/characterization/defects/a5-ignored-fields.test.mjs",
+      "test/integration/cli-envelope.test.mjs",
+      "test/traceability/T-008.json",
+      "test/unit/request.test.mjs"
+    ],
+    "sha": "877a6e09f6e89d5f366e68e462445d87ad34a9ad"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "confirm",
+    "reasons": [
+      "改动 9 个文件，超过 8 个"
+    ],
+    "metrics": {
+      "files": 9,
+      "lines": 686,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 9
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T00:47:49.590Z",
+    "base": "main",
+    "head": "HEAD"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "verdict": "pass",
+  "sha": "994745f367fbdeb8c783089600c66a1e2e974846",
+  "passed": 18,
+  "total": 18,
+  "evidence": [
+    "所验证的 git sha（只读、未执行任何 git 命令）：994745f367fbdeb8c783089600c66a1e2e974846，分支 task/008 HEAD。工作区 .git 文件:1 = 'gitdir: C:/git/dsh-CLIWorker/.git/worktrees/008'；.git/worktrees/008/HEAD:1 = 'ref: refs/heads/task/008'；.git/refs/heads/task/008:1 = 994745f367fbdeb8c783089600c66a1e2e974846。只读 zlib 解压松散对象 .git/objects/99/4745f367fbdeb8c783089600c66a1e2e974846 得 230 字节，对解压字节重算 SHA-1 = 994745f367fbdeb8c783089600c66a1e2e974846（match=true）；对象头 commit 219，tree f7dd288e2264e17290c909bc3ca9adc63382cc7e，parent aa5673f9ea8de8f0a50887fcded554d1cebc3c4b，时间戳 1794097745 +0800 = 2026-11-08 08:29:05 +0800（00:29:05Z），消息 'stage(dev): task 008'，COMMIT_EDITMSG 同。ORIG_HEAD = 86ff20e8d8db8ac9a101edae6230a0dfb1d9cde8，与 design.md:16、acceptance.md:3、impl.md:3 的基准 86ff20e 一致。worktrees/008/logs/HEAD 末条 aa5673f9... -> 994745f... 即该提交，CI 之后无新提交。",
+    "通过数/总数 = 18/18。acceptance.md 恰含 18 个以 AC id 开头的二级小节（grep -c '^## AC-' = 18，行号 13/18/23/28/33/38/43/48/53/58/63/68/73/78/83/88/93/98，即 AC-023 A-01..A-07、AC-024 A-08..A-15、AC-023 A-16、AC-024 A-17、AC-023 A-18），每节各 1 条 '- 命令:' 与 1 条 '- 期望:'，与 ci-results.json 的 18 条 results 一一对应，未自行发明编号/章节名。逐条 passed=true，0 项无法确认，0 条 finding。",
+    "执行证据口径：.collab/tasks/008/ci-results.json（SHA-256 d5008a7866e681787f306d2136432006f84cfe4daad33a3fde4e5966cdf46029，ranAt=2026-11-08T08:29:27.0663221+08:00，:5-7 passed=18 total=18 ok=true）由编排方用 PowerShell 7 产生，含每条命令退出码与输出，按口径为执行类验收项的有效运行证据，直接引用，不以其缺失为判据、也不自行重跑为判据；评审环境缺 pwsh 7 或临时文件权限不作为判 needs_revision 的理由。18 条 results 逐条 passed=true、exitCode=0、lastLine 为 'AC-023 OK' 或 'AC-024 OK'（行段见各 check）。ranAt 晚于 HEAD 提交时间 08:29:05 +0800 共 22 秒，reflog 末条即该提交、CI 之后无新提交，故 CI 结果与当前 HEAD 不矛盾。",
+    "独立只读复核（不只看文件存在、不写仓库文件、不执行 git 子命令）：以 node 直接 import lib/*.mjs 做纯函数内存求值 + createFakeContext 内存复跑 main()，逐项复核 design §2/§3/§4/§5/§6/§7 与 acceptance A-01..A-18 的规格一致性，全部一致：output.mjs 的 errorBody 键顺序 ok,error / code,message,retryable,retry_after、exitCodeFor 取注册表 exit（未知码回落 1）、errorBodyFrom 已知码保留/无码或未知码转 E_INTERNAL 且 message 仅取 e.message（不含 stack/令牌）、error-envelope schema 全部 ok；request.mjs 的 normalizeRequest 警告顺序（role->W_FIELD_IGNORED、tier->W_FIELD_DEPRECATED、level 优先、legacy 不警告）与规范化键顺序、非法值到注册表码映射、requestFromArgv 三种写法深相等+标志覆盖+缺省+argv 错误码、gateView 的 draft/agentline/full；README 1 个 ```json request 块与 3 条 models select 行解析后 warnings 全为 [] 且无 \"role\"/\"tier\"。",
+    "写域（只读解压 .git tree 对象，未用 git 子命令）：base 86ff20e（tree 09feb913，485 跟踪文件）-> HEAD 994745f（tree f7dd288e，495 跟踪文件）：ADDED 10 = 5 个 .collab/tasks/008/ 编排维护文件（acceptance.md、design.md、impl.md、run.json、state.json）+ 5 个 write_scope 文件（lib/output.mjs、lib/request.mjs、test/integration/cli-envelope.test.mjs、test/unit/request.test.mjs、test/traceability/T-008.json），MODIFIED 4（README.md、lib/cli.mjs、lib/commands/models/select.mjs、test/characterization/defects/a5-ignored-fields.test.mjs），REMOVED 0；写域外（排除 taskdir）= []，与 design.md:2-10 front matter 的 9 条 write_scope 一致。brief.md、defects.json、contracts/**、lib/select.mjs、lib/index.js、lib/contract/* 零改动。9 个 write_scope 文件按 git blob 算法（LF 归一后 SHA-1）与 HEAD tree 逐字节比对全部 MATCH=True（工作树 CRLF、对象 LF），CI 跑的就是当前内容。",
+    "辅助门禁只读复跑（node 直跑脚本，均不写仓库文件）：check-traceability -> 'check-traceability: ok (covered=28 planned=46)'（基线 26/48，AC-023、AC-024 由 planned 转 covered）；check-defects -> 'check-defects: ok'；check-seams -> ok (files=26)；check-unused -> ok；check-golden-frozen -> ok (14 files)；check-frozen-files -> ok (8 files)；check-contract-doc -> ok，全部 exit 0。全量 node scripts/run-tests.mjs -> tests 326 / pass 323 / fail 3，三条失败标题恰为基线遗留（[AC-073] check-no-collab、[AC-013] git check-ignore、[AC-006] ctx.stderr），未新增失败且总数 326>=312。--ac AC-023 -> filtered 1 files / tests 5 / fail 0；--ac AC-024 -> filtered 2 files / tests 10 / fail 0。",
+    "缺陷与追踪：a5-ignored-fields.test.mjs 的 [repro] 段按 check-defects.mjs:145-179 算法独立重算 SHA-256 = ea537e6df09eb0d1a362b8eea314946af7cba467ccbf1fee961bb1d2682ce8ca，与 test/characterization/defects.json:64 登记值逐字相等（[repro] 一字未改），文件末尾恰 1 个顶层 test('[fixed] [AC-024] ...')（:24-30），node --test 该文件 # tests 2 / # pass 2 / # fail 0 且输出含 [fixed] 标题。T-008.json:1-12 键恰 task/milestone/entries，task='T-008'、milestone='M1'、entries 恰 2 条（AC-023 covered -> cli-envelope.test.mjs；AC-024 covered -> request.test.mjs 与 a5-ignored-fields.test.mjs）。config.test.mjs+paths-entries.test.mjs+clock.test.mjs # tests 20 / # pass 20 / # fail 0；import-safe.test.mjs 保持基线 # tests 5 / # pass 4 / # fail 1，唯一失败为 'not ok 3 - [AC-006] failures are reported on ctx.stderr'。",
+    "备注（非缺陷，不写入 findings）：brief.md 与 design.md 均未指定验收报告路径（brief.md 全文 grep '报告/report/追加' 无命中，design.md:16 'brief 没有另给验收报告路径'），故本轮结论无追加目标、未改动任何历史小节。acceptance.md 的 check-no-collab/check-fast 等全局门禁基线遗留失败、import-safe 第 3 用例失败，按 design §1.1 第 5 条与 A-16/A-17 期望不计入判定。改动文件 grep 无 sk-/ghp_/xox/AKIA/PRIVATE KEY/Bearer/ANTHROPIC_API_KEY 字面量，令牌门满足。未修改 brief.md、design.md、acceptance.md、impl.md、state.json、run.json 及任何被评审代码与文档；SHA、写域、diff 等价核验均以只读解压 .git 对象与读文件完成，未执行任何 git 子命令、未以 git 得出任何验收结论；除本 review.md 与 verdict.json 外未在仓库内创建任何文件。沿用既有 verdict 字段（verdict/sha/passed/total/evidence/findings/checks）与 acceptance.md 的 18 个章节名，未发明字段、版本号或章节名。"
+  ],
+  "findings": [],
+  "checks": [
+    {
+      "id": "AC-023 A-01",
+      "passed": true,
+      "evidence": "ci-results.json:9-17 passed=true、exitCode=0、lastLine='AC-023 OK'、output='AC-023 OK'。命令 $o = & node .../scripts/run-tests.mjs --ac AC-023 2>&1；断言 fail 0、filtered 1 files。只读复跑 node scripts/run-tests.mjs --ac AC-023 -> 'ℹ tests 5 / ℹ pass 5 / ℹ fail 0'、'run-tests: filtered 1 files'（仅 test/integration/cli-envelope.test.mjs，其内 [AC-023] 标签 5 处），命中 acceptance.md:15-16 期望（退出码 0、输出含 fail 0 与 filtered 1 files，基线为 FAIL run.no_match AC-023）。"
+    },
+    {
+      "id": "AC-023 A-02",
+      "passed": true,
+      "evidence": "ci-results.json:18-26 passed=true、exitCode=0、lastLine='AC-023 OK'。命令的 9 个调用覆盖 E_REQUEST_INVALID（坏 --request JSON、非法 importance）、E_LEVEL_REQUIRED、E_LEVEL_UNKNOWN、E_UNKNOWN_COMMAND（bogus、models bogus）、E_CONFIG、E_CONFIG_EXAMPLE、E_VIEW_FORBIDDEN。只读内存复跑 main()+createFakeContext（不 spawn、不写仓库）：9 例 stdout 整体可 JSON.parse 得单值，顶层键恰 [ok,error]、error 键恰 [code,message,retryable,retry_after]，code 相符、retryable==getCode(code).retryable、retry_after===null、exitCode==getCode(code).exit（2/2/2/2/2/2/3/3/2，与 lib/contract/registry.mjs:14-70 及 acceptance.md:21 一致）、stderr==''、validate(error-envelope)={ok:true}、stdout 不含 sk-t008-secret。errorBody (lib/output.mjs:29-41) 与 errorBodyFrom (:44-52) 实现保证形状、键顺序、注册表码与 message 只取 e.message。"
+    },
+    {
+      "id": "AC-023 A-03",
+      "passed": true,
+      "evidence": "ci-results.json:27-35 passed=true、exitCode=0、lastLine='AC-023 OK'。命令对 E_UNKNOWN_COMMAND、E_CONFIG、以及 usage record --json {bad 抛出的无码 Error（映射 E_INTERNAL、退出码 1）的 stdout 逐一 validate error-envelope schema。只读内存复跑：E_UNKNOWN_COMMAND/E_CONFIG 错误体 validate(error-envelope.schema.json)={ok:true,errors:[]}；usage record --json {bad -> errorBodyFrom 得 E_INTERNAL、exitCode 1、stderr ''、validate={ok:true}。contracts/schemas/error-envelope.schema.json:1-55 顶层与 error 均 additionalProperties:false，lib/output.mjs 的键固定为 ok/error 与 code,message,retryable,retry_after，schema :11 要求 4 键齐备、:8 ok=const false、:48 boolean、:49 string|null，逐项匹配。"
+    },
+    {
+      "id": "AC-023 A-04",
+      "passed": true,
+      "evidence": "ci-results.json:36-44 passed=true、exitCode=0、lastLine='AC-023 OK'。只读内存复跑 9 个成功命令（providers、models list、models select 标志写法、models select --request-file、models forecast、usage summary、usage record、paths、init）经 createFakeContext：每个 stdout 整体 JSON.parse 成功、status 0、stderr==''、值为非 null 非数组 object，命中 acceptance.md:30-31 期望。lib/cli.mjs:59-64 成功路径 warnAboutTestClock 后 writeJson、返回 exitCode 0，不写 stderr。"
+    },
+    {
+      "id": "AC-023 A-05",
+      "passed": true,
+      "evidence": "ci-results.json:45-53 passed=true、exitCode=0、lastLine='AC-023 OK'。只读内存复跑：main([]) -> exitCode 1、stdout ''、stderr 以 'ERROR: usage: cliworker providers | models list|select|forecast | usage record|summary' 开头（lib/cli.mjs:47-50 与 USAGE 常量 :13 一字未改，import-safe.test.mjs:70 依赖）；main(['usage']) -> stdout 单 JSON、error.code='E_UNKNOWN_COMMAND'、exitCode 2（cli.mjs:52-57 resolveRoute 无匹配）。命中 acceptance.md:35-36 期望。"
+    },
+    {
+      "id": "AC-023 A-06",
+      "passed": true,
+      "evidence": "ci-results.json:54-62 passed=true、exitCode=0、lastLine='AC-023 OK'。只读内存复跑：CLIWORKER_TEST_CLOCK_FILE 设置时 paths 成功结果 warnings 含 {code:'W_TEST_CLOCK'}（cli.mjs:38-44 warnAboutTestClock 仅在 result 对象上追加）；bogus 错误体 exitCode 2、顶层键恰 [ok,error]（错误路径 cli.mjs:65-69 走 errorBodyFrom，不经过 warnAboutTestClock，故 errorBody 不含 warnings，符合 design §1.1 第 3 条与 error-envelope additionalProperties:false）。命中 acceptance.md:40-41 期望。"
+    },
+    {
+      "id": "AC-023 A-07",
+      "passed": true,
+      "evidence": "ci-results.json:63-71 passed=true、exitCode=0、lastLine='AC-023 OK'。只读内存复跑：models select --level Top --count 1（不带 schema）-> exitCode 0、schema='cliworker.selection/v1'、warnings 恰 [{code:'W_DRAFT_DEPRECATED'}]、request.level='Top'、request.count=1；--request-file 含 {schema:'cliworker.request/v1',level:'top',role:'dev',tier:'top'} -> warnings 恰 [{code:'W_FIELD_IGNORED',field:'role'},{code:'W_FIELD_DEPRECATED',field:'tier'}]（agentline 分支不带 W_DRAFT_DEPRECATED，符合 design §1.1 第 2 条）。命中 acceptance.md:45-46 期望。lib/commands/models/select.mjs:7-15 requestFromArgv->gateView->selectModels，:12-13 合并警告非空才写入。"
+    },
+    {
+      "id": "AC-024 A-08",
+      "passed": true,
+      "evidence": "ci-results.json:72-80 passed=true、exitCode=0、lastLine='AC-024 OK'。只读复跑 node scripts/run-tests.mjs --ac AC-024 -> 'ℹ tests 10 / ℹ pass 10 / ℹ fail 0'、'run-tests: filtered 2 files'（test/unit/request.test.mjs 与 test/characterization/defects/a5-ignored-fields.test.mjs；前者 [AC-024] 标签 8 处，后者 [fixed] [AC-024] 1 处），命中 acceptance.md:50-51 期望（fail 0、filtered 2 files，基线 FAIL run.no_match AC-024）。"
+    },
+    {
+      "id": "AC-024 A-09",
+      "passed": true,
+      "evidence": "ci-results.json:81-89 passed=true、exitCode=0、lastLine='AC-024 OK'。只读内存求值：--request、--request-file、单项标志三种写法 {request,warnings} 深相等且 warnings=[]，规范化请求恰为 {request_id:'r-001',level:'Top',count:2,usage:'Heavy',importance:'high',cwd:'C:/work/repo'}；标志覆盖 JSON 同名字段（--level High 覆盖 level:'quick'），未给字段缺省 count 1 / usage Normal / importance normal。命中 acceptance.md:55-56 期望，与 lib/request.mjs:179-196（FLAGS/互斥/覆盖）、:128-140（键顺序）一致。"
+    },
+    {
+      "id": "AC-024 A-10",
+      "passed": true,
+      "evidence": "ci-results.json:90-98 passed=true、exitCode=0、lastLine='AC-024 OK'。只读内存求值：normalizeRequest({level:'Quick',role:'dev',importance:'high'}) -> warnings 恰 [{code:'W_FIELD_IGNORED',field:'role'}] 且 'role' in request=false；{tier:'top'} -> [{code:'W_FIELD_DEPRECATED',field:'tier'}]、request.level='Top'、不含 tier；{level:'Middle',tier:'top',foo:1,bar:2} -> level='Middle'、warnings 按输入键顺序为 [W_FIELD_DEPRECATED tier, W_FIELD_IGNORED foo, W_FIELD_IGNORED bar]；{exclude,candidates,require_verified} -> warnings=[] 且字段原样保留。命中 acceptance.md:60-61 期望，与 lib/request.mjs:100-107（fieldWarnings 按 Object.keys(raw) 顺序）、:24-54（KNOWN_FIELDS/LEGACY_FIELDS）一致。"
+    },
+    {
+      "id": "AC-024 A-11",
+      "passed": true,
+      "evidence": "ci-results.json:99-107 passed=true、exitCode=0、lastLine='AC-024 OK'。只读内存求值逐项：importance 仅接受精确 normal/high（urgent/High/low/1/null/true -> E_REQUEST_INVALID）；count 仅 1..10 整数（0/11/1.5/'2'/-1/null -> E_REQUEST_INVALID，1 与 10 通过）；usage 大小写不敏感（Extreme -> E_REQUEST_INVALID、heavy -> Heavy）；缺失或空 level -> E_LEVEL_REQUIRED；非法 level（Ultra、5）-> E_LEVEL_UNKNOWN、tOp -> Top；不支持的 schema -> E_SCHEMA_UNSUPPORTED；null/[] -> E_REQUEST_INVALID；compat:'full'/view:'everything'/timeout_ms:0/exclude_handles:[1] -> E_REQUEST_INVALID；坏 JSON、读文件失败、--request 与 --request-file 同时给、--count abc、标志缺值、无输入 -> E_REQUEST_INVALID 或 E_LEVEL_REQUIRED。命中 acceptance.md:65-66 期望，与 lib/request.mjs:64-98、:110-143、:145-196 一致。"
+    },
+    {
+      "id": "AC-024 A-12",
+      "passed": true,
+      "evidence": "ci-results.json:108-116 passed=true、exitCode=0、lastLine='AC-024 OK'。只读内存求值：gateView(normalizeRequest(raw).request) 对 {level:'Top'} 与 {schema:v1,compat:'draft'} -> {view:'draft',warnings:[{code:'W_DRAFT_DEPRECATED'}]}；{schema:v1,level:'Top'} -> {view:'agentline',warnings:[]}；带 view:'full'（含/不含 schema）-> 抛 E_VIEW_FORBIDDEN。命中 acceptance.md:70-71 期望，与 lib/request.mjs:198-205、lib/contract/views.mjs:7-28（transport=cli 时 full 先判 forbidden）一致。"
+    },
+    {
+      "id": "AC-024 A-13",
+      "passed": true,
+      "evidence": "ci-results.json:117-125 passed=true、exitCode=0、lastLine='AC-024 OK'。只读抽取 README.md：```json request 围栏块 1 个（:31-39，含 \"schema\": \"cliworker.request/v1\"、规范 \"level\": \"Top\"），```bash 块内含 'models select' 的行 3 条（:21 标志写法、:22 --request 内联 JSON、:23 --request-file），逐条按 shell 引号规则拆参数交 requestFromArgv 后 warnings 均为 [] 且不抛错；全文 /\"(role|tier)\"/ 不命中（:59 的 tier 为说明文字、非请求字段）。jsonBlocks>=1、selectLines>=2 均满足。命中 acceptance.md:75-76 与 design §6 约定；test/unit/request.test.mjs:158-178 同逻辑测试通过。"
+    },
+    {
+      "id": "AC-024 A-14",
+      "passed": true,
+      "evidence": "ci-results.json:126-134 passed=true、exitCode=0、lastLine='AC-024 OK'。只读复跑 node --test a5-ignored-fields.test.mjs -> '# tests 2 / # pass 2 / # fail 0'，输出含 [repro] 与 [fixed] 标题；node scripts/check-defects.mjs -> 'check-defects: ok'（exit 0）。按 check-defects.mjs:145-179 独立重算 [repro] 段 SHA-256 = ea537e6df09eb0d1a362b8eea314946af7cba467ccbf1fee961bb1d2682ce8ca == test/characterization/defects.json:64 登记值，证明 [repro] 一字未改；文件 :24-30 恰追加 1 个顶层 test('[fixed] [AC-024] ...')（非 describe），对 live normalizeRequest/requestFromArgv 断言 warnings 恰为 W_FIELD_IGNORED/role。命中 acceptance.md:80-81 期望。"
+    },
+    {
+      "id": "AC-024 A-15",
+      "passed": true,
+      "evidence": "ci-results.json:135-143 passed=true、exitCode=0、lastLine='AC-024 OK'。只读复跑 node scripts/check-traceability.mjs -> 'check-traceability: ok (covered=28 planned=46)'（exit 0），与基线 covered=26 planned=48 相比 AC-023/AC-024 由 planned 转 covered；T-008.json:1-12 恰 2 条 entries，AC-023/AC-024 均 status='covered'，files 分别含 test/integration/cli-envelope.test.mjs 与 test/unit/request.test.mjs + test/characterization/defects/a5-ignored-fields.test.mjs，task='T-008'、milestone='M1'。命中 acceptance.md:85-86 与 design §7 的 T-008.json 形状。"
+    },
+    {
+      "id": "AC-023 A-16",
+      "passed": true,
+      "evidence": "ci-results.json:144-152 passed=true、exitCode=0、lastLine='AC-023 OK'。只读复跑全量 node scripts/run-tests.mjs -> 'ℹ tests 326 / ℹ pass 323 / ℹ fail 3'，输出中 3 条 ✖ 标题恰为基线遗留：'[AC-073] check-no-collab reports zero references in the repository'、'[AC-013] git check-ignore -v matches config/a.local.json, state/x, a.jsonl and .collab/x'、'[AC-006] failures are reported on ctx.stderr and never leave the process'，无新失败，总数 326>=312（design §8、impl.md:63 亦记 326/323/3）。命中 acceptance.md:90-91 期望。"
+    },
+    {
+      "id": "AC-024 A-17",
+      "passed": true,
+      "evidence": "ci-results.json:153-161 passed=true、exitCode=0、lastLine='AC-024 OK'。只读复跑 node --test config.test.mjs + paths-entries.test.mjs + clock.test.mjs -> '# tests 20 / # pass 20 / # fail 0'；node --test import-safe.test.mjs -> '# tests 5 / # pass 4 / # fail 1'，唯一失败 'not ok 3 - [AC-006] failures are reported on ctx.stderr ...'（基线遗留），第 5 个 bin 无参数用例 ok。命中 acceptance.md:95-96 期望（config 的 AC-013/AC-014 CLI 退出码 3 用例继续通过）。"
+    },
+    {
+      "id": "AC-023 A-18",
+      "passed": true,
+      "evidence": "ci-results.json:162-170 passed=true、exitCode=0、lastLine='AC-023 OK'。只读逐个复跑 6 个辅助检查均 exit 0：check-defects 'ok'、check-seams 'ok (files=26)'、check-unused 'ok'、check-golden-frozen 'ok (14 files)'、check-frozen-files 'ok (8 files)'、check-contract-doc 'ok'。check-unused 对 lib/output.mjs/lib/request.mjs/lib/cli.mjs/lib/commands/models/select.mjs 亦 'ok (files=4)'（新文件无未导出且无引用的函数）。命中 acceptance.md:100-101 期望；写域由 check-task 校验、A-18 不重复，design §8 与只读 tree diff 已独立确认写域内。"
+    }
+  ]
+}

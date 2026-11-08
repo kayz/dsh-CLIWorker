@@ -18,13 +18,35 @@ AgentLine  --ModelRequest JSON-->  CLIWorker  --ModelSelection JSON-->  AgentLin
 node bin/cliworker.mjs providers
 node bin/cliworker.mjs models list
 node bin/cliworker.mjs models list --all
-node bin/cliworker.mjs models select --request '{"role":"dev","tier":"top","count":2,"importance":"high"}'
+node bin/cliworker.mjs models select --level Top --count 2 --importance high
+node bin/cliworker.mjs models select --request '{"schema":"cliworker.request/v1","level":"Top","count":2,"importance":"high"}'
+node bin/cliworker.mjs models select --request-file ./request.json
 node bin/cliworker.mjs models forecast --model hy4free
 node bin/cliworker.mjs usage record --json '{"model":"hy4free","input_tokens":1000,"output_tokens":500}'
 node bin/cliworker.mjs usage summary
 ```
 
+`models select` 的三种写法等价：单项标志、`--request` 内联 JSON、`--request-file` 文件。文件内容就是一个请求 JSON：
+
+```json request
+{
+  "schema": "cliworker.request/v1",
+  "level": "Top",
+  "count": 2,
+  "usage": "Heavy",
+  "importance": "high"
+}
+```
+
 所有输出都是 JSON。
+
+### 输出与错误
+
+- 失败时 stdout 是一个错误体：`{"ok":false,"error":{"code":"...","message":"...","retryable":false,"retry_after":null}}`。
+- 退出码取自 `contracts/registry.snapshot.json` 中该错误码的 `exit`；成功为 0。
+- 请求里不认识的字段不改变结果，只回一条 `W_FIELD_IGNORED` 警告，`field` 是字段名。
+- 用 `tier` 代替 `level` 仍可用，但会回一条 `W_FIELD_DEPRECATED` 警告。
+- 请求不带 `schema` 时按 draft 视图处理，结果带 `W_DRAFT_DEPRECATED` 警告；该视图在 0.3.0 移除。
 
 ## 配置
 
