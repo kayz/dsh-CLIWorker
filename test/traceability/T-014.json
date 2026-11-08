@@ -1,0 +1,7 @@
+{
+  "task": "T-014",
+  "milestone": "M2",
+  "entries": [
+    { "ac": "AC-034", "status": "covered", "files": ["test/unit/config-v2.test.mjs"] }
+  ]
+}
