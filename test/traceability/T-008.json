@@ -1,0 +1,12 @@
+{
+  "task": "T-008",
+  "milestone": "M1",
+  "entries": [
+    { "ac": "AC-023", "status": "covered", "files": ["test/integration/cli-envelope.test.mjs"] },
+    {
+      "ac": "AC-024",
+      "status": "covered",
+      "files": ["test/unit/request.test.mjs", "test/characterization/defects/a5-ignored-fields.test.mjs"]
+    }
+  ]
+}
