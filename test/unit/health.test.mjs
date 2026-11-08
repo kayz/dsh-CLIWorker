@@ -89,3 +89,22 @@ test('[AC-061] probe expiration uses the existing strict TTL boundary', async ()
   assert.equal(report.checks.find(item => item.id === 'probes').ok, false)
   assert.equal(report.checks.find(item => item.id === 'probes').detail, 1)
 })
+
+test('[AC-061] a non-finite clock degrades dependent checks', async () => {
+  const ctx = createFakeContext({ files: { '/cw/config.json': config } })
+  ctx.clock.now = () => Number.NaN
+  const report = await collectHealth({ ctx, configPath: '/cw/config.json', registration: 'ok' })
+  assert.equal(report.status, 'degraded')
+  assert.equal(report.checks.find(item => item.id === 'test_clock').ok, false)
+  assert.equal(report.checks.length, 8)
+})
+
+test('[AC-061] invalid inventory timestamps are rejected', async () => {
+  for (const stamp of ['1', '2026-02-31T00:00:00Z', '2026-11-07T00:00:00+00:00']) {
+    const raw = JSON.stringify({ providers: {}, models: {}, state_dir: '/cw/state' })
+    const inventory = JSON.stringify({ schema: 'cliworker.inventory/v1', generated_at: stamp, entries: [] })
+    const ctx = createFakeContext({ files: { '/cw/config.json': raw, '/cw/state/inventory.json': inventory } })
+    const report = await collectHealth({ ctx, configPath: '/cw/config.json', registration: 'ok' })
+    assert.equal(report.checks.find(item => item.id === 'inventory').ok, false)
+  }
+})

@@ -39,6 +39,17 @@ test('[AC-059] registration failure is isolated and sanitized', () => {
   assert.equal(apply(createHostStub({ failInject: true }).ctx, {}, { ctx }), undefined)
 })
 
+test('[AC-059] effects that have not run are not reported as registered', () => {
+  const callbacks = []
+  const host = { inject(_services, fn) { fn({ effect(callback) { callbacks.push(callback) }, webServer: { register() {} } }) } }
+  const result = createPlugin(host, {}, { ctx: createFakeContext() })
+  assert.equal(result.registered.length, 0)
+  assert.equal(getRegistration().status, 'failed')
+  for (const callback of callbacks) callback()
+  assert.equal(result.registered.length, paths.length)
+  assert.equal(getRegistration().status, 'ok')
+})
+
 test('[AC-059] management reads require the session header', async () => {
   const ctx = createFakeContext({ files: { '/cw/config.json': config } })
   const host = createHostStub()

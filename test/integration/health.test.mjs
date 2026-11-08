@@ -9,6 +9,7 @@ import * as doctorStep from '../flows/steps/doctor.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
 import { run as runDoctor } from '../../lib/commands/doctor.mjs'
+import { createContext } from '../../lib/context.mjs'
 
 test('[AC-061] HTTP health and doctor agree for healthy and missing config', async () => {
   for (const valid of [true, false]) {
@@ -71,4 +72,37 @@ test('[AC-061] doctor and health agree when equivalent registrations fail', asyn
   const error = JSON.parse(doctorCtx.stdout.text())
   assert.equal(error.error.code, 'E_HEALTH_DEGRADED')
   assert.deepEqual(JSON.parse(error.error.message), JSON.parse(response.body))
+})
+
+test('[AC-061] doctor degrades when registration effects have not run', async () => {
+  const ctx = createFakeContext({ files: { '/cw/config.json': JSON.stringify({ providers: {}, models: {} }) } })
+  const hostCtx = { inject(_services, fn) { fn({ effect() {}, webServer: { register() {} } }) } }
+  const result = await runDoctor({ argv: ['doctor', '--config', '/cw/config.json'], ctx, hostCtx })
+  assert.equal(result.exitCode, 9)
+  const report = JSON.parse(JSON.parse(ctx.stdout.text()).error.message)
+  assert.equal(report.registration, 'failed')
+  assert.equal(report.checks.find(item => item.id === 'registration').ok, false)
+})
+
+test('[AC-061] file clock cases degrade HTTP and CLI consistently', async () => {
+  for (const contents of ['1794000000000', 'invalid', null]) {
+    const flow = createFlow()
+    try {
+      const clockFile = path.join(flow.root, 'clock.txt')
+      if (contents !== null) fs.writeFileSync(clockFile, contents, 'utf8')
+      const env = { ...flow.env, CLIWORKER_TEST_CLOCK_FILE: clockFile }
+      const host = createHostStub()
+      createPlugin(host.ctx, { configPath: flow.config_path }, { ctx: createContext({ env }) })
+      const response = await host.request('/cliworker/health')
+      const result = flow.run(['doctor', '--config', flow.config_path], { env: { CLIWORKER_TEST_CLOCK_FILE: clockFile } })
+      assert.equal(response.statusCode, 503)
+      assert.equal(result.code, 9)
+      assert.equal(result.json.error.code, 'E_HEALTH_DEGRADED')
+      const report = JSON.parse(result.json.error.message)
+      assert.equal(report.test_clock, true)
+      assert.ok(report.warnings.some(w => w.code === 'W_TEST_CLOCK'))
+      delete report.warnings
+      assert.deepEqual(report, JSON.parse(response.body))
+    } finally { flow.cleanup() }
+  }
 })

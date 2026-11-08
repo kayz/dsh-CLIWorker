@@ -29,3 +29,7 @@
 续接第 3 轮：补充真实 HTTP 会话响应字段、到期、管理读、full/draft 视图、五种 403 与注册表的一致性测试；逐写路由补充未知及过期会话、跨会话 CSRF 和超限体测试。补充健康检查的配置、秘密后端、不可写状态目录、活跃锁、多故障与探测 TTL 边界测试，并允许 doctor 测试注入诊断宿主以验证同等注册失败时与 HTTP 的报告一致性。
 
 自测：AC-059 对应的三个测试文件 12 项通过，AC-060 7 项通过，AC-061 11 项通过；traceability 检查通过。没有运行会间接执行 Git 的 unit 全量及 check-fast。测试通过仅表示这些断言通过；discover、enumerate、probe、read-usage、secret 仍未接入生产业务分发，完整故障矩阵和其他验收细节仍有缺口，三项 AC 仍保持 planned。
+
+续接第 4 轮：修复注册 effect 尚未执行时 `getRegistration` 与 doctor 错报成功的问题；健康收集器拒绝非有限时钟和无效清单时间。新增有效、非法和不可读文件时钟的真实 CLI/HTTP 一致性测试，以及未执行注册 effect 的测试；对五个剩余端点补充注入接缝只在守卫和 JSON 解析后调用的测试。注入接缝的测试不代表生产业务已接入。
+
+自测：AC-059 对应的测试文件 13 项、AC-060 8 项、AC-061 15 项通过；traceability 检查通过。未运行会间接调用 Git 的 unit 全量和 check-fast。discover、enumerate、probe、read-usage、secret 的生产业务仍未实现；完整故障矩阵和其他验收细节仍有缺口，三项 AC 仍保持 planned。

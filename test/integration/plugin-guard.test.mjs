@@ -120,3 +120,25 @@ test('[AC-060] HTTP flow steps exercise the real plugin and scan recorded respon
     assert.deepEqual(flow.scan().hits, [])
   } finally { flow.cleanup() }
 })
+
+test('[AC-060] remaining operation seams run only after authorization and JSON parsing', async () => {
+  const paths = ['discover', 'enumerate', 'probe', 'read-usage', 'secret'].map(name => `/cliworker/api/${name}`)
+  const calls = []
+  const handlers = Object.fromEntries(paths.map(path => [path, ({ body }) => { calls.push({ path, body }); return { ok: true } }]))
+  const ctx = createFakeContext({ files: { '/cw/config.json': JSON.stringify({ providers: {}, models: {} }) } })
+  const host = createHostStub()
+  createPlugin(host.ctx, { configPath: '/cw/config.json' }, { ctx, handlers })
+  const token = JSON.parse((await host.request('/cliworker/api/session')).body)
+  for (const path of paths) {
+    const rejected = await host.request(path, { method: 'POST', body: '{}' })
+    assert.equal(JSON.parse(rejected.body).error.code, 'E_ADMIN_REQUIRED')
+    const malformed = await host.request(path, { method: 'POST', body: '{', headers: { 'x-cliworker-session': token.session, 'x-cliworker-csrf': token.csrf } })
+    assert.equal(JSON.parse(malformed.body).error.code, 'E_REQUEST_INVALID')
+  }
+  assert.equal(calls.length, 0)
+  for (const path of paths) {
+    const response = await host.request(path, { method: 'POST', body: {}, headers: { 'x-cliworker-session': token.session, 'x-cliworker-csrf': token.csrf } })
+    assert.equal(response.statusCode, 200)
+  }
+  assert.deepEqual(calls.map(call => call.path), paths)
+})
