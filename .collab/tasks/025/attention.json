@@ -1,0 +1,8 @@
+{
+  "question": "T-025 存在致命接入范围冲突：当前包入口 lib/index.js 直接返回固定的 /cliworker/ui 空 HTML，先于 deps.handlers 扩展点；该扩展点固定用 sendJson 包装结果，不能输出静态 ESM 或 SSE；jobIds 也仅在初始化时展开 exact 路由。仓库没有现成 SSE 注册入口，允许新建的三个 lib/http 数据面文件也没有被入口导入。仅在 brief 的 write_scope 内无法从真实插件入口交付 UI、实时问题流及运行时生成的 job 查询，不能靠测试注入宣称接通。请选择如何修复接入前提；确认前不生成假定该扩展点存在的 design.md / acceptance.md。",
+  "options": [
+    "授权将 lib/index.js 加入 T-025 write_scope，仅做薄接线：从本任务三个数据面模块接入静态外壳/资源、数据处理、SSE 与具体 job 的 exact 注册；不修改 lib/http/routes.mjs、会话、csrf、lib/cli.mjs、lib/routes.mjs、lib/context.mjs 或宿主契约。",
+    "保持 T-025 write_scope，由上游先补交能替换 UI 响应、提供静态资源/SSE 并动态注册具体 job exact 路由的生产扩展点，之后重新启动本任务设计。"
+  ],
+  "default": "保持 T-025 write_scope，由上游先补交能替换 UI 响应、提供静态资源/SSE 并动态注册具体 job exact 路由的生产扩展点，之后重新启动本任务设计。"
+}
