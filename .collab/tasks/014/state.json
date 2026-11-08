@@ -114,15 +114,39 @@
       "from": "implemented",
       "to": "implemented",
       "by": "dev:gpt-6.1-terra (inherited c1)"
+    },
+    {
+      "at": "2026-11-08T02:48:08.284Z",
+      "from": "implemented",
+      "to": "blocked",
+      "by": "flow"
+    },
+    {
+      "at": "2026-11-08T02:55:22.245Z",
+      "from": "blocked",
+      "to": "implemented",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-08T02:55:24.141Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T03:49:54.277Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:hy4free"
     }
   ],
-  "status": "implemented",
-  "updated_at": "2026-11-08T02:48:06.262Z",
-  "role": "dev",
-  "model": "gpt-6.1-terra",
-  "model_resolved": "gpt-6.1-terra",
+  "status": "reviewed",
+  "updated_at": "2026-11-08T03:49:54.277Z",
+  "role": "review",
+  "model": "hy4free",
+  "model_resolved": "hy4free",
   "effort": "high",
-  "attempt": 7,
+  "attempt": 8,
   "switches": 7,
   "blocked_reason": null,
   "handoff": null,
