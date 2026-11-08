@@ -80,3 +80,4 @@
 | AC-076 | contract,integration,unit | T-032 | T-032:contract,integration,unit |
 | AC-077 | integration | T-025 | T-025:integration,unit |
 | AC-078 | contract,integration | T-033 | T-033:contract,integration |
+| AC-079 | contract | T-036 | T-036:contract,e2e |

@@ -584,11 +584,10 @@
     },
     {
       "id": "AC-079",
-      "title": "模型表静态检查：禁止代码里出现硬编码模型清单",
-      "tasks": [
-        "T-036"
-      ],
-      "level": "contract"
+      "text": "模型表静态检查：代码中不得出现硬编码的模型清单。check-no-model-table 脚本扫描 lib 与 commands，发现写死的 provider/model 列表即失败并列出文件与行号；per-CLI 枚举器通过 fixtures 自测可检出违反。",
+      "levels": [
+        "contract"
+      ]
     }
   ],
   "tasks": [
