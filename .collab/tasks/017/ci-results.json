@@ -1,0 +1,28 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\017",
+  "taskDir": ".collab\\tasks\\017",
+  "ranAt": "2026-11-08T22:17:51.0863780+08:00",
+  "passed": 0,
+  "total": 2,
+  "ok": false,
+  "results": [
+    {
+      "id": "AC-041",
+      "title": "",
+      "passed": false,
+      "exitCode": 1,
+      "durationS": 0.52,
+      "lastLine": "FAIL run.no_match AC-041",
+      "output": "FAIL run.no_match AC-041"
+    },
+    {
+      "id": "AC-042",
+      "title": "",
+      "passed": false,
+      "exitCode": 1,
+      "durationS": 0.53,
+      "lastLine": "FAIL run.no_match AC-042",
+      "output": "FAIL run.no_match AC-042"
+    }
+  ]
+}
