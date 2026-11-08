@@ -258,15 +258,27 @@
       "from": "reviewed",
       "to": "implemented",
       "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T12:06:49.303Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T12:07:35.443Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
     }
   ],
-  "status": "implemented",
-  "updated_at": "2026-11-08T12:06:47.566Z",
-  "role": "dev",
-  "model": "gpt-6.1-terra",
-  "model_resolved": "gpt-6.1-terra",
+  "status": "reviewed",
+  "updated_at": "2026-11-08T12:07:35.443Z",
+  "role": "review",
+  "model": "claude-sonnet-5-5",
+  "model_resolved": "claude-sonnet-5-5",
   "effort": "high",
-  "attempt": 16,
+  "attempt": 17,
   "switches": 10,
   "blocked_reason": null,
   "handoff": null,
