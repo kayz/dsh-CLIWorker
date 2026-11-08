@@ -1,0 +1,36 @@
+{
+  "task": "025",
+  "round": 1,
+  "verdict": "needs_revision",
+  "git_sha": "20cbe69b13c055e66d11f3336498b0661aa26d37",
+  "passed": 0,
+  "total": 3,
+  "criteria": [
+    {
+      "id": "AC-062",
+      "pass": false,
+      "evidence": "ci-results.json: 命令退出 0，484 项全绿；本轮实跑 node --test \"test/unit/*.test.mjs\" 同样 pass 484 fail 0。但 test/unit/ui-render.test.mjs 仅 3 项（43 行）：无 source/at 可读、100% 保留、blocking>major>minor 排序、任务/角色/严重度组合筛选、证据展开的结果断言；test/fixtures/ui/** 不存在；测试标题无 [AC-062] 标签。"
+    },
+    {
+      "id": "AC-063",
+      "pass": false,
+      "evidence": "ci-results.json: 命令退出 0，4 项通过（用户输入所称 2/3 已过时，当前为 3/3）。但本轮实跑 node scripts/run-tests.mjs --ac AC-063 输出 'FAIL run.no_match AC-063'，退出码 1（scripts/run-tests.mjs:243-256，测试文件无 [AC-063] 标签）。ui-snapshot.test.mjs:40 仅断言空目录 models:[]，无有数据的 models/forecast/source/at/evidence 形状断言；deps.handlers 只测 /cliworker/ui（:45-53），未测已有 JSON 路由覆盖与返回 JSON 值；job 失败保留旧值+stale+last_error+失败 at 无测试（:116-118 仅首轮 unknown）；资源越界、注册失败、readonly、脱敏哨兵均无断言。"
+    },
+    {
+      "id": "AC-077",
+      "pass": false,
+      "evidence": "ci-results.json: 命令退出 0，7 项通过，check-acceptance 本轮实跑 acs=3 commands=5 warnings=0 退出 0（仅格式）。但集成测试只断言 HTML 中“问题”先于“模型”（ui-snapshot.test.mjs:27），app 测试使用 stub 元素（:64-66），无默认选中“问题”标签、'问题来源未接入' 文案、15000ms 后来源状态更新、连接失败后 unknown/stale 的断言；问题组件排序与组合筛选无结果断言。"
+    }
+  ],
+  "findings": [
+    {"severity": "P1", "summary": "两个测试文件无 [AC-0xx] 标签，run-tests.mjs --ac AC-063 退出 1", "evidence": "本轮输出 FAIL run.no_match AC-063；scripts/run-tests.mjs:243-256"},
+    {"severity": "P1", "summary": "快照端点形状未断言，仅空目录 models:[]", "evidence": "test/integration/ui-snapshot.test.mjs:40"},
+    {"severity": "P1", "summary": "job 失败保留旧值并标 stale、附 last_error 与失败 at、成功后最新证据无测试", "evidence": "test/integration/ui-snapshot.test.mjs:109-118；lib/index.js:148-154"},
+    {"severity": "P1", "summary": "deps.handlers 优先级仅覆盖 /cliworker/ui，未覆盖已有 JSON 路由、JSON 返回值旧行为与写请求守卫", "evidence": "test/integration/ui-snapshot.test.mjs:45-53；lib/index.js:104-113"},
+    {"severity": "P1", "summary": "AC-077 外壳/app 行为未验证：默认选中“问题”、来源未接入文案、15s 后状态更新、失败后 unknown/stale", "evidence": "test/integration/ui-snapshot.test.mjs:27,64-66"},
+    {"severity": "P1", "summary": "AC-062 单元测试缺 source/at、100%、排序、组合筛选、证据展开断言", "evidence": "test/unit/ui-render.test.mjs 共 3 项 43 行"},
+    {"severity": "P1", "summary": "缺 test/fixtures/ui/** 与 test/traceability/T-025.json", "evidence": "两路径均不存在"},
+    {"severity": "P2", "summary": "资源越界/编码绕过、注册失败、readonly、脱敏哨兵无测试", "evidence": "test/integration/ui-snapshot.test.mjs 全文"},
+    {"severity": "P2", "summary": "impl.md 未更新，自述未完成", "evidence": ".collab/tasks/025/impl.md:3-5"}
+  ]
+}
