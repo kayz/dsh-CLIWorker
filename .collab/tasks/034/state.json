@@ -209,16 +209,59 @@
       "from": "implemented",
       "to": "implemented",
       "by": "dev:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T10:45:38.363Z",
+      "from": "implemented",
+      "to": "blocked",
+      "by": "flow"
+    },
+    {
+      "at": "2026-11-08T10:57:01.982Z",
+      "from": "blocked",
+      "to": "implemented",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-08T10:57:03.917Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T10:57:08.632Z",
+      "from": "reviewable",
+      "to": "blocked",
+      "by": "review",
+      "reason": "result error"
+    },
+    {
+      "at": "2026-11-08T12:05:04.282Z",
+      "from": "blocked",
+      "to": "reviewable",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-08T12:05:05.918Z",
+      "from": "reviewable",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T12:05:52.632Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
     }
   ],
-  "status": "implemented",
-  "updated_at": "2026-11-08T10:45:36.263Z",
-  "role": "dev",
-  "model": "gpt-6.1-sol",
-  "model_resolved": "gpt-6.1-sol",
+  "status": "reviewed",
+  "updated_at": "2026-11-08T12:05:52.632Z",
+  "role": "review",
+  "model": "claude-sonnet-5-5",
+  "model_resolved": "claude-sonnet-5-5",
   "effort": "high",
-  "attempt": 14,
-  "switches": 9,
+  "attempt": 15,
+  "switches": 10,
   "blocked_reason": null,
   "handoff": null,
   "interrupted": null

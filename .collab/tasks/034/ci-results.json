@@ -1,19 +1,19 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\034",
   "taskDir": ".collab\\tasks\\034",
-  "ranAt": "2026-11-08T18:45:09.0856966+08:00",
-  "passed": 0,
+  "ranAt": "2026-11-08T20:05:05.8136513+08:00",
+  "passed": 1,
   "total": 1,
-  "ok": false,
+  "ok": true,
   "results": [
     {
       "id": "AC-033",
       "title": "配置明文拒载与凭据后端失败处理",
-      "passed": false,
-      "exitCode": 1,
-      "durationS": 1.03,
-      "lastLine": "     | AC-033 tests failed",
-      "output": "Could not find 'test/unit/inline-secret.test.mjs, test/integration/secret-backend-failure.test.mjs'\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-cdfa772f-56a2-427e-9782-91e8ec432e06.ps1:2\nLine |\n   2 |  鈥?t.mjs; if ($LASTEXITCODE -ne 0) { throw \"AC-033 tests failed\" }; Writ 鈥?\n     |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-033 tests failed"
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.74,
+      "lastLine": "AC-033 OK",
+      "output": "TAP version 13\n# Subtest: [AC-033] detectInlineSecret finds top-level plaintext secret\nok 1 - [AC-033] detectInlineSecret finds top-level plaintext secret\n  ---\n  duration_ms: 1.45\n  type: 'test'\n  ...\n# Subtest: [AC-033] detectInlineSecret recurses into nested objects and arrays\nok 2 - [AC-033] detectInlineSecret recurses into nested objects and arrays\n  ---\n  duration_ms: 0.4578\n  type: 'test'\n  ...\n# Subtest: [AC-033] compatible configs without secrets still load\nok 3 - [AC-033] compatible configs without secrets still load\n  ---\n  duration_ms: 0.1952\n  type: 'test'\n  ...\n# Subtest: [AC-033] assertNoInlineSecret reports E_INLINE_SECRET with paths\nok 4 - [AC-033] assertNoInlineSecret reports E_INLINE_SECRET with paths\n  ---\n  duration_ms: 0.2665\n  type: 'test'\n  ...\n# Subtest: [AC-033] short or non-secret-like values are not flagged\nok 5 - [AC-033] short or non-secret-like values are not flagged\n  ---\n  duration_ms: 0.2718\n  type: 'test'\n  ...\n1..5\n# tests 5\n# suites 0\n# pass 5\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 89.7241\nAC-033 OK"
     }
   ]
 }

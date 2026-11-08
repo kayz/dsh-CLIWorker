@@ -1481,5 +1481,170 @@
       "token_ref": "sha256:a068f81662b19bcd",
       "invalidated_reason": null
     }
+  },
+  {
+    "task": "034",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T10:45:38.361Z",
+    "ended_at": "2026-11-08T10:45:38.361Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 1
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 0,
+      "total": 1,
+      "ok": false,
+      "ran_at": "2026-11-08T10:45:38.361Z",
+      "report_ref": ".collab/tasks/034/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/034/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "034",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T10:57:03.915Z",
+    "ended_at": "2026-11-08T10:57:03.915Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 1,
+      "total": 1,
+      "ok": true,
+      "ran_at": "2026-11-08T10:57:03.915Z",
+      "report_ref": ".collab/tasks/034/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/034/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "034",
+    "role": "review",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "hy4free",
+    "model_resolved": "hy4free",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-08T10:57:04.077Z",
+    "ended_at": "2026-11-08T10:57:08.630Z",
+    "duration_ms": 4553,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/034/logs/review-r1-1.log",
+    "error": "result error",
+    "session": {
+      "reused": false,
+      "token_ref": null,
+      "invalidated_reason": null
+    }
+  },
+  {
+    "task": "034",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T12:05:05.916Z",
+    "ended_at": "2026-11-08T12:05:05.916Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 1,
+      "total": 1,
+      "ok": true,
+      "ran_at": "2026-11-08T12:05:05.916Z",
+      "report_ref": ".collab/tasks/034/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/034/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "034",
+    "role": "review",
+    "round": 1,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-08T12:05:06.052Z",
+    "ended_at": "2026-11-08T12:05:52.629Z",
+    "duration_ms": 46577,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 12,
+      "output": 5329,
+      "cache_read": 209900,
+      "cache_write": 31551,
+      "cost_usd": 0.20050799999999996
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/034/logs/review-r1-1.log",
+    "error": null,
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:a80330bdf80cc906",
+      "invalidated_reason": null
+    }
   }
 ]
