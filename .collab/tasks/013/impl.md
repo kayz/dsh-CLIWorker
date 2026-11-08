@@ -31,3 +31,9 @@ AC-032 尚未完成，不能声称已验收。交班单显示候选 #1 执行失
 本次保留现场已有实现和测试：交班单记录候选 #1 未产生改动，已有实现与设计部分一致且定向测试通过；禁止执行 Git，无法独立核验差异或确认其来源。本次在隔离集成测试中增加不同 state_dir 不可见、覆盖旧凭据、新进程读取新值、清除后消费失败的断言，并在设置、消费和清除后扫描临时根目录与捕获的输出、参数，检查两次令牌的多种编码不泄漏。
 
 本次使用 PowerShell 7 原样执行 acceptance.md 中的命令，3 项通过、无跳过，输出 `AC-032 OK`；`node --test test/unit/secrets.test.mjs` 8 项通过。验收命令通过不代表设计全部完成：共享 auth flow、显式引用、后端失败的文件变化及完整平台和输入覆盖、追踪文件仍缺失。未运行 check-fast，因为检查链包含被禁止的 Git 命令；没有修改 acceptance.md 或将覆盖标为 covered。此前关于本环境找不到 pwsh 的记录不适用于本次。
+
+本次交班单记录候选 #1 没有留下改动；保留现场已有 secrets、auth、配置、exec 和集成测试，因为它们实现了设计的一部分且定向测试通过。遵照禁止执行 Git 的要求，没有独立运行 git diff，也无法确认已有实现的来源。
+
+在 `test/unit/secrets.test.mjs` 增加 auth 输入校验、stdin 空白保留、状态及清除、只读 env 引用和空 env_names 的测试，验证无效输入不会调用后端。自测：acceptance.md 的 AC-032 命令通过 3 项并输出 `AC-032 OK`；secrets、config、config-v2、paths 和 exec 定向测试共 42 项通过，无 skip。未执行 check-fast：其检查链调用 Git，且可能写范围外报告，违反本轮限制。
+
+任务仍未完成：集成测试没有调用共享 auth flow；`test/flows/steps/auth.mjs` 和 `test/traceability/T-013.json` 不存在，显式引用、后端失败文件不变以及设计列出的完整跨平台和泄漏扫描覆盖尚需补齐。现有验收命令通过不足以证明设计全部实现，不应标记 covered。

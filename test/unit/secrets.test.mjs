@@ -8,6 +8,39 @@ import { createFakeContext } from '../helpers/ctx.mjs'
 import path from 'node:path'
 import os from 'node:os'
 import { resolveSecret, runWithSecrets, secretAction } from '../../lib/secrets/index.mjs'
+import { run as authSet } from '../../lib/commands/auth/set.mjs'
+import { run as authStatus } from '../../lib/commands/auth/status.mjs'
+import { run as authClear } from '../../lib/commands/auth/clear.mjs'
+
+test('[AC-033] auth validates input before accessing the backend and preserves stdin whitespace', () => {
+  let calls = 0
+  const ctx = { env: { INPUT: ' value ' }, fs: { readFileSync: () => ' value \r\n' }, platform: 'linux', exec: () => { calls++; throw new Error('unexpected backend call') } }
+  const config = { secrets: { kimi: { ref: 'session:test' } } }
+  const run = (fn, args) => fn({ argv: ['auth', ...args], ctx, config })
+  for (const args of [['set'], ['set', 'kimi', 'extra'], ['set', 'kimi', '--unknown'], ['set', 'kimi', '--from-env'], ['set', 'kimi', '--from-env', 'MISSING']]) {
+    assert.throws(() => run(authSet, args), { code: 'E_REQUEST_INVALID' })
+  }
+  assert.equal(calls, 0)
+  assert.deepEqual(run(authSet, ['set', 'kimi']), { ok: true, state: 'set' })
+  assert.equal(resolveSecret(ctx, config, 'kimi'), ' value ')
+  assert.deepEqual(run(authStatus, ['status', 'kimi']), { ok: true, state: 'set' })
+  assert.deepEqual(run(authClear, ['clear', 'kimi']), { ok: true, state: 'unset' })
+  assert.deepEqual(run(authStatus, ['status', 'kimi']), { ok: true, state: 'unset' })
+  assert.deepEqual(run(authSet, ['set', 'kimi', '--from-env', 'INPUT']), { ok: true, state: 'set' })
+  assert.equal(resolveSecret(ctx, config, 'kimi'), ' value ')
+})
+
+test('[AC-033] env references are read-only and empty env_names do not resolve credentials', () => {
+  let calls = 0
+  const env = { INPUT: 'value' }
+  const ctx = { env, platform: 'linux', exec: () => { calls++; return { ok: true, code: 0, stdout: '', stderr: '', error: null } } }
+  const config = { secrets: { kimi: { ref: 'env:INPUT' } } }
+  assert.equal(resolveSecret(ctx, config, 'kimi'), 'value')
+  for (const action of ['set', 'clear']) assert.throws(() => secretAction(ctx, config, 'kimi', action, 'other'), { code: 'E_SECRET_BACKEND' })
+  assert.deepEqual(env, { INPUT: 'value' })
+  runWithSecrets(ctx, { secrets: { kimi: { ref: 'bad' } } }, 'kimi', { command: 'provider', args: [], env_names: [] })
+  assert.equal(calls, 1)
+})
 
 test('[AC-033] recursive inline secret detection preserves config compatibility', () => {
   const file = path.join(os.tmpdir(), 'cw-secret-config.json')
