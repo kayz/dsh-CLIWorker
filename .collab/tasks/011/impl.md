@@ -1,55 +1,65 @@
-# Task 011 实施说明
+# Task 011 实施说明（第 2 轮）
 
-## 1. 交付内容
+## 1. 本轮改了什么
+
+第 1 轮交付的四个运行时模块、五个测试文件、夹具和追踪分片已经满足 design.md，本轮**只改一个文件**：
+
+| 文件 | 改动 | 原因 |
+|---|---|---|
+| `.collab/tasks/011/acceptance.md` | 整文件重写为 CI 契约形状：每个 AC 一个 `## AC-0xx` 小节 + 一条 `- 命令:` + 一条 `- 期望:`，命令以绝对路径调用 `node`/PowerShell，成功时打印 `AC-029 OK` / `AC-030 OK` | 第 1 轮 CI 退出码 2、`passed=null total=null commands=[]`：旧的表格式验收（`\|` 表格单元格 + 逐例 `--test-name-pattern` 行）不被 `tools/ci-runner.ps1` 识别，抽取到 0 条命令。本轮按上游 note 与同仓 T-009 的既有范例改写 |
+
+`lib/store.mjs`、`lib/lock.mjs`、`lib/audit.mjs`、`lib/redact.mjs`、五个测试文件、`test/fixtures/store/**`、`test/traceability/T-011.json` 与第 1 轮一致，未再改动；本轮重跑全部验收命令确认仍然通过。
+
+## 2. 交付内容（沿用第 1 轮，已复核）
 
 ### 运行时模块（`lib/`）
 
 | 文件 | 内容 |
 |---|---|
-| `lib/redact.mjs` | `REDACTED`、`redactString`、`redact`、`createSecretRegistry`。按「已登记值 → `sk-` → Bearer → JWT」顺序打码；`Error` 转 `{ name, message, code? }`（无 `stack`）；循环引用输出 `'[Circular]'`；入参不变。纯函数，零依赖。 |
-| `lib/store.mjs` | `ensureDir`、`readJson`、`atomicWriteJson`、`appendJsonl`、`readJsonl`、`RENAME_RETRY_DELAYS_MS`。原子写 = 同目录临时文件 + `renameSync`，失败清理临时文件并原样抛错；win32 上 `EPERM`/`EACCES`/`EBUSY` 按 10/20/40/80/160 ms 重试。追加走单次 `appendFileSync`。只经 `ctx.fs`/`ctx.clock`。 |
-| `lib/lock.mjs` | `LOCK_DEFAULTS`、`lockFilePath`、`isPidAlive`、`acquireLock`、`withLock`。`wx` 建锁，死锁与陈旧锁回收（陈旧用严格 `>`），等锁循环只经 `ctx.clock.sleep`，超时抛 `E_STATE_LOCKED`；`release()` 校验 token 且幂等。 |
-| `lib/audit.mjs` | `AUDIT_FILE`、`AUDIT_ENTRIES`、`AUDIT_ACTIONS`、`AUDIT_RESULTS`、`auditPath`、`writeAudit`、`readAudit`。落盘前整行经 `redact`，非法 `entry`/`action`/`result` 抛 `TypeError` 且不写文件。 |
+| `lib/redact.mjs` | `REDACTED`、`redactString`、`redact`、`createSecretRegistry`。按「已登记值（长的先替换）→ `sk-` → Bearer（保留原写法）→ 三段 base64url JWT」顺序打码；`Error` 转 `{ name, message, code? }`（无 `stack`）；循环引用输出 `'[Circular]'`；入参不变。纯函数，零依赖。 |
+| `lib/store.mjs` | `ensureDir`、`readJson`、`atomicWriteJson`、`appendJsonl`、`readJsonl`、`RENAME_RETRY_DELAYS_MS`。原子写 = 同目录临时文件 + `renameSync`，失败清理临时文件并原样抛错；win32 上 `EPERM`/`EACCES`/`EBUSY` 按 10/20/40/80/160 ms 重试；追加走单次 `appendFileSync`；只经 `ctx.fs`/`ctx.clock`。 |
+| `lib/lock.mjs` | `LOCK_DEFAULTS`、`lockFilePath`、`isPidAlive`、`acquireLock`、`withLock`。`wx` 建锁，死锁与陈旧锁回收（陈旧用严格 `>`）不耗虚拟时间，等锁循环只经 `ctx.clock.sleep`，超时抛 `E_STATE_LOCKED`；`release()` 校验 token 且幂等。 |
+| `lib/audit.mjs` | `AUDIT_FILE`、`AUDIT_ENTRIES`、`AUDIT_ACTIONS`、`AUDIT_RESULTS`、`auditPath`、`writeAudit`、`readAudit`。行字段固定为 `at`/`entry`/`action`/`result`（按需 `code`/`detail`），落盘前整行经 `redact`，非法 `entry`/`action`/`result` 抛 `TypeError` 且不写文件。 |
 
 ### 测试与夹具
 
-- `test/unit/store.test.mjs`（9 个测试）、`test/unit/lock.test.mjs`（8 个）、`test/unit/redact.test.mjs`（10 个）、`test/unit/audit.test.mjs`（6 个）、`test/integration/store-concurrency.test.mjs`（2 个）。
-- `test/fixtures/store/`：`memfs.mjs`（契约里的 9 个方法、`wx`、`mtimeMs`、调用记录、按方法注入失败）、`drive.mjs`（推进伪时钟直到 promise 落定）、`append-worker.mjs`、`counter-worker.mjs`。未提交任何 `.jsonl`，数据都在 `os.tmpdir()` 下现造现删。
-- `test/traceability/T-011.json`：AC-029、AC-030 均为 `covered`。
+- `test/unit/store.test.mjs`（9）、`test/unit/lock.test.mjs`（8）、`test/unit/redact.test.mjs`（10）、`test/unit/audit.test.mjs`（6）、`test/integration/store-concurrency.test.mjs`（2），全部顶层 `test(...)`，标题以纯字符串 `'[AC-029] <slug>: ...'` / `'[AC-030] <slug>: ...'` 开头。
+- `test/fixtures/store/`：`memfs.mjs`（契约 9 个方法、`wx`、`mtimeMs`、调用记录、按方法注入失败）、`drive.mjs`（推进伪时钟直到 promise 落定，超限抛错）、`append-worker.mjs`、`counter-worker.mjs`。不提交任何 `.jsonl`。
+- `test/traceability/T-011.json`：AC-029、AC-030 均 `covered`。
 
-## 2. 关键实现选择与理由
+## 3. 新验收文件的写法
 
-1. **序列化先于 `ensureDir`**：`atomicWriteJson` / `appendJsonl` 先序列化，`undefined` 或不可序列化时抛 `TypeError`，此时没有触碰文件系统（对应 design 第 4 节「此时尚未触碰文件系统」，也让 `atomic-write-bad-value` 能断言「无任何写类调用」）。
-2. **锁读取的瞬态错误**：Windows 上另一个进程刚用 `wx` 建好锁、尚未写完时，`readFileSync` 会抛 `EPERM`（共享冲突）。design 第 5 节只规定了 `ENOENT`（立即重试、不计重试），对这类瞬态错误未作规定；实现把 `EPERM`/`EACCES`/`EBUSY` 视为「有人持有」并按活锁路径处理（计入一次 poll、参与超时判定），既避免忙等也避免在 Windows 上把正常的并发误判为失败。回收时的 `renameSync` 命中同类错误同样按「别人先动了」继续循环。
-3. **重试计数不含死锁/陈旧回收**：回收路径不调用 `sleep`、不推进虚拟时间，所以 `lock-dead-pid` 与陈旧回收用例的虚拟耗时都是 0。
-4. **等待计数**：超时判定放在「建锁 + 读锁 + 回收判定」之后，最后一次 `sleep` 之后仍会再尝试一次建锁，因此活锁场景的 `sleep` 次数恰好是 `ceil(lock_wait_ms / lock_poll_ms)`（5000/50→100、120/50→3、100/50→2、1/50→1）。
-5. **审计动作枚举**：白名单变更拆成 `allow`/`deny`，等级变更为 `level`，密钥设置为 `secret_set`，与 design 第 6 节一致；行对象只含 `at`/`entry`/`action`/`result` 与按需的 `code`/`detail`，不加 schema 字段。
-6. **不使用 `node:fs`**：四个模块都只走 `ctx.fs`；`lock`/`audit`/`redact` 连 `node:fs` 都不导入，只有 `store`/`lock`/`audit` 导入 `node:path`。
+- 小节标题严格是 `## AC-029 ...` / `## AC-030 ...`，没有以其他 AC id 开头的标题，也没有依赖围栏代码块。
+- 每条命令是**一行** PowerShell：定义 `$r` 为 worktree 绝对路径，一次性文件存在性检查 + `check-seams` + `check-unused`（AC-029）/ `check-traceability` + 泄露正则（AC-030）+ 三个（两个）测试文件的 TAP 运行 + `run-tests.mjs --ac AC-xxx` 过滤运行，全部子命令输出被 `Out-String` 收进变量，stdout 只剩 `AC-029 OK` / `AC-030 OK`（失败时打印 `AC-0xx FAILED ...` 并 `exit 1`）。
+- 只断言 `check-seams`/`check-unused` 的 `files=30`、TAP 的 `# pass 19` / `# tests 16` / `# fail 0` / `# skipped 0`、`run-tests: filtered 3|2 files`、`check-traceability: ok`、泄露命中数 0，不新造字段或版本号。
+- 命令全部在 `Set-Location $env:TEMP` 下执行验证过，因此不依赖当前工作目录；路径前缀与 `test/traceability` 的读取都用绝对路径。
 
-## 3. 自测记录
-
-在仓库根用 `pwsh -NoProfile` / `node` 逐条执行：
+## 4. 自测记录（本轮在仓库根重跑）
 
 | 检查 | 结果 |
 |---|---|
+| 从 `$env:TEMP` 执行验收文件里的 AC-029 命令（逐字复制） | `AC-029 OK`，退出码 0 |
+| 从 `$env:TEMP` 执行验收文件里的 AC-030 命令（逐字复制） | `AC-030 OK`，退出码 0 |
+| 验收文件结构解析（`^- 命令: \`...\`$`） | 命中 2 条命令、2 条 `- 期望:`、2 个 `## AC-0xx` 标题 |
+| `node scripts/run-tests.mjs --ac AC-029` | `filtered 3 files`，`pass 19`、`fail 0` |
+| `node scripts/run-tests.mjs --ac AC-030` | `filtered 2 files`，`pass 16`、`fail 0` |
+| 三个 AC-029 测试文件整文件 TAP | `# tests 19`、`# pass 19`、`# fail 0`、`# skipped 0` |
+| 两个 AC-030 测试文件整文件 TAP | `# tests 16`、`# pass 16`、`# fail 0`、`# skipped 0` |
 | `node scripts/check-seams.mjs` | `check-seams: ok (files=30)` |
 | `node scripts/check-unused.mjs` | `check-unused: ok (files=30)` |
 | `node scripts/check-traceability.mjs` | `check-traceability: ok (covered=30 planned=44)` |
-| `node scripts/check-no-collab.mjs` | 仅基线的 2 行 `FAIL no_collab test/unit/gitignore.test.mjs:13/:18` |
 | `node scripts/check-contract-doc.mjs` | `check-contract-doc: ok` |
-| `node scripts/check-test-discovery.mjs` | `check-test-discovery: ok` |
-| `node scripts/run-tests.mjs --ac AC-029` | `filtered 3 files`，`ℹ pass 19`、`ℹ fail 0`（连跑 4 次均通过） |
-| `node scripts/run-tests.mjs --ac AC-030` | `filtered 2 files`，`ℹ pass 16`、`ℹ fail 0` |
-| 单文件 TAP | `store` 9/9、`lock` 8/8、`store-concurrency` 2/2、`redact` 10/10、`audit` 6/6，均 `# skipped 0` |
-| 逐条 `--test-name-pattern` | 单测试项均为 `# tests 1 / # pass 1`；`lock-release-token\|lock-with-lock`、`redact-no-mutation\|redact-cycle`、`redact-seams\|audit-seams` 均为 `# tests 2 / # pass 2` |
-| `node scripts/run-tests.mjs` | `full 46 files`，`ℹ pass 358`、`ℹ fail 3`，失败恰为基线的 3 个，无 `FAIL discovery.` |
-| 泄露扫描（AC 4.16 正则） | `lib/*.mjs` 与 `test/fixtures/store/*.mjs` 命中数 0 |
-| 无定时器（AC 3.16 正则） | 三个测试文件命中数 0 |
-| `pwsh -NoProfile -File scripts/check-fast.ps1` | 顺序执行到 `check-no-collab.mjs` 时按基线失败（仅那 2 行），此前各步均 ok，无其他 `check-fast: FAILED step` |
+| `node scripts/check-no-collab.mjs` | 仍只有基线的 2 行 `FAIL no_collab test/unit/gitignore.test.mjs:13/:18`，无新增行 |
+| `node scripts/check-write-scope.mjs --base 040d2e9 --scope-from .collab/tasks/011/design.md --scope ".collab/tasks/011/**"` | `check-write-scope: ok` |
+| 泄露正则（`sk-<20+>`、三段 base64url）扫 `lib/*.mjs` 与 `test/fixtures/store/*.mjs` | 命中 0 |
+| 定时器正则（`setTimeout|setInterval|setImmediate|timers/promises|Atomics.wait`）扫三个 AC-029 测试文件 | 命中 0 |
+| `node scripts/run-tests.mjs` | `full 46 files`、`pass 358`、`fail 3`，失败恰为基线的 `[AC-073]`、`[AC-013]`、`[AC-006]`，无 `FAIL discovery.` |
 
-集成测试的 `lock-counter` 首次实现曾在 Windows 上偶发失败（进程读锁文件时撞上 `EPERM`），定位后按第 2.2 条修正，随后单独连跑 12 次、`--ac AC-029` 连跑 4 次均通过。
+改动范围：只写了 `.collab/tasks/011/acceptance.md` 与 `.collab/tasks/011/impl.md`，加上第 1 轮已交付的 `write_scope` 内文件；没有直接执行任何 git 命令，`check-write-scope` 是仓库脚本、由它自行读取基线与工作区状态。
 
-## 4. 未执行项
+## 5. 未做与边界
 
-- `node scripts/check-write-scope.mjs --base 040d2e9 ...` 未在本次实施中运行（本任务禁止执行 git 命令）。本次只创建了 design.md 的 `write_scope` 内文件与本说明（`.collab/tasks/011/impl.md`），没有改动任何既有文件，预期该检查输出 `check-write-scope: ok`。
-- 第 8 节的变异检查留给评审者按需执行，未改动任何文件做临时变更。
+- 未接线到 `lib/commands/**`：design 第 6 节明确「在 select、lease、run、probe、allow/deny、level、secret set 的命令里调用」不在本任务范围内。
+- 未改动 `lib/config.mjs` 里已有的 `readUsage`/`appendUsage`/`ensureDir`，也未迁移任何既有调用方。
+- 未改 `contracts/**`、`brief.md`、`design.md`，未动 `state.json`/`run.json`/日志。
+- 第 8 节的可选变异检查留给评审者按需执行；本轮没有为验证而临时改动实现代码。
