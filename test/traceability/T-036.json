@@ -1,0 +1,7 @@
+{
+  "task": "T-036",
+  "milestone": "M3",
+  "entries": [
+    { "ac": "AC-079", "status": "covered", "files": ["test/unit/check-no-model-table.test.mjs", "test/flows/steps/enumerate.mjs"] }
+  ]
+}

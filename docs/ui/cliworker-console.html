@@ -242,14 +242,14 @@ function m(key,cli,vendor,group,level,allowed,avail,availReason,identity,readonl
 }
 
 let providers = [
-  {id:'claude', recognized:true, transport:'cli', platform:'win32', path:'%APPDATA%/npm/claude.cmd', version:'1.0.42', auth:'logged_in', status:'present', last:'今天 09:12', readonly:true},
-  {id:'codex', recognized:true, transport:'cli', platform:'win32', path:'%APPDATA%/npm/codex.cmd', version:'0.98.1', auth:'logged_out', status:'present', last:'今天 09:12', readonly:true},
-  {id:'codebuddy', recognized:true, transport:'cli', platform:'win32', path:'%APPDATA%/npm/codebuddy.cmd', version:'2.4.0', auth:'token_ref', status:'present', last:'今天 09:12', readonly:true, secret:'env:BUDDY_ACCESS_TOKEN'},
-  {id:'cursor-wsl', recognized:true, transport:'cli', platform:'wsl', path:'wsl.exe -e bash -lc agent', version:'2026.11', auth:'logged_in', status:'present', last:'昨天', readonly:false},
-  {id:'gemini', recognized:true, transport:'cli', platform:'win32', path:'%APPDATA%/npm/gemini.cmd', version:null, auth:'unknown', status:'present', last:'今天 09:12', readonly:true},
-  {id:'deepseek', recognized:true, transport:'http', platform:null, path:'https://api.deepseek.com/chat/completions', version:null, auth:'token_ref', status:'present', last:'今天 08:02', readonly:true, secret:'env:DEEPSEEK_API_KEY'},
-  {id:'kimi', recognized:false, transport:'cli', platform:'win32', path:'kimi.exe', version:null, auth:'unknown', status:'present', last:'今天 09:12', readonly:null},
-  {id:'trae', recognized:true, transport:'cli', platform:'win32', path:'trae.cmd', version:'0.9.0', auth:'unknown', status:'gone', last:'11-02', readonly:true}
+  {id:'claude', recognized:true, transport:'cli', platform:'win32', path:'%APPDATA%/npm/claude.cmd', version:'1.0.42', auth:'logged_in', status:'present', last:'今天 09:12', readonly:true, enabled:true},
+  {id:'codex', recognized:true, transport:'cli', platform:'win32', path:'%APPDATA%/npm/codex.cmd', version:'0.98.1', auth:'logged_out', status:'present', last:'今天 09:12', readonly:true, enabled:true},
+  {id:'codebuddy', recognized:true, transport:'cli', platform:'win32', path:'%APPDATA%/npm/codebuddy.cmd', version:'2.4.0', auth:'token_ref', status:'present', last:'今天 09:12', readonly:true, secret:'env:BUDDY_ACCESS_TOKEN', enabled:true},
+  {id:'cursor-wsl', recognized:true, transport:'cli', platform:'wsl', path:'wsl.exe -e bash -lc agent', version:'2026.11', auth:'logged_in', status:'present', last:'昨天', readonly:false, enabled:true},
+  {id:'gemini', recognized:true, transport:'cli', platform:'win32', path:'%APPDATA%/npm/gemini.cmd', version:null, auth:'unknown', status:'present', last:'今天 09:12', readonly:true, enabled:true},
+  {id:'deepseek', recognized:true, transport:'http', platform:null, path:'https://api.deepseek.com/chat/completions', version:null, auth:'token_ref', status:'present', last:'今天 08:02', readonly:true, secret:'env:DEEPSEEK_API_KEY', enabled:true},
+  {id:'kimi', recognized:false, transport:'cli', platform:'win32', path:'kimi.exe', version:null, auth:'unknown', status:'present', last:'今天 09:12', readonly:null, enabled:true},
+  {id:'trae', recognized:true, transport:'cli', platform:'win32', path:'trae.cmd', version:'0.9.0', auth:'unknown', status:'gone', last:'11-02', readonly:true, enabled:false}
 ];
 
 const pools = [
@@ -380,11 +380,22 @@ function remainText(x){
   if (x.remainLabel) return esc(x.remainLabel);
   return unk(null);
 }
+function providerBy(id){ return providers.find(p => p.id===id) || null; }
+function providerEnabled(id){
+  const p = providerBy(id);
+  return !p || p.enabled!==false;
+}
+function effectiveAvail(x){
+  if (!providerEnabled(x.cli)) return {state:'unavailable', reason:'provider_off'};
+  return {state:x.avail, reason:x.availReason||null};
+}
 function availTag(x){
-  if (x.stale) return '<span class="tag yellow">探测过期</span>';
+  const e = effectiveAvail(x);
+  if (e.reason==='provider_off') return '<span class="tag red">渠道已关闭</span>';
+  if (x.stale && e.state==='callable') return '<span class="tag yellow">探测过期</span>';
   const map = {callable:['green','可调用'], blocked:['red','阻塞'], unavailable:['red','不可用'], discovered:['yellow','已发现'], deprecated:['orange','弃用']};
-  const a = map[x.avail] || ['', 'unknown'];
-  const extra = x.availReason ? ' · ' + x.availReason : '';
+  const a = map[e.state] || ['', 'unknown'];
+  const extra = e.reason ? ' · ' + e.reason : '';
   return `<span class="tag ${a[0]}">${a[1]}${esc(extra)}</span>`;
 }
 function idTag(id){
@@ -421,13 +432,17 @@ function icon(name){
 }
 
 function attentionItems(){
-  return [
+  const off = providers.filter(p => p.status==='present' && p.enabled===false).map(p => {
+    const n = models.filter(m => m.cli===p.id).length;
+    return {dot:'bad', title:p.id+' 已关闭', msg:'名下 '+n+' 个模型都不可用。打开渠道后恢复关闭前的可用性。', page:'providers'};
+  });
+  return off.concat([
     {dot:'bad', title:'codex 未登录', msg:'gpt-6-astra 停在 E_PROVIDER_AUTH。登录状态写在渠道页，令牌不进仓库。', page:'providers'},
     {dot:'warn', title:'CodeBuddy 积分按 Heavy 已不可再跑', msg:'tasks_left = 0，risk = critical。Light 仍可把 0 价模型排前面。', page:'pools'},
     {dot:'warn', title:'gpt-6.1-sol 探测已超过有效期', msg:'上次探测 7 小时前，probe_ttl 6 小时。选模理由是 availability_stale。', page:'models'},
     {dot:'warn', title:'DeepSeek 预付余额缺少 USD 样本', msg:'余额 $12.40 在，预测 status 仍是 unknown，reason = usd_samples_missing。', page:'pools'},
     {dot:'warn', title:'gemini-4 已发现，未入白名单', msg:'管理页可见。不探测、不入候选，直到你打开白名单。', page:'models'}
-  ];
+  ]);
 }
 
 function viewPools(){
@@ -461,7 +476,11 @@ function viewForecast(){
 }
 function viewLeases(){
   return `<table><thead><tr><th>租约</th><th>模型</th><th>用量假设</th><th>已运行</th><th>到期</th><th></th></tr></thead><tbody>
-    ${leases.map(l => `<tr><td class="mono">${esc(l.id)}</td><td>${esc(l.model)}</td><td>${esc(l.usage)}</td><td>${esc(l.age)}</td><td>${esc(l.exp)}</td><td><span class="tag blue">${esc(l.status)}</span></td></tr>`).join('')}
+    ${leases.map(l => {
+      const md = modelBy(l.model);
+      const off = md && !providerEnabled(md.cli);
+      return `<tr><td class="mono">${esc(l.id)}</td><td>${esc(l.model)}</td><td>${esc(l.usage)}</td><td>${esc(l.age)}</td><td>${esc(l.exp)}</td><td>${off?'<span class="tag red">渠道已关闭</span>':`<span class="tag blue">${esc(l.status)}</span>`}</td></tr>`;
+    }).join('')}
   </tbody></table>`;
 }
 function viewUsage(){
@@ -471,8 +490,8 @@ function viewUsage(){
 }
 function viewProviders(){
   return `<div class="chips" style="gap:6px">${providers.filter(p => p.status==='present').map(p => `
-    <button class="chip" data-act="go" data-page="providers">${esc(p.id)} ${p.auth==='logged_in'?'<i class="dot ok"></i>':p.auth==='logged_out'?'<i class="dot bad"></i>':'<i class="dot"></i>'}</button>`).join('')}</div>
-    <div class="hint" style="margin-top:8px">灰点是 unknown 或仅有凭据引用。红点是未登录。消失的渠道不在这排芯片里。</div>`;
+    <button class="chip ${p.enabled===false?'':''}" data-act="go" data-page="providers">${esc(p.id)} ${p.enabled===false?'<span class="tag red">关</span>':p.auth==='logged_in'?'<i class="dot ok"></i>':p.auth==='logged_out'?'<i class="dot bad"></i>':'<i class="dot"></i>'}</button>`).join('')}</div>
+    <div class="hint" style="margin-top:8px">标成「关」的渠道，名下模型全部不可用。灰点是 unknown 或仅有凭据引用。红点是未登录。</div>`;
 }
 function viewCost(){
   const by = {};
@@ -544,8 +563,8 @@ function filteredModels(){
   return models.filter(x => {
     if (state.level!=='all' && x.level!==state.level) return false;
     if (state.onlyAllow && !x.allowed) return false;
-    if (state.avail==='stale' && !x.stale) return false;
-    if (state.avail!=='all' && state.avail!=='stale' && x.avail!==state.avail) return false;
+    if (state.avail==='stale' && (!x.stale || !providerEnabled(x.cli))) return false;
+    if (state.avail!=='all' && state.avail!=='stale' && effectiveAvail(x).state!==state.avail) return false;
     if (!q) return true;
     return (x.key+' '+x.vendor+' '+x.cli+' '+x.group).toLowerCase().includes(q);
   });
@@ -569,7 +588,7 @@ function modelRows(){
 }
 function pageModels(){
   const nAllow = models.filter(x => x.allowed).length;
-  const nCall = models.filter(x => x.avail==='callable' && !x.stale).length;
+  const nCall = models.filter(x => effectiveAvail(x).state==='callable' && !x.stale).length;
   const nDep = models.filter(x => x.deprecated).length;
   const nUnk = models.filter(x => x.risk==='unknown' && !x.deprecated).length;
   const chips = [['all','全部档'],...LEVELS.map(l => [l,l])];
@@ -592,10 +611,11 @@ function drawer(){
   if (!x) return '';
   return `<div class="scrim" data-act="close-drawer"></div><aside class="drawer" role="dialog" aria-label="模型详情">
     <div class="ch"><div><div class="kicker">${x.group?esc(x.group):'<span class="unknown">unknown</span>'}</div><h1 style="font-size:16px">${esc(x.key)}</h1></div><span class="grow"></span><button class="btn" data-act="edit-params" data-id="${esc(x.key)}">手工改参数</button><button class="icon" data-act="close-drawer">关闭</button></div>
+    ${!providerEnabled(x.cli)?`<div class="callout bad"><b>${esc(x.cli)} 已关闭。</b> 这个渠道下的模型都不可用。到渠道页打开后，可用性回到关闭前的记录。</div>`:''}
     ${x.deprecated?`<div class="callout warn"><b>已弃用。</b> ${esc(x.depReason)} 不能加入白名单，也不能当候补。</div>`:''}
-    ${x.probeState==='err'?`<div class="callout bad"><b>探测失败 · ${esc(x.probeErr)}</b><div class="hint">重试不会把失败改写成可调用。</div><button class="btn" data-act="retry" data-id="${esc(x.key)}">重试探测</button></div>`:''}
-    ${x.probeState==='never'?`<div class="callout">还没有探测记录。未入白名单时不会自动探测。</div>`:''}
-    ${x.stale?`<div class="callout warn">探测时间超过 probe_ttl_s（6 小时）。选模会以 availability_stale 拒绝，直到重新探测成功。</div>`:''}
+    ${providerEnabled(x.cli)&&x.probeState==='err'?`<div class="callout bad"><b>探测失败 · ${esc(x.probeErr)}</b><div class="hint">重试不会把失败改写成可调用。</div><button class="btn" data-act="retry" data-id="${esc(x.key)}">重试探测</button></div>`:''}
+    ${providerEnabled(x.cli)&&x.probeState==='never'?`<div class="callout">还没有探测记录。未入白名单时不会自动探测。</div>`:''}
+    ${providerEnabled(x.cli)&&x.stale?`<div class="callout warn">探测时间超过 probe_ttl_s（6 小时）。选模会以 availability_stale 拒绝，直到重新探测成功。</div>`:''}
     <div class="kv" style="margin-top:10px">
       <div class="k">渠道</div><div class="mono">${esc(x.cli)}</div>
       <div class="k">档位</div><div>${x.deprecated?unk(x.level):`<select data-act="set-level" data-id="${esc(x.key)}">${LEVELS.map(l => `<option ${x.level===l?'selected':''}>${l}</option>`).join('')}</select>`}<div class="hint">来源 config · catalog.levels</div></div>
@@ -738,7 +758,7 @@ function intakeForm(item){
   const fresh = !item.catalogKey;
   return `<div class="kicker">${fresh?'未入库':'已在目录'}</div><h3 style="margin:4px 0 8px">${esc(item.id)}</h3>
     <div class="kv" style="margin-bottom:10px">
-      <div class="k">渠道</div><div class="mono">${esc(item.cli)}</div>
+      <div class="k">渠道</div><div class="mono">${esc(item.cli)} ${providerEnabled(item.cli)?'':'<span class="tag red">已关闭</span>'}</div>
       <div class="k">列举来源</div><div class="mono">${item.via?esc(item.via):unk(null)}</div>
       <div class="k">目录键</div><div>${item.catalogKey?`<span class="mono">${esc(item.catalogKey)}</span>`:'<span class="unknown">尚未写入</span>'}</div>
     </div>
@@ -775,7 +795,7 @@ function pageIntake(){
   const failN = intake.filter(g => g.status==='err').length;
   const groups = intake.map(g => {
     const rows = g.items.filter(it => !state.intakeOnlyNew || !it.catalogKey);
-    const head = `<div class="ch"><h3>${esc(g.cli)}</h3>${g.status==='ok'?'<span class="tag green">已列举</span>':g.status==='err'?'<span class="tag red">列举失败</span>':'<span class="tag">跳过</span>'}${g.via?`<span class="mono hint">${esc(g.via)}</span>`:''}</div>${g.note?`<div class="hint" style="margin-bottom:6px">${esc(g.note)}</div>`:''}`;
+    const head = `<div class="ch"><h3>${esc(g.cli)}</h3>${providerEnabled(g.cli)?'':'<span class="tag red">渠道已关闭</span>'}${g.status==='ok'?'<span class="tag green">已列举</span>':g.status==='err'?'<span class="tag red">列举失败</span>':'<span class="tag">跳过</span>'}${g.via?`<span class="mono hint">${esc(g.via)}</span>`:''}</div>${!providerEnabled(g.cli)?'<div class="hint" style="margin-bottom:6px">清单还在，但名下模型都不可用，选模不会选中。</div>':''}${g.note?`<div class="hint" style="margin-bottom:6px">${esc(g.note)}</div>`:''}`;
     if (!g.items.length) return `<section class="igroup">${head}</section>`;
     if (!rows.length) return '';
     return `<section class="igroup">${head}${rows.map(it => `<div class="intake-row ${state.intakePick===it.uid?'on':''}">
@@ -798,7 +818,7 @@ function pageIntake(){
 }
 
 function pageProviders(){
-  return `<div class="sub"><div><h1>渠道</h1><div class="hint">扫描结果落在本机状态目录。未知 CLI 默认不探测。认证只显示状态或凭据引用。</div></div>
+  return `<div class="sub"><div><h1>渠道</h1><div class="hint">关掉某个渠道后，它名下的模型全部不可用，探测和试选都不会再用。打开后恢复关闭前的可用性。令牌仍然只显示引用。</div></div>
     <div class="inline"><button class="btn" data-act="scan">重新扫描</button><button class="btn primary" data-act="manual">补录渠道</button></div></div>
     ${state.manual?`<form class="card heady" data-act="manual-form" style="margin-bottom:12px">
       <h3>补录</h3>
@@ -809,9 +829,10 @@ function pageProviders(){
       </div>
       <div class="inline"><button class="btn primary" type="submit">保存补录</button><button class="btn" type="button" data-act="manual-cancel">取消</button></div>
     </form>`:''}
-    <div class="tablewrap"><table><thead><tr><th>渠道</th><th>传输</th><th>平台</th><th>版本</th><th>认证</th><th>只读</th><th>状态</th><th>路径</th><th>最后看见</th></tr></thead><tbody>
+    <div class="tablewrap"><table><thead><tr><th>启用</th><th>渠道</th><th>传输</th><th>平台</th><th>版本</th><th>认证</th><th>只读</th><th>状态</th><th>路径</th><th>最后看见</th></tr></thead><tbody>
       ${providers.map(p => `<tr>
-        <td><b>${esc(p.id)}</b> ${p.recognized?'':'<span class="tag yellow">未识别</span>'} ${p.manual?'<span class="tag blue">手工</span>':''}</td>
+        <td><button class="switch" role="switch" aria-checked="${p.enabled!==false?'true':'false'}" aria-label="${p.enabled!==false?'关闭':'启动'} ${esc(p.id)}" data-act="provider-toggle" data-id="${esc(p.id)}" ${p.status==='gone'?'disabled':''} title="${p.status==='gone'?'渠道已消失':p.enabled!==false?'关闭后名下模型全部不可用':'打开后恢复可用性'}"><i></i></button></td>
+        <td><b>${esc(p.id)}</b> ${p.recognized?'':'<span class="tag yellow">未识别</span>'} ${p.manual?'<span class="tag blue">手工</span>':''} ${p.enabled===false&&p.status==='present'?'<span class="tag red">已关闭</span>':''}</td>
         <td class="mono">${esc(p.transport)}</td>
         <td>${unk(p.platform)}</td>
         <td>${unk(p.version)}</td>
@@ -881,6 +902,8 @@ function runSelect(){
   pool = pool.filter(x => !x.deprecated);
   reject(pool.filter(x => !x.allowed), 'not_allowed');
   pool = pool.filter(x => x.allowed);
+  reject(pool.filter(x => !providerEnabled(x.cli)), 'E_PROVIDER_DISABLED');
+  pool = pool.filter(x => providerEnabled(x.cli));
   reject(pool.filter(x => x.stale), 'availability_stale');
   pool = pool.filter(x => !x.stale);
   reject(pool.filter(x => x.avail==='blocked' && x.availReason==='auth'), 'E_PROVIDER_AUTH');
@@ -1196,6 +1219,17 @@ function onClick(e){
     render();
     return;
   }
+  if (act==='provider-toggle'){
+    e.stopPropagation();
+    const p = providerBy(id);
+    if (!p || p.status==='gone') return;
+    p.enabled = p.enabled===false;
+    const n = models.filter(m => m.cli===p.id).length;
+    if (state.selection) runSelect();
+    toast(p.enabled ? '已启动 '+p.id+'。'+n+' 个模型恢复到关闭前的可用性。' : '已关闭 '+p.id+'。'+n+' 个模型现在都不可用。');
+    render();
+    return;
+  }
   if (act==='retry'){
     const x=modelBy(id);
     x.probe='刚刚';
@@ -1407,7 +1441,7 @@ function onSubmit(e){
     const path=String(fd.get('path')||'').trim();
     if (!id || !path) return;
     if (providers.some(p => p.id===id)){ toast('已经有这个渠道 id'); return; }
-    providers.unshift({id, recognized:false, transport:'cli', platform:'win32', path, version:null, auth:'unknown', status:'present', last:'刚刚', readonly:null, manual:true});
+    providers.unshift({id, recognized:false, transport:'cli', platform:'win32', path, version:null, auth:'unknown', status:'present', last:'刚刚', readonly:null, manual:true, enabled:true});
     state.manual=false;
     toast('已补录 '+id+'。认证是 unknown，还没有探测。');
     render();

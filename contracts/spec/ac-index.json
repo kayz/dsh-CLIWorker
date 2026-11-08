@@ -74,6 +74,7 @@
     { "ac": "AC-071", "owner": "T-030", "milestone": "M5", "levels": ["integration"], "baseline": ["darwin", "linux", "win32"] },
     { "ac": "AC-072", "owner": "T-003", "milestone": "M1", "levels": ["unit"], "baseline": ["darwin", "linux", "win32"] },
     { "ac": "AC-073", "owner": "T-004", "milestone": "M1", "levels": ["contract", "unit"], "baseline": ["darwin", "linux", "win32"] },
-    { "ac": "AC-074", "owner": "T-001", "milestone": "M1", "levels": ["unit"], "baseline": ["darwin", "linux", "win32"] }
+    { "ac": "AC-074", "owner": "T-001", "milestone": "M1", "levels": ["unit"], "baseline": ["darwin", "linux", "win32"] },
+    { "ac": "AC-079", "owner": "T-036", "milestone": "M3", "levels": ["contract"], "baseline": ["darwin", "linux", "win32"] }
   ]
 }

@@ -39,17 +39,21 @@ function runJson(root, extra = []) {
 
 test('[AC-004] the committed AC index validates cleanly', () => {
   const index = readIndex()
-  assert.equal(index.acs.length, 74)
+  const legacy = JSON.parse(fs.readFileSync(FIXTURE_INDEX, 'utf8'))
+  const added = { ac: 'AC-079', owner: 'T-036', milestone: 'M3', levels: ['contract'], baseline: ['darwin', 'linux', 'win32'] }
+  assert.deepEqual(index, { ...legacy, acs: [...legacy.acs, added] })
+  assert.equal(index.acs.length, legacy.acs.length + 1)
+  assert.deepEqual(validateIndex(legacy), [])
   assert.deepEqual(validateIndex(index), [])
 })
 
 test('[AC-004] index.count rejects missing, duplicated and reordered entries', () => {
   const missing = readIndex()
-  missing.acs.pop()
+  missing.acs.splice(1, 1)
   assert.ok(ids(validateIndex(missing)).includes('index.count'))
 
   const duplicated = readIndex()
-  duplicated.acs[73] = { ...duplicated.acs[0] }
+  duplicated.acs[duplicated.acs.length - 1] = { ...duplicated.acs[0] }
   assert.ok(ids(validateIndex(duplicated)).includes('index.count'))
 
   const reordered = readIndex()
@@ -197,13 +201,13 @@ test('[AC-004] the task graph cross-check flags a wrong owner and accepts the re
 
     const wrongOwner = path.join(dir, 'wrong-owner.json')
     fs.writeFileSync(wrongOwner, JSON.stringify(build('T-999')))
-    const flagged = runJson(ROOT, ['--task-graph', wrongOwner])
+    const flagged = runJson(ROOT, ['--index', INDEX_FILE, '--task-graph', wrongOwner])
     assert.equal(flagged.status, 1)
     assert.ok(flagged.payload.errors.some((error) => error.id === 'graph.mismatch'))
 
     const consistent = path.join(dir, 'consistent.json')
     fs.writeFileSync(consistent, JSON.stringify(build(null)))
-    const clean = runJson(ROOT, ['--task-graph', consistent])
+    const clean = runJson(ROOT, ['--index', INDEX_FILE, '--task-graph', consistent])
     assert.equal(clean.status, 0, JSON.stringify(clean.payload.errors))
     assert.ok(!clean.payload.errors.some((error) => error.id === 'graph.mismatch'))
   } finally {

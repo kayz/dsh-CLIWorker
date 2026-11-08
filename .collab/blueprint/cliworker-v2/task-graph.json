@@ -581,6 +581,13 @@
         "contract",
         "integration"
       ]
+    },
+    {
+      "id": "AC-079",
+      "text": "模型表静态检查：代码中不得出现硬编码的模型清单。check-no-model-table 脚本扫描 lib 与 commands，发现写死的 provider/model 列表即失败并列出文件与行号；per-CLI 枚举器通过 fixtures 自测可检出违反。",
+      "levels": [
+        "contract"
+      ]
     }
   ],
   "tasks": [
@@ -1363,7 +1370,8 @@
         "test/fixtures/discovery/**",
         "test/flows/steps/discover.mjs",
         "test/traceability/T-016.json",
-        "lib/cli.mjs"
+        "lib/cli.mjs",
+        "lib/exec.mjs"
       ],
       "acceptance": [
         "AC-036",
@@ -1411,7 +1419,8 @@
         "test/fixtures/enumerators/**",
         "test/fixtures/model-table/**",
         "test/flows/steps/enumerate.mjs",
-        "test/traceability/T-017.json"
+        "test/traceability/T-017.json",
+        "lib/cli.mjs"
       ],
       "acceptance": [
         "AC-041",
@@ -2180,6 +2189,43 @@
       "test_levels": [
         "unit",
         "integration"
+      ]
+    },
+    {
+      "id": "T-036",
+      "title": "模型表静态检查与 per-CLI 枚举器（从 T-017 拆出）",
+      "milestone": "M3",
+      "inputs": [
+        "T-017 的目录与枚举实现",
+        "contracts 模型表契约"
+      ],
+      "outputs": [
+        "scripts/check-no-model-table.mjs",
+        "test/flows/steps/enumerate.mjs",
+        "lib/models/per-cli/*.mjs"
+      ],
+      "depends_on": [
+        "T-017"
+      ],
+      "write_scope": [
+        "scripts/check-no-model-table.mjs",
+        "test/flows/steps/enumerate.mjs",
+        "lib/models/per-cli/",
+        "contracts/spec/ac-index.json",
+        "contracts/schemas/ac-index.schema.json",
+        "test/unit/lock.test.mjs",
+        "test/contract/milestone-gate.test.mjs",
+        "test/unit/check-no-model-table.test.mjs"
+      ],
+      "acceptance": [
+        "AC-079"
+      ],
+      "acceptance_direction": [
+        "node scripts/check-no-model-table.mjs"
+      ],
+      "test_levels": [
+        "contract",
+        "e2e"
       ]
     }
   ]

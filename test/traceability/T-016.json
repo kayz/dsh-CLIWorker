@@ -1,0 +1,10 @@
+{
+  "task": "T-016",
+  "milestone": "M3",
+  "entries": [
+    { "ac": "AC-036", "status": "covered", "files": ["test/integration/discovery.test.mjs", "test/integration/discover-command.test.mjs"] },
+    { "ac": "AC-037", "status": "covered", "files": ["test/unit/discovery/wsl-distros.test.mjs"] },
+    { "ac": "AC-039", "status": "covered", "files": ["test/integration/discovery-deny.test.mjs"] },
+    { "ac": "AC-040", "status": "covered", "files": ["test/integration/discovery-incremental.test.mjs"] }
+  ]
+}

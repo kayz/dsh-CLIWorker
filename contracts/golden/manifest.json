@@ -47,7 +47,7 @@
     },
     {
       "path": "contracts/spec/ac-index.json",
-      "sha256": "809631c89371c88f38e801fda82b6b32fdecc72bdfb50e07ef20386fbf54d12f"
+      "sha256": "c55986f076105c32309e238cd49a4035bd78b19068248279e165d46afd1f70a8"
     },
     {
       "path": "contracts/spec/migration-map.json",

@@ -1,0 +1,51 @@
+{
+  "task": "036",
+  "verdict": "needs_revision",
+  "sha": "07d2992",
+  "sha_note": "HEAD 取自会话 gitStatus 快照，评审期间未执行 git log 复核",
+  "passed": 1,
+  "total": 2,
+  "ci_passed": 2,
+  "ci_total": 2,
+  "criteria": [
+    {
+      "id": "AC-079",
+      "ok": true,
+      "evidence": "ci-results.json exitCode 0, lastLine 'AC-079 OK'; 评审另跑 node scripts/check-no-model-table.mjs 输出 AC-079 OK; node --test test/unit/check-no-model-table.test.mjs 6 pass 0 fail"
+    },
+    {
+      "id": "AC-006",
+      "ok": true,
+      "evidence": "ci-results.json exitCode 0, lastLine 'AC-006 OK'。仅覆盖 test/unit，不覆盖 flow 测试"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "P1",
+      "file": "test/flows/steps/enumerate.mjs",
+      "line": 10,
+      "summary": "enumerate 步骤对 flow 夹具（config/v1，无 catalog.manual）退出码 3，令 test/flows/flow.test.mjs 的 [AC-031] full flow 失败（enumerate: 3 !== 0）",
+      "evidence": "lib/models/directory.mjs:90 抛 E_CONFIG；test/helpers/flow.mjs:124-133 夹具无 catalog；评审运行 node --test test/flows/flow.test.mjs 得 not ok 2",
+      "suggestion": "步骤在 flow.root 下自写含 catalog.manual 单条 q 记录的 cliworker.config/v2 配置并以 --config 指向，或由调度器扩大 write_scope 修改 flow 夹具"
+    },
+    {
+      "id": "F2",
+      "severity": "P1",
+      "file": "docs/contract.md",
+      "line": 192,
+      "summary": "ac-index.json 追加 AC-079 后摘要变化，docs/contract.md 内嵌旧摘要已过期，check-contract-doc 失败，check-fast 无法通过",
+      "evidence": "node scripts/check-contract-doc.mjs: FAIL contract_doc.stale docs/contract.md; docs/contract.md:192 仍为 809631c8…",
+      "suggestion": "调度器将 docs/contract.md 纳入范围并用 scripts/gen-contract-doc.mjs 重新生成，或明确裁决豁免"
+    },
+    {
+      "id": "F3",
+      "severity": "P2",
+      "file": ".collab/tasks/036/impl.md",
+      "line": 7,
+      "summary": "scripts/check-fast.ps1 无执行证据；F1/F2 均属该门禁应发现的问题",
+      "evidence": "ci-results.json 仅含 AC-079 与 AC-006 两条命令",
+      "suggestion": "修复后补跑完整 check-fast 并记录结果"
+    }
+  ]
+}

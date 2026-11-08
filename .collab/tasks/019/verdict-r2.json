@@ -1,0 +1,73 @@
+{
+  "verdict": "needs_revision",
+  "sha": "1bd40a6e945aea2851e8036c8bf4a81f5aa062e5",
+  "passed": 0,
+  "total": 3,
+  "evidence": [
+    "sha 读自 .git/refs/heads/task/019，未执行 git 命令。",
+    "ci-results.json:5-7 passed=2 total=2；AC-045 tests 3 / pass 3，AC-046 tests 4 / pass 4，fail、cancelled、skipped、todo 均为 0。命令能通过，但只是部分覆盖。",
+    "lib/commands/models/ 只有 forecast.mjs、list.mjs、select.mjs；allow.mjs、deny.mjs、level.mjs、alias.mjs 不存在。",
+    "lib/commands/models/list.mjs:1-7 仍 import providerStatus 和 select.mjs 的 listModels，没有 route 导出，没有使用 lib/catalog.mjs。",
+    "lib/catalog.mjs 中没有 not_allowed 处理（design 第 2 条）。",
+    "test/traceability/T-019.json 不存在（ls 确认）。",
+    "ci-results.json 没有追踪检查和 check-fast 的结果；impl.md 称追踪检查退出码 1，check-fast 未运行。",
+    "lib/catalog.mjs:69-74 已保留匹配的配置 level_source，stat 失败抛 E_CONFIG，修复了第 1 轮的两项 P1。",
+    "未修改 brief/design/acceptance/impl/state/run 或被评审代码；brief 未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [
+    {
+      "severity": "P0",
+      "title": "仍缺四个管理写命令，list 未接入目录",
+      "file": "lib/commands/models/list.mjs",
+      "line": 1,
+      "detail": "allow.mjs、deny.mjs、level.mjs、alias.mjs 不存在；list.mjs 仍依赖 providerStatus 与旧 select.mjs，无 route 导出，也没有使用 lib/catalog.mjs。违反 design 第 2、10、11 条，五条 main 分发路径与写失败路径均无法测试。"
+    },
+    {
+      "severity": "P0",
+      "title": "仍缺 test/traceability/T-019.json",
+      "file": "test/traceability/T-019.json",
+      "line": 1,
+      "detail": "分片不存在，AC-045、AC-046 无法记为 covered，acceptance 的追踪检查必然失败。"
+    },
+    {
+      "severity": "P1",
+      "title": "管理副本 not_allowed 未实现",
+      "file": "lib/catalog.mjs",
+      "line": 84,
+      "detail": "design 第 2 条要求 models list 的管理输出副本上对 allowed=false 的记录将 availability.reason 标为 not_allowed，state 保持冻结枚举；lib/catalog.mjs 没有该处理，也没有测试断言。"
+    },
+    {
+      "severity": "P1",
+      "title": "测试缺少 acceptance 要求的多数断言",
+      "file": "test/unit/catalog.test.mjs",
+      "line": 1,
+      "detail": "缺少 main 分发五条路由、幂等、v1 写入 E_CONFIG、锁失败/原子写失败、命令层 E_LEVEL_REQUIRED/E_LEVEL_UNKNOWN、alias 命令冲突、对 model.v1 schema 的逐条校验、令牌 canary。"
+    },
+    {
+      "severity": "P1",
+      "title": "check-fast 与追踪检查无执行证据",
+      "file": ".collab/tasks/019/ci-results.json",
+      "line": 5,
+      "detail": "ci-results.json 只含 AC-045、AC-046；acceptance 的追踪命令与 check-fast 没有结果，无法确认。"
+    },
+    {
+      "severity": "P1",
+      "title": "T-017 上游未交付，需编排方确认",
+      "file": ".collab/tasks/019/impl.md",
+      "line": 10,
+      "detail": "lib/models/** 在工作树中仍不存在。纯函数与命令模块不依赖上游，不应缺席；若上游确实未就绪，应由编排方裁决依赖顺序，不能把缺失接口吞成空目录。"
+    },
+    {
+      "severity": "P2",
+      "title": "validate 为自写简化校验，未对照 model.v1 schema",
+      "file": "lib/catalog.mjs",
+      "line": 8,
+      "detail": "可能与 contracts/schemas/model.v1.schema.json 偏离；建议测试中逐条用 schema 校验输出。"
+    }
+  ],
+  "checks": [
+    { "id": "AC-045", "passed": false, "evidence": "ci 3 条测试通过，但命令模块、not_allowed 管理副本、main 分发、写失败路径缺失；见 review-r2.md。" },
+    { "id": "AC-046", "passed": false, "evidence": "ci 4 条测试通过，优先级/同级/弃用/非法价格已覆盖，但命令层等级错误码、别名命令、schema 校验、canary 缺失。" },
+    { "id": "traceability-and-check-fast", "passed": false, "evidence": "T-019.json 不存在；check-fast 无执行证据。" }
+  ]
+}

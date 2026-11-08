@@ -1,0 +1,45 @@
+{
+  "verdict": "needs_revision",
+  "sha": "946a4caeb2442a365626736bdbe84eee9aea8355",
+  "passed": 0,
+  "total": 1,
+  "criteria": [
+    {
+      "id": "AC-033",
+      "passed": false,
+      "evidence": "ci-results.json 退出码0、最后一行 AC-033 OK，但 TAP 仅 5 个用例且全来自 test/unit/inline-secret.test.mjs；test/integration/secret-backend-failure.test.mjs 不存在（brief.md 必须创建项），node --test 对缺失路径不报错故为假绿；E_SECRET_BACKEND 仅见 lib/contract/registry.mjs:104，无抛出代码，无 lib/commands/auth、lib/cli.mjs 无 auth 路由；lib/secrets/inline.mjs:46 仍用未注册码 E_INLINE_SECRET（registry.mjs:96 只有 E_CONFIG_SECRET_INLINE），inline.mjs 与单测 mtime 仍为 18:56，dev-r3 无代码改动；impl.md 自述暂停且 AC-033 未通过。CI 与 brief/design 矛盾，无法确认。"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "P0",
+      "title": "集成测试 test/integration/secret-backend-failure.test.mjs 仍缺失，CI 假绿",
+      "evidence": "ls test/integration 无该文件；ci-results.json TAP 只有单元用例（# tests 5）"
+    },
+    {
+      "severity": "P0",
+      "title": "凭据后端失败与凭据状态仍无生产实现",
+      "evidence": "E_SECRET_BACKEND 仅见 lib/contract/registry.mjs:104；lib/commands 无 auth；lib/cli.mjs 无 auth 路由；impl.md 自述未实现"
+    },
+    {
+      "severity": "P1",
+      "title": "inline.mjs 使用未注册错误码 E_INLINE_SECRET 且未接入 loadConfig，与 config.mjs checkSecrets 规则不一致",
+      "evidence": "lib/secrets/inline.mjs:46；lib/contract/registry.mjs:96；lib/config.mjs:83-94；test/unit/inline-secret.test.mjs:32-35"
+    },
+    {
+      "severity": "P1",
+      "title": "追踪分片 test/traceability/T-034.json 缺失",
+      "evidence": "brief.md 要求；ls test/traceability 无 T-034.json（该路径不在 design write_scope，需调度器裁决）"
+    },
+    {
+      "severity": "P1",
+      "title": "brief 与 design（暂停至 T-013 合并）冲突未消解，dev-r2/r3 连续零产出",
+      "evidence": "brief.md 要求实现并通过测试 vs design.md 暂停条款；impl.md 与 dev-r3 日志：未改代码；需调度器二选一：确认 T-013 合并并恢复 design/acceptance，或修订 design 允许独立实现"
+    },
+    {
+      "severity": "P2",
+      "title": "单元测试未经 loadConfig 生产入口，覆盖偏弱",
+      "evidence": "test/unit/inline-secret.test.mjs 仅调用 inline.mjs 导出，无大小写、SecretRef 用例"
+    }
+  ]
+}
