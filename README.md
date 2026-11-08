@@ -8,22 +8,22 @@ CLIWorker 为 AgentLine 提供模型选择与包装调用。需要 Node 20 或�
 
 可运行：
 ```pwsh
-node bin/cliworker.mjs models select --request '{"schema":"cliworker.request/v1","level":"Top","count":1,"usage":"Normal","importance":"normal"}'
+node bin/cliworker.mjs models select --request '{"schema":"cliworker.request/v1","request_id":"example-1","level":"Top","count":1,"usage":"Normal","importance":"normal"}'
 node bin/cliworker.mjs models list
 node bin/cliworker.mjs usage summary
 ```
 
-选择结果中的 `calls` 应按返回顺序执行。未知请求字段会产生 `W_FIELD_IGNORED`，这是兼容行为，不应依赖被忽略的字段。旧字段和视图的迁移见[迁移指南](docs/migration.md)。
+选择结果中的 `calls` 应按返回顺序执行。实际执行调用时需提供非空 `request_id`，以便记录调用信息；新申请使用不同的标识。未知请求字段会产生 `W_FIELD_IGNORED`，这是兼容行为，不应依赖被忽略的字段。旧字段和视图的迁移见[迁移指南](docs/migration.md)。
 
 相同的请求数据可以准备为 JSON 文件：
 
 ```json request
-{"schema":"cliworker.request/v1","level":"Top","count":1,"usage":"Normal","importance":"normal"}
+{"schema":"cliworker.request/v1","request_id":"example-1","level":"Top","count":1,"usage":"Normal","importance":"normal"}
 ```
 
 不可运行：以下写法需要已配置的实际环境，文件示例须先保存上面的请求数据。
 ```bash
-node bin/cliworker.mjs models select --request '{"schema":"cliworker.request/v1","level":"Top"}'
+node bin/cliworker.mjs models select --request '{"schema":"cliworker.request/v1","request_id":"example-1","level":"Top"}'
 node bin/cliworker.mjs models select --request-file request.json
 ```
 

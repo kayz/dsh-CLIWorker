@@ -2,11 +2,11 @@
 
 ### forecast.tasks_left
 
-旧预测可能以剩余额度近似任务数；现值以任务为单位，由可用容量及使用样本估算，美元依据使用成本样本。缺少样本、容量、换算或窗口等证据时为 null，依据为 none；调用方必须把它当未知处理。
+旧预测按平均消耗估计剩余任务；现值以任务为单位，优先用剩余 Mtok 除以对应使用类型的每任务消耗分位数，再向下取整；无此依据时使用剩余美元与成本分位数。分位数至少需要三个有效样本，且消耗必须大于零；可用容量、样本或必要的额度换算不足时 `tasks_left` 为 null、依据为 none。`tasks_left_assumed` 可按策略估计，但不是已测量的 `tasks_left`。调用方应区分两者并把 null 当未知处理。
 
 ### forecast.risk
 
-旧值不能作为新风险枚举的直接等价物。现值为 ok、low_reserve、critical、exhausted 或 unknown，按 tasks、usd、fraction 的顺序选择依据。任务数小于等于 0、2、5 分别为 exhausted、critical、low_reserve；剩余比例小于等于 0、小于 0.05、小于 0.15 分别对应这些等级。缺少依据为 unknown，调用方不能把 unknown 当作通过。
+旧值不能作为新风险枚举的直接等价物。现值为 ok、low_reserve、critical、exhausted 或 unknown，按 tasks、usd、fraction 的顺序选择依据。任务数小于等于 0、2、5 分别为 exhausted、critical、low_reserve；剩余比例小于等于 0、小于 0.05、小于 0.15 分别对应这些等级，其余为 ok。容量明确为零时即使没有其他依据也可为 exhausted；缺少依据为 unknown，调用方不能把 unknown 当作通过。
 
 ### handle.cli_removed
 
@@ -14,7 +14,7 @@
 
 ### draft_reason_mapping
 
-旧 draft 原因映射为 v1 原因，见下表；调用方应更新匹配逻辑。draft 视图带弃用警告，选择失败应依据实际错误和退出码处理。
+旧 draft 原因映射为 v1 原因，见下表；调用方应更新匹配逻辑。缺省 schema 或兼容 draft 时使用 draft 视图并附带 `W_DRAFT_DEPRECATED`。CLI 的 draft 选择失败作为结果返回，而 v1 选择失败通常返回错误体并使用注册表退出码；旧 v1 配置的兼容路径也可能以 `ok:false` 返回。调用方需同时检查响应和退出码。
 
 ### config_v1_to_v2
 
