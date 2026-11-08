@@ -1,0 +1,8 @@
+{
+  "question": "T-033 在现有五文件范围内存在无法由仓库确定的契约缺口：1）lib/secrets/index.mjs 仅支持 env/keychain/session，没有 vault 的格式或解析接口；2）尚无统一 cli/http provider 描述符，现有生产 probe 也不会调用新 registry，请明确仅库层交付是否足够及生产接线归属；3）现有 identity_source 没有 HTTP 来源，lib/identity.mjs 尚不存在；4）AC-078 的 E_SECRET_MISSING/E_AUTH 未在冻结注册表登记，需明确 HTTP 状态与现有码的对应及重试行为。请提供这些权威契约，或正式调整 brief，避免下游自行发明接口。",
+  "options": [
+    "保持暂停；先补齐上述权威契约和所需前置接口，再恢复设计",
+    "调整 brief 的目标或写入范围，并明确上述契约后重新设计"
+  ],
+  "default": "保持暂停；先补齐上述权威契约和所需前置接口，再恢复设计"
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "task": "033",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-sol",
+    "model_resolved": "gpt-6.1-sol",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T16:25:00.751Z",
+    "ended_at": "2026-11-08T16:30:45.512Z",
+    "duration_ms": 344761,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 1022133,
+      "output": 10332,
+      "cache_read": 960384,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/033/logs/design-r1-1.log",
+    "error": null,
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:3f1d5aab045a9666",
+      "invalidated_reason": null
+    }
+  }
+]
