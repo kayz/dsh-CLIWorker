@@ -1,0 +1,31 @@
+{
+  "task": "028",
+  "verdict": "pass",
+  "sha": "63e52f8d088847a6c08a9a8da3fcd1461d52db7f",
+  "passed": 2,
+  "total": 2,
+  "criteria": [
+    {
+      "id": "AC-067",
+      "result": "pass",
+      "evidence": "ci-results.json: exitCode 0, lastLine 'AC-067 OK', output contains 'check-docs: ok' and 'check-fast: ok'; scripts/check-docs.mjs:94-142 runs fixture commands via process.execPath without a shell and verifies calls and event streams; docs/migration.md:3-21 has all 5 semantic_change sections and 32 mapping rows (10+15+7), and checkMigration against the registry and migration-map succeeds on read-only re-run ('migration ok'); README.md:11,21,26 requests contain no field that triggers W_FIELD_IGNORED; test/integration/docs.test.mjs covers failure samples."
+    },
+    {
+      "id": "AC-068",
+      "result": "pass",
+      "evidence": "ci-results.json: exitCode 0, lastLine 'AC-068 OK', tests 1 / pass 1 / fail 0; docs/agentline-integration.md:3-11 matches lib/request.mjs and the registry codes, exit values and retryable flags; the forbidden-key whole-word scan has 0 hits (unit test passed)."
+    }
+  ],
+  "findings": [
+    {
+      "severity": "P2",
+      "title": "Topic docs are brief; platforms.md has no runnable snippet",
+      "detail": "Does not violate design (README and docs/ui.md already have runnable snippets). Non-blocking."
+    },
+    {
+      "severity": "P2",
+      "title": "impl.md says unit regression and check-fast were not run as written",
+      "detail": "The orchestrator CI ran them under pwsh 7 and they passed. Non-blocking."
+    }
+  ]
+}
