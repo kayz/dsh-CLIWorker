@@ -51,6 +51,10 @@ test('[AC-062] fresh measured and assumed remaining capacity are distinct', () =
   model.source = { kind: 'manual' }
   const cells = renderModels(snapshot, Date.parse(model.availability.at)).rows[0].cells
   assert.equal(cells[3], '100%')
+  snapshot.forecast[0] = { model: 'p/m', tasks_left: null, remaining_fraction: 0.29 }
+  assert.equal(renderModels(snapshot, Date.parse(model.availability.at)).rows[0].cells[3], '29%')
+  snapshot.forecast[0].remaining_fraction = 0.57
+  assert.equal(renderModels(snapshot, Date.parse(model.availability.at)).rows[0].cells[3], '57%')
   assert.match(cells[5], /source manual；at 2026-01-01T00:00:00Z/)
 })
 

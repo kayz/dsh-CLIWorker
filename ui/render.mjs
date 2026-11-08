@@ -14,7 +14,7 @@ export function renderModels(snapshot, now) {
     let remaining = 'unknown'
     if (Number.isFinite(forecast.tasks_left)) remaining = String(forecast.tasks_left)
     else if (Number.isFinite(forecast.tasks_left_assumed)) remaining = `unknown（估计 ${forecast.tasks_left_assumed}，assumed）`
-    else if (Number.isFinite(forecast.remaining_fraction)) remaining = `${forecast.remaining_fraction * 100}%`
+    else if (Number.isFinite(forecast.remaining_fraction)) remaining = `${Math.round(forecast.remaining_fraction * 1000) / 10}%`
     if (stale && remaining !== 'unknown') remaining = `stale（${remaining}）`
     const source = text(model.source?.kind)
     const at = text(availability.at)
