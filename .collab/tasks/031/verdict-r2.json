@@ -1,0 +1,14 @@
+{
+  "verdict": "pass",
+  "sha": "f5e7318d5e29161d3bc05ab990eb5cda7d78f98b",
+  "passed": 1,
+  "total": 1,
+  "criteria": [
+    {
+      "id": "AC-075",
+      "result": "pass",
+      "evidence": "ci-results.json: AC-075 exitCode 0, TAP '# tests 22 / # pass 22 / # fail 0 / # cancelled 0 / # skipped 0 / # todo 0', last line 'AC-075 OK'. Independent read-only run of the 4 files identity.test + identity-levels.test + session.test + session-invalidation.test: 48/48 pass, all other counters 0; node --test test/unit/*.test.mjs: 398/398 pass. Redaction fix verified by probe through classifyIdentity: lib/identity.mjs:31 USER_DIR_RE has the i flag and name runs to the next separator, so 'c:\\users\\alice\\r.jsonl', '/HOME/bob/r.jsonl', 'C:/Users/John Smith/r.jsonl', UNC and \\\\?\\ paths all yield [REDACTED] with no user name; observed_at, requested_model, reported_model are also scrubbed (identity.mjs:116-118, 183-193) and calls[].evidence comes from that redacted object (lib/providers/call.mjs:240-251). Level mapping identity.mjs:17-24; failed-first identity.mjs:133; whitelist views lib/contract/views.mjs:80-117. New assertions in test/unit/identity-levels.test.mjs:303-312; none weakened."
+    }
+  ],
+  "findings": []
+}
