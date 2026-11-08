@@ -1,12 +1,12 @@
 {
   "task": "014",
   "event": "blocked",
-  "reason": "auth",
+  "reason": "ci_failed",
   "verdict": null,
-  "ci": null,
+  "ci": "0/1",
   "files": null,
   "branch": "task/014",
   "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】014 / task 014\n结果：blocked — auth\n阶段：design ✅ · dev ❌\n变更：分支 task/014 · 耗时 31m39s\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-08T02:06:48.647Z"
+  "summary": "【AgentLine 任务被阻塞】014 / task 014\n结果：blocked — ci_failed\n阶段：design ✅ · dev ✅ · CI 0/1 ❌\n变更：分支 task/014 · 耗时 43m37s\n验收：CI 0/1\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-08T02:18:46.114Z"
 }
