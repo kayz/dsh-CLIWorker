@@ -581,6 +581,14 @@
         "contract",
         "integration"
       ]
+    },
+    {
+      "id": "AC-079",
+      "title": "模型表静态检查：禁止代码里出现硬编码模型清单",
+      "tasks": [
+        "T-036"
+      ],
+      "level": "contract"
     }
   ],
   "tasks": [
@@ -2182,6 +2190,38 @@
       "test_levels": [
         "unit",
         "integration"
+      ]
+    },
+    {
+      "id": "T-036",
+      "title": "模型表静态检查与 per-CLI 枚举器（从 T-017 拆出）",
+      "milestone": "M3",
+      "inputs": [
+        "T-017 的目录与枚举实现",
+        "contracts 模型表契约"
+      ],
+      "outputs": [
+        "scripts/check-no-model-table.mjs",
+        "test/flows/steps/enumerate.mjs",
+        "lib/models/per-cli/*.mjs"
+      ],
+      "depends_on": [
+        "T-017"
+      ],
+      "write_scope": [
+        "scripts/check-no-model-table.mjs",
+        "test/flows/steps/enumerate.mjs",
+        "lib/models/per-cli/"
+      ],
+      "acceptance": [
+        "AC-079"
+      ],
+      "acceptance_direction": [
+        "node scripts/check-no-model-table.mjs"
+      ],
+      "test_levels": [
+        "contract",
+        "e2e"
       ]
     }
   ]
