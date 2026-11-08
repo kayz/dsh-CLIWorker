@@ -5,8 +5,8 @@
     { "ac": "AC-051", "status": "covered", "files": ["test/unit/select-policy.test.mjs"] },
     { "ac": "AC-052", "status": "covered", "files": ["test/unit/select-reserve.test.mjs"] },
     { "ac": "AC-053", "status": "covered", "files": ["test/unit/select-policy.test.mjs", "test/contract/selection-shape.test.mjs"] },
-    { "ac": "AC-054", "status": "planned", "files": ["test/integration/select-concurrency.test.mjs"] },
-    { "ac": "AC-055", "status": "planned", "files": ["test/unit/select-noexec.test.mjs", "test/characterization/defects/a5-nocache.test.mjs"] },
-    { "ac": "AC-056", "status": "planned", "files": ["test/contract/selection-view.test.mjs"] }
+    { "ac": "AC-054", "status": "covered", "files": ["test/integration/select-concurrency.test.mjs"] },
+    { "ac": "AC-055", "status": "covered", "files": ["test/unit/select-noexec.test.mjs", "test/characterization/defects/a5-nocache.test.mjs"] },
+    { "ac": "AC-056", "status": "planned", "files": ["test/contract/selection-view.test.mjs", "test/contract/selection-shape.test.mjs"] }
   ]
 }

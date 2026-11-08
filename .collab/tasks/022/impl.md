@@ -18,3 +18,11 @@
 - `node scripts/check-fast.mjs` 在 `check-pack` 阶段失败，报告 npm pack 退出 4294963248；该命令不替代要求的 PowerShell 完成检查。另行启动完整测试时，现有 `test/integration/cli-envelope.test.mjs` 的“每个成功命令”用例对无缓存 draft 选模期待退出 0，实际退出 5；完整运行随后未收束并被中断，因此不能声称完整测试通过。
 
 仍需覆盖 AC-056 对全部策略夹具驱动真实命令、静态 AgentLine 示例扫描、paid 详情和更全面的密钥哨兵检查；AC-054 还需事件驱动时钟、严格检查每次提交快照及竞争中的不足额度行为。完成这些工作后才能将对应追踪状态设为 covered，并在可用的 PowerShell 7 环境逐条执行原验收命令。
+
+## 第二轮续接记录
+
+- 对六个策略金标构造真实 CLI 目录和池，扫描实际 AgentLine 输出；增加静态 AgentLine 示例扫描、契约中的请求/模型/池输入、paid 管理详情、secrets 环境引用和状态目录递归哨兵检查。AC-053 形状测试的所有编排结果也使用对应目录及包装参数扫描。已扫描的输出没有删除字段。
+- 50 进程测试复现锁文件打开 `EPERM`；在选模入口仅对 Windows 上目标锁文件的瞬时 open 错误按时钟和锁等待限制重试，其他 IO 和提交错误继续抛出。修复后连续四次直接运行并发测试均通过；此前本轮三次中两次通过、一次出现上述错误。AC-054、AC-055 根据评审结论及现有测试标为 covered。
+- `node scripts/run-tests.mjs --ac AC-056` 执行 19 项、全部通过；`node scripts/check-traceability.mjs` 通过。AC-056 仍标为 planned：形状夹具由真实编排运行，尚未逐个由真实 CLI 驱动；完整检查亦未通过，不能宣称全部要求已完成。
+- 再次执行 `node scripts/check-fast.mjs`，在 `check-pack` 遇到 npm pack 退出 4294963248 而失败；本机找不到 `pwsh`，未能执行规定的 PowerShell 命令。已确认写域外的 `test/integration/cli-envelope.test.mjs` 期望无缓存选模退出 0，而本任务明确要求零候选退出 5；不能修改该测试，也不能违反规格改变零候选行为。该冲突需要在允许修改的范围或规格调整后解决，不能据此声称 `check-fast: ok`。
+- 扫描现有形状夹具时，模型名 `unknown` 与注册原因 `quota_unknown_policy` 的单词匹配触发扫描器命中；将该假模型改为更具体的 `unknown-model-x`，实际输出仍原样扫描。对于真实目录也存在相同名称碰撞的可能，当前扫描器在写域外，尚未解决此边界。

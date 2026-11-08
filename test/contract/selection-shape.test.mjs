@@ -5,7 +5,8 @@ import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { runSelection } from '../../lib/select.mjs'
+import { runSelection as select } from '../../lib/select.mjs'
+import { scanView } from '../../lib/contract/scan.mjs'
 import { isExpired, effectiveReservations } from '../../lib/leases.mjs'
 import { validate } from '../../lib/contract/validate.mjs'
 import { createContext } from '../../lib/context.mjs'
@@ -15,6 +16,19 @@ import { createFakeClock } from '../helpers/clock.mjs'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 const SCHEMA_DIR = path.join(ROOT, 'contracts', 'schemas')
 const START = Date.parse('2026-11-07T00:00:00.000Z')
+const forbidden = JSON.parse(fs.readFileSync(path.join(ROOT, 'contracts/agentline-forbidden.json'), 'utf8'))
+
+async function runSelection(options) {
+  const result = await select(options)
+  const config = options.config
+  const scan = scanView(result.agentline, {
+    forbidden,
+    catalog: { models: config.catalog.manual },
+    wrapper: { command: process.execPath, bin: path.join(ROOT, 'bin/cliworker.mjs'), state_dir: config._home, config: config._file },
+  })
+  assert.deepEqual(scan, { ok: true, hits: [] })
+  return result
+}
 
 function loadSchema(name) {
   return JSON.parse(fs.readFileSync(path.join(SCHEMA_DIR, name), 'utf8'))
@@ -169,7 +183,7 @@ function createFixture({
   }
 }
 
-test('[AC-053] a shortfall reports truncation while still returning the handles it has', async () => {
+test('[AC-053] [AC-056] a shortfall reports truncation while still returning the handles it has', async () => {
   const models = [modelRecord('m1'), modelRecord('m2'), modelRecord('m3')]
   const pools = [planPool('p1', ['m1', 'm2', 'm3'], { cap: 10, remaining: 1.5 })]
   const fixture = createFixture({ models, pools })
@@ -351,11 +365,11 @@ test('[AC-053] a sample-poor model falls back to the configured assumption', asy
 test('[AC-053] unknown plan capacity is a policy choice, never a fabricated balance', async () => {
   const ghost = { ...usageRow('ghost', 100000, START - 1000), pools: ['unknown-pool'] }
   const rows = [ghost]
-  const models = [modelRecord('known'), modelRecord('unknown')]
+  const models = [modelRecord('known'), modelRecord('unknown-model-x')]
   const pools = [
     planPool('known-pool', ['known'], { cap: 10, remaining: 5 }),
     {
-      ...planPool('unknown-pool', ['unknown'], { cap: 10, remaining: 5 }),
+      ...planPool('unknown-pool', ['unknown-model-x'], { cap: 10, remaining: 5 }),
       used_fraction: { value: 0.5, source: 'config', at: iso(START - 2000) },
     },
   ]
@@ -379,7 +393,7 @@ test('[AC-053] unknown plan capacity is a policy choice, never a fabricated bala
     rejected.cleanup()
   }
 
-  const onlyUnknown = createFixture({ models: [modelRecord('unknown')], pools: [pools[1]], rows, policy: { unknown_policy: 'reject' } })
+  const onlyUnknown = createFixture({ models: [modelRecord('unknown-model-x')], pools: [pools[1]], rows, policy: { unknown_policy: 'reject' } })
   try {
     const result = await runSelection({ ctx: onlyUnknown.ctx, config: onlyUnknown.config, request: onlyUnknown.request({ count: 1 }) })
     assert.equal(result.ok, false)

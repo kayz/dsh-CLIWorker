@@ -33,7 +33,7 @@ function fixture() {
     source: { kind: 'manual', ref: 'fixture', at }, deprecated: false,
   }
   const config = {
-    schema: 'cliworker.config/v2', state_dir: state, secrets: {},
+    schema: 'cliworker.config/v2', state_dir: state, secrets: { fixture: { ref: 'env:CW_VIEW_SENTINEL' } },
     discovery: { extra_dirs: [], wsl: false, probe_unknown: false, unknown_patterns: [],
       cli_overrides: { claude: { cli: 'provider-executable', args_prefix: [], adapter: 'claude', readonly: true, env_names: [] } } },
     catalog: { allow: [key], levels: { [key]: 'Top' }, aliases: {}, deprecated: {}, manual: [model] },
@@ -84,8 +84,67 @@ test('[AC-056] real CLI gates full view and scans AgentLine handles', () => {
     assert.ok(legacy.json.warnings.some((item) => item.code === 'W_FIELD_IGNORED'))
     for (const field of ['key', 'provider', 'id', 'level', 'prices', 'quota', 'forecast', 'call']) assert.ok(Object.hasOwn(legacy.json.models[0], field), field)
     for (const result of [denied, selected, admin, draft, legacy]) assert.equal((result.stdout + result.stderr).includes('dummy-view-secret-742'), false)
-    assert.equal(fs.readFileSync(path.join(f.state, 'leases.json'), 'utf8').includes('dummy-view-secret-742'), false)
+    const scanFiles = (dir) => {
+      if (!fs.existsSync(dir)) return
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const file = path.join(dir, entry.name)
+        if (entry.isDirectory()) scanFiles(file)
+        else assert.equal(fs.readFileSync(file, 'utf8').includes('dummy-view-secret-742'), false)
+      }
+    }
+    scanFiles(f.state)
   } finally { f.cleanup() }
+})
+
+test('[AC-056] static AgentLine examples are scanned with their wrapper', () => {
+  for (const name of ['handle.v1', 'selection-ok.v1', 'selection-failed.v1']) {
+    const value = JSON.parse(fs.readFileSync(path.join(root, 'contracts/examples', name, 'valid/01.json'), 'utf8'))
+    const call = value.call || value.models?.[0]?.call
+    const wrapper = call ? { command: call.command, bin: call.args[0], state_dir: call.args[5], config: call.args[7] } : {}
+    const result = scanView(value, { forbidden, catalog: { models: [] }, wrapper })
+    assert.deepEqual(result, { ok: true, hits: [] }, name)
+  }
+})
+
+test('[AC-056] every policy golden supplies models and pools to the real CLI', () => {
+  const dir = path.join(root, 'contracts/golden/policy')
+  let cases = 0
+  for (const file of fs.readdirSync(dir).filter((name) => name.endsWith('.json'))) {
+    const golden = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'))
+    for (const item of golden.cases) {
+      const f = fixture()
+      try {
+        const input = item.input
+        const at = f.model.source.at
+        const models = input.candidates.map((candidate) => ({ ...structuredClone(f.model), key: candidate.key, id: candidate.key,
+          prices: { input_per_mtok: candidate.price, output_per_mtok: 0, source: 'config' } }))
+        f.config.catalog = { allow: models.map((model) => model.key), levels: Object.fromEntries(models.map((model) => [model.key, 'Top'])), aliases: {}, deprecated: {}, manual: models }
+        f.config.policy.unknown_policy = input.policy.unknown_policy
+        f.config.policy.reserve_fraction_for_high = input.policy.reserve_fraction_for_high
+        f.config.policy.usage_estimate_mtok.Normal = input.est_mtok
+        f.config.pools = input.pools.map((pool) => {
+          const keys = input.candidates.filter((candidate) => candidate.pool_ids.includes(pool.id)).map((candidate) => candidate.key)
+          return { id: pool.id, cli: 'claude', funding: pool.funding,
+            kind: pool.funding === 'paid' ? 'prepaid_usd' : 'plan_window',
+            window: pool.funding === 'paid' ? null : { length_s: 3600, anchor: 'rolling', start_at: at,
+              reset_at: new Date(Date.parse(at) + (pool.reset_in_h ?? 1) * 3600000).toISOString(), reset_source: 'config' },
+            capacity_mtok: Object.fromEntries(keys.map((key) => [key, { value: pool.cap_mtok, source: 'config' }])),
+            used_fraction: { value: pool.remaining_mtok === null ? null : 1 - pool.remaining_mtok / pool.cap_mtok, source: 'config', at }, credits_per_mtok: null }
+        })
+        fs.writeFileSync(f.file, JSON.stringify(f.config), 'utf8')
+        const result = f.run(['models', 'select'], { ...f.request, count: input.count, importance: input.importance, request_id: item.id })
+        assert.equal(result.code, 0, `${item.id}: ${result.stdout} ${result.stderr}`)
+        assert.deepEqual(scanView(result.json, { forbidden, catalog: { models }, wrapper: { command: process.execPath, bin, state_dir: f.state, config: f.file } }), { ok: true, hits: [] }, item.id)
+        if (item.id === 'p1-order') {
+          const admin = f.run(['admin', 'select'], { ...f.request, request_id: item.id })
+          assert.equal(admin.code, 0)
+          assert.ok(admin.json.models.some((model) => model.detail.funding === 'paid'))
+        }
+        cases += 1
+      } finally { f.cleanup() }
+    }
+  }
+  assert.equal(cases, 6)
 })
 
 test('[AC-056] quota and non-quota failures keep distinct errors and safe views', async () => {
@@ -107,6 +166,29 @@ test('[AC-056] quota and non-quota failures keep distinct errors and safe views'
       const cli = f.run(['models', 'select'], request)
       assert.equal(cli.code, 5, cli.stderr || cli.stdout)
       assert.equal(cli.json.error.code, code)
+    }
+  } finally { f.cleanup() }
+})
+
+test('[AC-056] request, model and pool examples drive the real CLI', () => {
+  const f = fixture()
+  try {
+    const read = (name, validity, file = '01.json') => JSON.parse(fs.readFileSync(path.join(root, 'contracts/examples', name, validity, file), 'utf8'))
+    const model = read('model.v1', 'valid')
+    const pool = read('pool', 'valid')
+    const at = f.model.source.at
+    model.availability.at = at
+    f.config.catalog = { allow: [model.key], levels: { [model.key]: model.level }, aliases: {}, deprecated: {}, manual: [model] }
+    pool.used_fraction.at = at
+    f.config.pools = [pool]
+    fs.writeFileSync(f.file, JSON.stringify(f.config), 'utf8')
+    const result = f.run(['models', 'select'], { ...read('request.v1', 'valid'), cwd: f.dir })
+    assert.equal(result.code, 0, result.stderr || result.stdout)
+    assert.deepEqual(scanView(result.json, { forbidden, catalog: { models: [model] }, wrapper: { command: process.execPath, bin, state_dir: f.state, config: f.file } }), { ok: true, hits: [] })
+    for (const file of fs.readdirSync(path.join(root, 'contracts/examples/request.v1/invalid'))) {
+      const rejected = f.run(['models', 'select'], read('request.v1', 'invalid', file))
+      assert.notEqual(rejected.code, 0, file)
+      assert.equal(rejected.json.ok, false, file)
     }
   } finally { f.cleanup() }
 })
