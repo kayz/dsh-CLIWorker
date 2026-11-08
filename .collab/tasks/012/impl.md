@@ -68,3 +68,43 @@
 `check-fast.ps1` 的失败点在 `check-no-collab.mjs` 这一步（早于 `npm test`），即上述第 1 项的同一根因。
 
 `run-tests` 其余部分通过：`full 49 files`（基线 47 + 本任务 2 个测试文件），仅上述 3 个文件失败；本任务相关的 `test/unit/leak-scan-canary.test.mjs` 与 `test/flows/flow.test.mjs` 在完整运行中全部通过（A1 的 `filtered 2 files`、23 个用例全 ✔）。
+
+## 本轮（attempt 3）修复：验收契约与 CI 解析
+
+### 问题
+
+前 3 次 CI 都以退出码 2 结束，`run.json` 里 `ci` 字段为 `passed: null / total: null`：`tools/ci-runner.ps1` 只识别 `## AC-nnn` 小节下的 `- 命令: \`<单行命令>\``，而旧版 `.collab/tasks/012/acceptance.md` 用的是「A1/A2… 表格」形式，解析出 0 条命令，直接判失败。也就是说，源码实现本身没被运行过，失败原因不在 write_scope 内的文件。
+
+### 改动
+
+按本轮输入的 note 要求，**整篇重写** `.collab/tasks/012/acceptance.md`（不逐行打补丁）：
+
+- 只保留**一个** `## AC-031 …` 小节，小节下一条 `- 命令:`（单行，命令内容包在反引号里）与一条 `- 期望:`。
+- 命令写成 `node -e "…"`：从任意工作目录（CI 在 TEMP 下运行）都能工作，所有仓库路径用绝对路径 `C:/git/dsh-CLIWorker/.collab/worktrees/012`，子进程统一 `cwd` 指向仓库根。
+- 命令自身是判定器：任何子检查失败会退出码 1 并打印失败项，全部通过才输出精确字符串 `AC-031 OK`。
+- 命令内不再使用 shell 语法（无 `&&`、无管道、无 `pwsh` 专有写法），因此在 `cmd`、`bash`、`pwsh -File` 下行为一致；JS 侧只用单引号，避免外层双引号被 shell 二次解析。
+
+### 覆盖范围（与原 A/B/C/D/E 条目一一对应）
+
+| 原条目 | 命令内的断言 |
+|---|---|
+| A1 | `node scripts/run-tests.mjs --ac AC-031` 退出码 0、含 `run-tests: filtered 2 files`、不含 `FAIL` |
+| A2/A3 | 两个测试文件整跑：`pass >= 9` / `pass >= 4`，且 `fail`、`skipped`、`todo` 均为 0 |
+| B1–B7、E1、E3 | 逐个 `--test-name-pattern` 跑 `stdout`、`stderr`、`state_dir`、`audit`、`http`、`argv`、`clean`、`not leak`、`input`，每个选择器 `pass >= 1` 且 `fail 0`（匹配不到用例时 node 报 `pass 0`，会被判失败） |
+| C1–C4 | 逐个 `--test-name-pattern` 跑 `discover`、`full flow`、`env`、`self-test`，同上 |
+| C5 | 跑完测试后 `git status --short -- test` 无输出（临时目录都在 `os.tmpdir()`） |
+| D1 | `check-write-scope.mjs --base 682a62e --scope-from .collab/tasks/012/design.md --scope ".collab/**"` → `check-write-scope: ok` 且无 `write_scope.outside` |
+| D2 | design 的 7 个 write_scope 文件全部存在 |
+| D3/D4 | 7 个 `.mjs` 中不存在指向 `lib/` 的 import、不存在裸模块名（内置模块必须带 `node:`）、不存在 `require(` |
+| D5–D7 | `check-traceability.mjs`、`check-test-discovery.mjs`、`check-unused.mjs` 均退出码 0 |
+| E2 | 7 个 `.mjs` 中不存在 `cwsentinel_<label>_<24 位 hex>` 硬编码字面量（模板串 `cwsentinel_${label}_…` 不算） |
+
+A4/F1（全量 `run-tests` / `check-fast.ps1`）不作为 AC-031 判定项，原因见上文「已知阻塞」：失败的 3 个用例分别属于 AC-073、AC-013、AC-006，其归属文件不在 T-012 的 write_scope 内。
+
+### 本轮自测
+
+- 从 `%TEMP%` 下的空目录执行 accepted 命令（模拟 CI）：输出 `AC-031 OK`，退出码 0。
+- 同一命令在三种 shell 下验证通过：`bash`、`cmd /c`、`pwsh -NoProfile -File`（各自从临时目录运行）。
+- 负例：把命令里的仓库根改成不存在的路径后，退出码 1 并逐行打印失败项（`unit exit null`、`leak-scan-canary pass >= 9 got -1` …），说明判定器不是永远输出 OK。
+- 使用与 CI 等价的解析方式（逐行找 `## AC-nnn` 标题，再取该小节第一条 `- 命令:` 的反引号内容）从 acceptance.md 抽出命令：恰好 1 条，执行通过。
+- 未改动任何 write_scope 内的源文件（本轮只重写 acceptance.md、追加本说明），两个测试文件仍为 `pass 15` / `pass 8`。

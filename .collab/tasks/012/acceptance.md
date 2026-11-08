@@ -1,66 +1,23 @@
-# T-012 验收标准
+# T-012 验收标准（AC-031）
 
-对应 AC-031（owner T-012，M2，levels: integration, unit）。brief 未给基准 commit 或既有验收报告；以任务开始时的 HEAD `682a62e`（`chore(010): mark merged after human permission`）作为写入范围对比基准。
+对应 AC-031（owner T-012，M2，levels: integration, unit）。brief 未给基准 commit；写入范围以 `.collab/tasks/012/design.md` 的 write_scope 为准，对比基准为 `682a62e`。
 
-所有命令在仓库根（worktree 根）执行，shell 为 `pwsh` 或 bash 均可（命令只用 `node`/`git`，不含 shell 特有语法）。每条命令独立判定：“期望”列写明退出码与输出特征，不满足即失败。
+本文件遵循 tools/ci-runner.ps1 的契约：每个 `## AC-nnn` 小节给出**一条**单行命令，命令从临时目录运行，退出码 0 且 stdout 出现 `AC-031 OK` 即通过。命令内部使用绝对路径，不依赖当前工作目录。
 
-## A. 目标测试（AC-031）
+## AC-031 泄露检查共享 harness、canary 与全流程测试框架
 
-| # | 命令 | 期望 |
-|---|---|---|
-| A1 | `node scripts/run-tests.mjs --ac AC-031` | 退出码 0；输出含 `run-tests: filtered 2 files`；输出不含 `FAIL`；spec 报告中 `test/unit/leak-scan-canary.test.mjs` 与 `test/flows/flow.test.mjs` 的用例全部 ✔，无 skipped/todo |
-| A2 | `node --test test/unit/leak-scan-canary.test.mjs` | 退出码 0；`# fail 0`、`# skipped 0`、`# todo 0`；`# pass` ≥ 9（design §4 的 9 组 canary 各至少 1 个用例） |
-| A3 | `node --test test/flows/flow.test.mjs` | 退出码 0；`# fail 0`、`# skipped 0`、`# todo 0`；`# pass` ≥ 4 |
-| A4 | `node scripts/run-tests.mjs` | 退出码 0；输出不含 `FAIL`（无 `discovery.orphan` / `discovery.missing` / `discovery.unexpected`）；末行形如 `run-tests: full N files`，N 比任务前多 2 |
+- 命令: `node -e "const {spawnSync}=require('node:child_process');const fs=require('node:fs');const path=require('node:path');const R='C:/git/dsh-CLIWorker/.collab/worktrees/012';const Q=String.fromCharCode(39);const LF=String.fromCharCode(10);const P=[];const want=(c,l)=>{if(!c){P.push(l)}};const run=(a,l)=>{const r=spawnSync(process.execPath,a,{cwd:R,encoding:'utf8'});const o=(r.stdout||'')+(r.stderr||'');want(r.status===0,l+' exit '+r.status);return o};const num=(o,k)=>{let v=-1;for(const line of o.split(LF)){const t=line.trim().split(' ');if(t.length>1&&t[t.length-2]===k){const n=Number(t[t.length-1]);if(Number.isInteger(n)){v=n}}}return v};const totals=(o,l,m)=>{want(num(o,'pass')>=m,l+' pass >= '+m+' got '+num(o,'pass'));want(num(o,'fail')===0,l+' fail 0');want(num(o,'skipped')===0,l+' skipped 0');want(num(o,'todo')===0,l+' todo 0')};totals(run(['--test','test/unit/leak-scan-canary.test.mjs'],'unit'),'leak-scan-canary',9);totals(run(['--test','test/flows/flow.test.mjs'],'flow'),'flow',4);for(const q of ['stdout','stderr','state_dir','audit','http','argv','clean','not leak','input']){const o=run(['--test','--test-name-pattern='+q,'test/unit/leak-scan-canary.test.mjs'],'unit '+q);want(num(o,'pass')>=1&&num(o,'fail')===0,'unit pattern '+q)}for(const q of ['discover','full flow','env','self-test']){const o=run(['--test','--test-name-pattern='+q,'test/flows/flow.test.mjs'],'flow '+q);want(num(o,'pass')>=1&&num(o,'fail')===0,'flow pattern '+q)}const ac=run(['scripts/run-tests.mjs','--ac','AC-031'],'run-tests');want(ac.indexOf('run-tests: filtered 2 files')!==-1,'run-tests filtered 2');want(ac.indexOf('FAIL')===-1,'run-tests no FAIL');for(const s of ['check-traceability.mjs','check-test-discovery.mjs','check-unused.mjs']){run(['scripts/'+s],s)}const ws=run(['scripts/check-write-scope.mjs','--base','682a62e','--scope-from','.collab/tasks/012/design.md','--scope','.collab/**'],'scope');want(ws.indexOf('check-write-scope: ok')!==-1,'scope ok');want(ws.indexOf('write_scope.outside')===-1,'scope outside');const F=['test/helpers/leak-scan.mjs','test/helpers/flow.mjs','test/flows/flow.test.mjs','test/flows/steps/select.mjs','test/flows/steps/doctor.mjs','test/unit/leak-scan-canary.test.mjs','test/traceability/T-012.json'];for(const f of F){want(fs.existsSync(path.join(R,f)),'missing '+f)}const gs=spawnSync('git',['status','--short','--','test'],{cwd:R,encoding:'utf8'});want(!gs.error&&gs.status===0,'git status test');want(String(gs.stdout||'').trim()==='','git status test clean');const isSent=(t)=>{let i=t.indexOf('cwsentinel_');while(i!==-1){const rest=t.slice(i);const cut=rest.indexOf('_',11);if(cut!==-1){let e=cut+1;let c=0;while(e<rest.length&&'0123456789abcdef'.indexOf(rest[e])!==-1){c+=1;e+=1}if(c>=24){return true}}i=t.indexOf('cwsentinel_',i+1)}return false};for(const f of F){if(!f.endsWith('.mjs')||!fs.existsSync(path.join(R,f))){continue}const t=fs.readFileSync(path.join(R,f),'utf8');for(const line of t.split(LF)){for(const mark of ['from '+Q,'import('+Q]){let at=line.indexOf(mark);while(at!==-1){const rest=line.slice(at+mark.length-1);const end=rest.indexOf(Q,1);if(end>0){const s=rest.slice(1,end);if(s.indexOf('lib/')!==-1&&(s.indexOf('../')===0||s.indexOf('/')===0)){P.push('lib import in '+f)}if(!(s.indexOf('.')===0||s.indexOf('node:')===0)){P.push('bare module '+s+' in '+f)}}at=line.indexOf(mark,at+1)}}}want(t.indexOf('require(')===-1,'require( in '+f);want(!isSent(t),'hardcoded sentinel in '+f)}if(P.length>0){process.stdout.write(P.join(LF)+LF);process.exit(1)}console.log('AC-031 OK')"`
+- 期望: 退出码 0，stdout 末行为 `AC-031 OK`；任一子检查失败时退出码为 1，并逐行打印失败项（例如 `leak-scan-canary fail 0`、`unit pattern stdout`）。
 
-## B. 六个面的 canary（design §1.3 / §4.1）
+**该命令自动执行并逐项判定下列内容（全部通过才输出 `AC-031 OK`）**
 
-以下用 `--test-name-pattern` 单独判定每个面。每条：退出码 0，输出含 `# pass 1`（或更多）且 `# fail 0`。
+- 单元 canary：`node --test test/unit/leak-scan-canary.test.mjs` 要求 `pass >= 9` 且 `fail`、`skipped`、`todo` 均为 0。
+- 集成流程：`node --test test/flows/flow.test.mjs` 要求 `pass >= 4` 且 `fail`、`skipped`、`todo` 均为 0。
+- 六个面与三项行为：逐个 `--test-name-pattern` 运行 `stdout`、`stderr`、`state_dir`、`audit`、`http`、`argv`、`clean`、`not leak`、`input`，每个选择器必须匹配到至少 1 个通过用例且 `fail` 为 0（证明 location 精确、深层文件、audit 不重复报告、编码与输入校验、结果不含哨兵值）。
+- 全流程框架：逐个 `--test-name-pattern` 运行 `discover`、`full flow`、`env`、`self-test`，每个选择器必须匹配到至少 1 个通过用例且 `fail` 为 0（自动发现步骤、同一临时 state_dir/哨兵跑全部步骤、哨兵只经 env 传递、泄露与抛错步骤被正确报告）。
+- 项目运行器：`node scripts/run-tests.mjs --ac AC-031` 退出码 0，输出含 `run-tests: filtered 2 files` 且不含 `FAIL`。
+- 静态约束：`scripts/check-traceability.mjs`、`scripts/check-test-discovery.mjs`、`scripts/check-unused.mjs` 均退出码 0；`scripts/check-write-scope.mjs --base 682a62e --scope-from .collab/tasks/012/design.md --scope ".collab/**"` 输出 `check-write-scope: ok` 且无 `write_scope.outside`。
+- 交付物与洁净度：设计文档 write_scope 的 7 个文件全部存在；跑完测试后 `git status --short -- test` 无输出（临时目录都在系统 temp 下，不污染仓库）。
+- 依赖与泄露约束：7 个 `.mjs` 均无指向 `lib/` 的 import、无裸模块名（内置模块必须带 `node:` 前缀）、无 `require(`、无硬编码的 `cwsentinel_<label>_<24 位 hex>` 字面量。
 
-| # | 命令 | 期望 |
-|---|---|---|
-| B1 | `node --test --test-name-pattern="stdout" test/unit/leak-scan-canary.test.mjs` | 退出码 0；`# fail 0`；`# pass` ≥ 1 |
-| B2 | `node --test --test-name-pattern="stderr" test/unit/leak-scan-canary.test.mjs` | 同上 |
-| B3 | `node --test --test-name-pattern="state_dir" test/unit/leak-scan-canary.test.mjs` | 同上（深层文件 `a/b/c/deep.bin`，location 精确断言） |
-| B4 | `node --test --test-name-pattern="audit" test/unit/leak-scan-canary.test.mjs` | 同上（`audit:audit.jsonl:2@…`，且不重复报告） |
-| B5 | `node --test --test-name-pattern="http" test/unit/leak-scan-canary.test.mjs` | 同上（body、headers、url） |
-| B6 | `node --test --test-name-pattern="argv" test/unit/leak-scan-canary.test.mjs` | 同上（`argv[0][3]@0`） |
-| B7 | `node --test --test-name-pattern="clean" test/unit/leak-scan-canary.test.mjs` | 同上（干净运行 0 命中，`scanned.files ≥ 1`、`scanned.stdout > 0`） |
-
-> 测试标题须让上述 pattern 各至少匹配 1 个用例（标题中含对应面名称的英文词；干净用例标题含 `clean`）。pattern 匹配 0 个用例时 node 报 `# pass 0`，视为失败。
-
-## C. 全流程框架（design §2、§3、§4 flow.test）
-
-| # | 命令 | 期望 |
-|---|---|---|
-| C1 | `node --test --test-name-pattern="discover" test/flows/flow.test.mjs` | 退出码 0；`# fail 0`；`# pass` ≥ 1（自动发现 `doctor`、`select`，契约合法，顺序遵循 STEP_ORDER） |
-| C2 | `node --test --test-name-pattern="full flow" test/flows/flow.test.mjs` | 退出码 0；`# fail 0`；`# pass` ≥ 1（同一临时 state_dir、同一哨兵下依次跑全部已有步骤，`leak.ok === true`） |
-| C3 | `node --test --test-name-pattern="env" test/flows/flow.test.mjs` | 退出码 0；`# fail 0`；`# pass` ≥ 1（哨兵经 env 到达子进程，`captured.argv` 无哨兵） |
-| C4 | `node --test --test-name-pattern="self-test" test/flows/flow.test.mjs` | 退出码 0；`# fail 0`；`# pass` ≥ 1（夹具步骤把哨兵泄到 stdout / state_dir / argv 均被 `runFlow` 报告 `ok === false`；抛错步骤不短路） |
-| C5 | `node --test test/flows/flow.test.mjs`，随后 `git status --short -- test` | 两条命令退出码均为 0；`git status --short -- test` 的输出只含本任务 write_scope 内的文件（见 D1），无残留的临时文件 |
-
-## D. 写入范围、文件存在与静态约束
-
-| # | 命令 | 期望 |
-|---|---|---|
-| D1 | `node scripts/check-write-scope.mjs --base 682a62e --scope-from .collab/tasks/012/design.md --scope ".collab/**"` | 退出码 0；输出 `check-write-scope: ok`；无 `write_scope.outside` 行 |
-| D2 | `git ls-files --others --exclude-standard -- test/helpers/leak-scan.mjs test/helpers/flow.mjs test/flows/flow.test.mjs test/flows/steps/select.mjs test/flows/steps/doctor.mjs test/unit/leak-scan-canary.test.mjs test/traceability/T-012.json` | 提交前：恰好输出这 7 个路径各一行（已提交后改用 `git ls-files -- <同样 7 个路径>`，同样恰好 7 行） |
-| D3 | `git grep --no-index -n -E "from ['\"](\.\./)+lib/|import\(['\"](\.\./)+lib/" -- test/helpers/leak-scan.mjs test/helpers/flow.mjs test/flows/steps test/unit/leak-scan-canary.test.mjs test/flows/flow.test.mjs` | 退出码 1，无输出（本任务文件不 import `lib/` 下任何模块） |
-| D4 | `git grep --no-index -n -E "from ['\"][^.n/][^'\"]*['\"]|require\(" -- test/helpers/leak-scan.mjs test/helpers/flow.mjs test/flows test/unit/leak-scan-canary.test.mjs` | 退出码 1，无输出（无第三方依赖、无 CommonJS；内置模块须带 `node:` 前缀，因此裸模块名也会命中） |
-| D5 | `node scripts/check-traceability.mjs` | 退出码 0；无 `FAIL`；T-012 分片中 AC-031 为 covered，files 含 `test/unit/leak-scan-canary.test.mjs` 与 `test/flows/flow.test.mjs`，且两者标题均含 `[AC-031]` |
-| D6 | `node scripts/check-test-discovery.mjs` | 退出码 0；无 `FAIL`（`test/flows/steps/*.mjs` 不被当作测试文件或 orphan） |
-| D7 | `node scripts/check-unused.mjs` | 退出码 0；无 `FAIL`（本任务新增导出若被 check-unused 视为未使用，须在测试中被引用） |
-
-## E. 不泄露（令牌不进仓库/日志/JSON）
-
-| # | 命令 | 期望 |
-|---|---|---|
-| E1 | `node --test --test-name-pattern="not leak" test/unit/leak-scan-canary.test.mjs` | 退出码 0；`# fail 0`；`# pass` ≥ 1（`JSON.stringify(leakScan 结果)` 不含任何哨兵值；`hit.sentinel` 为 label） |
-| E2 | `git grep --no-index -n -E "cwsentinel_[A-Za-z0-9]+_[0-9a-f]{24}" -- test` | 退出码 1，无输出（仓库中没有硬编码的哨兵值；哨兵只在运行时由 `makeSentinel` 生成） |
-| E3 | `node --test --test-name-pattern="input" test/unit/leak-scan-canary.test.mjs` | 退出码 0；`# fail 0`；`# pass` ≥ 1（非法 label、<16 长度、重复 label、空列表均抛 `TypeError`） |
-
-## F. 完成前总检
-
-| # | 命令 | 期望 |
-|---|---|---|
-| F1 | `pwsh -NoProfile -File scripts/check-fast.ps1` | 退出码 0（`$LASTEXITCODE` 为 0）；输出无 `FAIL`；其中的完整 `npm test` 通过 |
+**关于全量套件**：本基线上 `node scripts/run-tests.mjs` 仍有 3 个非本任务用例失败（`AC-073` check-no-collab、`AC-013` gitignore、`AC-006` import-safe），它们的归属文件不在 T-012 的 write_scope 内，属于其他任务范围，因此不作为 AC-031 的判定条件。T-012 新增的两个测试文件在全量运行（`run-tests: full 49 files`）中同样全部通过。
