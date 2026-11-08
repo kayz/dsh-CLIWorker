@@ -1,0 +1,61 @@
+{
+  "verdict": "needs_revision",
+  "sha": "75e8abb5769b0e9a1a632261c48ecb2520be1c3e",
+  "passed": 0,
+  "total": 3,
+  "evidence": [
+    "sha 读自 .git/refs/heads/task/019，未执行 git 命令。",
+    "ci-results.json：AC-045 tests 3 / pass 3，AC-046 tests 8 / pass 8，fail、cancelled、skipped、todo 均为 0，退出码 0；命令能通过，但只是部分覆盖。",
+    "lib/commands/models/ 只有 forecast.mjs、list.mjs、select.mjs；allow.mjs、deny.mjs、level.mjs、alias.mjs 不存在。",
+    "lib/commands/models/list.mjs:1-7 仍 import providerStatus 和 select.mjs 的 listModels，无 route 导出，未使用 lib/catalog.mjs。",
+    "grep -c not_allowed lib/catalog.mjs 为 0，管理副本 not_allowed 未实现。",
+    "test/traceability/ 下只有 T-001..T-014，T-019.json 不存在。",
+    "ci-results.json 没有追踪检查和 check-fast 结果；impl.md 称 check-fast 未运行。",
+    "lib/models/ 不存在，T-017 未交付。",
+    "未修改 brief/design/acceptance/impl/state/run 或被评审代码；brief 未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [
+    {
+      "severity": "P0",
+      "title": "仍缺四个管理写命令，list 未接入目录",
+      "file": "lib/commands/models/list.mjs",
+      "line": 1,
+      "detail": "allow.mjs、deny.mjs、level.mjs、alias.mjs 不存在；list.mjs 仍依赖 providerStatus 与旧 select.mjs，无 route 导出，未使用 lib/catalog.mjs。违反 design 第 2、10、11 条，五条 main 分发路径、写失败路径、E_LEVEL_REQUIRED/E_LEVEL_UNKNOWN、alias 命令冲突均无法测试。连续三轮未处理。"
+    },
+    {
+      "severity": "P0",
+      "title": "仍缺 test/traceability/T-019.json",
+      "file": "test/traceability/T-019.json",
+      "line": 1,
+      "detail": "分片不存在，AC-045、AC-046 无法记为 covered，acceptance 的追踪检查必然失败。"
+    },
+    {
+      "severity": "P1",
+      "title": "管理副本 not_allowed 未实现",
+      "file": "lib/catalog.mjs",
+      "line": 1,
+      "detail": "design 第 2 条要求 models list 的管理输出副本对 allowed=false 的记录将 availability.reason 标为 not_allowed，state 保持冻结枚举；lib/catalog.mjs 无该处理，测试也无断言。"
+    },
+    {
+      "severity": "P1",
+      "title": "缺 schema 校验与令牌 canary 测试",
+      "file": "test/unit/catalog-levels.test.mjs",
+      "line": 1,
+      "detail": "acceptance 要求输出逐条按 contracts/schemas/model.v1.schema.json 校验，并用合成 canary 验证管理输出、错误、stdout/stderr 不泄露令牌；当前为自写简化校验，且无 canary。"
+    },
+    {
+      "severity": "P1",
+      "title": "check-fast 与追踪检查无执行证据",
+      "file": ".collab/tasks/019/ci-results.json",
+      "line": 1,
+      "detail": "ci-results.json 只含 AC-045、AC-046；追踪检查与 check-fast 无结果，不能确认通过。"
+    },
+    {
+      "severity": "P2",
+      "title": "T-017 上游未交付需编排方裁决",
+      "file": "lib/models",
+      "line": 1,
+      "detail": "lib/models/ 不存在。纯函数、命令模块和追踪分片不依赖它，不应因此缺席；真实 list 接入应如实记录依赖未就绪，由编排方裁决顺序。"
+    }
+  ]
+}
