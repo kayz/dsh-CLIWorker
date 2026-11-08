@@ -121,25 +121,25 @@ test('[AC-042] add appends one model record atomically and enumerate reads it ba
   assert.equal(enumerated.models[0].source.kind, 'manual')
 })
 
-test('[AC-042] add rejects an invalid level with E_BAD_LEVEL and keeps the file byte-identical', async () => {
+test('[AC-042] add rejects an invalid level with E_LEVEL_UNKNOWN and keeps the file byte-identical', async () => {
   const ctx = setup()
   const before = readText(ctx)
 
   const { result, body } = await runAdd(ctx, ['--provider', 'example', '--id', 'new-model', '--level', 'Ultra'])
   assert.equal(result.exitCode, 2)
   assert.equal(body.ok, false)
-  assert.equal(body.error.code, 'E_BAD_LEVEL')
+  assert.equal(body.error.code, 'E_LEVEL_UNKNOWN')
   assert.equal(readText(ctx), before)
 })
 
-test('[AC-042] add rejects an unknown provider with E_UNKNOWN_MODEL and keeps the file byte-identical', async () => {
+test('[AC-042] add rejects an unknown provider with E_REQUEST_INVALID and keeps the file byte-identical', async () => {
   const ctx = setup()
   const before = readText(ctx)
 
   const { result, body } = await runAdd(ctx, ['--provider', 'missing', '--id', 'new-model'])
   assert.equal(result.exitCode, 2)
   assert.equal(body.ok, false)
-  assert.equal(body.error.code, 'E_UNKNOWN_MODEL')
+  assert.equal(body.error.code, 'E_REQUEST_INVALID')
   assert.equal(readText(ctx), before)
 })
 
