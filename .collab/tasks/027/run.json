@@ -1,0 +1,82 @@
+[
+  {
+    "task": "027",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-sol",
+    "model_resolved": "gpt-6.1-sol",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T19:32:16.752Z",
+    "ended_at": "2026-11-08T19:39:32.568Z",
+    "duration_ms": 435816,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": null,
+    "usage_source": "unavailable",
+    "log_ref": ".collab/tasks/027/logs/design-r1-1.log",
+    "error": "stall",
+    "session": {
+      "reused": false,
+      "token_ref": null,
+      "invalidated_reason": null
+    },
+    "handoff": {
+      "file": "handoff/design-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/027/design-r1-c1",
+      "sha": "78235a989634c954bf3aed43810a25ed70e5a956"
+    }
+  },
+  {
+    "task": "027",
+    "role": "design",
+    "round": 1,
+    "candidate": 2,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-08T19:39:37.956Z",
+    "ended_at": "2026-11-08T19:44:59.144Z",
+    "duration_ms": 321188,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 42,
+      "output": 41252,
+      "cache_read": 1600727,
+      "cache_write": 107708,
+      "cost_usd": 1.0035087000000003
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/027/logs/design-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "gpt-6.1-sol",
+      "file": "handoff/design-r1-c1-to-c2.md"
+    },
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:8d8b1091ca6a41fa",
+      "invalidated_reason": null
+    }
+  }
+]
