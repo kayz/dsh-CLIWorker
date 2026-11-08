@@ -157,22 +157,44 @@ test('[AC-060] management writes dispatch to their real capabilities', async () 
   const tokens = JSON.parse((await host.request('/cliworker/api/session')).body)
   const call = (path, body) => host.request(path, { method: 'POST', headers: { 'x-cliworker-session': tokens.session, 'x-cliworker-csrf': tokens.csrf }, body })
 
-  const discover = await call('/cliworker/api/discover', {})
-  assert.equal(discover.statusCode, 200)
-  assert.equal(JSON.parse(discover.body).schema, 'cliworker.inventory/v1')
-  assert.equal(JSON.parse(ctx.fs.readFileSync('/cw/state/inventory.json', 'utf8')).schema, 'cliworker.inventory/v1')
+  // T-025: discover/enumerate/probe/read-usage became asynchronous jobs. The POST only accepts the
+  // job and returns `{ job_id }`; the instance-specific job query publishes the job envelope
+  // (job_id/status/at/last_error/error) together with the command's business result fields under
+  // their original names, so the content-level semantics stay observable over HTTP.
+  const runJob = async (path, body) => {
+    const accepted = await call(path, body)
+    assert.equal(accepted.statusCode, 200)
+    const acceptedBody = JSON.parse(accepted.body)
+    assert.deepEqual(Object.keys(acceptedBody), ['job_id'])
+    assert.match(acceptedBody.job_id, /^[A-Za-z0-9_-]+$/)
+    await ctx.clock.advance(0)
+    await new Promise(resolve => setImmediate(resolve))
+    const response = await host.request(`/cliworker/api/jobs/${acceptedBody.job_id}`, { headers: { 'x-cliworker-session': tokens.session } })
+    assert.equal(response.statusCode, 200)
+    const state = JSON.parse(response.body)
+    assert.equal(state.job_id, acceptedBody.job_id)
+    assert.equal(state.status, 'succeeded')
+    assert.equal(state.last_error, null)
+    assert.equal(state.error, null)
+    return state
+  }
 
-  const enumerate = await call('/cliworker/api/enumerate', { full: true })
-  assert.equal(enumerate.statusCode, 200)
-  assert.equal(JSON.parse(enumerate.body).schema, 'cliworker.models/v1')
+  const discover = await runJob('/cliworker/api/discover', {})
+  assert.equal(discover.schema, 'cliworker.inventory/v1')
+  assert.ok(Array.isArray(discover.entries))
+  const inventory = JSON.parse(ctx.fs.readFileSync('/cw/state/inventory.json', 'utf8'))
+  assert.equal(inventory.schema, 'cliworker.inventory/v1')
+  assert.equal(inventory.generated_at, discover.generated_at)
 
-  const probe = await call('/cliworker/api/probe', {})
-  assert.equal(probe.statusCode, 200)
-  assert.deepEqual(JSON.parse(probe.body), { schema: 'cliworker.models/v1', models: [] })
+  const enumerate = await runJob('/cliworker/api/enumerate', { full: true })
+  assert.equal(enumerate.schema, 'cliworker.models/v1')
+  assert.deepEqual(enumerate.models, [])
 
-  const readUsage = await call('/cliworker/api/read-usage', {})
-  assert.equal(readUsage.statusCode, 200)
-  assert.deepEqual(JSON.parse(readUsage.body).records, [usage])
+  const probe = await runJob('/cliworker/api/probe', {})
+  assert.deepEqual({ schema: probe.schema, models: probe.models }, { schema: 'cliworker.models/v1', models: [] })
+
+  const readUsage = await runJob('/cliworker/api/read-usage', {})
+  assert.deepEqual(readUsage.records, [usage])
 
   const secret = await call('/cliworker/api/secret', { cli: 'example', value: 'guard-secret-sentinel' })
   assert.equal(secret.statusCode, 200)

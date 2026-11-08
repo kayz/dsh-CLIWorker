@@ -1,0 +1,7 @@
+[
+  {"task_id":"task-a","role":"dev","model":"model-a","provider":"provider-a","severity":"blocking","category":"tool","at":"2026-01-01T00:00:00Z","summary":"first","raw_output":"failed","action":"retry","evidence":["sessions/log.txt","file:///private","https://example.test/evidence"],"unclosed":true},
+  {"task_id":"task-a","role":"dev","model":"model-a","provider":"provider-a","severity":"blocking","category":"tool","at":"2026-01-02T00:00:00Z","summary":"second","raw_output":"failed again","action":"retry","evidence":["logs/output.txt"],"unclosed":true},
+  {"task_id":"task-b","role":"reviewer","model":"model-b","provider":"provider-b","severity":"blocking","category":"permission","at":"2026-01-03T00:00:00Z","summary":"blocked","raw_output":"denied","action":"inspect","evidence":[],"unclosed":false},
+  {"task_id":"task-c","role":"dev","model":"model-c","provider":"provider-c","severity":"major","category":"quota","at":"2026-01-04T00:00:00Z","summary":"quota","raw_output":"quota","action":"retry","evidence":[],"unclosed":false},
+  {"task_id":"task-d","role":"dev","model":"model-d","provider":"provider-d","severity":"minor","category":"other","at":"2026-01-05T00:00:00Z","summary":"minor","raw_output":"detail","action":"inspect","evidence":[],"unclosed":false}
+]

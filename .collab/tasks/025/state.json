@@ -1,0 +1,99 @@
+{
+  "id": "025",
+  "history": [
+    {
+      "at": "2026-11-08T19:32:16.530Z",
+      "to": "draft",
+      "by": "init"
+    },
+    {
+      "at": "2026-11-08T19:34:06.197Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T19:34:53.296Z",
+      "from": "designed",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T19:34:53.771Z",
+      "from": "designed",
+      "to": "blocked",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-08T19:40:36.117Z",
+      "from": "blocked",
+      "to": "designed",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-08T19:40:36.126Z",
+      "from": "designed",
+      "to": "draft",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-08T19:45:45.355Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T19:47:57.411Z",
+      "from": "designed",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T19:55:10.627Z",
+      "from": "implemented",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T19:55:18.166Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T19:57:05.456Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T20:03:08.206Z",
+      "from": "reviewed",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T20:03:16.087Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T20:06:33.228Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
+    }
+  ],
+  "status": "reviewed",
+  "updated_at": "2026-11-08T20:06:33.228Z",
+  "role": "review",
+  "model": "claude-sonnet-5-5",
+  "model_resolved": "claude-sonnet-5-5",
+  "effort": "high",
+  "attempt": 8,
+  "switches": 0,
+  "blocked_reason": null,
+  "handoff": null,
+  "interrupted": null
+}
