@@ -1,12 +1,9 @@
 {
   "task": "025",
-  "event": "blocked",
-  "reason": "awaiting_human",
-  "verdict": null,
-  "ci": null,
-  "files": null,
+  "event": "merged",
+  "status": "merged",
+  "ci": "3/3",
   "branch": "task/025",
-  "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】025 / task 025\n结果：blocked — awaiting_human\n阶段：design ✅\n变更：分支 task/025 · 耗时 2m36s\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-08T19:34:53.780Z"
+  "summary": "【AgentLine 任务已合并】dsh-CLIWorker / task 025\n结果：已并入 main（b05b3cb）\n阶段：design ✅ · dev ✅ · CI 3/3 ✅ · review r2 needs_revision ❌\n变更：分支 task/025（已删除） · 耗时 34m16s\n验收：CI 3/3 · verdict=needs_revision · findings 6\n下一步：无，任务已结束",
+  "at": "2026-11-08T20:34:46.985Z"
 }
