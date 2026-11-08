@@ -1,0 +1,8 @@
+{
+  "task": "T-023",
+  "milestone": "M4",
+  "entries": [
+    { "ac": "AC-057", "status": "covered", "files": ["test/integration/runner.test.mjs"] },
+    { "ac": "AC-058", "status": "covered", "files": ["test/integration/runner-errors.test.mjs"] }
+  ]
+}
