@@ -1,0 +1,8 @@
+{
+  "question": "T-013 要求真实 CLI 的 auth set/status/clear 与秘密后端输入，但允许范围内无法接入：lib/cli.mjs 是静态分发表且没有 auth；lib/exec.mjs 不透传 stdin input。是否允许把这两个文件加入 T-013 的实现 write_scope，仅做 auth 路由注册及 exec input 透传（不新增 ctx 字段、不改其他路由）？批准后 design 将补齐跨进程存储、适配器消费点与不依赖原生密钥环的集成隔离方案。",
+  "options": [
+    "允许增加 lib/cli.mjs 和 lib/exec.mjs，仅做 auth 路由注册及 exec input 透传，先修订设计再实现",
+    "保持原 write_scope，暂停 T-013，由调度器先补齐路由和输入依赖再恢复设计"
+  ],
+  "default": "保持原 write_scope，暂停 T-013，由调度器先补齐路由和输入依赖再恢复设计"
+}
