@@ -1,0 +1,8 @@
+{
+  "task": "T-027",
+  "milestone": "M5",
+  "entries": [
+    { "ac": "AC-065", "files": ["test/e2e/install.test.mjs"], "status": "covered" },
+    { "ac": "AC-066", "files": ["test/e2e/upgrade.test.mjs", "test/integration/restart-recovery.test.mjs"], "status": "covered" }
+  ]
+}
