@@ -2,6 +2,30 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { EventEmitter } from 'node:events'
 import { createExec } from '../../lib/exec.mjs'
+import { loadConfig } from '../../lib/config.mjs'
+import { exitCodeFor, errorBodyFrom } from '../../lib/output.mjs'
+import { createFakeContext } from '../helpers/ctx.mjs'
+import path from 'node:path'
+import os from 'node:os'
+
+test('recursive configuration scan rejects string secrets without exposing values', () => {
+  const file = path.join(os.tmpdir(), 'cw-secret-config.json')
+  const value = 'sensitive-test-value'
+  for (const key of ['ACCESS_TOKEN', 'my_api_key_value', 'clientSecret', 'PASSWORD']) {
+    const raw = { providers: {}, models: {}, nested: [{ [key]: value }] }
+    const ctx = createFakeContext({ files: { [file]: JSON.stringify(raw) }, env: {}, platform: process.platform })
+    assert.throws(() => loadConfig({ file, ctx }), error => {
+      assert.equal(error.code, 'E_CONFIG_SECRET_INLINE')
+      assert.equal(exitCodeFor(error.code), 3)
+      assert.equal(errorBodyFrom(error).error.retryable, false)
+      assert.equal(error.message.includes(value), false)
+      return true
+    })
+  }
+  const raw = { providers: {}, models: {}, nested: [{ access_token: { ref: 'env:EXAMPLE' }, password: 42 }] }
+  const ctx = createFakeContext({ files: { [file]: JSON.stringify(raw) }, env: {}, platform: process.platform })
+  assert.doesNotThrow(() => loadConfig({ file, ctx }))
+})
 
 test('exec forwards synchronous input without changing argv', () => {
   let observed
