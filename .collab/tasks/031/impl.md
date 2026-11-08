@@ -44,7 +44,7 @@
 
 1. AC-075 主命令（design.md 指定）：`test/contract/identity.test.mjs` + `test/unit/identity-levels.test.mjs`。
 
-   实测结果：`# tests 21`、`# pass 21`、`# fail 0`、`# cancelled 0`、`# skipped 0`、`# todo 0`，最后打印 `AC-075 OK`，退出码 0。
+   实测结果：`# tests 22`、`# pass 22`、`# fail 0`、`# cancelled 0`、`# skipped 0`、`# todo 0`，最后打印 `AC-075 OK`，退出码 0。
 
 2. AC-075 Session 兼容回归：`test/contract/session.test.mjs` + `test/unit/session-invalidation.test.mjs`。
 
@@ -63,3 +63,25 @@
 - 本次不接入旧 select、ModelHandle 选模流程，也不修改 `requireVerified` 等旧策略；`callWithIdentity` 及其 `calls[]` 是供下游消费的执行证据入口。
 - 新入口的 `calls[]` 与旧 select 根部的命令列表 `calls[]` 无关，未扩大扫描器白名单。
 - 输入对象不被修改；同一输入两次调用得到相等但相互独立的 `evidence` 对象。
+
+## 第 2 轮评审修复
+
+按 review.md 第 1 轮的 F1、F2 修复脱敏缺口，范围仍限于 `lib/identity.mjs` 与 `test/unit/identity-levels.test.mjs`：
+
+- **F1（P1）大小写**：`USER_DIR_RE` 增加 `i` 标志。Windows 路径不区分大小写，`c:\users\alice\...` 与 `/HOME/bob/...` 现在都会移除用户名段。
+- **F2（P2）含空格的用户名**：用户名部分由 `[^\\/\s]+` 改为 `[^\\/\r\n]+`，不再在空白处截断，而是取到下一个路径分隔符为止；`C:\Users\John Smith\r.jsonl` 现在整段用户名被替换为 `[REDACTED]`。
+- 新增测试 `[AC-075] user directory matching ignores case and covers names with spaces`，覆盖小写 `users`、大写 `/HOME`、含空格用户名三种输入。
+
+修复后的独立探针输出（同一 `classifyIdentity` 入口）：
+
+- `c:/users/alice/r.jsonl` → `c:\users\[REDACTED]\r.jsonl`
+- `/HOME/bob/r.jsonl` → `/HOME/[REDACTED]/r.jsonl`
+- `C:/Users/John Smith/r.jsonl` → `C:\Users\[REDACTED]\r.jsonl`
+
+修复后重新执行验收：
+
+- AC-075 主命令：`# tests 22`、`# pass 22`、fail/cancelled/skipped/todo 均为 0，打印 `AC-075 OK`，退出码 0。
+- Session 兼容回归命令：`# tests 26`、`# pass 26`，其余计数均为 0，打印 `AC-075 OK`，退出码 0。两条命令本轮均已实际执行。
+- `check-seams`、`check-unused`、`check-no-model-table` 复跑仍为 ok。
+
+F3 属于编排侧的 CI 证据补录，不涉及代码；acceptance.md 的两条命令本轮都已运行，可直接作为下一轮 `ci-results.json` 的补录依据。未修改 review.md、verdict.json、state.json、run.json 等受保护文件。

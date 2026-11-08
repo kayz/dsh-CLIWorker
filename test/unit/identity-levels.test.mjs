@@ -286,6 +286,32 @@ test('[AC-075] evidence redacts tokens and Windows, POSIX and macOS user directo
   assert.ok(mac.evidence.path.includes('[REDACTED]'))
 })
 
+test('[AC-075] user directory matching ignores case and covers names with spaces', () => {
+  const lower = grade({
+    descriptor: identityDescriptor('rollout-file', 'model', { file: 'c:\\users\\alice\\r.jsonl' }),
+    readFile: () => `${JSON.stringify({ model: 'm-a' })}\n`,
+  })
+  assert.ok(!JSON.stringify(lower).includes('alice'))
+  assert.ok(lower.evidence.path.includes('[REDACTED]'))
+
+  const upper = grade({
+    descriptor: identityDescriptor('rollout-file', 'model', { file: '/HOME/bob/r.jsonl' }),
+    cwd: '',
+    readFile: () => `${JSON.stringify({ model: 'm-a' })}\n`,
+  })
+  assert.ok(!JSON.stringify(upper).includes('bob'))
+  assert.ok(upper.evidence.path.includes('[REDACTED]'))
+
+  const spaced = grade({
+    descriptor: identityDescriptor('rollout-file', 'model', { file: 'C:\\Users\\John Smith\\r.jsonl' }),
+    readFile: () => `${JSON.stringify({ model: 'm-a' })}\n`,
+  })
+  const spacedText = JSON.stringify(spaced)
+  assert.ok(!spacedText.includes('John'))
+  assert.ok(!spacedText.includes('Smith'))
+  assert.ok(spaced.evidence.path.includes('[REDACTED]'))
+})
+
 test('[AC-075] the source enum stays the fixed six-value list', () => {
   assert.ok(Object.isFrozen(IDENTITY_SOURCES))
   assert.deepEqual([...IDENTITY_SOURCES], [
