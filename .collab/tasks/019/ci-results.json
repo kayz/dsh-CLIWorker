@@ -1,0 +1,28 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\019",
+  "taskDir": ".collab\\tasks\\019",
+  "ranAt": "2026-11-08T22:17:06.0905842+08:00",
+  "passed": 2,
+  "total": 2,
+  "ok": true,
+  "results": [
+    {
+      "id": "AC-045",
+      "title": "",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.76,
+      "lastLine": "run-tests: filtered 1 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\43c0baa22b02\\files-executed.json",
+      "output": "鉁?[AC-045] whitelist filters candidates and downstream callbacks (3.4857ms)\n鈩?tests 1\n鈩?suites 0\n鈩?pass 1\n鈩?fail 0\n鈩?cancelled 0\n鈩?skipped 0\n鈩?todo 0\n鈩?duration_ms 95.8309\nrun-tests: filtered 1 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\43c0baa22b02\\files-executed.json"
+    },
+    {
+      "id": "AC-046",
+      "title": "",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.71,
+      "lastLine": "run-tests: filtered 1 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\43c0baa22b02\\files-executed.json",
+      "output": "鉁?[AC-046] explicit, measured and CLI level priority (3.159ms)\n鈩?tests 1\n鈩?suites 0\n鈩?pass 1\n鈩?fail 0\n鈩?cancelled 0\n鈩?skipped 0\n鈩?todo 0\n鈩?duration_ms 76.9603\nrun-tests: filtered 1 files, manifest C:\\Users\\kayz\\AppData\\Local\\Temp\\cliworker-test-results\\43c0baa22b02\\files-executed.json"
+    }
+  ]
+}
