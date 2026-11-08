@@ -71,16 +71,29 @@
       "from": "reviewed",
       "to": "implemented",
       "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T14:45:17.121Z",
+      "from": "implemented",
+      "to": "blocked",
+      "by": "recovery:interrupted"
     }
   ],
-  "status": "implemented",
-  "updated_at": "2026-11-08T14:26:48.210Z",
+  "status": "blocked",
+  "updated_at": "2026-11-08T14:45:17.121Z",
   "role": "dev",
   "model": "gpt-6.1-terra",
   "model_resolved": "gpt-6.1-terra",
   "effort": "high",
   "attempt": 8,
   "switches": 0,
-  "blocked_reason": null,
-  "handoff": null
+  "blocked_reason": "interrupted",
+  "handoff": null,
+  "interrupted": {
+    "from": "implemented",
+    "role": "dev",
+    "model": "gpt-6.1-terra",
+    "at": "2026-11-08T14:45:17.121Z",
+    "note": "上次运行被终止（进程消失），需要显式继续"
+  }
 }
