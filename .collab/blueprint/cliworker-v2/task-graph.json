@@ -1702,7 +1702,9 @@
         "test/integration/runner.test.mjs",
         "test/integration/runner-errors.test.mjs",
         "test/flows/steps/run.mjs",
-        "test/traceability/T-023.json"
+        "test/traceability/T-023.json",
+        "lib/cli.mjs",
+        "lib/select.mjs"
       ],
       "acceptance": [
         "AC-057",
