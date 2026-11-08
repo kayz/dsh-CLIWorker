@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
+import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createPlugin } from '../../lib/index.js'
 import { createHostStub } from '../helpers/host-stub.mjs'
@@ -16,9 +17,35 @@ const forbidden = JSON.parse(fs.readFileSync(fileURLToPath(new URL('../../contra
 const errorEnvelope = readSchema('error-envelope.schema.json')
 const sessionSchema = readSchema('session.v1.schema.json')
 
+// T-025: `/cliworker/ui` now serves the shipped `ui/` files through `ctx.fs.realpathSync` and
+// `ctx.fs.readFileSync`. This context exposes those real assets while every other path stays on
+// the deterministic fake filesystem.
+const uiRoot = fileURLToPath(new URL('../../ui/', import.meta.url))
+
+function createUiAwareContext(options) {
+  const ctx = createFakeContext(options)
+  const fake = ctx.fs
+  const root = path.resolve(uiRoot)
+  const withinUi = (file) => {
+    const resolved = path.resolve(String(file))
+    return resolved === root || resolved.startsWith(`${root}${path.sep}`)
+  }
+  const fakeReadFileSync = fake.readFileSync
+  fake.realpathSync = (file) => {
+    if (!withinUi(file)) {
+      const error = new Error(`ENOENT: no such file or directory, realpath '${String(file)}'`)
+      error.code = 'ENOENT'
+      throw error
+    }
+    return fs.realpathSync(file)
+  }
+  fake.readFileSync = (file, encoding) => withinUi(file) ? fs.readFileSync(file, encoding) : fakeReadFileSync(file, encoding)
+  return ctx
+}
+
 test('[AC-059] actual bootstrap routes require all loopback components', async () => {
   const host = createHostStub()
-  createPlugin(host.ctx, {}, { ctx: createFakeContext() })
+  createPlugin(host.ctx, {}, { ctx: createUiAwareContext() })
   for (const path of ['/cliworker/api/session', '/cliworker/ui']) {
     for (const options of [{ remoteAddress: '192.0.2.1' }, { host: 'localhost.example' }, { origin: 'http://example.com' }]) {
       const response = await host.request(path, options)
