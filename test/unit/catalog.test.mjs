@@ -4,7 +4,12 @@ import path from 'node:path'
 import { createFakeContext } from '../helpers/ctx.mjs'
 import { main } from '../../lib/cli.mjs'
 import { loadConfig } from '../../lib/config.mjs'
+import { exitCodeFor } from '../../lib/output.mjs'
 import { listModels, filterAllowed, selectModels, resolveModel, managementView, writeCatalog } from '../../lib/catalog.mjs'
+import * as modelsAllow from '../../lib/commands/models/allow.mjs'
+import * as modelsDeny from '../../lib/commands/models/deny.mjs'
+import * as modelsLevel from '../../lib/commands/models/level.mjs'
+import * as modelsAlias from '../../lib/commands/models/alias.mjs'
 
 const at = '2026-01-01T00:00:00Z'
 function model(key) {
@@ -110,13 +115,46 @@ test('[AC-045] write failures preserve the original configuration', async () => 
   assert.equal(v1.ctx.fs.readFileSync(v1.file, 'utf8'), old)
 })
 
-test('[AC-045] argument errors are returned before accessing the upstream', async () => {
-  for (const [args, code] of [[['level', 'a'], 'E_LEVEL_REQUIRED'], [['level', 'a', 'bad'], 'E_LEVEL_UNKNOWN'], [['alias', 'a'], 'E_REQUEST_INVALID'], [['allow', 'a', '--bad'], 'E_REQUEST_INVALID']]) {
-    const state = setup()
-    const before = state.ctx.fs.readFileSync(state.file, 'utf8')
-    const result = await main(['models', ...args, '--config', state.file], state.ctx)
-    assert.notEqual(result.exitCode, 0)
-    assert.equal(JSON.parse(state.ctx.stdout.text()).error.code, code)
-    assert.equal(state.ctx.fs.readFileSync(state.file, 'utf8'), before)
-  }
+async function dispatch(args) {
+  const state = setup()
+  const before = state.ctx.fs.readFileSync(state.file, 'utf8')
+  const result = await main(['models', ...args, '--config', state.file], state.ctx)
+  return { state, before, result }
+}
+
+async function assertError(args, code) {
+  const { state, before, result } = await dispatch(args)
+  const body = JSON.parse(state.ctx.stdout.text())
+  assert.equal(result.exitCode, exitCodeFor(code))
+  assert.equal(body.ok, false)
+  assert.equal(body.error.code, code)
+  assert.equal(state.ctx.stderr.text(), '')
+  assert.equal(state.ctx.fs.readFileSync(state.file, 'utf8'), before)
+  assert.equal(state.ctx.exec.count, 0)
+  assert.equal(state.ctx.fetch.calls.length, 0)
+}
+
+test('[AC-045] models allow self-registers and rejects extra targets before the upstream', async () => {
+  assert.deepEqual(modelsAllow.route, { cmd: 'models', sub: 'allow' })
+  await assertError(['allow', 'a'], 'E_CONFIG')
+  await assertError(['allow', 'a', 'b'], 'E_REQUEST_INVALID')
+})
+
+test('[AC-045] models deny self-registers and rejects unknown options before the upstream', async () => {
+  assert.deepEqual(modelsDeny.route, { cmd: 'models', sub: 'deny' })
+  await assertError(['deny', 'a'], 'E_CONFIG')
+  await assertError(['deny', 'a', '--bad'], 'E_REQUEST_INVALID')
+})
+
+test('[AC-045] models level self-registers and reports missing or unknown levels', async () => {
+  assert.deepEqual(modelsLevel.route, { cmd: 'models', sub: 'level' })
+  await assertError(['level', 'a', 'high'], 'E_CONFIG')
+  await assertError(['level', 'a'], 'E_LEVEL_REQUIRED')
+  await assertError(['level', 'a', 'bad'], 'E_LEVEL_UNKNOWN')
+})
+
+test('[AC-045] models alias self-registers and requires exactly two positionals', async () => {
+  assert.deepEqual(modelsAlias.route, { cmd: 'models', sub: 'alias' })
+  await assertError(['alias', 'short', 'a'], 'E_CONFIG')
+  await assertError(['alias', 'short'], 'E_REQUEST_INVALID')
 })
