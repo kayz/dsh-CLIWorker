@@ -1,0 +1,60 @@
+{
+  "task": "021",
+  "round": 0,
+  "verdict": "needs_revision",
+  "git_sha": "4d72ff9ad54bc27144991267fc553315f8f5236a",
+  "passed": 2,
+  "total": 2,
+  "summary": "AC-049 and AC-050 execution evidence passes (ci-results.json: 25/25 and 16/16 tests, filtered runner ok, AC-049 OK / AC-050 OK), but independent review found one P1 and three P2 deviations from design.md.",
+  "ac_results": [
+    {
+      "id": "AC-049",
+      "status": "pass",
+      "evidence": "ci-results.json AC-049 exitCode 0, tests 25 pass 25 fail/cancelled/skipped/todo 0, 'run-tests: filtered 2 files', last line 'AC-049 OK'; lib/usage.mjs:167-189 lock + idempotent append; lib/commands/models/forecast.mjs:81-127 per-pool evaluation and TTL; lib/usage-readers/*.mjs"
+    },
+    {
+      "id": "AC-050",
+      "status": "pass",
+      "evidence": "ci-results.json AC-050 exitCode 0, tests 16 pass 16 fail/cancelled/skipped/todo 0, 'run-tests: filtered 1 files', last line 'AC-050 OK'; lib/capacity.mjs:223-279 adjacent-pair learning with delta>=0.01, sum/sum/1e6, k confidence; test/traceability/T-021.json"
+    },
+    {
+      "id": "AC-050-check-fast",
+      "status": "unconfirmed",
+      "evidence": "Not present in ci-results.json. impl.md reports exit 1 at check-contract-doc (docs/contract.md ac-index hash mismatch, out of write_scope). Not counted against verdict."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "P1",
+      "file": "lib/commands/pools/set.mjs",
+      "line": 57,
+      "summary": "pools set writes any object with a string id into the config without validating the pool shape against pool.schema.json.",
+      "failure_scenario": "pools set --json '{\"id\":\"codex:plan\",\"kind\":\"nope\",\"junk\":1}' returns ok and overwrites the configured pool; later forecast/pools list read a malformed pool or fail with E_CONFIG. Tests only cover bad JSON and unknown id."
+    },
+    {
+      "id": "F2",
+      "severity": "P2",
+      "file": "lib/commands/usage/import.mjs",
+      "line": 222,
+      "summary": "Explicit import of a wholly corrupt CLI file returns ok instead of failing (design item 4).",
+      "failure_scenario": "usage import --file garbage.txt --cli codex --pool <id> where the file contains only non-JSON text: readers silently return empty readings and the command returns {ok:true} with no change, indistinguishable from 'no reading'."
+    },
+    {
+      "id": "F3",
+      "severity": "P2",
+      "file": "lib/usage.mjs",
+      "line": 169,
+      "summary": "Keyless usage record derives idempotency_key from a 32-bit FNV hash of row content, which can merge distinct records.",
+      "failure_scenario": "Two different manual records that collide (or identical content at the same clock ms) get the same auto: key; the second call returns the first row as success and the second consumption is silently not booked."
+    },
+    {
+      "id": "F4",
+      "severity": "P2",
+      "file": "lib/commands/usage/import.mjs",
+      "line": 246,
+      "summary": "Importing an older reading file overwrites a newer stored used_fraction and CLI reset_at.",
+      "failure_scenario": "Import a file with latest at=10:00, then an older file with latest at=yesterday: pools.json regresses to the old reading, forecast treats it as stale and the older reset_at is stored as source cli."
+    }
+  ]
+}
