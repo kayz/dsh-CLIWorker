@@ -1,0 +1,11 @@
+---
+write_scope:
+  - ui/**
+  - lib/http/snapshot.mjs
+  - lib/http/jobs.mjs
+  - lib/http/issues-api.mjs
+  - test/unit/ui-render.test.mjs
+  - test/integration/ui-snapshot.test.mjs
+  - test/fixtures/ui/**
+  - test/traceability/T-025.json
+---
