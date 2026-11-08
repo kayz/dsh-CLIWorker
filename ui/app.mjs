@@ -21,7 +21,7 @@ export function startApp({ document, fetch, setTimeout, now = () => Date.now() }
   async function read() {
     if (pendingRead) return pendingRead
     pendingRead = (async () => {
-      try { snapshot = await request('/cliworker/api/snapshot'); status.textContent = '已更新'; list.innerHTML = renderModelsHtml(snapshot, now()) }
+      try { snapshot = await request('/cliworker/api/snapshot'); status.textContent = snapshot.last_error ? `stale：${snapshot.last_error}；${snapshot.at || 'unknown'}` : '已更新'; list.innerHTML = renderModelsHtml(snapshot, now()) }
       catch { status.textContent = 'stale：读取失败'; if (snapshot) list.innerHTML = renderModelsHtml({ ...snapshot, last_error: '读取失败' }, now()) }
     })().finally(() => { pendingRead = null })
     return pendingRead
@@ -31,7 +31,7 @@ export function startApp({ document, fetch, setTimeout, now = () => Date.now() }
     for (const tab of ['issues', 'models']) { document.getElementById(tab).hidden = tab !== name; document.getElementById(`${tab}-tab`).setAttribute('aria-selected', String(tab === name)) }
   })
   for (const button of document.querySelectorAll('[data-job]')) button.addEventListener('click', async () => {
-    try { await request(`/cliworker/api/${button.dataset.job}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' }); await read() } catch { status.textContent = 'stale：操作失败' }
+    try { await request(`/cliworker/api/${button.dataset.job}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' }); await read() } catch { status.textContent = 'stale：操作失败'; if (snapshot) list.innerHTML = renderModelsHtml({ ...snapshot, last_error: '操作失败' }, now()) }
   })
   tick()
   return { read, get timer() { return timer } }

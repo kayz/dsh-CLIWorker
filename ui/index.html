@@ -3,7 +3,7 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CLIWorker</title></head>
 <body>
 <main><h1>CLIWorker</h1><nav aria-label="管理页面"><button type="button" id="issues-tab" aria-selected="true">问题</button><button type="button" id="models-tab" aria-selected="false">模型</button></nav>
-<section id="issues"><p id="issue-source">问题来源未接入</p></section>
-<section id="models" hidden><p id="status">加载中</p><div id="model-list"></div><button type="button" data-job="discover">刷新</button><button type="button" data-job="probe">探测</button></section></main>
+<p id="status">加载中</p><section id="issues"><p id="issue-source">问题来源未接入</p></section>
+<section id="models" hidden><div id="model-list"></div><button type="button" data-job="discover">刷新</button><button type="button" data-job="probe">探测</button></section></main>
 <script type="module" src="/cliworker/ui/app.mjs"></script>
 </body></html>
