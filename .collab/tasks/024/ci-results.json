@@ -1,8 +1,8 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\024",
   "taskDir": ".collab\\tasks\\024",
-  "ranAt": "2026-11-09T02:54:09.6332505+08:00",
-  "passed": 1,
+  "ranAt": "2026-11-09T02:55:42.3454604+08:00",
+  "passed": 2,
   "total": 3,
   "ok": false,
   "results": [
@@ -11,27 +11,27 @@
       "title": "",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.79,
+      "durationS": 0.68,
       "lastLine": "AC-059 OK",
-      "output": "TAP version 13\n# Subtest: AC-059 loopback components are independently required\nok 1 - AC-059 loopback components are independently required\n  ---\n  duration_ms: 1.2558\n  type: 'test'\n  ...\n# Subtest: AC-059 session expiry, isolation and CSRF binding\nok 2 - AC-059 session expiry, isolation and CSRF binding\n  ---\n  duration_ms: 2.5156\n  type: 'test'\n  ...\n# Subtest: [AC-008] getRegistration reports a failed placeholder before the plugin is applied\nok 3 - [AC-008] getRegistration reports a failed placeholder before the plugin is applied\n  ---\n  duration_ms: 1.3982\n  type: 'test'\n  ...\n# Subtest: [AC-008] createPlugin registers the four routes and reports ok\nok 4 - [AC-008] createPlugin registers the four routes and reports ok\n  ---\n  duration_ms: 1.884\n  type: 'test'\n  ...\n# Subtest: [AC-008] a failing route is reported without blocking the others\nok 5 - [AC-008] a failing route is reported without blocking the others\n  ---\n  duration_ms: 0.5652\n  type: 'test'\n  ...\n# Subtest: [AC-008] an inject failure is reported with a null path\nok 6 - [AC-008] an inject failure is reported with a null path\n  ---\n  duration_ms: 0.362\n  type: 'test'\n  ...\n# Subtest: [AC-008] apply throws in strict mode and stays quiet otherwise\nok 7 - [AC-008] apply throws in strict mode and stays quiet otherwise\n  ---\n  duration_ms: 0.6952\n  type: 'test'\n  ...\n# Subtest: [AC-008] a registered handler round-trips through the injected ctx\nok 8 - [AC-008] a registered handler round-trips through the injected ctx\n  ---\n  duration_ms: 4.2239\n  type: 'test'\n  ...\n1..8\n# tests 8\n# suites 0\n# pass 8\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 145.9729\nAC-059 OK"
+      "output": "TAP version 13\n# Subtest: AC-059 loopback components are independently required\nok 1 - AC-059 loopback components are independently required\n  ---\n  duration_ms: 1.2958\n  type: 'test'\n  ...\n# Subtest: AC-059 session expiry, isolation and CSRF binding\nok 2 - AC-059 session expiry, isolation and CSRF binding\n  ---\n  duration_ms: 1.8283\n  type: 'test'\n  ...\n# Subtest: [AC-008] getRegistration reports a failed placeholder before the plugin is applied\nok 3 - [AC-008] getRegistration reports a failed placeholder before the plugin is applied\n  ---\n  duration_ms: 1.1393\n  type: 'test'\n  ...\n# Subtest: [AC-008] createPlugin registers the four routes and reports ok\nok 4 - [AC-008] createPlugin registers the four routes and reports ok\n  ---\n  duration_ms: 1.1445\n  type: 'test'\n  ...\n# Subtest: [AC-008] a failing route is reported without blocking the others\nok 5 - [AC-008] a failing route is reported without blocking the others\n  ---\n  duration_ms: 0.3635\n  type: 'test'\n  ...\n# Subtest: [AC-008] an inject failure is reported with a null path\nok 6 - [AC-008] an inject failure is reported with a null path\n  ---\n  duration_ms: 0.2324\n  type: 'test'\n  ...\n# Subtest: [AC-008] apply throws in strict mode and stays quiet otherwise\nok 7 - [AC-008] apply throws in strict mode and stays quiet otherwise\n  ---\n  duration_ms: 0.6106\n  type: 'test'\n  ...\n# Subtest: [AC-008] a registered handler round-trips through the injected ctx\nok 8 - [AC-008] a registered handler round-trips through the injected ctx\n  ---\n  duration_ms: 4.224\n  type: 'test'\n  ...\n1..8\n# tests 8\n# suites 0\n# pass 8\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 111.5747\nAC-059 OK"
     },
     {
       "id": "AC-060",
       "title": "",
-      "passed": false,
-      "exitCode": 1,
-      "durationS": 0.76,
-      "lastLine": "     | AC-060 guard/flow tests failed",
-      "output": "Could not find 'test/integration/plugin-guard.test.mjs'\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-7d4dde33-ccab-4656-9a6f-eba8b5272645.ps1:7\nLine |\n   7 |  if ($testExit -ne 0) { throw 'AC-060 guard/flow tests failed' }\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-060 guard/flow tests failed"
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.61,
+      "lastLine": "AC-060 OK",
+      "output": "TAP version 13\n# Subtest: AC-060 write gates take precedence without reading the request body\nok 1 - AC-060 write gates take precedence without reading the request body\n  ---\n  duration_ms: 3.076\n  type: 'test'\n  ...\n# Subtest: AC-060 oversized and malformed bodies reject without destroying the stream\nok 2 - AC-060 oversized and malformed bodies reject without destroying the stream\n  ---\n  duration_ms: 1.5036\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 83.6816\nAC-060 OK"
     },
     {
       "id": "AC-061",
       "title": "",
       "passed": false,
       "exitCode": 1,
-      "durationS": 0.73,
+      "durationS": 0.62,
       "lastLine": "     | AC-061 health/doctor tests failed",
-      "output": "Could not find 'test/unit/health.test.mjs, test/integration/health.test.mjs'\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-54a687cb-bbd2-4c18-a596-a923da6b268d.ps1:7\nLine |\n   7 |  if ($testExit -ne 0) { throw 'AC-061 health/doctor tests failed' }\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-061 health/doctor tests failed"
+      "output": "Could not find 'test/unit/health.test.mjs, test/integration/health.test.mjs'\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-c048ce5c-26ac-4cd7-bf30-47a994c2d812.ps1:7\nLine |\n   7 |  if ($testExit -ne 0) { throw 'AC-061 health/doctor tests failed' }\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-061 health/doctor tests failed"
     }
   ]
 }

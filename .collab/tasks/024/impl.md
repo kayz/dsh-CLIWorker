@@ -11,3 +11,7 @@
 续接第 1 轮新增 `lib/http/guard.mjs`：使用既有注册表的判定函数处理管理路由门控，提供标准错误响应和按字节限制的 JSON 读取；请求超限时立即拒绝，继续排空而不销毁响应。新增 `test/integration/plugin-guard.test.mjs`，对声明的管理写路径检查门控优先级和不读取 body，并检查畸形及超限输入。运行 `node --test test/integration/plugin-guard.test.mjs test/integration/plugin-session.test.mjs`，4 项通过。
 
 本轮新增模块同样尚未接入生产插件；这些测试只覆盖独立模块，并未执行 flows 或覆盖实际 HTTP 请求，不能当作 AC-060 通过。上述尚需工作仍未完成。
+
+本次续接新增 `lib/health.mjs`、`lib/commands/doctor.mjs` 和两份 `[AC-061]` 测试；现有插件注册公共 health 路由，doctor 使用 streamed 钩子，正常与配置缺失时由同一收集器生成报告。测试覆盖基本聚合、配置缺失和进程内 CLI 分发与 HTTP 报告一致性。`node scripts/run-tests.mjs --ac AC-061` 退出 0（3 项）；`node --test "test/unit/*.test.mjs"` 退出 0（475 项，1 项跳过）；`node scripts/check-traceability.mjs` 退出 0。
+
+这并不代表完整 AC-061 已覆盖：真实独立 CLI 进程、故障矩阵、flows、精确时间边界及注册失败对照等仍待实现或验证。现有 registration 测试仍按旧四路由断言，新增 health 后运行该测试有 2 项失败；session/ui、其他新路由和管理读鉴权尚未接入，不能仅改测试冒充完成。注册更新、完整 T-024 追溯及所有原验收要求仍未完成。
