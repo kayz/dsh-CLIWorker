@@ -1804,7 +1804,9 @@
         "test/integration/ui-snapshot.test.mjs",
         "test/fixtures/ui/**",
         "test/traceability/T-025.json",
-        "lib/http/issues-api.mjs"
+        "lib/http/issues-api.mjs",
+        "lib/index.js",
+        "lib/http/routes.mjs"
       ],
       "acceptance": [
         "AC-062",
