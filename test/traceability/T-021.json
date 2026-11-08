@@ -1,0 +1,21 @@
+{
+  "task": "T-021",
+  "milestone": "M4",
+  "entries": [
+    {
+      "ac": "AC-049",
+      "status": "covered",
+      "files": [
+        "test/unit/usage-ledger.test.mjs",
+        "test/unit/usage-readers.test.mjs"
+      ]
+    },
+    {
+      "ac": "AC-050",
+      "status": "covered",
+      "files": [
+        "test/unit/capacity.test.mjs"
+      ]
+    }
+  ]
+}

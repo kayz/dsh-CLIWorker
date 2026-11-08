@@ -34,5 +34,41 @@
       "token_ref": "sha256:a0c4eb6c007918e2",
       "invalidated_reason": null
     }
+  },
+  {
+    "task": "021",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-08T16:35:21.621Z",
+    "ended_at": "2026-11-08T16:51:20.104Z",
+    "duration_ms": 958483,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 22275408,
+      "output": 129222,
+      "cache_read": 22108288,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/021/logs/dev-r1-1.log",
+    "error": null,
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:6056e22be9104116",
+      "invalidated_reason": null
+    }
   }
 ]

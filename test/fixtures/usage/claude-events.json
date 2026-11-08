@@ -1,0 +1,37 @@
+{
+  "events": [
+    {
+      "type": "usage_limit",
+      "scope": "five_hour",
+      "timestamp": "2026-11-07T09:00:00Z",
+      "used_percent": 20,
+      "resets_at": 1794060000
+    },
+    {
+      "type": "usage_limit",
+      "scope": "five_hour",
+      "timestamp": "2026-11-07T10:00:00Z",
+      "remaining_percent": 40,
+      "resets_at": 1794060000
+    },
+    {
+      "type": "usage_limit",
+      "scope": "seven_day",
+      "timestamp": "2026-11-07T09:30:00Z",
+      "used_percent": 12.5,
+      "resets_at": "2026-11-14T00:00:00Z"
+    },
+    {
+      "type": "usage_limit",
+      "scope": "five_hour",
+      "timestamp": "2026-11-07T10:10:00Z",
+      "used_percent": 130,
+      "resets_at": 1794060000
+    },
+    {
+      "type": "message",
+      "timestamp": "2026-11-07T10:05:00Z",
+      "usage": { "input_tokens": 50000, "output_tokens": 8000 }
+    }
+  ]
+}
