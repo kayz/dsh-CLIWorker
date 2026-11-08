@@ -17,3 +17,40 @@ test('[AC-046] explicit, measured and CLI level priority', () => {
   const unassigned = listModels(config({}), { models: [row(null, null)], ctx })
   assert.deepEqual(selectModels(unassigned).rejected, [{ key: 'a', reason: 'level_unassigned' }])
 })
+
+test('[AC-046] configuration evidence is retained and invalid values fail', () => {
+  const configured = row('config', 'Top')
+  configured.level_source = { kind: 'config', ref: 'config#catalog.levels.a', at }
+  assert.deepEqual(listModels(config({ a: 'top' }), { models: [configured], ctx })[0].level_source, configured.level_source)
+  for (const invalid of [null, '', 'unknown', 0, undefined]) {
+    assert.throws(() => listModels(config({ a: invalid }), { models: [row('cli', 'High')], ctx }), { code: 'E_CONFIG' })
+  }
+  const fileConfig = config({ a: 'High' })
+  fileConfig._file = 'config.json'
+  assert.throws(() => listModels(fileConfig, { models: [row('cli', 'High')], ctx: { ...ctx, fs: { statSync() { throw new Error('read failed') } } } }), { code: 'E_CONFIG' })
+})
+
+test('[AC-046] equal priority uses newest evidence and rejects ties in conflict', () => {
+  const older = row('measured', 'High')
+  const newer = row('measured', 'Top')
+  newer.level_source.at = '2026-02-01T00:00:00Z'
+  for (const input of [[older, newer], [newer, older]]) assert.equal(listModels(config({}), { models: input, ctx })[0].level, 'Top')
+  newer.level_source.at = at
+  assert.throws(() => listModels(config({}), { models: [older, newer], ctx }), { code: 'E_CONFIG' })
+})
+
+test('[AC-046] deprecation preserves evidence and invalid metadata is rejected', () => {
+  const input = row(null, null)
+  const cfg = config({})
+  cfg.catalog.deprecated.a = true
+  const result = listModels(cfg, { models: [input], ctx })[0]
+  assert.equal(result.availability.state, 'deprecated')
+  assert.deepEqual(result.availability.evidence, { probe: true })
+  assert.deepEqual(selectModels([result]).rejected, [{ key: 'a', reason: 'deprecated' }])
+  assert.equal(input.availability.state, 'callable')
+  for (const value of [-1, NaN, Infinity, '0']) {
+    const bad = row('cli', 'High')
+    bad.prices.input_per_mtok = value
+    assert.throws(() => listModels(config({}), { models: [bad], ctx }), { code: 'E_CONFIG' })
+  }
+})

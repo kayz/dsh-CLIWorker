@@ -21,3 +21,24 @@ test('[AC-045] whitelist filters candidates and downstream callbacks', () => {
   assert.deepEqual(calls, ['b'])
   assert.deepEqual(selectModels(listModels(config([]), { models: input })).models, [])
 })
+
+test('[AC-045] the same allowed records feed each downstream callback', () => {
+  const rows = listModels(config(['b']), { models: [model('a'), model('b')] })
+  const counts = { a: [0, 0, 0], b: [0, 0, 0] }
+  const callbacks = [0, 1, 2].map(index => item => { counts[item.key][index] += 1 })
+  for (const item of filterAllowed(rows)) for (const callback of callbacks) callback(item)
+  assert.deepEqual(counts, { a: [0, 0, 0], b: [1, 1, 1] })
+  assert.equal(rows.find(item => item.key === 'a').allowed, false)
+})
+
+test('[AC-045] aliases do not bypass denial and conflicts fail without mutation', () => {
+  const input = [model('a'), model('b')]
+  const cfg = config(['alias'])
+  assert.deepEqual(selectModels(listModels(cfg, { models: input })).models.map(item => item.key), ['a'])
+  cfg.catalog.allow = []
+  assert.deepEqual(selectModels(listModels(cfg, { models: input })), { models: [], rejected: [] })
+  const before = structuredClone(input)
+  cfg.catalog.aliases = { b: 'a' }
+  assert.throws(() => listModels(cfg, { models: input }), { code: 'E_CONFIG' })
+  assert.deepEqual(input, before)
+})

@@ -16,3 +16,11 @@
 - `node scripts/run-tests.mjs --ac AC-046`：退出码 0，执行 1 个测试；仅验证上述部分行为，不代表 AC-046 验收通过。
 - acceptance 中的追踪检查退出码 1：缺少尚不能如实标记 covered 的 `test/traceability/T-019.json`。
 - 未运行 `scripts/check-fast.ps1`：其调用的 `scripts/check-write-scope.mjs` 会执行 Git，与本任务禁止执行 Git 的指令冲突。
+
+## 第 2 轮增量
+
+- 补强输入 model/v1 的字段、嵌套结构和数值校验，避免非法数值被当成有效价格或能力；显式配置的非法等级仍以 E_CONFIG 失败。
+- 匹配的配置等级证据保留原有来源与时间；存在配置文件路径和文件系统接口时，获取文件修改时间失败改为 E_CONFIG，注入调用没有文件元数据时仍使用注入时钟。
+- 增加配置证据、无效等级、同级时间冲突、弃用证据、非法价格以及白名单回调和别名冲突的回归测试。
+- 重跑 `node scripts/run-tests.mjs --ac AC-045`：3 项通过；`node scripts/run-tests.mjs --ac AC-046`：4 项通过。两组均为部分覆盖，不能视为对应 AC 的完整验收。
+- 复查后 T-017 的模型接口和缓存仍不存在。管理命令、真实列表接入、完整验收覆盖和追踪分片仍未完成；未运行会执行 Git 的 check-fast。
