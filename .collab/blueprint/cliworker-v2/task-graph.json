@@ -1540,7 +1540,9 @@
         "test/integration/probe.test.mjs",
         "test/integration/probe-ledger.test.mjs",
         "test/flows/steps/probe.mjs",
-        "test/traceability/T-020.json"
+        "test/traceability/T-020.json",
+        "lib/select.mjs",
+        "lib/commands/models/select.mjs"
       ],
       "acceptance": [
         "AC-047",
