@@ -10,12 +10,12 @@ function checkIgnore(target) {
   return spawnSync('git', ['check-ignore', '-v', '--', target], { cwd: ROOT, encoding: 'utf8' })
 }
 
-test('[AC-013] git check-ignore -v matches config/a.local.json, state/x, a.jsonl and .collab/x', () => {
+test('[AC-013] git check-ignore -v matches config/a.local.json, state/x, a.jsonl and .collab/worktrees/x', () => {
   const rules = {
     'config/a.local.json': 'config/*.local.json',
     'state/x': 'state/',
     'a.jsonl': '*.jsonl',
-    '.collab/x': '.collab/',
+    '\.collab/worktrees/x': '.collab/worktrees/',
   }
 
   for (const [target, rule] of Object.entries(rules)) {

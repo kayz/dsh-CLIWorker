@@ -1,12 +1,9 @@
 {
   "task": "013",
-  "event": "blocked",
-  "reason": "review_exhausted",
-  "verdict": "needs_revision",
+  "event": "merged",
+  "status": "merged",
   "ci": "1/1",
-  "files": null,
   "branch": "task/013",
-  "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】013 / task 013\n结果：blocked — review_exhausted\n阶段：design ✅ · dev ✅ · CI 1/1 ✅ · review r3 needs_revision ❌\n变更：分支 task/013 · 耗时 2h57m\n验收：CI 1/1 · verdict=needs_revision · findings 4\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-08T06:56:24.044Z"
+  "summary": "【AgentLine 任务已合并】dsh-CLIWorker / task 013\n结果：已并入 main（2b30e8e）\n阶段：design ✅ · dev ✅ · CI 1/1 ✅ · review r3 needs_revision ❌\n变更：分支 task/013（已删除） · 32 个文件 · 耗时 3h57m\n验收：CI 1/1 · verdict=needs_revision · findings 4\n下一步：无，任务已结束",
+  "at": "2026-11-08T08:05:10.192Z"
 }
