@@ -1243,7 +1243,9 @@
         "test/unit/secrets.test.mjs",
         "test/integration/secrets-native.test.mjs",
         "test/flows/steps/auth.mjs",
-        "test/traceability/T-013.json"
+        "test/traceability/T-013.json",
+        "lib/cli.mjs",
+        "lib/exec.mjs"
       ],
       "acceptance": [
         "AC-032",
