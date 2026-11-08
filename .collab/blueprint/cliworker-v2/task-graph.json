@@ -1411,7 +1411,8 @@
         "test/fixtures/enumerators/**",
         "test/fixtures/model-table/**",
         "test/flows/steps/enumerate.mjs",
-        "test/traceability/T-017.json"
+        "test/traceability/T-017.json",
+        "lib/cli.mjs"
       ],
       "acceptance": [
         "AC-041",
