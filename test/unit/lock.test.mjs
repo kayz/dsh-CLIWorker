@@ -178,6 +178,78 @@ test('[AC-029] lock-release-token: release only removes a lock it still owns', a
   assert.equal(LOCK_DEFAULTS.lock_stale_ms, 30000)
 })
 
+test('[AC-029] lock-create-busy: Windows EPERM/EBUSY on exclusive create means a busy lock', async () => {
+  // A lock file that another process just released is briefly delete-pending on Windows, so the
+  // exclusive create fails with EPERM (or EBUSY) instead of EEXIST. That must wait, not throw.
+  const win = makeCtx()
+  win.ctx.platform = 'win32'
+  win.memfs.failNext('writeFileSync', 'EPERM', 2)
+  const handle = await acquireLock(win.ctx, lockFilePath(STATE), { pid: 21 })
+  assert.equal(JSON.parse(win.memfs.text(lockFilePath(STATE))).pid, 21)
+  await handle.release()
+
+  const busy = makeCtx()
+  busy.ctx.platform = 'win32'
+  busy.memfs.failNext('writeFileSync', 'EBUSY', 1)
+  const busyHandle = await acquireLock(busy.ctx, lockFilePath(STATE), { pid: 22 })
+  await busyHandle.release()
+
+  // Other platforms and other error codes keep failing fast.
+  const linux = makeCtx()
+  linux.memfs.failNext('writeFileSync', 'EPERM', 1)
+  await assert.rejects(
+    () => acquireLock(linux.ctx, lockFilePath(STATE), { pid: 23 }),
+    (error) => error.code === 'EPERM'
+  )
+
+  const fatal = makeCtx()
+  fatal.ctx.platform = 'win32'
+  fatal.memfs.failNext('writeFileSync', 'EACCES', 1)
+  await assert.rejects(
+    () => acquireLock(fatal.ctx, lockFilePath(STATE), { pid: 24 }),
+    (error) => error.code === 'EACCES'
+  )
+})
+
+test('[AC-029] lock-reclaim-identity: a stale read never steals the fresh lock that replaced it', async () => {
+  // The holder released and a waiter took a fresh lock between the read that looked stale and
+  // the reclaim. Moving that fresh lock out of the way would let two holders run at once, so the
+  // reclaim must re-read the lock and leave it alone.
+  const { ctx, clock, memfs } = makeCtx()
+  const lockPath = lockFilePath(STATE)
+  const fresh = JSON.stringify({ pid: 2222, at: clock.now(), token: 'fresh-holder' })
+  memfs.setFile(lockPath, fresh)
+  const stale = JSON.stringify({ pid: 4242, at: clock.now() - 100000, token: 'stale-holder' })
+
+  const realRead = memfs.readFileSync
+  let reads = 0
+  ctx.fs = {
+    ...memfs,
+    readFileSync(target, encoding) {
+      if (reads === 0 && path.resolve(String(target)) === path.resolve(lockPath)) {
+        reads += 1
+        return encoding ? stale : Buffer.from(stale, 'utf8')
+      }
+      return realRead(target, encoding)
+    },
+  }
+  const policy = { lock_stale_ms: 1000000, lock_wait_ms: 120, lock_poll_ms: 50 }
+
+  await assert.rejects(
+    () => drive(clock, acquireLock(ctx, lockPath, { pid: 7, isPidAlive: (pid) => pid === 2222, policy }), { step: 50 }),
+    (error) => error.code === 'E_STATE_LOCKED'
+  )
+
+  assert.ok(reads >= 1)
+  assert.equal(memfs.text(lockPath), fresh, 'the fresh lock must survive the stale reclaim')
+  assert.deepEqual(memfs.names(STATE), ['state.lock'], 'no tombstone may be left behind')
+  assert.equal(
+    memfs.calls.filter((method) => method === 'renameSync').length,
+    0,
+    'a lock that was not just re-read must never be moved out of the way'
+  )
+})
+
 test('[AC-029] lock-with-lock: withLock returns the result and always releases', async () => {
   const { ctx, memfs } = makeCtx()
   const lockPath = lockFilePath(STATE)
