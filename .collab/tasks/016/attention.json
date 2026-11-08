@@ -1,0 +1,9 @@
+{
+  "question": "T-016 的三份权威规格未列出 11 个已知 CLI 的完整规则及拒读路径集合，T-015 夹具尚未交付；同时 brief 比 task-graph.json 少授权 lib/cli.mjs、lib/exec.mjs。当前 CLI 分发把 discover 后的选项当 sub，固定 UTF-8 的执行结果也不能保证 WSL UTF-16LE 中文名称无损。请提供或授权制定规则/拒读集合，并确认是否按任务图扩大这两处文件的最小修改范围；若保持 brief 范围，请给出现成的选项路由和无损 WSL 执行接入方式。",
+  "options": [
+    "提供权威规则与拒读集合，并按任务图授权 lib/cli.mjs、lib/exec.mjs 的最小修改；由 design 更新规格后实现",
+    "授权 design 制定明确的规则与拒读集合，并按任务图授权 lib/cli.mjs、lib/exec.mjs 的最小修改；由 design 更新规格后实现",
+    "保持 brief 写入范围，补充规则来源及无需改分发器和执行器的现成接入方式"
+  ],
+  "default": "提供权威规则与拒读集合，并按任务图授权 lib/cli.mjs、lib/exec.mjs 的最小修改；由 design 更新规格后实现"
+}
