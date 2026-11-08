@@ -1,0 +1,1 @@
+{"schema":"cliworker.skip/v1","test":"[AC-001] evidence","file":"test/unit/evidence.test.mjs","ac":"AC-001","requires":"win32","reason":"fixture","platform":"linux","node":"v22.23.3"}

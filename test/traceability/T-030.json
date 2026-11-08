@@ -1,0 +1,8 @@
+{
+  "task": "T-030",
+  "milestone": "M5",
+  "entries": [
+    { "ac": "AC-070", "files": ["test/unit/release-gate.test.mjs"], "status": "covered" },
+    { "ac": "AC-071", "files": ["test/integration/flow-complete.test.mjs"], "status": "covered" }
+  ]
+}

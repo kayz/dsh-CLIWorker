@@ -1,0 +1,9 @@
+{
+  "mode": "full",
+  "filter": "",
+  "files": [
+    "test/unit/evidence.test.mjs"
+  ],
+  "platform": "darwin",
+  "node": "v22.23.3"
+}
