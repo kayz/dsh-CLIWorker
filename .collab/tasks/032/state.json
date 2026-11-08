@@ -1,0 +1,26 @@
+{
+  "id": "032",
+  "history": [
+    {
+      "at": "2026-11-08T00:49:41.702Z",
+      "to": "draft",
+      "by": "init"
+    },
+    {
+      "at": "2026-11-08T01:06:03.369Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:claude-sonnet-5-5"
+    }
+  ],
+  "status": "designed",
+  "updated_at": "2026-11-08T01:06:03.369Z",
+  "role": "design",
+  "model": "claude-sonnet-5-5",
+  "model_resolved": "claude-sonnet-5-5",
+  "effort": "high",
+  "attempt": 1,
+  "switches": 0,
+  "blocked_reason": null,
+  "handoff": null
+}
