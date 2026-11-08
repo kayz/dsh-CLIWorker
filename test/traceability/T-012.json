@@ -1,0 +1,14 @@
+{
+  "task": "T-012",
+  "milestone": "M2",
+  "entries": [
+    {
+      "ac": "AC-031",
+      "status": "covered",
+      "files": [
+        "test/unit/leak-scan-canary.test.mjs",
+        "test/flows/flow.test.mjs"
+      ]
+    }
+  ]
+}
