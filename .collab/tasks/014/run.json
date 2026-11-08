@@ -105,5 +105,147 @@
     "usage_source": "cli_json",
     "log_ref": ".collab/tasks/014/logs/design-r1-1.log",
     "error": null
+  },
+  {
+    "task": "014",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-08T02:06:44.904Z",
+    "ended_at": "2026-11-08T02:06:48.165Z",
+    "duration_ms": 3261,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/014/logs/dev-r1-1.log",
+    "error": "result error",
+    "handoff": {
+      "file": "handoff/dev-r1-c1-to-c2.md",
+      "checkpoint": null,
+      "sha": null
+    }
+  },
+  {
+    "task": "014",
+    "role": "dev",
+    "round": 1,
+    "candidate": 2,
+    "backend": "http-openai",
+    "model_requested": "deepseek-flash",
+    "model_resolved": "deepseek-flash",
+    "provider": "deepseek-api",
+    "effort": null,
+    "started_at": "2026-11-08T02:06:48.634Z",
+    "ended_at": "2026-11-08T02:06:48.637Z",
+    "duration_ms": 3,
+    "exit": {
+      "code": 1
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": null,
+    "usage_source": "unavailable",
+    "log_ref": ".collab/tasks/014/logs/dev-r1-2.log",
+    "error": "auth_error: missing API key (set DEEPSEEK_API_KEY or providers.deepseek-api.options.apiKeyEnv)",
+    "inherited_from": {
+      "candidate": 1,
+      "model": "deepseek-v4.1-flash",
+      "file": "handoff/dev-r1-c1-to-c2.md"
+    }
+  },
+  {
+    "task": "014",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-08T02:15:13.639Z",
+    "ended_at": "2026-11-08T02:15:17.622Z",
+    "duration_ms": 3983,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/014/logs/dev-r1-1.log",
+    "error": "result error",
+    "handoff": {
+      "file": "handoff/dev-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/014/dev-r1-c1",
+      "sha": "a47c7e9b4d496b346c214db05135abecc6288246"
+    }
+  },
+  {
+    "task": "014",
+    "role": "dev",
+    "round": 1,
+    "candidate": 2,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-terra",
+    "model_resolved": "gpt-6.1-terra",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T02:15:19.285Z",
+    "ended_at": "2026-11-08T02:16:45.437Z",
+    "duration_ms": 86152,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 437096,
+      "output": 2617,
+      "cache_read": 404224,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/014/logs/dev-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": true
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "deepseek-v4.1-flash",
+      "file": "handoff/dev-r1-c1-to-c2.md"
+    }
   }
 ]
