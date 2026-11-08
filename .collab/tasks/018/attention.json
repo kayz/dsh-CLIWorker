@@ -1,8 +1,0 @@
-{
-  "question": "T-018 要求真实 cli resolve 和生产选模拒选，但当前 lib/cli.mjs 仅支持静态 ROUTES，lib/select.mjs 内联生成调用，两文件均不在 write_scope；显式前置 T-016 的 lib/discovery/、参数采集及设计也未交付。如何补齐依赖和接线责任后继续设计？",
-  "options": [
-    "保持原 write_scope，暂停 T-018；先交付 T-016，并由获授权任务提供入口和选模接线，再恢复设计。",
-    "正式调整任务与 write_scope，明确授权 T-018 修改 lib/cli.mjs 和 lib/select.mjs；先补齐 T-016 的识别规则及参数证据，再恢复设计。"
-  ],
-  "default": "保持原 write_scope，暂停 T-018；先交付 T-016，并由获授权任务提供入口和选模接线，再恢复设计。"
-}

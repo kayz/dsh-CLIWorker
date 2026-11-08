@@ -2,7 +2,9 @@
 
 ## 约束
 
-本文件是验收规格，不是通过报告。同目录 attention.json 所述入口、选模接线和前置依赖尚未裁决，当前不得宣告 AC-043 或 AC-044 covered。裁决后必须补齐实现方案，所有下列必验命令才能用于最终验收；不得删去真实入口要求以规避阻断。
+本文件是暂停期间保留的验收要求，不是通过报告。用户已明确裁决暂停 T-018、保持 write_scope 不变，仅在 T-016 落地后恢复；当前不执行下列实现验收，不得宣告 AC-043 或 AC-044 covered，也不再等待同一问题的裁决或新建 attention.json。
+
+恢复设计时必须引用 T-016 实际发现产物、脱敏参数采集与验收证据，并核对真实 resolve/select 接线已由获授权任务交付。T-016 落地只允许恢复设计复核；接线未交付仍阻断实现。随后依据实际契约补齐设计和真实入口的具体冒烟命令，才能进入实现与最终验收。不得删去真实入口或生产选模要求，不得发明接口或把缺失依赖视作通过。
 
 命令均在仓库根执行，使用 Node 20+；每条独立执行，不依赖上一条产生的状态。Node 命令返回后立即检查 $LASTEXITCODE。每条均要求退出码 0；非零、FAIL run.no_match、测试失败、应验用例跳过或测试数量为 0 均判失败。run-tests 的报告使用其现有系统临时目录默认位置，不写仓库。
 
@@ -51,15 +53,11 @@ node --test test/unit/adapters.test.mjs test/unit/adapters-unverified.test.mjs
 
 期望输出：退出码 0；Node 测试摘要 fail 为 0、pass 大于 0、skipped 为 0。除两条 AC 的用例外，实际执行的解析测试覆盖采集事件中的 text、usage、result、error，以及空行、未知事件、损坏 JSON；预期全部与静态事件夹具深相等。构造完整事件的样例通过 contracts/schemas/event.v1.schema.json；不得从损坏输入构造成功 result，不得从请求模型伪造返回身份。对随机运行期哨兵检查输出与错误消息，命中数为 0；fixture 中不保存真实秘密。
 
-**真实 cli resolve 冒烟（只生成描述）。**
+**真实 cli resolve 冒烟（暂停，恢复设计时补齐）。**
 
-命令：
+brief 给定的入口为 bin/cliworker.mjs cli resolve，包含 --model、--cwd、--platform、--config；只读场景另带蓝图已有 --readonly。T-016 尚未落地，不能确认成功模型、调用参数或离线配置，不保留此前凭接口示例指定的成功样例，也不提供带占位符而无法独立判定的验收命令。本项保持未完成，不能据此验收通过。
 
-~~~pwsh
-node bin/cliworker.mjs cli resolve --model claude:claude-sonnet-5-5 --cwd . --platform linux --readonly --config test/fixtures/adapters/resolve.config.json
-~~~
-
-期望输出：退出码 0，stdout 可整体 JSON.parse 为单个 JSON；包含成功的 direct_call，command 与 args 指向夹具的 Claude 调用和具体模型 claude-sonnet-5-5，input 为 stdin，只读参数与已采集证据一致，cwd 与请求经既定路径规则解析的目录一致；同时具有 pwsh 与 posix 两种展示串。输出不含令牌值，不产生 lease 或 usage 记录。返回 E_UNKNOWN_COMMAND、call:null、缺少配置、缺少参数证据或只调用命令模块均判失败。响应完整封装须由裁决后的 design.md 依据现有契约确定；此处不创设额外字段。
+恢复设计时必须在本项补入一条使用实际模型与实际夹具路径、可从仓库根独立执行的完整命令，并写明对应 T-016 证据路径与具体响应断言。期望输出必须包括：退出码 0，stdout 可整体 JSON.parse 为单个 JSON；成功 direct_call 的 command、args、具体模型、stdin、只读参数及 cwd 与实际证据和夹具一致；包含 pwsh 与 posix 两种展示串。输出不含令牌值，不产生 lease 或 usage 记录。E_UNKNOWN_COMMAND、call:null、缺少配置、缺少参数证据或只调用命令模块均判失败。响应封装只引用实际契约，不创设字段；未补齐此命令前不得进入最终验收。
 
 **追踪一致性。**
 
@@ -73,4 +71,12 @@ node scripts/check-traceability.mjs
 
 ## 非目标
 
-本 design 轮不执行实现验收，也不运行 scripts/check-fast.ps1：其脚本会运行全部检查及全量测试，包含 Git 调用和额外文件写入，与本轮禁止 Git、只能创建指定文件的限制冲突。下游应在其权限允许后用 pwsh -NoProfile -File scripts/check-fast.ps1 做完成前检查；预期退出码 0、末行 check-fast: ok，有失败须报告原始失败项，不能把尚未裁决的阻断称为基线豁免。
+本 design 轮不执行实现验收，也不运行 scripts/check-fast.ps1：其脚本会运行全部检查及全量测试，包含 Git 调用和额外文件写入，与本轮禁止 Git、只能创建指定文件的限制冲突。下游应在恢复设计、依赖补齐且其权限允许后执行完成前检查。
+
+命令：
+
+~~~pwsh
+pwsh -NoProfile -File scripts/check-fast.ps1
+~~~
+
+期望输出：退出码 0、末行 check-fast: ok。非零退出码或任一 FAILED 均判失败；须报告原始失败项，不能把已裁决暂停但尚未补齐的依赖称为基线豁免。当前未执行此命令，也没有全量检查通过结论。

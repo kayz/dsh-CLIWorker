@@ -14,7 +14,9 @@ write_scope:
 
 交付范围和验收归属沿用 brief 与任务图 T-018（M3），只覆盖 AC-043、AC-044，测试层级为 unit。权威依据为蓝图 design.md、interfaces.md、task-graph.json；具体输出字段、错误码与事件结构复用仓库 contracts，不增加 schema、版本号或公开字段。
 
-**本设计尚有阻断，不能据此开始实现或宣告验收完成。** 已生成同目录 attention.json。以下写域保持 brief 原值，未自行扩权；已确定的行为要求和验收门槛可保留，涉及入口与选模接线的实现步骤须在裁决后补齐。
+**按本轮用户裁决，暂停 T-018，write_scope 保持不变；仅在 T-016 落地后恢复设计复核。** 本轮裁决为：“Decision: pause T-018 (keep write_scope unchanged). It depends on T-016 discovery artefacts and on the resolve/select wiring which no authorised task has delivered yet. Resume only after T-016 lands. Do not invent interfaces.” 该答复已解决本轮决策问题，不再等待同一问题的裁决，也不新建 attention.json。
+
+暂停期间不得开始实现、生成参数金标、创建验收夹具、运行实现验收或将 AC-043、AC-044 标为 covered。下文保留已知行为要求，不是可以立即执行的实现方案。恢复时先读取 T-016 的实际发现规则、脱敏参数采集及验收证据，再核对真实 resolve/select 接线是否已由获授权任务交付；接线仍缺失时继续阻断实现，不因 T-016 落地就宣告依赖全部满足。不能虚构适配器签名、路径映射、注册机制、选模注入接口或成功响应封装来填补依赖。
 
 当前文件提供的证据：
 
@@ -23,7 +25,7 @@ write_scope:
 - T-016 是 T-018 的显式前置任务，但当前没有 lib/discovery/，也没有 .collab/tasks/016/design.md。不能从旧 select.mjs 推导完整的 11 个已知 CLI、已验证参数和只读能力。其 cursor-wsl 的 shell 拼接尤其不能作为新金标。
 - .collab/tasks/008/design.md 明确保持静态 ROUTES；任务图 T-022 后续才接管 lib/select.mjs。现有文件没有授权 T-018 修改这些文件，亦没有可供 T-018 使用的动态注册缝。
 
-需要裁决的是：补齐前置任务及写域外接线后再继续，还是经正式任务调整允许 T-018 修改入口和选模。默认保持原写域并暂停，不把真实入口验收换成仅直接调用命令模块，不把自制选模函数当成生产选模。裁决前不固定缺失的 CLI 参数表、展示串封装字段或新增接口签名。
+已裁决采用等待前置产物的方案，不扩大 T-018 写域。lib/cli.mjs、lib/select.mjs 的接线必须由获授权任务交付，本设计不指定尚未存在的接线接口或擅自分配其他任务的新职责。不把真实入口验收换成仅直接调用命令模块，不把自制选模函数当成生产选模；缺失的 CLI 参数表、展示串封装字段和新增接口签名均保持未定。
 
 ## 约束
 
@@ -39,22 +41,22 @@ write_scope:
 
 6. **事件解析。** parseEvent 只把有采集证据的 CLI 输出映射为 event.v1.schema.json 已定义的 text、usage、result、error 内容；构造完整事件时必须通过现有事件 schema。seq、lease_id、at 等执行期信息由调用方提供，不在解析器内读取全局时间或捏造租约。未知记录、空行和损坏 JSON 不产生成功 result，也不从请求参数补出 reported_model。凭据、认证头、完整原始对象和未知字段不能透传。错误映射限于注册表已有 E_PROVIDER_AUTH、E_PROVIDER_QUOTA、E_PROVIDER_FAILED 等既定触发语义；执行超时和退出结算留给 T-023。最终身份分档和 session 协议分别由对应任务负责。
 
-7. **cli resolve。** 命令模块遵守现有 run({argv,ctx,config}) 约定，解析蓝图已有 --model、--cwd、--platform、--readonly，复用配置加载及既有错误输出工具。它解析指定模型并调用同一 buildCall，返回含具体模型参数的 direct_call 以及两种展示串，禁止以展示串再构造可执行调用。只解析描述，不申请租约、不执行模型、不写状态。缺失模型、平台非法及参数缺值的错误沿用注册表与配置约定；未验证情况保持 call:null 和 adapter_unverified，不新增专属错误码。成功响应的完整封装须在缺失依赖与接线裁决补齐后，依据现有契约确定，不在此发明字段。
+7. **cli resolve。** 命令模块遵守现有 run({argv,ctx,config}) 约定，解析蓝图已有 --model、--cwd、--platform、--readonly，复用配置加载及既有错误输出工具。它解析指定模型并调用同一 buildCall，返回含具体模型参数的 direct_call 以及两种展示串，禁止以展示串再构造可执行调用。只解析描述，不申请租约、不执行模型、不写状态。缺失模型、平台非法及参数缺值的错误沿用注册表与配置约定；未验证情况保持 call:null 和 adapter_unverified，不新增专属错误码。成功响应的完整封装须在 T-016 落地、获授权任务交付接线后，依据实际契约确定，不在此发明字段。
 
 8. **真实集成。** AC-043 必须经 bin/cliworker.mjs cli resolve 验证路由；AC-044 必须经生产选模路径验证拒选。接线应在任何 handle/call 生成前检查适配器结果，失败模型仅进入 rejected。夹具须把等级、可用性、身份、只读及额度等其他过滤条件设为通过，以免被其他原因提前拒绝而掩盖缺陷。至少包含一个可调用对照模型，证明 models/calls 不是因全局失败而为空。不能通过 import 副作用、修改全局对象、测试中重写生产函数、第二套选模实现或自执行命令模块绕过写域冲突。
 
-9. **夹具。** test/fixtures/adapters/golden/** 存逐 CLI、逐平台的独立静态调用预期；不在测试运行时调用 buildCall 生成预期。覆盖带空格与单引号的 cwd、stdin、模型参数、只读开关及拒绝分支。同一 fixtures 根目录存脱敏参数证据、事件输入与预期和 resolve 的离线配置。配置复用 config/v2 与仓库已有模型样例；不依赖个人配置或真实凭据。resolve 验收配置固定为 test/fixtures/adapters/resolve.config.json，成功样例模型沿用接口示例 claude:claude-sonnet-5-5；该成功样例必须先有参数证据，缺证据时保持阻断，不能伪造验证结论。
+9. **夹具。** test/fixtures/adapters/golden/** 存逐 CLI、逐平台的独立静态调用预期；不在测试运行时调用 buildCall 生成预期。覆盖带空格与单引号的 cwd、stdin、模型参数、只读开关及拒绝分支。同一 fixtures 根目录存脱敏参数证据、事件输入与预期和 resolve 的离线配置。配置复用 config/v2 与仓库已有模型样例；不依赖个人配置或真实凭据。暂停期间不固定成功样例、具体配置文件名和参数金标；恢复设计时依据 T-016 实际证据选择并将路径和模型实值补入 acceptance.md，不能把接口示例当成已验证调用。
 
 10. **追踪。** test/unit/adapters.test.mjs 的相关测试标题含 [AC-043]；test/unit/adapters-unverified.test.mjs 的相关标题含 [AC-044]。test/traceability/T-018.json 使用 interfaces.md 已定义的 task、milestone、entries 格式，只列本任务这两条 AC 及实际测试文件；全部对应验收通过才标 covered。baseline 只读取 contracts/spec/ac-index.json，不在分片重定义。
 
 ## 建议验收方向
 
-执行顺序为：完成阻断裁决并修订本设计 → 前置规则与采集可用 → 实现纯适配器及独立金标 → 事件解析与命令模块 → 经授权责任方完成入口与生产选模接线 → 分别执行 acceptance.md 中各命令。AC-043 与 AC-044 都必须通过；没有测试匹配、跳过、缺少前置或仅模块级调用都不算完成。
+执行顺序为：保持暂停，等待 T-016 落地 → 恢复设计复核，引用实际发现规则、参数采集与验收证据 → 核对获授权任务交付的真实入口与生产选模接线，缺失则继续阻断 → 依据实际契约补齐本设计及 acceptance.md 的具体冒烟命令 → 实现纯适配器、独立金标、事件解析及命令模块 → 分别执行 acceptance.md 中各命令。AC-043 与 AC-044 都必须通过；没有测试匹配、跳过、缺少前置或仅模块级调用都不算完成。当前没有执行这些实现步骤，也没有实现验收通过结论。
 
 详细命令和期望见同目录 acceptance.md。brief 没有提供本任务基准 commit SHA 或既有验收报告路径，不借用其他任务的基准，不制造对比报告。这里的要求是设计验收门槛，并非已执行通过的报告。
 
 ## 非目标
 
-不改 brief、impl、review、verdict、state 或 run 文件，不执行 Git，不写代码或测试，不创建临时脚本。本轮只写 design.md、acceptance.md，以及用户明确允许在致命歧义时生成的 attention.json。
+不改 brief、impl、review、verdict、state 或 run 文件，不执行 Git，不写代码或测试，不创建临时脚本。本轮只修改 design.md、acceptance.md；已有用户裁决，不创建 attention.json 或任何其他文件。
 
 实现角色仍只受 YAML 原写域授权；不得因本文件解释了接线要求就扩权。发现、真实探测、模型目录、额度策略、租约、runner、身份分档、会话及秘密注入由各自任务负责。运行时代码、测试和随包文档不得引用 .collab；规格来源只在本调度文档中记载。
