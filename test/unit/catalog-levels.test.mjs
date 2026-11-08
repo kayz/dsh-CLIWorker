@@ -1,6 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { listModels, selectModels } from '../../lib/catalog.mjs'
+import { readFileSync } from 'node:fs'
+import { validate } from '../../lib/contract/validate.mjs'
+import { listModels, selectModels, resolveModel } from '../../lib/catalog.mjs'
 
 const at = '2026-01-01T00:00:00Z'
 const row = (kind, level) => ({ schema: 'cliworker.model/v1', key: 'a', id: 'a', cli: 'x', provider: 'x', vendor: 'x', aliases: [], allowed: false, level, level_source: kind ? { kind, ref: kind, at } : null, availability: { state: 'callable', reason: null, at, ttl_s: 60, evidence: { probe: true } }, identity: 'verified', capabilities: { context_tokens: 0, readonly: false, stdin: false }, prices: { input_per_mtok: 0, output_per_mtok: 0, source: 'x' }, source: { kind: 'manual', ref: 'x', at }, deprecated: false })
@@ -53,4 +55,53 @@ test('[AC-046] deprecation preserves evidence and invalid metadata is rejected',
     bad.prices.input_per_mtok = value
     assert.throws(() => listModels(config({}), { models: [bad], ctx }), { code: 'E_CONFIG' })
   }
+})
+
+test('[AC-046] every level normalizes and output satisfies model/v1', () => {
+  const schema = JSON.parse(readFileSync(new URL('../../contracts/schemas/model.v1.schema.json', import.meta.url), 'utf8'))
+  for (const [input, expected] of [['TOP', 'Top'], ['high', 'High'], ['MiDdLe', 'Middle'], ['quick', 'Quick']]) {
+    const original = row('cli', 'High')
+    const actual = listModels(config({ a: input }), { models: [original], ctx })[0]
+    assert.equal(actual.level, expected)
+    assert.deepEqual(actual.capabilities, { context_tokens: 0, readonly: false, stdin: false })
+    assert.deepEqual(actual.prices, { input_per_mtok: 0, output_per_mtok: 0, source: 'x' })
+    assert.deepEqual(actual.source, { kind: 'manual', ref: 'x', at })
+    assert.equal(validate(schema, actual).ok, true)
+  }
+})
+
+test('[AC-046] aliases resolve without duplicate candidates and reject invalid mappings', () => {
+  const a = row('cli', 'High')
+  const b = { ...structuredClone(a), key: 'b', id: 'b' }
+  a.aliases = ['short']
+  const cfg = config({})
+  cfg.catalog.aliases = { short: 'a' }
+  const models = listModels(cfg, { models: [a, b], ctx })
+  assert.strictEqual(resolveModel(models, 'short'), resolveModel(models, 'a'))
+  assert.equal(models.length, 2)
+  for (const aliases of [{ '': 'a' }, { a: 'a' }, { b: 'a' }, { missing: 'unknown' }, { short: 'b' }, { one: 'two', two: 'a' }, { one: 'two', two: 'one' }]) {
+    const before = structuredClone(aliases)
+    cfg.catalog.aliases = aliases
+    assert.throws(() => listModels(cfg, { models: [a, b], ctx }), { code: 'E_CONFIG' })
+    assert.deepEqual(aliases, before)
+  }
+})
+
+test('[AC-046] configuration time comes from the file metadata', () => {
+  const cfg = config({ a: 'Quick' })
+  cfg._file = 'configuration.json'
+  const modified = '2026-03-02T00:00:00.000Z'
+  const actual = listModels(cfg, { models: [row('cli', 'High')], ctx: { ...ctx, fs: { statSync: () => ({ mtimeMs: Date.parse(modified) }) } } })[0]
+  assert.deepEqual(actual.level_source, { kind: 'config', ref: 'configuration.json#catalog.levels.a', at: modified })
+})
+
+test('[AC-046] malformed catalog configuration fails without mutating input', () => {
+  const input = row('cli', 'High')
+  const before = structuredClone(input)
+  for (const [key, value] of [['allow', [42]], ['levels', null], ['aliases', []], ['deprecated', { a: 'true' }]]) {
+    const cfg = config({})
+    cfg.catalog[key] = value
+    assert.throws(() => listModels(cfg, { models: [input], ctx }), { code: 'E_CONFIG' })
+  }
+  assert.deepEqual(input, before)
 })
