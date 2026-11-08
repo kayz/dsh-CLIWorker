@@ -53,10 +53,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T16:49:07.087Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T16:49:07.294Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-08T16:49:06.619Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-08T16:49:07.294Z",
   "role": "review",
   "model": "claude-sonnet-5-5",
   "model_resolved": "claude-sonnet-5-5",
@@ -65,5 +77,50 @@
   "switches": 0,
   "blocked_reason": null,
   "handoff": null,
-  "interrupted": null
+  "interrupted": null,
+  "pr": {
+    "branch": "task/033",
+    "state": "open",
+    "files": [
+      ".collab/tasks/033/acceptance.md",
+      ".collab/tasks/033/ci-results.json",
+      ".collab/tasks/033/design.md",
+      ".collab/tasks/033/impl.md",
+      ".collab/tasks/033/notice.json",
+      ".collab/tasks/033/review.md",
+      ".collab/tasks/033/run.json",
+      ".collab/tasks/033/sessions/.gitignore",
+      ".collab/tasks/033/state.json",
+      ".collab/tasks/033/verdict.json",
+      "lib/providers/http-openai.mjs",
+      "lib/providers/registry.mjs",
+      "lib/usage/ledger.mjs",
+      "test/contract/http-provider.test.mjs",
+      "test/unit/http-usage.test.mjs"
+    ],
+    "sha": "232808746b863b011aa5791e1ca99c4a17cd925d"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "low",
+    "reasons": [],
+    "metrics": {
+      "files": 5,
+      "lines": 1970,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 5
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T16:49:07.239Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
