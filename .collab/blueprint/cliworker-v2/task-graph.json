@@ -1759,7 +1759,8 @@
         "test/flows/steps/http-select.mjs",
         "test/flows/steps/http-admin.mjs",
         "test/flows/steps/doctor.mjs",
-        "test/traceability/T-024.json"
+        "test/traceability/T-024.json",
+        "test/integration/registration.test.mjs"
       ],
       "acceptance": [
         "AC-059",
