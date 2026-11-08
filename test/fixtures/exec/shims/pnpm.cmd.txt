@@ -1,0 +1,12 @@
+@SETLOCAL
+@IF NOT DEFINED NODE_PATH (
+  @SET "NODE_PATH=%~dp0\.."
+  @SET PATHEXT=%PATHEXT:;.JS;=;%
+)
+@IF EXIST "%~dp0\node.exe" (
+  @SET "_prog=%~dp0\node.exe"
+) ELSE (
+  @SET "_prog=node"
+  @SET PATHEXT=%PATHEXT:;.JS;=;%
+)
+"%_prog%"  "%~dp0\..\foo\bin\foo.js" %*

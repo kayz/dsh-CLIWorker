@@ -1,0 +1,29 @@
+{
+  "task": "T-010",
+  "milestone": "M2",
+  "entries": [
+    {
+      "ac": "AC-026",
+      "status": "covered",
+      "files": [
+        "test/unit/exec.test.mjs",
+        "test/characterization/defects/a5-shell.test.mjs"
+      ]
+    },
+    {
+      "ac": "AC-027",
+      "status": "covered",
+      "files": [
+        "test/integration/exec-native.test.mjs"
+      ]
+    },
+    {
+      "ac": "AC-028",
+      "status": "covered",
+      "files": [
+        "test/integration/exec-tree.test.mjs",
+        "test/unit/exec.test.mjs"
+      ]
+    }
+  ]
+}
