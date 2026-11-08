@@ -4,7 +4,7 @@
   "entries": [
     {
       "ac": "AC-032",
-      "files": ["test/integration/secrets-native.test.mjs", "test/flows/steps/auth.mjs"],
+      "files": ["test/integration/secrets-native.test.mjs", "test/flows/flow.test.mjs"],
       "status": "covered"
     },
     {
