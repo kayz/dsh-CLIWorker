@@ -1,37 +1,37 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\024",
   "taskDir": ".collab\\tasks\\024",
-  "ranAt": "2026-11-09T03:04:08.6015950+08:00",
-  "passed": 2,
+  "ranAt": "2026-11-09T03:06:42.4001076+08:00",
+  "passed": 3,
   "total": 3,
-  "ok": false,
+  "ok": true,
   "results": [
     {
       "id": "AC-059",
       "title": "",
-      "passed": false,
-      "exitCode": 1,
-      "durationS": 0.77,
-      "lastLine": "     | AC-059 route/session tests failed",
-      "output": "TAP version 13\n# Subtest: AC-059 loopback components are independently required\nok 1 - AC-059 loopback components are independently required\n  ---\n  duration_ms: 1.2496\n  type: 'test'\n  ...\n# Subtest: AC-059 session expiry, isolation and CSRF binding\nok 2 - AC-059 session expiry, isolation and CSRF binding\n  ---\n  duration_ms: 1.7222\n  type: 'test'\n  ...\n# Subtest: [AC-008] getRegistration reports a failed placeholder before the plugin is applied\nok 3 - [AC-008] getRegistration reports a failed placeholder before the plugin is applied\n  ---\n  duration_ms: 1.0897\n  type: 'test'\n  ...\n# Subtest: [AC-008] createPlugin registers the four routes and reports ok\nnot ok 4 - [AC-008] createPlugin registers the four routes and reports ok\n  ---\n  duration_ms: 2.1503\n  type: 'test'\n  location: 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\024\\\\test\\\\integration\\\\registration.test.mjs:26:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly deep-equal:\n    + actual - expected\n    \n      [\n        '/cliworker/forecast',\n    +   '/cliworker/health',\n        '/cliworker/models',\n        '/cliworker/providers',\n        '/cliworker/select'\n      ]\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected:\n    0: '/cliworker/forecast'\n    1: '/cliworker/models'\n    2: '/cliworker/providers'\n    3: '/cliworker/select'\n  actual:\n    0: '/cliworker/forecast'\n    1: '/cliworker/health'\n    2: '/cliworker/models'\n    3: '/cliworker/providers'\n    4: '/cliworker/select'\n  operator: 'deepStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///C:/git/dsh-CLIWorker/.collab/worktrees/024/test/integration/registration.test.mjs:31:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n# Subtest: [AC-008] a failing route is reported without blocking the others\nnot ok 5 - [AC-008] a failing route is reported without blocking the others\n  ---\n  duration_ms: 0.7626\n  type: 'test'\n  location: 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\024\\\\test\\\\integration\\\\registration.test.mjs:41:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    4 !== 3\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 3\n  actual: 4\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///C:/git/dsh-CLIWorker/.collab/worktrees/024/test/integration/registration.test.mjs:49:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n# Subtest: [AC-008] an inject failure is reported with a null path\nok 6 - [AC-008] an inject failure is reported with a null path\n  ---\n  duration_ms: 0.4053\n  type: 'test'\n  ...\n# Subtest: [AC-008] apply throws in strict mode and stays quiet otherwise\nok 7 - [AC-008] apply throws in strict mode and stays quiet otherwise\n  ---\n  duration_ms: 0.5173\n  type: 'test'\n  ...\n# Subtest: [AC-008] a registered handler round-trips through the injected ctx\nok 8 - [AC-008] a registered handler round-trips through the injected ctx\n  ---\n  duration_ms: 4.0203\n  type: 'test'\n  ...\n1..8\n# tests 8\n# suites 0\n# pass 6\n# fail 2\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 114.5636\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3d7672bc-f67c-4659-a041-bdc32650adbf.ps1:7\nLine |\n   7 |  if ($testExit -ne 0) { throw 'AC-059 route/session tests failed' }\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-059 route/session tests failed"
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.69,
+      "lastLine": "AC-059 OK",
+      "output": "TAP version 13\n# Subtest: [AC-059] actual bootstrap routes require all loopback components\nok 1 - [AC-059] actual bootstrap routes require all loopback components\n  ---\n  duration_ms: 4.9639\n  type: 'test'\n  ...\n# Subtest: [AC-059] privileged select views are gated for direct and wrapped bodies\nok 2 - [AC-059] privileged select views are gated for direct and wrapped bodies\n  ---\n  duration_ms: 1.1136\n  type: 'test'\n  ...\n# Subtest: [AC-059] known job exact route applies management guard before handler\nok 3 - [AC-059] known job exact route applies management guard before handler\n  ---\n  duration_ms: 0.6494\n  type: 'test'\n  ...\n# Subtest: AC-059 loopback components are independently required\nok 4 - AC-059 loopback components are independently required\n  ---\n  duration_ms: 1.1963\n  type: 'test'\n  ...\n# Subtest: AC-059 session expiry, isolation and CSRF binding\nok 5 - AC-059 session expiry, isolation and CSRF binding\n  ---\n  duration_ms: 1.6398\n  type: 'test'\n  ...\n# Subtest: [AC-059] registration covers the declared and independently expected exact paths\nok 6 - [AC-059] registration covers the declared and independently expected exact paths\n  ---\n  duration_ms: 3.0603\n  type: 'test'\n  ...\n# Subtest: [AC-059] registration failure is isolated and sanitized\nok 7 - [AC-059] registration failure is isolated and sanitized\n  ---\n  duration_ms: 1.161\n  type: 'test'\n  ...\n# Subtest: [AC-059] management reads require the session header\nok 8 - [AC-059] management reads require the session header\n  ---\n  duration_ms: 3.4011\n  type: 'test'\n  ...\n1..8\n# tests 8\n# suites 0\n# pass 8\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 145.5507\nAC-059 OK"
     },
     {
       "id": "AC-060",
       "title": "",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.63,
+      "durationS": 0.67,
       "lastLine": "AC-060 OK",
-      "output": "TAP version 13\n# Subtest: AC-060 write gates take precedence without reading the request body\nok 1 - AC-060 write gates take precedence without reading the request body\n  ---\n  duration_ms: 2.8224\n  type: 'test'\n  ...\n# Subtest: AC-060 oversized and malformed bodies reject without destroying the stream\nok 2 - AC-060 oversized and malformed bodies reject without destroying the stream\n  ---\n  duration_ms: 1.7305\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 87.0144\nAC-060 OK"
+      "output": "TAP version 13\n# Subtest: AC-060 write gates take precedence without reading the request body\nok 1 - AC-060 write gates take precedence without reading the request body\n  ---\n  duration_ms: 3.6516\n  type: 'test'\n  ...\n# Subtest: AC-060 oversized and malformed bodies reject without destroying the stream\nok 2 - AC-060 oversized and malformed bodies reject without destroying the stream\n  ---\n  duration_ms: 1.5428\n  type: 'test'\n  ...\n# Subtest: [AC-060] registered write routes reject in order before parsing malformed bodies\nok 3 - [AC-060] registered write routes reject in order before parsing malformed bodies\n  ---\n  duration_ms: 6.0956\n  type: 'test'\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 133.7026\nAC-060 OK"
     },
     {
       "id": "AC-061",
       "title": "",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.69,
+      "durationS": 0.7,
       "lastLine": "AC-061 OK",
-      "output": "TAP version 13\n# Subtest: [AC-061] HTTP health and doctor agree for healthy and missing config\nok 1 - [AC-061] HTTP health and doctor agree for healthy and missing config\n  ---\n  duration_ms: 7.5489\n  type: 'test'\n  ...\n# Subtest: [AC-061] healthy facts and missing initial caches are aggregated\nok 2 - [AC-061] healthy facts and missing initial caches are aggregated\n  ---\n  duration_ms: 4.7953\n  type: 'test'\n  ...\n# Subtest: [AC-061] faults are collected without exposing the config path\nok 3 - [AC-061] faults are collected without exposing the config path\n  ---\n  duration_ms: 0.6529\n  type: 'test'\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 125.8687\nAC-061 OK"
+      "output": "TAP version 13\n# Subtest: [AC-061] HTTP health and doctor agree for healthy and missing config\nok 1 - [AC-061] HTTP health and doctor agree for healthy and missing config\n  ---\n  duration_ms: 8.9241\n  type: 'test'\n  ...\n# Subtest: [AC-061] healthy facts and missing initial caches are aggregated\nok 2 - [AC-061] healthy facts and missing initial caches are aggregated\n  ---\n  duration_ms: 4.7294\n  type: 'test'\n  ...\n# Subtest: [AC-061] faults are collected without exposing the config path\nok 3 - [AC-061] faults are collected without exposing the config path\n  ---\n  duration_ms: 0.6771\n  type: 'test'\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 147.0794\nAC-061 OK"
     }
   ]
 }
