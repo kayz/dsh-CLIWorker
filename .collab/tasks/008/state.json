@@ -29,10 +29,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:hy4free"
+    },
+    {
+      "at": "2026-11-08T00:47:49.489Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T00:47:49.633Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-08T00:47:49.129Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-08T00:47:49.633Z",
   "role": "review",
   "model": "hy4free",
   "model_resolved": "hy4free",
@@ -40,5 +52,54 @@
   "attempt": 3,
   "switches": 0,
   "blocked_reason": null,
-  "handoff": null
+  "handoff": null,
+  "pr": {
+    "branch": "task/008",
+    "state": "open",
+    "files": [
+      ".collab/tasks/008/acceptance.md",
+      ".collab/tasks/008/ci-results.json",
+      ".collab/tasks/008/design.md",
+      ".collab/tasks/008/impl.md",
+      ".collab/tasks/008/review.md",
+      ".collab/tasks/008/run.json",
+      ".collab/tasks/008/state.json",
+      ".collab/tasks/008/verdict.json",
+      "README.md",
+      "lib/cli.mjs",
+      "lib/commands/models/select.mjs",
+      "lib/output.mjs",
+      "lib/request.mjs",
+      "test/characterization/defects/a5-ignored-fields.test.mjs",
+      "test/integration/cli-envelope.test.mjs",
+      "test/traceability/T-008.json",
+      "test/unit/request.test.mjs"
+    ],
+    "sha": "877a6e09f6e89d5f366e68e462445d87ad34a9ad"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "confirm",
+    "reasons": [
+      "改动 9 个文件，超过 8 个"
+    ],
+    "metrics": {
+      "files": 9,
+      "lines": 686,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 9
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T00:47:49.590Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
