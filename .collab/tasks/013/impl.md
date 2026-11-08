@@ -37,3 +37,27 @@ AC-032 尚未完成，不能声称已验收。交班单显示候选 #1 执行失
 在 `test/unit/secrets.test.mjs` 增加 auth 输入校验、stdin 空白保留、状态及清除、只读 env 引用和空 env_names 的测试，验证无效输入不会调用后端。自测：acceptance.md 的 AC-032 命令通过 3 项并输出 `AC-032 OK`；secrets、config、config-v2、paths 和 exec 定向测试共 42 项通过，无 skip。未执行 check-fast：其检查链调用 Git，且可能写范围外报告，违反本轮限制。
 
 任务仍未完成：集成测试没有调用共享 auth flow；`test/flows/steps/auth.mjs` 和 `test/traceability/T-013.json` 不存在，显式引用、后端失败文件不变以及设计列出的完整跨平台和泄漏扫描覆盖尚需补齐。现有验收命令通过不足以证明设计全部实现，不应标记 covered。
+
+截至本轮，以上历史记录中的实现缺口已补齐；全项目检查仍有下述范围外及环境阻碍，不能宣称 check-fast 已通过。本轮严格保留 brief.md、design.md、acceptance.md、review/verdict、state/run；没有执行 Git 命令，也没有创建 write_scope 外的源码或文档。brief 没有指定另一个验收报告路径。本轮没有缩短或弱化 acceptance.md；依据当前 design.md 第 13–16 项，把评审要求的完整行为覆盖落实到允许修改的测试中。
+
+- 新增 `test/flows/steps/auth.mjs`，导出约定的 auth/T-013/AC-032 元数据和 run(flow)，使用共享 flow.run/flow.spawn 运行真实 bin。from-env 和 stdin 各自独立 set、status、消费和 clear；消费脚本加载生产 context、配置和 runWithSecrets，不自行组装凭据环境。finally 恢复原配置和 flow.env 并清理临时夹具，完整 flow 的后续步骤仍可运行。
+- flows 夹具源码包含在允许的 auth flow 文件中；运行时只在系统临时 flow.root 下生成 preload、消费脚本、fake-cli 和密文条目。preload 只替换后端 spawnSync 并同步 ESM 绑定，保留生产 CLI/auth/exec/定位/消费路径。替身使用 AES-256-GCM，随机密钥仅在父进程内存和后端测试子进程环境中；Windows 密文仍由生产代码写入。消费创建 ctx 前移除测试密钥、存储配置与 NODE_OPTIONS，status/消费没有来源哨兵或令牌 stdin。
+- 恢复六个实质性的 AC-032 集成用例：两种输入跨进程持久化、默认引用覆盖旧值与 state_dir 隔离、显式 keychain 引用、clear 后消费失败且 provider 不启动、ENOENT/普通后端失败时目录与已有文件字节不变，以及实际发现并运行共享 auth flow。显式条目含引号、反斜杠和路径形态，Windows 验证文件名为完整 SHA-256。失败测试还比较加密替身存储并验证原本缺失的 state_dir 仍不存在。
+- 每种输入设置后、消费后、清除后都以 flow.sentinels 扫描 stdout/stderr/argv/HTTP/state_dir/audit，并额外扫描整个 flow.root，断言 ok=true、hits=[]、errors=[]。沿用 leakScan 的 raw/UTF-16LE/base64/hex 扫描，没有排除明文文件。后端 stdin 只在内存处理；先检查凭据没有进入后端 argv，再记录安全的命令参数供文件扫描。fake-cli 仅记录 argv、变量名和 SHA-256，断言匹配令牌摘要的环境变量集合恰为声明集合 KIMI_API_KEY。
+- 附加 native roundtrip 只在显式设置 `CLIWORKER_TEST_NATIVE_SECRETS=1` 时注册，按平台、工具和会话门控，以既有 cliworker.skip/v1 记录跳过原因。名称不含 AC 标记；默认 AC-032 和正式 runner 均没有注册 native 用例或产生 skip。明确选择时只写临时 state_dir 对应的隔离服务条目并 finally 清除。
+- 生产消费入口现在删除所有包含秘密的未声明环境变量，包括带前后缀的别名；沿用 Windows 不区分大小写的目标变量清理，不修改调用者 env/config/call。返回结果改用既有 redact。SecretRef 非空条目标识允许进入既定后端校验，使 security 交互输入中的控制字符在执行前安全返回 E_REQUEST_INVALID。
+- 扩充 AC-033 纯单测：逐一注入 win32/darwin/linux，验证服务完整 SHA-256、程序/参数/shell=false/stdin、引用一致性、后端错误与缺失的区别；比较递归目录和原有文件字节，覆盖 Windows 临时文件与目录回滚、损坏/读写权限错误。还覆盖输入验证、恰好移除一个行尾、env 只读/session 隔离、配置明文扫描不写文件、CLI envelope、同步 input/回退、异步 EOF/EPIPE/写入异常/超时/时钟及并发槽释放、无 input 回归。
+- 新增 `test/traceability/T-013.json`，仅使用 task/milestone/entries/ac/files/status，登记 AC-032 和 AC-033。行为验证通过后，最终状态为 covered；没有新增 schema、版本、错误码、ctx 或产品配置字段。
+
+本轮实际自测（Node v22.23.3，Windows）：
+
+- `node --test --test-name-pattern=AC-032 test/integration/secrets-native.test.mjs`：6/6 通过，fail/cancelled/skipped/todo 均为 0。这是 acceptance.md 命令中的 Node 测试部分；当前缺少 PowerShell 7，不能声称最后的 PowerShell `AC-032 OK` 输出已原样复现。
+- `node scripts/run-tests.mjs --ac AC-032`：6/6 通过；`node scripts/run-tests.mjs --ac AC-033`：最终 23/23 通过。另用各自独立的系统临时 out-dir 运行并断言测试数非空、fail/cancelled/skipped/todo 为 0、skips.jsonl 为空、files-executed.json 的 mode/filter/files 精确对应各 AC 及唯一预期测试文件；验证后清理临时证据。
+- `node --test test/flows/flow.test.mjs test/integration/cli-envelope.test.mjs test/unit/config.test.mjs test/unit/config-v2.test.mjs test/unit/exec.test.mjs`：39/39 通过，无跳过；paths 的 6 项亦通过。
+- check-traceability、check-seams、check-unused、check-test-discovery 均通过。显式选择 native 且工具缺失时，仅注册该 native 用例，正确产生一条 cliworker.skip/v1 工具门控记录；未写真实账号条目。
+
+最终检查没有全部通过，具体限制如下：指定 `pwsh -NoProfile -File C:/git/dsh-CLIWorker/.collab/worktrees/013/scripts/check-fast.ps1` 实际尝试后因找不到 pwsh 退出 1；检查了常见安装/便携位置，没有发现 PowerShell 7。执行工具早期在 shell=pwsh 时静默回落到 5.1，发现后已停止使用该回落，后续以 Node/原生命令执行验证。直接执行该 ps1 所调用的 `node scripts/check-fast.mjs`，前五个检查通过，随后在 check-no-collab 停止：`docs/ui/cliworker-console.html:1073`、`test/unit/gitignore.test.mjs:13`、`:18` 共三处违规；均不在 write_scope，未改动。没有启用任何检查脚本注入覆盖。
+
+另外独立运行 check-pack 时 npm pack 返回退出码 4294963248；扩展 import-safe 回归时，范围外 `test/unit/import-safe.test.mjs:70` 仍要求缺失配置退出 1/写 stderr，当前既有 CLI 按配置错误 envelope 退出 3，与该旧断言冲突（该文件 5 项中 4 项通过）。这些结果已保留为失败记录，未通过修改范围外文件或改变其他路由来掩盖。因此本轮 AC 行为测试和所列定向检查通过，但全项目 check-fast 及额外回归仍不能标为通过。
+
+最后收紧 Linux 的 unset 判定：退出 1 时必须 stdout/stderr/error 均为空；stdout 含诊断内容仍为 E_SECRET_BACKEND，避免掩盖后端失败。增加对应 get/clear 断言。最终再次执行 `node --test test/unit/secrets.test.mjs test/integration/secrets-native.test.mjs`：29/29 通过，fail/cancelled/skipped/todo 全为 0。

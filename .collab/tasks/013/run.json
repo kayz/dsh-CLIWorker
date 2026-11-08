@@ -1378,5 +1378,67 @@
       "model": "deepseek-v4.1-flash",
       "file": "handoff/dev-r4-c1-to-c2.md"
     }
+  },
+  {
+    "task": "013",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T06:56:24.026Z",
+    "ended_at": "2026-11-08T06:56:24.026Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 1,
+      "total": 1,
+      "ok": true,
+      "ran_at": "2026-11-08T06:56:24.026Z",
+      "report_ref": ".collab/tasks/013/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/013/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "013",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-sol",
+    "model_resolved": "gpt-6.1-sol",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T07:24:57.961Z",
+    "ended_at": "2026-11-08T07:41:11.526Z",
+    "duration_ms": 973565,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 4448790,
+      "output": 37028,
+      "cache_read": 4310272,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/013/logs/dev-r1-1.log",
+    "error": null
   }
 ]

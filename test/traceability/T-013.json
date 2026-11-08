@@ -1,0 +1,16 @@
+{
+  "task": "T-013",
+  "milestone": "M2",
+  "entries": [
+    {
+      "ac": "AC-032",
+      "files": ["test/integration/secrets-native.test.mjs", "test/flows/steps/auth.mjs"],
+      "status": "covered"
+    },
+    {
+      "ac": "AC-033",
+      "files": ["test/unit/secrets.test.mjs"],
+      "status": "covered"
+    }
+  ]
+}

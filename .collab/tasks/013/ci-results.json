@@ -1,7 +1,7 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\013",
   "taskDir": ".collab\\tasks\\013",
-  "ranAt": "2026-11-08T14:35:17.3785026+08:00",
+  "ranAt": "2026-11-08T14:56:23.9358972+08:00",
   "passed": 1,
   "total": 1,
   "ok": true,
@@ -11,9 +11,9 @@
       "title": "用户令牌只经适配器声明的环境变量注入",
       "passed": true,
       "exitCode": 0,
-      "durationS": 2.81,
+      "durationS": 2.38,
       "lastLine": "AC-032 OK",
-      "output": "TAP version 13\n# Subtest: [AC-032] from-env persists across processes and injects declared env only\nok 1 - [AC-032] from-env persists across processes and injects declared env only\n  ---\n  duration_ms: 989.1768\n  type: 'test'\n  ...\n# Subtest: [AC-032] stdin persists across processes and injects declared env only\nok 2 - [AC-032] stdin persists across processes and injects declared env only\n  ---\n  duration_ms: 982.1397\n  type: 'test'\n  ...\n# Subtest: [AC-032] real CLI reports an absent default credential as unset\nok 3 - [AC-032] real CLI reports an absent default credential as unset\n  ---\n  duration_ms: 91.9438\n  type: 'test'\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 2151.2379\nAC-032 OK"
+      "output": "TAP version 13\n# Subtest: [AC-032] from-env persists across processes and injects declared env only\nok 1 - [AC-032] from-env persists across processes and injects declared env only\n  ---\n  duration_ms: 848.4652\n  type: 'test'\n  ...\n# Subtest: [AC-032] stdin persists across processes and injects declared env only\nok 2 - [AC-032] stdin persists across processes and injects declared env only\n  ---\n  duration_ms: 859.2279\n  type: 'test'\n  ...\n# Subtest: [AC-032] real CLI reports an absent default credential as unset\nok 3 - [AC-032] real CLI reports an absent default credential as unset\n  ---\n  duration_ms: 87.1286\n  type: 'test'\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 1865.3631\nAC-032 OK"
     }
   ]
 }
