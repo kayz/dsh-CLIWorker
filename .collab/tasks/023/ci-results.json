@@ -1,0 +1,28 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\023",
+  "taskDir": ".collab\\tasks\\023",
+  "ranAt": "2026-11-09T02:26:25.4366869+08:00",
+  "passed": 0,
+  "total": 2,
+  "ok": false,
+  "results": [
+    {
+      "id": "AC-057",
+      "title": "",
+      "passed": false,
+      "exitCode": 1,
+      "durationS": 1.01,
+      "lastLine": "     | AC-057 direct tests failed",
+      "output": "Could not find 'test/integration/runner.test.mjs'\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-6b5bd3c4-4124-43f8-b0ff-96a471800841.ps1:7\nLine |\n   7 |  if ($testExit -ne 0) { throw 'AC-057 direct tests failed' }\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-057 direct tests failed"
+    },
+    {
+      "id": "AC-058",
+      "title": "",
+      "passed": false,
+      "exitCode": 1,
+      "durationS": 0.88,
+      "lastLine": "     | AC-058 direct tests failed",
+      "output": "Could not find 'test/integration/runner-errors.test.mjs'\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-05843be6-0c30-41ff-824b-e6b102de36ee.ps1:7\nLine |\n   7 |  if ($testExit -ne 0) { throw 'AC-058 direct tests failed' }\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-058 direct tests failed"
+    }
+  ]
+}
