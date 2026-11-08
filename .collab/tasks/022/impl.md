@@ -8,4 +8,13 @@
 
 自测：`node --test` 对策略、储备、无探测测试的 22 个测试通过；selection-shape 的 12 个测试及 A5 的两个测试在组合运行中通过。50 进程并发测试一次失败、一次通过，仍存在不稳定性，不能声明 AC-054 通过。`npm.cmd run perf` 运行了 50 模型、5 次预热和 30 个样本，报告 p95=16.406 ms；这是单次测量，不是性能门槛。
 
-尚缺 `test/contract/selection-view.test.mjs` 和 `test/traceability/T-022.json`，未完成 AC-056 所要求的视图、CLI、流程和追踪验证，也未逐条执行全部验收命令。调用环境中的 `pwsh` 不可用，`npm run perf` 的 PowerShell 包装脚本受执行策略阻止，故原样完成检查未运行。应在具备 PowerShell 7 的环境中补齐实现与测试、排查并发不稳定后，按 acceptance.md 逐条执行所有检查。
+当时尚缺视图测试和追踪分片，且未完成 AC-056 验证。调用环境中的 `pwsh` 不可用，`npm run perf` 的 PowerShell 包装脚本受执行策略阻止，故原样完成检查未运行。
+
+## 续接记录
+
+- 新增视图契约测试，使用真实 CLI 检查 full 门控及无租约副作用、截断、管理详情、草稿兼容和警告合并；分别检查两个零候选错误及退出码，并对实际成功与失败的 AgentLine 结果调用扫描器。测试遍历现有示例并按所属 schema 校验，也实际运行 select 流程步骤。
+- 新增 T-022 追踪分片。AC-054、AC-055、AC-056 仍标为 planned：现有测试尚未覆盖 acceptance 中的所有细节，不能根据测试通过而标为 covered。
+- 六次 `node scripts/run-tests.mjs --ac` 均退出 0；新视图测试四项通过。并发测试本轮两次直接运行及一次过滤运行通过，但此前出现过子进程失败，且其等待仍需改成规格要求的事件协调时钟，不能证明稳定或完整满足 AC-054。
+- `node scripts/check-fast.mjs` 在 `check-pack` 阶段失败，报告 npm pack 退出 4294963248；该命令不替代要求的 PowerShell 完成检查。另行启动完整测试时，现有 `test/integration/cli-envelope.test.mjs` 的“每个成功命令”用例对无缓存 draft 选模期待退出 0，实际退出 5；完整运行随后未收束并被中断，因此不能声称完整测试通过。
+
+仍需覆盖 AC-056 对全部策略夹具驱动真实命令、静态 AgentLine 示例扫描、paid 详情和更全面的密钥哨兵检查；AC-054 还需事件驱动时钟、严格检查每次提交快照及竞争中的不足额度行为。完成这些工作后才能将对应追踪状态设为 covered，并在可用的 PowerShell 7 环境逐条执行原验收命令。
