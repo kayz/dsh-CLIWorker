@@ -34,5 +34,41 @@
       "token_ref": "sha256:7ecea6623ebd2e78",
       "invalidated_reason": null
     }
+  },
+  {
+    "task": "026",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-terra",
+    "model_resolved": "gpt-6.1-terra",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T19:39:12.389Z",
+    "ended_at": "2026-11-08T19:42:19.596Z",
+    "duration_ms": 187207,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 853230,
+      "output": 7056,
+      "cache_read": 817280,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/026/logs/dev-r1-1.log",
+    "error": null,
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:6878c2d3141e07bc",
+      "invalidated_reason": null
+    }
   }
 ]
