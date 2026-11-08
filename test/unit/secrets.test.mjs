@@ -58,6 +58,22 @@ test('legacy configuration retains explicit secret references', () => {
   assert.equal(config.secrets.kimi.ref, 'session:configured')
 })
 
+test('Windows failed ciphertext write removes directories created by the attempt', () => {
+  const removed = []
+  const ctx = {
+    platform: 'win32', env: {},
+    exec: () => ({ ok: true, code: 0, stdout: 'ciphertext', stderr: '', error: null }),
+    fs: {
+      mkdirSync: () => 'C:\\isolated\\state',
+      writeFileSync: () => { throw new Error('write failed') },
+      unlinkSync: () => {},
+      rmdirSync: dir => removed.push(dir),
+    },
+  }
+  assert.throws(() => secretAction(ctx, { state_dir: 'C:\\isolated\\state' }, 'kimi', 'set', 'value'), { code: 'E_SECRET_BACKEND' })
+  assert.deepEqual(removed, ['c:\\isolated\\state\\secrets', 'c:\\isolated\\state'])
+})
+
 test('exec forwards synchronous input without changing argv', () => {
   let observed
   const exec = createExec({ spawnSync: (file, args, options) => {
