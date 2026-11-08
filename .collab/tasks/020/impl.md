@@ -15,3 +15,11 @@
 - `node --test test/unit/select.test.mjs test/unit/select-draft.test.mjs test/unit/adapters.test.mjs test/unit/adapters-unverified.test.mjs`：27 项通过，仅覆盖既有回归。
 - AC-047 本地 TAP 命令中的 Node 测试调用返回 0、27 项通过，但 `test/integration/probe.test.mjs` 尚不存在；本机 Node 没有因此报错，所以此结果不能证明探测测试运行或 AC 通过。
 - 未运行 `scripts/check-fast.ps1`：完整测试链包含直接调用 Git 的测试，与用户禁止执行 Git 的要求冲突。未运行会写入仓库外指定范围之外报告的门禁。
+
+## 第 1 轮增量
+
+- 新增 `lib/probe.mjs` 和 `models probe` 动态命令，使用目录白名单、已有直接调用构造与 SecretRef 执行入口；本地合成事件实现 nonce、身份与部分错误结果的解析。新增探测用量锁内幂等写入及缓存更新，缓存读取增加证据类型校验。
+- 新增本任务专属本地 stub、流程步骤和两条 planned 追踪条目。流程测试经真实 bin 执行，验证缓存、账本和泄漏扫描；stub 不代表真实供应商协议或 T-015 集成。
+- 本地 AC-047 命令对应的 TAP 调用：37 项中 36 项通过、1 项失败。持续超时且没有可信用量时，当前实现保守地返回 `E_PROVIDER_FAILED` 并使旧成功记录失效，而验收要求返回 `unavailable`；如何记录未知消耗且不误报免费仍未完成。首次超时无用量、重试成功的情形也受此限制。
+- 本地 AC-048 TAP 调用：4 项通过，覆盖白名单对照、串行与并发重放、损坏账本和一个池用量增量；仍未覆盖验收要求的全部失败、窗口、泄漏和重试场景，不能将其视为完整 AC-048 验收。当前命令可能因覆盖不足而返回 0。
+- 尚需完成完整解码和用量处理、生产选模入口与无记录兼容性覆盖、账本写入失败及其余验收断言。本轮实现仍为未完成状态，不应作为正式交付；T-015 缺失，正式集成验收保持 pending。未运行会间接调用 Git 的 `check-fast.ps1`。

@@ -1,0 +1,8 @@
+{
+  "task": "T-020",
+  "milestone": "M3",
+  "entries": [
+    { "ac": "AC-047", "status": "planned", "files": ["test/integration/probe.test.mjs"] },
+    { "ac": "AC-048", "status": "planned", "files": ["test/integration/probe-ledger.test.mjs"] }
+  ]
+}
