@@ -1,0 +1,21 @@
+{
+  "verdict": "pass",
+  "sha": "97d6f884bfb8d6c5799367b9862253bc9a700ccb",
+  "passed": 1,
+  "total": 1,
+  "evidence": [
+    "验证的 git sha（只读，未执行 git 命令）：97d6f884bfb8d6c5799367b9862253bc9a700ccb。.git 文件指向 worktrees/033，HEAD 为 refs/heads/task/033，refs 值即该 sha，reflog 末条 'stage(dev): task 033'（1794156448 +0800）。",
+    "通过数/总数 = 1/1（acceptance.md 仅含 AC-078 一节）。执行证据：ci-results.json passed=1 total=1 ok=true，AC-078 exitCode=0、lastLine='AC-078 OK'，TAP 摘要 tests 23 / pass 23 / fail 0 / cancelled 0 / skipped 0 / todo 0，23 个用例标题均带 [AC-078]。CI ranAt 16:47:29Z 晚于提交 16:47:28Z，与代码不矛盾。",
+    "只读核对实现与规格一致：registry.mjs:32-52,108-141,147-155,161-170,176-199（描述符、精确 endpoint、注入模型清单、CLI 直通 buildDirectCall、网络前校验）；http-openai.mjs:70-104（apiKeyEnv 经 env 引用 resolveSecret，缺失 E_SECRET_BACKEND 含变量名，内联 E_CONFIG_SECRET_INLINE，非法名 E_REQUEST_INVALID）、:173-188,276-290,328-366（错误映射与 2 次尝试上限）、:194-225（ctx.clock 超时覆盖 fetch 与响应体并清理）、:340-346（逐次累加已确认用量，溢出显式失败）、:66-68（redact）；ledger.mjs:47-97（来源键、池隔离、共池付费前拒绝）、:99-157（未知不写零账、cache 计 0、withLock 内按 来源键+idempotency_key 防重、坏账本/写失败抛出不改字节）。",
+    "测试覆盖核对：test/contract/http-provider.test.mjs:422-468 逐行断言错误表（码/retryable/retry_after/fetch 次数），:470-544 超时与无遗留定时器，:546-571 身份五分支并与 hook 对比，:573-615 用量精确/未知/cache，:636-738 分池与共池拒绝（真实 evaluatePools），:740-788 防重/坏账本/写失败，:790-816 重试用量合计；unit 文件另含 10 个用例。",
+    "非阻塞观察（P2，详见 review.md）：合计溢出分支无测试；Retry-After 日期用 Date.parse 较宽松；评审环境无法用 git 对 tree 做独立写域比对，写域依 impl.md 声明与文件清单只读推断。HTTP probe 接线缺口归 T-020，已在 impl.md:106-108 记录。brief 无验收报告路径，无需追加历史文档。"
+  ],
+  "findings": [],
+  "checks": [
+    {
+      "id": "AC-078",
+      "passed": true,
+      "evidence": "ci-results.json passed=true、exitCode=0、lastLine='AC-078 OK'；TAP tests 23 pass 23 fail/cancelled/skipped/todo 0。只读复核 registry.mjs、http-openai.mjs、ledger.mjs 与两份测试，描述符契约、verified/observed 身份、123/45 精确记账、env 凭据引用、分池、防重、重试用量合计与错误映射表均与 design.md/acceptance.md 一致，详见 review.md。"
+    }
+  ]
+}
