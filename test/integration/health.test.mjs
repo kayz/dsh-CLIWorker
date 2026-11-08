@@ -8,6 +8,7 @@ import { createFlow } from '../helpers/flow.mjs'
 import * as doctorStep from '../flows/steps/doctor.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
+import { run as runDoctor } from '../../lib/commands/doctor.mjs'
 
 test('[AC-061] HTTP health and doctor agree for healthy and missing config', async () => {
   for (const valid of [true, false]) {
@@ -56,4 +57,18 @@ test('[AC-061] health reports this plugin instance registration failure', async 
   const report = JSON.parse(response.body)
   assert.equal(report.registration, 'failed')
   assert.equal(report.checks.find(x => x.id === 'registration').ok, false)
+})
+
+test('[AC-061] doctor and health agree when equivalent registrations fail', async () => {
+  const files = { '/cw/config.json': JSON.stringify({ providers: {}, models: {} }) }
+  const httpCtx = createFakeContext({ files })
+  const host = createHostStub({ failPaths: ['/cliworker/models'] })
+  createPlugin(host.ctx, { configPath: '/cw/config.json' }, { ctx: httpCtx })
+  const response = await host.request('/cliworker/health')
+  const doctorCtx = createFakeContext({ files })
+  const result = await runDoctor({ argv: ['doctor', '--config', '/cw/config.json'], ctx: doctorCtx, hostCtx: createHostStub({ failPaths: ['/cliworker/models'] }).ctx })
+  assert.equal(result.exitCode, 9)
+  const error = JSON.parse(doctorCtx.stdout.text())
+  assert.equal(error.error.code, 'E_HEALTH_DEGRADED')
+  assert.deepEqual(JSON.parse(error.error.message), JSON.parse(response.body))
 })

@@ -62,6 +62,31 @@ test('[AC-060] registered write routes reject in order before parsing malformed 
   }
 })
 
+test('[AC-060] each registered write rejects invalid and expired sessions, mismatched csrf, and oversize bodies', async () => {
+  const raw = { schema: 'cliworker.config/v2', state_dir: '/cw/state', discovery: { cli_overrides: {} }, catalog: { manual: [], allow: [], levels: {}, aliases: {}, deprecated: {} }, pools: [], policy: { session_ttl_s: 2 }, secrets: {} }
+  const ctx = createFakeContext({ files: { '/cw/config.json': JSON.stringify(raw) } })
+  const host = createHostStub()
+  createPlugin(host.ctx, { configPath: '/cw/config.json' }, { ctx })
+  const first = JSON.parse((await host.request('/cliworker/api/session')).body)
+  const second = JSON.parse((await host.request('/cliworker/api/session')).body)
+  const huge = 'x'.repeat(2_000_001)
+  for (const entry of routes.filter(x => x.level === 'admin_write')) {
+    const call = (headers, body) => host.request(entry.path, { method: 'POST', headers, body })
+    const unknown = await call({ 'x-cliworker-session': 'unknown' }, '{')
+    assert.equal(JSON.parse(unknown.body).error.code, 'E_ADMIN_REQUIRED')
+    const mismatch = await call({ 'x-cliworker-session': first.session, 'x-cliworker-csrf': second.csrf }, '{')
+    assert.equal(JSON.parse(mismatch.body).error.code, 'E_CSRF')
+    const over = await call({ 'x-cliworker-session': first.session, 'x-cliworker-csrf': first.csrf }, huge)
+    assert.equal(over.statusCode, 400)
+    assert.equal(JSON.parse(over.body).error.code, 'E_REQUEST_INVALID')
+  }
+  await ctx.clock.advance(2000)
+  for (const entry of routes.filter(x => x.level === 'admin_write')) {
+    const expired = await host.request(entry.path, { method: 'POST', headers: { 'x-cliworker-session': first.session, 'x-cliworker-csrf': first.csrf }, body: '{' })
+    assert.equal(JSON.parse(expired.body).error.code, 'E_ADMIN_REQUIRED')
+  }
+})
+
 test('[AC-060] first write with the issued session and csrf updates the real pool configuration', async () => {
   const pool = { id: 'p', cli: 'example', kind: 'credits', funding: 'paid', window: null, capacity_mtok: {}, used_fraction: null, credits_per_mtok: null }
   const raw = { schema: 'cliworker.config/v2', state_dir: '/cw/state', discovery: { cli_overrides: {} }, catalog: { manual: [], allow: [], levels: {}, aliases: {}, deprecated: {} }, pools: [pool], policy: {}, secrets: {} }

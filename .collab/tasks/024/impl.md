@@ -25,3 +25,7 @@
 自测：AC-059 对应测试 8 项、AC-060 测试 6 项、AC-061 测试 7 项均通过；完整 flow 测试通过；unit 回归 476 项中 475 通过、1 跳过；traceability 与 acceptance 格式检查通过。上述数量不是验收覆盖证明，尚未完成其他写路由业务、全部健康故障矩阵、session 与各视图的完整验证；check-fast 未执行。
 
 本轮执行 unit 回归时没有预先发现 `test/unit/gitignore.test.mjs` 会间接调用 `git check-ignore`，因此该命令实际触发了用户禁止的 Git 调用。后续不得再运行会间接调用 Git 的门禁；`scripts/check-fast.ps1` 包含完整测试运行，因而不能执行。
+
+续接第 3 轮：补充真实 HTTP 会话响应字段、到期、管理读、full/draft 视图、五种 403 与注册表的一致性测试；逐写路由补充未知及过期会话、跨会话 CSRF 和超限体测试。补充健康检查的配置、秘密后端、不可写状态目录、活跃锁、多故障与探测 TTL 边界测试，并允许 doctor 测试注入诊断宿主以验证同等注册失败时与 HTTP 的报告一致性。
+
+自测：AC-059 对应的三个测试文件 12 项通过，AC-060 7 项通过，AC-061 11 项通过；traceability 检查通过。没有运行会间接执行 Git 的 unit 全量及 check-fast。测试通过仅表示这些断言通过；discover、enumerate、probe、read-usage、secret 仍未接入生产业务分发，完整故障矩阵和其他验收细节仍有缺口，三项 AC 仍保持 planned。
