@@ -83,10 +83,16 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T20:34:46.114Z",
+      "from": "reviewed",
+      "to": "merged",
+      "by": "human"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-08T20:06:33.228Z",
+  "status": "merged",
+  "updated_at": "2026-11-08T20:34:46.114Z",
   "role": "review",
   "model": "claude-sonnet-5-5",
   "model_resolved": "claude-sonnet-5-5",
@@ -95,5 +101,35 @@
   "switches": 0,
   "blocked_reason": null,
   "handoff": null,
-  "interrupted": null
+  "interrupted": null,
+  "pr": {
+    "state": "merged",
+    "sha": "b05b3cb26c79f9dc2bcf41a67f5612bdd42355c3",
+    "merged_at": "2026-11-08T20:34:46.106Z",
+    "permission": "用满三个task并行量继续推进，之后task合并不需要我显式提示，直接处理掉",
+    "permission_kind": "explicit",
+    "grant_id": null
+  },
+  "merge_risk": {
+    "tier": "confirm",
+    "reasons": [
+      "3 个文件在 write_scope 之外：.collab/blueprint/cliworker-v2/task-graph.json, test/integration/plugin-guard.test.mjs, test/integration/plugin-routes.test.mjs",
+      "改动 14 个文件，超过 8 个"
+    ],
+    "metrics": {
+      "files": 14,
+      "lines": 894,
+      "review_rounds": 2,
+      "out_of_scope": 3,
+      "write_scope": 9
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T20:34:44.952Z",
+    "base": "main",
+    "head": "task/025"
+  }
 }
