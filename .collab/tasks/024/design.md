@@ -1,0 +1,16 @@
+---
+write_scope:
+  - lib/index.js
+  - lib/http/**
+  - lib/health.mjs
+  - lib/commands/doctor.mjs
+  - test/integration/plugin-routes.test.mjs
+  - test/integration/plugin-guard.test.mjs
+  - test/integration/plugin-session.test.mjs
+  - test/integration/health.test.mjs
+  - test/unit/health.test.mjs
+  - test/flows/steps/http-select.mjs
+  - test/flows/steps/http-admin.mjs
+  - test/flows/steps/doctor.mjs
+  - test/traceability/T-024.json
+---
