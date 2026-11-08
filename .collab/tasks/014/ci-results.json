@@ -1,0 +1,19 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\014",
+  "taskDir": ".collab\\tasks\\014",
+  "ranAt": "2026-11-08T10:55:24.0592457+08:00",
+  "passed": 1,
+  "total": 1,
+  "ok": true,
+  "results": [
+    {
+      "id": "AC-034",
+      "title": "配置 v2 与 v1 迁移",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 1.24,
+      "lastLine": "AC-034 OK",
+      "output": "AC-034 OK"
+    }
+  ]
+}

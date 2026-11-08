@@ -1,0 +1,28 @@
+{
+  "schema": "cliworker.config/v1",
+  "state_dir": "./state",
+  "providers": {
+    "claude": { "cli": "claude", "adapter": "claude", "readonly": true },
+    "codex": { "cli": "codex", "readonly": false },
+    "credits": { "cli": "credits" },
+    "unknown": { "cli": "unknown" },
+    "usd": { "cli": "usd" },
+    "both": { "cli": "both" }
+  },
+  "models": {
+    "claude:alpha": { "provider": "claude", "id": "alpha", "level": "High", "identity": "verified", "identity_group": "alpha", "readonly": true, "input_per_mtok": 1, "output_per_mtok": 2 },
+    "codex:beta": { "provider": "codex", "id": "beta", "tier": "advanced", "identity": "verified", "input_per_mtok": 2, "output_per_mtok": 3 },
+    "credits:gamma": { "provider": "credits", "id": "gamma", "level": "Quick", "identity": "unverified" },
+    "unknown:delta": { "provider": "unknown", "id": "delta", "level": "Quick" },
+    "usd:epsilon": { "provider": "usd", "id": "epsilon", "level": "Quick" },
+    "both:zeta": { "provider": "both", "id": "zeta", "level": "High", "deprecated": true, "deprecated_reason": "retired" }
+  },
+  "quotas": {
+    "claude": { "remaining_pct": 75 },
+    "codex": { "remaining": 2000000, "unit": "tokens" },
+    "credits": { "remaining": 20, "unit": "credits", "credits_per_mtok": 10 },
+    "unknown": { "remaining": 30, "unit": "credits" },
+    "usd": { "remaining_usd": 12 },
+    "both": { "remaining": 40, "unit": "credits", "remaining_usd": 9 }
+  }
+}
