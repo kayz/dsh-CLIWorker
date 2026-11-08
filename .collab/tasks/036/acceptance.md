@@ -4,7 +4,7 @@
 
 以下均在仓库根目录、PowerShell 7 中独立执行；原生命令执行后立即检查 `$LASTEXITCODE`，非 0 即该项失败。下列是下游实现完成后的标准，本 design 阶段未执行，不代表通过。brief 只给出单元测试当前基线 356 pass，没有基准 SHA 或既有验收报告路径。
 
-当前阻塞见 design.md 和 attention.json：中央追踪只接受 AC-001..AC-074，加入 AC-079 分片将使既有单元测试失败；per-CLI 模块接口与范围也待裁决。必须先解决阻塞，不能将以下任何失败改写为通过。
+本轮用户已授权 AC-079 的最小追加与必要的计数迁移，并取消 per-CLI 模块；上一轮 attention.json 的问题已获回答，不再作为暂停条件。以下标准包含中央追踪兼容，产品交付仍为 brief 四项。增量 `e2667e5` 仅作为用户提供的变更引用；沿用工作树已更新的 E_LEVEL_UNKNOWN/E_REQUEST_INVALID 错误码，不执行 git 获取提交内容。
 
 1. AC-079（contract）。
 
@@ -88,7 +88,7 @@
    node scripts/check-traceability.mjs --json
    ```
 
-   期望输出：退出码 0，JSON 中 `ok` 为 true、`errors` 为空，`acs` 包含 AC-079 且其 `status` 为 covered。当前索引未兼容时此项必失败；不能删除 T-036 分片、隐藏未知 AC 或使用临时索引代替全仓结果。
+   期望输出：退出码 0，JSON 中 `ok` 为 true、`errors` 为空，`acs` 包含 AC-079 且其 `status` 为 covered。不能删除 T-036 分片、隐藏未知 AC 或使用临时索引代替全仓结果。
 
 6. 既有单元测试回归门禁。
 
@@ -98,7 +98,7 @@
    node --test "test/unit/*.test.mjs"
    ```
 
-   期望输出：退出码 0，汇总 `fail 0`；在 brief 的 356 pass 基础上保留既有用例并增加 AC-079 用例，不固定最终精确总数。不能通过改断言、删除/跳过既有用例达标。测试文件发现失败或空跑均失败。
+   期望输出：退出码 0，汇总 `fail 0`；在 brief 的 356 pass 基础上保留既有用例并增加 AC-079 用例，不固定最终精确总数。仅按 design.md 迁移索引数量断言和对应缺失反例，不降低原校验强度；不能删除/跳过既有用例。测试文件发现失败或空跑均失败。
 
 7. flow 回归。
 
@@ -118,4 +118,76 @@
    pwsh -NoProfile -File scripts/check-fast.ps1
    ```
 
-   期望输出：退出码 0，发现并执行 `check-no-model-table.mjs`，包含 `AC-079 OK`，最后一行为 `check-fast: ok`。任何步骤失败均失败，包含中央追踪冲突；不得绕过自动检查发现机制。此命令及测试可能生成临时数据或间接调用 git，只由后续具备相应执行授权的阶段运行，本设计角色不执行。
+   期望输出：退出码 0，发现并执行 `check-no-model-table.mjs`，包含 `AC-079 OK`，最后一行为 `check-fast: ok`。任何步骤失败均失败；不得绕过自动检查发现机制。此命令及测试可能生成临时数据或间接调用 git，只由后续具备相应执行授权的阶段运行，本设计角色不执行。
+
+9. AC-079 只追加与旧索引兼容。
+
+   命令：
+
+   ```pwsh
+   @'
+   import fs from 'node:fs';
+   import assert from 'node:assert/strict';
+   import {validateIndex} from './scripts/check-traceability.mjs';
+   import {validate} from './lib/contract/validate.mjs';
+   const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
+   const legacy = read('test/fixtures/traceability/ac-index.json');
+   const current = read('contracts/spec/ac-index.json');
+   const schema = read('contracts/schemas/ac-index.schema.json');
+   const added = {ac:'AC-079',owner:'T-036',milestone:'M3',
+     levels:['contract'],baseline:['darwin','linux','win32']};
+   assert.deepEqual(current, {...legacy, acs:[...legacy.acs, added]});
+   assert.equal(current.acs.length, legacy.acs.length + 1);
+   assert.deepEqual(validateIndex(legacy), []);
+   assert.deepEqual(validateIndex(current), []);
+   for (const index of [legacy, current]) {
+     const result = validate(schema, index);
+     assert.equal(result.ok, true, JSON.stringify(result.errors));
+     const missing = structuredClone(index);
+     missing.acs.splice(1, 1);
+     assert.ok(validateIndex(missing).some(e => e.id === 'index.count'));
+     const duplicate = structuredClone(index);
+     duplicate.acs[duplicate.acs.length - 1] = {...duplicate.acs[0]};
+     assert.ok(validateIndex(duplicate).some(e => e.id === 'index.count'));
+     const reordered = structuredClone(index);
+     [reordered.acs[0], reordered.acs[1]] = [reordered.acs[1], reordered.acs[0]];
+     assert.ok(validateIndex(reordered).some(e => e.id === 'index.count'));
+   }
+   const unknown = structuredClone(current);
+   unknown.acs.push({...added, ac:'AC-080'});
+   assert.ok(validateIndex(unknown).some(e => e.id === 'index.count'));
+   console.log('AC-079 OK');
+   '@ | node --input-type=module
+   ```
+
+   期望输出：退出码 0，stdout 为 `AC-079 OK`；中央索引仅为原 74 条加 AC-079 共 75 条，原字段、条目内容及顺序完全相同；旧完整夹具与新索引均通过索引检查和 schema 校验，核心条目缺失、重复、乱序、未知扩展均仍失败。旧夹具禁止修改，不能通过改变参照来通过验收。
+
+10. 中央追踪及本轮模型错误码回归。
+
+    命令：
+
+    ```pwsh
+    node --test test/unit/traceability.test.mjs test/unit/milestone-gate.test.mjs test/unit/lock.test.mjs test/unit/models-enumerate.test.mjs test/unit/models-add.test.mjs
+    ```
+
+    期望输出：退出码 0，`fail 0`、`skipped 0`、`todo 0`；原追踪与 milestone 夹具保留其有效/无效结论，models add 继续断言非法级别 E_LEVEL_UNKNOWN、未知 provider E_REQUEST_INVALID 且配置不变。实际 milestone 文件在 unit 目录；不为不存在的 `test/contract/milestone-gate.test.mjs` 新建文件。
+
+11. 既有契约文档一致性。
+
+    命令：
+
+    ```pwsh
+    node scripts/check-contract-doc.mjs
+    ```
+
+    期望输出：退出码 0，stdout 为 `check-contract-doc: ok`；当前 schema 已使用 AC ID 正则且支持 AC-079，无需修改 schema 或重生成文档。旧索引与新索引的 schema 兼容已由第 9 条直接校验，不以文档检查代替。
+
+12. 冻结清单同步。
+
+    命令：
+
+    ```pwsh
+    node scripts/check-golden-frozen.mjs
+    ```
+
+    期望输出：退出码 0，stdout 匹配 `check-golden-frozen: ok (... files)`，没有 `golden.changed`、`golden.unregistered` 或其他失败。实现修改中清单只能刷新中央索引对应摘要，不得接受其他文件漂移。

@@ -4,6 +4,13 @@ write_scope:
   - test/unit/check-no-model-table.test.mjs
   - test/flows/steps/enumerate.mjs
   - test/traceability/T-036.json
+  - contracts/spec/ac-index.json
+  - contracts/schemas/ac-index.schema.json
+  - contracts/golden/manifest.json
+  - scripts/check-traceability.mjs
+  - test/unit/traceability.test.mjs
+  - test/unit/lock.test.mjs
+  - test/contract/milestone-gate.test.mjs
 ---
 
 # Task 036 — 模型表静态检查与 per-CLI 枚举器
@@ -12,12 +19,11 @@ write_scope:
 
 依据同目录 brief.md、现有 `lib/commands/models/enumerate.mjs`、`lib/models/directory.mjs`、`test/helpers/flow.mjs`、`contracts/schemas/model.v1.schema.json` 和 `test/traceability/T-017.json`。brief 未提供基准 commit SHA 或既有验收报告路径；356 pass 是 brief 给出的回归基线，不另造提交基准。
 
-当前存在必须先裁决的冲突，已按任务指令写入同目录 attention.json；本稿不授权下游带着冲突开始实现。
+本轮用户已裁决：授权最小追加 AC-079 并完成相关索引计数迁移；取消 per-CLI 模块，只交付 brief 的四项详细交付物及必要的中央追踪兼容修改。此裁决替代上一轮 attention.json 中的待答问题，解除原暂停条件；本轮不修改旧 attention.json，也不等待上游任务。`lib/models/per-cli/*` 不进入计划或 write_scope，不创建该目录或模块；蓝图的旧 outputs 不覆盖本轮裁决。
 
-- `contracts/spec/ac-index.json` 仅登记 AC-001..AC-074；`scripts/check-traceability.mjs` 的 `expectedAcs()` 也固定为该范围，`mergeShards()` 将新 AC 分片报为 `shard.unknown_ac`。既有 `test/unit/traceability.test.mjs` 明确要求索引长度为 74、全仓分片合并 errors 为空、全仓追踪检查成功。因此只新增 brief 要求的 T-036 分片就会违反“既有单元测试 0 fail”，不是实现细节可以规避的问题。中央索引属于冻结文件，亦需同步清单；不能直接加一行或忽略未知 AC。
-- `.collab/blueprint/cliworker-v2/task-graph.json` 的 T-036 outputs 包括 `lib/models/per-cli/*.mjs`，brief 标题和引言也提到骨架，但详细交付物未给这些模块的文件名、调用接口、配置形状或调用链。现有枚举实现只投影配置，没有可直接复用的 per-CLI 插件协议。不得据标题发明模块接口或配置字段。
+write_scope 在原四文件上增加用户授权的索引、按需 schema、计数测试，以及完成该授权所必要的追踪检查器、实际含固定计数的 `test/unit/traceability.test.mjs` 和索引冻结清单。当前核查发现 `test/unit/lock.test.mjs` 没有 AC 数量断言，`test/contract/milestone-gate.test.mjs` 不存在；这两个用户点名路径保留授权，但不为它们创建文件或做无关修改。实际 milestone 测试为 `test/unit/milestone-gate.test.mjs`，本次只运行，不需修改。
 
-当前 write_scope 严格对应 brief 的四项明确交付物。须由调度器裁决中央追踪兼容由哪个任务完成，以及本次是否仅交付四项详细交付物；如仍需 per-CLI 模块，先补充契约及精确范围，再更新这两个文档。不能把 attention 的默认值当成人类已回答。
+本轮给出的增量引用为 `e2667e5`，不是另定验收基准；按禁止 git 的约束，只核对工作树实际文件。`models add` 和 `lib/models/directory.mjs` 已使用 `E_LEVEL_UNKNOWN`（非法级别）及 `E_REQUEST_INVALID`（未知 provider），既有 models-add 测试亦已对应。沿用这些错误语义，不恢复旧码、不将这些代码文件加入本任务范围。
 
 ## 交付物
 
@@ -27,7 +33,7 @@ write_scope:
    - 已知名称从仓库声明文件生成集合，不在检查器中复制 CLI 或模型名单。读取 `config/cliworker.example.json` 的 `providers` 键、各 provider 的 `cli`/`adapter`、`models` 键及各模型 `id`；读取 `contracts/examples/model.v1/valid/*.json` 中既有 model/v1 记录的 `id`、`cli`、`provider`。仅收集非空字符串并去重；不把普通字段名、错误码、级别等全部 JSON 字符串当模型名。不读用户配置、不依赖用户安装情况。应有测试证明声明文件新增名称后可被识别，而无需修改检查器。
    - 按 JavaScript 词法边界识别真实数组/对象字面量，处理跨行、嵌套、单双引号及转义；不能用对整文件的名称计数替代。忽略注释及普通字符串内伪造的代码，正则和模板文本不能被误当容器。无需做动态执行、常量传播或跨表达式求值。
    - 对同一字面量范围内的字符串字面量值及对象属性键，统计命中词表的不同名称；嵌套模型记录计入其所属外层字面量。CLI 名和模型 id 可混合计数，达到 3 个即失败。重复同一名称三次不达阈值，三个分离表达式不能合并计数；函数体或代码块本身不是对象字面量。
-   - 白名单只包含精确相对路径 `lib/commands/_util.mjs`，路径统一为 `/` 后比较，拒绝用目录、文件名后缀或“包含 _util”宽泛排除。不因文件已有命中就扩白名单。若发现基线真命中且无法在四文件范围内消除，交调度器裁决，不静默绕过。
+   - 白名单只包含精确相对路径 `lib/commands/_util.mjs`，路径统一为 `/` 后比较，拒绝用目录、文件名后缀或“包含 _util”宽泛排除。不因文件已有命中就扩白名单。若发现基线真命中且无法在获准范围内消除，交调度器裁决，不静默绕过。
    - 无命中退出 0，stdout 输出一行 `AC-079 OK`。有命中退出非 0，逐项输出相对文件路径、从 1 开始的行号及对应原始字面量片段；多行片段可以换行展示，不能仅输出名称或省略片段。失败不得输出成功标记。读取、声明解析或扫描错误同样非 0 并有可定位诊断，不能 catch 后当作干净文件。
    - 可导出内部扫描逻辑供同文件夹具测试复用，但不增加产品 CLI 参数、配置字段或公共模型协议。被 import 时不自动运行仓库检查。`scripts/check-fast.mjs` 已自动发现 `check-*.mjs`，无需修改门禁接线。
 
@@ -47,14 +53,23 @@ write_scope:
 
    沿用 T-017 分片形状：顶层仅 `task`、`milestone`、`entries`，值分别为 T-036、M3 及条目数组；唯一条目使用 `ac: 'AC-079'`、`status: 'covered'`、`files`，files 精确指向上述单元测试和 flow 步骤两个文件。不得改 AC-042 的既有归属，不添加 baseline 或新 schema。
 
-   此分片只能在中央追踪兼容问题被明确解决后落地。不能将 covered 改 planned、删除分片、过滤 AC-079、跳过全仓追踪测试来换取绿灯。
+   同步完成以下用户授权的中央追踪兼容修改，再运行全仓验收。不能将 covered 改 planned、删除分片、过滤 AC-079、跳过全仓追踪测试来换取绿灯。
+
+   - `contracts/spec/ac-index.json`：在原 AC-074 条目后仅追加一条 `{"ac":"AC-079","owner":"T-036","milestone":"M3","levels":["contract"],"baseline":["darwin","linux","win32"]}`，字段与取值沿用既有索引及蓝图 AC-079 的 contract 级别。既有 74 条内容、相对顺序和 schema 标识保持不变；新总数为 75，不是 79，不补 AC-075..AC-078。当前 `test/fixtures/traceability/ac-index.json` 与修改前中央索引 JSON 完全一致，可作为独立的旧条目保留性依据，禁止修改该夹具。
+   - `contracts/schemas/ac-index.schema.json`：当前 `ac` 使用 `^AC-\\d{3}$`，已经接受 AC-079，无枚举扩展需求，因此保持不变。未来若核查环境发现确有枚举，只增补 AC-079，保持旧 schema 文档和旧索引有效，不升级 schema 或改字段。
+   - `scripts/check-traceability.mjs`：调整 `expectedAcs()`/`validateIndex()` 的范围校验，使完整原 AC-001..AC-074 与其末尾追加 AC-079 的形状均有效。旧完整索引仍用于既有追踪夹具；真实仓库必须由分片与追加条目断言确认包含 AC-079。继续拒绝原条目缺失、重复、乱序和未授权新增 ID，保留 `index.count` 等现有诊断及所有字段校验。不能单纯把上界 74 改成 79，也不能仅比较输入长度与自身推导长度。计数与遍历优先由已验证条目数组长度取得；原 AC 集合的完整性边界不能为消除数字常量而丢失。
+   - `test/unit/traceability.test.mjs`：用旧完整夹具作独立参照，断言中央索引恰好等于旧条目加上述 AC-079 条目，并用 `legacy.acs.length + 1` 表达新总数，禁止自比较。原缺失反例不能再只 pop 可选扩展的尾条目，应删除一个原核心条目，继续断言 `index.count`；重复和乱序反例继续失败，数组索引改用实际长度或按 AC 查找。补充旧完整索引仍可校验和新条目精确归属的断言；不删测试、不降低反例约束强度。
+   - 用户点名的 lock/contract 测试路径：若实施时已有准确的 AC 数量断言，按本轮授权改成源索引长度或旧基线长度加一，并保留原比较的实际结果与独立期望。当前无需修改；不要批量替换包含 74 的随机数常量、AC-074 标签或其他无关数字。既有 milestone 夹具不增加 AC-079，避免改变其已定义的 M1/M2/M3/M4 通过和阻断情景。
+   - `contracts/golden/manifest.json`：中央索引属于冻结清单，本次授权追加后只刷新 `contracts/spec/ac-index.json` 对应的规范化 SHA-256；保留所有其他条目及其摘要。沿用 `scripts/check-golden-frozen.mjs` 的 CRLF 规范化算法，不关闭冻结检查、不修改黄金数据。若使用该脚本的 `--write` 生成清单，必须核实实际差异仅为获准索引摘要，不能顺带接受其他漂移。
+
+   实施顺序为中央兼容及保持强度的测试迁移、四项交付物、索引清单摘要同步、独立验收及完整门禁。这些兼容变更是四项交付物的必要接线，不增加产品功能或 per-CLI 协议。
 
 ## 硬约束
 
-实现仅写 front matter 四条路径；禁止修改 `lib/cli.mjs`、`lib/routes.mjs`、`lib/context.mjs`、`lib/catalog.mjs`，不放宽既有断言，不修改中央契约、冻结清单、其他检查器或测试框架。保持 Windows/PowerShell 7、UTF-8 无 BOM，不使用 Bash/WSL，不执行 git。遇到所述裁决扩大范围时，先更新规格，再按获准范围实施。
+实现仅写 front matter 路径，新增授权仅用于上述 AC 索引兼容；禁止修改 `lib/cli.mjs`、`lib/routes.mjs`、`lib/context.mjs`、`lib/catalog.mjs` 及本轮已更新的模型代码。不放宽既有断言，不修改其他中央契约、冻结条目、检查器或测试框架。保持 Windows/PowerShell 7、UTF-8 无 BOM，不使用 Bash/WSL，不执行 git。
 
-本 design 阶段仅创建 design.md、acceptance.md，以及用户为致命歧义明确授权的 attention.json；不运行会生成文件或间接执行 git 的全量检查。下游在实现完成且获准执行测试的阶段运行 acceptance.md 命令；多步骤自动化按本机规范写为获准位置的 `.ps1`，原生命令后检查 `$LASTEXITCODE`。不能因当前阻塞而声称测试已通过。
+本轮 design 阶段只修改 design.md、acceptance.md，不修改代码、任务状态或旧 attention.json，不运行会生成文件或间接执行 git 的全量检查。下游在实现完成且获准执行测试的阶段运行 acceptance.md 命令；多步骤自动化按本机规范写为获准位置的 `.ps1`，原生命令后检查 `$LASTEXITCODE`。本轮未运行产品测试，不记录通过结果。
 
 ## 验收
 
-以 acceptance.md 的独立命令及期望输出为准。中央追踪冲突未解决、per-CLI 范围未裁决时，不宣告可实现或验收通过。必须保留 `node scripts/check-no-model-table.mjs` 的成功标记、夹具反例、真实 flow 接线、追踪分片检查、既有单元测试零失败，以及项目 `scripts/check-fast.ps1` 门禁；不把已知冲突作为可接受失败。
+以 acceptance.md 的独立命令及期望输出为准。本轮裁决已满足继续实施的前提；实现完成后必须保留 `node scripts/check-no-model-table.mjs` 的成功标记、夹具反例、真实 flow 接线、追加索引与旧索引兼容检查、追踪分片检查、既有单元测试零失败，以及项目 `scripts/check-fast.ps1` 门禁。原条目被修改、schema 失去兼容、冻结清单未同步均为失败。
