@@ -138,10 +138,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:hy4free"
+    },
+    {
+      "at": "2026-11-08T03:49:54.665Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T03:49:54.838Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-08T03:49:54.277Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-08T03:49:54.838Z",
   "role": "review",
   "model": "hy4free",
   "model_resolved": "hy4free",
@@ -150,5 +162,60 @@
   "switches": 7,
   "blocked_reason": null,
   "handoff": null,
-  "interrupted": null
+  "interrupted": null,
+  "pr": {
+    "branch": "task/014",
+    "state": "open",
+    "files": [
+      ".collab/blueprint/cliworker-v2/task-graph.json",
+      ".collab/tasks/014/acceptance.md",
+      ".collab/tasks/014/ci-results.json",
+      ".collab/tasks/014/design.md",
+      ".collab/tasks/014/handoff/design-r1-c1-to-c2.md",
+      ".collab/tasks/014/handoff/dev-r1-c1-to-c2.md",
+      ".collab/tasks/014/impl.md",
+      ".collab/tasks/014/notice.json",
+      ".collab/tasks/014/review-r1.md",
+      ".collab/tasks/014/review.md",
+      ".collab/tasks/014/run.json",
+      ".collab/tasks/014/state.json",
+      ".collab/tasks/014/verdict-r1.json",
+      ".collab/tasks/014/verdict.json",
+      "lib/cli.mjs",
+      "lib/commands/config/migrate.mjs",
+      "lib/config-migrate.mjs",
+      "lib/config.mjs",
+      "test/fixtures/config/v1-no-schema.json",
+      "test/fixtures/config/v1.json",
+      "test/traceability/T-014.json",
+      "test/unit/config-v2.test.mjs"
+    ],
+    "sha": "63ca637999fca2b789b9520c39c9f8b164af927a"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "confirm",
+    "reasons": [
+      "1 个文件在 write_scope 之外：.collab/blueprint/cliworker-v2/task-graph.json",
+      "改动 9 个文件，超过 8 个"
+    ],
+    "metrics": {
+      "files": 9,
+      "lines": 246,
+      "review_rounds": 1,
+      "out_of_scope": 1,
+      "write_scope": 7
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T03:49:54.783Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
