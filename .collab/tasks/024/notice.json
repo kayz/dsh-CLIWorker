@@ -1,12 +1,12 @@
 {
   "task": "024",
   "event": "blocked",
-  "reason": "ci_failed",
-  "verdict": null,
-  "ci": "2/3",
+  "reason": "review_exhausted",
+  "verdict": "needs_revision",
+  "ci": "3/3",
   "files": null,
   "branch": "task/024",
   "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】024 / task 024\n结果：blocked — ci_failed\n阶段：design ✅ · dev ✅ · CI 2/3 ❌\n变更：分支 task/024 · 耗时 13m58s\n验收：CI 2/3\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-08T18:55:42.440Z"
+  "summary": "【AgentLine 任务被阻塞】024 / task 024\n结果：blocked — review_exhausted\n阶段：design ✅ · dev ✅ · CI 3/3 ✅ · review r2 needs_revision ❌\n变更：分支 task/024 · 耗时 40m20s\n验收：CI 3/3 · verdict=needs_revision · findings 5\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-08T19:22:04.142Z"
 }

@@ -125,17 +125,29 @@
       "from": "reviewed",
       "to": "implemented",
       "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T19:22:04.126Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T19:22:04.132Z",
+      "from": "reviewable",
+      "to": "blocked",
+      "by": "flow"
     }
   ],
-  "status": "implemented",
-  "updated_at": "2026-11-08T19:22:00.119Z",
+  "status": "blocked",
+  "updated_at": "2026-11-08T19:22:04.132Z",
   "role": "dev",
   "model": "gpt-6.1-terra",
   "model_resolved": "gpt-6.1-terra",
   "effort": "high",
   "attempt": 13,
   "switches": 0,
-  "blocked_reason": null,
+  "blocked_reason": "review_exhausted",
   "handoff": null,
   "interrupted": null
 }

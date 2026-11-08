@@ -1,11 +1,20 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { createPlugin } from '../../lib/index.js'
 import { createHostStub } from '../helpers/host-stub.mjs'
 import { createFakeContext } from '../helpers/ctx.mjs'
 import { createFlow } from '../helpers/flow.mjs'
 import { setup, withFixture } from '../flows/steps/http-select.mjs'
 import { getCode } from '../../lib/contract/registry.mjs'
+import { validate } from '../../lib/contract/validate.mjs'
+import { scanView } from '../../lib/contract/scan.mjs'
+
+const readSchema = (name) => JSON.parse(fs.readFileSync(fileURLToPath(new URL(`../../contracts/schemas/${name}`, import.meta.url)), 'utf8'))
+const forbidden = JSON.parse(fs.readFileSync(fileURLToPath(new URL('../../contracts/agentline-forbidden.json', import.meta.url)), 'utf8'))
+const errorEnvelope = readSchema('error-envelope.schema.json')
+const sessionSchema = readSchema('session.v1.schema.json')
 
 test('[AC-059] actual bootstrap routes require all loopback components', async () => {
   const host = createHostStub()
@@ -16,7 +25,9 @@ test('[AC-059] actual bootstrap routes require all loopback components', async (
       assert.equal(response.statusCode, 403)
       assert.equal(JSON.parse(response.body).error.code, 'E_LOOPBACK_ONLY')
     }
-    assert.equal((await host.request(path)).statusCode, 200)
+    const ok = await host.request(path)
+    assert.equal(ok.statusCode, 200)
+    if (path === '/cliworker/ui') assert.doesNotMatch(ok.body, /session|csrf|x-cliworker/i)
   }
 })
 
@@ -28,6 +39,28 @@ test('[AC-059] privileged select views are gated for direct and wrapped bodies',
     assert.equal(response.statusCode, 403)
     assert.equal(JSON.parse(response.body).error.code, 'E_VIEW_FORBIDDEN')
   }
+})
+
+test('[AC-059] a v1 select without a view returns an AgentLine view cleared by scanView', async () => {
+  const flow = createFlow()
+  try {
+    await withFixture(flow, async ({ model }) => {
+      const request = setup(flow)
+      const body = { schema: 'cliworker.request/v1', level: 'Top', cwd: flow.root }
+      const response = await request('/cliworker/select', { method: 'POST', body })
+      assert.equal(response.statusCode, 200)
+      const view = JSON.parse(response.body)
+      assert.equal(view.ok, true)
+      assert.equal(view.schema, 'cliworker.selection/v1')
+      const wrapper = { command: process.execPath, bin: fileURLToPath(new URL('../../bin/cliworker.mjs', import.meta.url)), state_dir: flow.state_dir, config: flow.config_path }
+      const options = { forbidden, catalog: { models: [model] }, wrapper }
+      assert.deepEqual(scanView(view, options).hits, [])
+      const cli = flow.run(['models', 'select', '--config', flow.config_path, '--request', JSON.stringify(body)])
+      assert.equal(cli.code, 0)
+      assert.deepEqual(scanView(cli.json, options).hits, [])
+      assert.deepEqual(flow.scan().hits, [])
+    })
+  } finally { flow.cleanup() }
 })
 
 test('[AC-059] known job exact route applies management guard before handler', async () => {
@@ -78,6 +111,7 @@ test('[AC-059] gate errors match the registry and strict error envelope shape', 
   for (const [code, response] of cases) {
     const body = JSON.parse(response.body), registry = getCode(code)
     assert.equal(response.statusCode, registry.http_status)
+    assert.deepEqual(validate(errorEnvelope, body), { ok: true, errors: [] })
     assert.deepEqual(Object.keys(body).sort(), ['error', 'ok'])
     assert.deepEqual(Object.keys(body.error).sort(), ['code', 'message', 'retry_after', 'retryable'])
     assert.equal(body.ok, false)
@@ -103,7 +137,9 @@ test('[AC-059] each management read gates invalid and expired sessions and allow
       assert.equal(result.statusCode, 403)
       assert.equal(JSON.parse(result.body).error.code, 'E_ADMIN_REQUIRED')
     }
-    assert.equal((await host.request(path, { headers: { 'x-cliworker-session': session } })).statusCode, 200)
+    const allowed = await host.request(path, { headers: { 'x-cliworker-session': session } })
+    assert.equal(allowed.statusCode, 200)
+    if (path === snapshot || path === job) assert.deepEqual(JSON.parse(allowed.body), { ok: true })
   }
   assert.equal(calls, 2)
   await ctx.clock.advance(1000)

@@ -2,8 +2,8 @@
   "task": "T-024",
   "milestone": "M5",
   "entries": [
-    { "ac": "AC-059", "files": ["test/integration/registration.test.mjs", "test/integration/plugin-routes.test.mjs", "test/integration/plugin-session.test.mjs"], "status": "planned" },
-    { "ac": "AC-060", "files": ["test/integration/plugin-guard.test.mjs"], "status": "planned" },
-    { "ac": "AC-061", "files": ["test/unit/health.test.mjs", "test/integration/health.test.mjs"], "status": "planned" }
+    { "ac": "AC-059", "files": ["test/integration/registration.test.mjs", "test/integration/plugin-routes.test.mjs", "test/integration/plugin-session.test.mjs"], "status": "covered" },
+    { "ac": "AC-060", "files": ["test/integration/plugin-guard.test.mjs"], "status": "covered" },
+    { "ac": "AC-061", "files": ["test/unit/health.test.mjs", "test/integration/health.test.mjs"], "status": "covered" }
   ]
 }

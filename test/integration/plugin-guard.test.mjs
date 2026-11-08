@@ -10,6 +10,7 @@ import { createFakeContext } from '../helpers/ctx.mjs'
 import { createFlow } from '../helpers/flow.mjs'
 import * as httpSelect from '../flows/steps/http-select.mjs'
 import * as httpAdmin from '../flows/steps/http-admin.mjs'
+import { secretAction } from '../../lib/secrets/index.mjs'
 
 test('AC-060 write gates take precedence without reading the request body', () => {
   let now = 0
@@ -141,4 +142,53 @@ test('[AC-060] remaining operation seams run only after authorization and JSON p
     assert.equal(response.statusCode, 200)
   }
   assert.deepEqual(calls.map(call => call.path), paths)
+})
+
+test('[AC-060] management writes dispatch to their real capabilities', async () => {
+  const raw = {
+    schema: 'cliworker.config/v2', state_dir: '/cw/state', discovery: { cli_overrides: {} },
+    catalog: { manual: [], allow: [], levels: {}, aliases: {}, deprecated: {} }, pools: [], policy: {},
+    secrets: { example: { ref: 'session:test' } },
+  }
+  const usage = { schema: 'cliworker.usage/v1', id: 'u_1', idempotency_key: 'seed:1', lease_id: '', model: 'example:one', pools: [], kind: 'manual', input_tokens: 1, output_tokens: 1, cache_read_tokens: 0, cache_write_tokens: 0, cost_usd: 0, pool_fraction_before: null, pool_fraction_after: null, at: '2026-11-07T00:00:00.000Z' }
+  const ctx = createFakeContext({ files: { '/cw/config.json': JSON.stringify(raw), '/cw/state/usage.jsonl': `${JSON.stringify(usage)}\n` }, env: { PATH: '' } })
+  const host = createHostStub()
+  createPlugin(host.ctx, { configPath: '/cw/config.json' }, { ctx })
+  const tokens = JSON.parse((await host.request('/cliworker/api/session')).body)
+  const call = (path, body) => host.request(path, { method: 'POST', headers: { 'x-cliworker-session': tokens.session, 'x-cliworker-csrf': tokens.csrf }, body })
+
+  const discover = await call('/cliworker/api/discover', {})
+  assert.equal(discover.statusCode, 200)
+  assert.equal(JSON.parse(discover.body).schema, 'cliworker.inventory/v1')
+  assert.equal(JSON.parse(ctx.fs.readFileSync('/cw/state/inventory.json', 'utf8')).schema, 'cliworker.inventory/v1')
+
+  const enumerate = await call('/cliworker/api/enumerate', { full: true })
+  assert.equal(enumerate.statusCode, 200)
+  assert.equal(JSON.parse(enumerate.body).schema, 'cliworker.models/v1')
+
+  const probe = await call('/cliworker/api/probe', {})
+  assert.equal(probe.statusCode, 200)
+  assert.deepEqual(JSON.parse(probe.body), { schema: 'cliworker.models/v1', models: [] })
+
+  const readUsage = await call('/cliworker/api/read-usage', {})
+  assert.equal(readUsage.statusCode, 200)
+  assert.deepEqual(JSON.parse(readUsage.body).records, [usage])
+
+  const secret = await call('/cliworker/api/secret', { cli: 'example', value: 'guard-secret-sentinel' })
+  assert.equal(secret.statusCode, 200)
+  assert.deepEqual(JSON.parse(secret.body), { ok: true, state: 'set' })
+  assert.equal(secretAction(ctx, raw, 'example', 'get'), 'guard-secret-sentinel')
+  assert.doesNotMatch(secret.body, /guard-secret-sentinel/)
+
+  for (const [path, body] of [
+    ['/cliworker/api/discover', { full: 'yes' }],
+    ['/cliworker/api/enumerate', { full: 1 }],
+    ['/cliworker/api/secret', {}],
+    ['/cliworker/api/secret', { cli: 'example' }],
+    ['/cliworker/api/secret', { cli: 'example', action: 'rotate', value: 'x' }],
+  ]) {
+    const response = await call(path, body)
+    assert.equal(response.statusCode, 400)
+    assert.equal(JSON.parse(response.body).error.code, 'E_REQUEST_INVALID')
+  }
 })

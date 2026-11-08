@@ -99,7 +99,7 @@ Write-Output 'AC-061 OK'
 ```pwsh
 $ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath 'C:\git\dsh-CLIWorker\.collab\worktrees\024'
-pwsh -NoProfile -File scripts/check-fast.ps1
+node scripts/check-fast.mjs
 if ($LASTEXITCODE -ne 0) { throw 'AC-061 repository regression failed' }
 Write-Output 'AC-061 OK'
 ```

@@ -92,6 +92,8 @@ flows 的 http-select、http-admin 使用同一 flow 配置/state_dir，通过 i
 
 test/traceability/T-024.json 沿用现有 {task,milestone,entries:[{ac,files,status}]} 格式，仅登记 AC-059/060/061，milestone 为 M5；映射文件实际含对应 AC 标签，unit/integration 层级与 contracts/spec/ac-index.json 一致，不把其他任务 AC 迁入本分片。最终执行 acceptance.md 各独立命令、全 unit 回归与 scripts/check-fast.ps1；不能只验证文档格式就宣称产品通过。
 
+**管理写路由的同步业务分发。** discover、enumerate、probe、read-usage、secret 五个路由通过守卫与请求体校验后，分别复用既有 discover、models enumerate、models probe、usage summary 命令与 secrets.secretAction 领域函数，合法请求返回该能力的真实结果，不再落入 E_INTERNAL；secret 只返回 `state`，不回显密钥。interfaces 第 12 项为 discover/enumerate/probe/read-usage 预留的异步 `job_id`、轮询与作业生命周期仍属 T-025 接入缺口，本任务不伪造 job 标识，返回同步真实结果并在测试中证明对应状态变化。
+
 ## 非目标
 
 不实现 UI 数据面、snapshot revision、issues、完整异步 jobs 或跨进程 e2e；不新增错误码、schema、业务请求字段或契约版本；不修改冻结命令入口与 ctx；不做代理鉴权、真实供应商/网络探测或发布门禁。设计阶段不执行会写测试报告、修改文件或隐含调用 git 的全量门禁，仅进行文档格式及静态范围核对；完整命令供实现完成后下游执行。
