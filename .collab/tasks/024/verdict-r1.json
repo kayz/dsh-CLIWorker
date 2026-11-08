@@ -1,0 +1,35 @@
+{
+  "task": "024",
+  "round": 1,
+  "verdict": "needs_revision",
+  "git_sha": "f2e047130599445efab5053f818566329d4c7803",
+  "passed": 0,
+  "total": 3,
+  "criteria": [
+    {
+      "id": "AC-059",
+      "pass": false,
+      "evidence": "ci-results.json: AC-059 命令退出 0，8 项测试通过、fail/cancelled/skipped/todo 均为 0。但 lib/index.js:73 对管理写路由无业务分发（返回 E_INTERNAL）；select 的 AgentLine 200 与 scanView、full/draft 有效会话视图、session 响应字段与 HMAC 校验、ui 伪造、403 错误与 registry 对照等验收细则缺少测试。"
+    },
+    {
+      "id": "AC-060",
+      "pass": false,
+      "evidence": "ci-results.json: AC-060 命令退出 0，3 项通过。但 test/flows/steps/http-select.mjs 与 http-admin.mjs 不存在；lib/index.js:73 使业务写请求返回 E_INTERNAL，首写成功与真实目录状态变化无法满足；flow.recordHttp / flow.scan 的 HTTP 秘密哨兵检查缺失。"
+    },
+    {
+      "id": "AC-061",
+      "pass": false,
+      "evidence": "ci-results.json: AC-061 第一条命令退出 0（3 项通过），但 test/unit/health.test.mjs 共 26 行、test/integration/health.test.mjs 共 23 行，无故障矩阵、test_clock、doctor 退出码 9 与 error envelope、HTTP 与 doctor 一致性测试。test/flows/steps/doctor.mjs 仍是 T-012 最小版（introduced_by T-012，ac AC-031）。test/traceability/T-024.json 不存在。unit 回归、check-acceptance、check-fast 三条命令在 CI 中无结果。"
+    }
+  ],
+  "findings": [
+    {"severity": "P0", "summary": "flows 步骤 http-select、http-admin 不存在", "evidence": "test/flows/steps/ 目录列表中无这两个文件"},
+    {"severity": "P0", "summary": "管理写路由通过守卫后无业务分发，一律 E_INTERNAL", "evidence": "lib/index.js:73"},
+    {"severity": "P0", "summary": "doctor 步骤仍是 T-012 最小版，未替换为完整版", "evidence": "test/flows/steps/doctor.mjs:1-2,8-9"},
+    {"severity": "P0", "summary": "缺少 test/traceability/T-024.json", "evidence": "test/traceability/ 目录列表中无 T-024.json"},
+    {"severity": "P1", "summary": "健康故障矩阵、test_clock、HTTP 与 doctor 一致性、退出码 9 与 envelope 测试缺失", "evidence": "test/unit/health.test.mjs（26 行）、test/integration/health.test.mjs（23 行）、ci-results AC-061 共 3 项"},
+    {"severity": "P1", "summary": "AC-059 细则覆盖不足：select AgentLine/scanView、full/draft、session 字段、ui 伪造、403 与 registry 对照", "evidence": "ci-results AC-059 的 8 项测试标题"},
+    {"severity": "P1", "summary": "CI 仅运行 3 条命令，缺 unit 回归、check-acceptance、check-fast 结果", "evidence": "ci-results.json total=3"},
+    {"severity": "P2", "summary": "jobs 动态路径依赖 deps.jobIds，属 design 披露的 T-025 接入缺口，测试补齐前未证实", "evidence": "lib/index.js jobIds 展开逻辑"}
+  ]
+}

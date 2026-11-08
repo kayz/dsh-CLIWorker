@@ -1,0 +1,153 @@
+{
+  "id": "024",
+  "history": [
+    {
+      "at": "2026-11-08T18:41:44.232Z",
+      "to": "draft",
+      "by": "init"
+    },
+    {
+      "at": "2026-11-08T18:44:04.381Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T18:44:46.414Z",
+      "from": "designed",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T18:44:46.861Z",
+      "from": "designed",
+      "to": "blocked",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-08T18:47:14.469Z",
+      "from": "blocked",
+      "to": "designed",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-08T18:47:14.476Z",
+      "from": "designed",
+      "to": "draft",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-08T18:52:13.357Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T18:54:06.241Z",
+      "from": "designed",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T18:55:39.496Z",
+      "from": "implemented",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T18:55:42.433Z",
+      "from": "implemented",
+      "to": "blocked",
+      "by": "flow"
+    },
+    {
+      "at": "2026-11-08T19:04:05.360Z",
+      "from": "designed",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T19:06:39.368Z",
+      "from": "implemented",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T19:06:42.487Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T19:07:47.219Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T19:13:25.157Z",
+      "from": "reviewed",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T19:13:29.325Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T19:15:24.411Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T19:18:43.465Z",
+      "from": "reviewed",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T19:18:47.113Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T19:19:45.013Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T19:22:00.119Z",
+      "from": "reviewed",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T19:22:04.126Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T19:22:04.132Z",
+      "from": "reviewable",
+      "to": "blocked",
+      "by": "flow"
+    }
+  ],
+  "status": "blocked",
+  "updated_at": "2026-11-08T19:22:04.132Z",
+  "role": "dev",
+  "model": "gpt-6.1-terra",
+  "model_resolved": "gpt-6.1-terra",
+  "effort": "high",
+  "attempt": 13,
+  "switches": 0,
+  "blocked_reason": "review_exhausted",
+  "handoff": null,
+  "interrupted": null
+}
