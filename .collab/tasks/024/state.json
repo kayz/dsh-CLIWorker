@@ -137,10 +137,16 @@
       "from": "reviewable",
       "to": "blocked",
       "by": "flow"
+    },
+    {
+      "at": "2026-11-08T19:31:58.540Z",
+      "from": "blocked",
+      "to": "merged",
+      "by": "human"
     }
   ],
-  "status": "blocked",
-  "updated_at": "2026-11-08T19:22:04.132Z",
+  "status": "merged",
+  "updated_at": "2026-11-08T19:31:58.540Z",
   "role": "dev",
   "model": "gpt-6.1-terra",
   "model_resolved": "gpt-6.1-terra",
@@ -149,5 +155,35 @@
   "switches": 0,
   "blocked_reason": "review_exhausted",
   "handoff": null,
-  "interrupted": null
+  "interrupted": null,
+  "pr": {
+    "state": "merged",
+    "sha": "8422396c80aa1d5a088c49c1df2c0de0b43bd921",
+    "merged_at": "2026-11-08T19:31:58.532Z",
+    "permission": "用满三个task并行量继续推进，之后task合并不需要我显式提示，直接处理掉",
+    "permission_kind": "explicit",
+    "grant_id": null
+  },
+  "merge_risk": {
+    "tier": "confirm",
+    "reasons": [
+      "1 个文件在 write_scope 之外：.collab/blueprint/cliworker-v2/task-graph.json",
+      "改动 17 个文件，超过 8 个"
+    ],
+    "metrics": {
+      "files": 17,
+      "lines": 1460,
+      "review_rounds": 3,
+      "out_of_scope": 1,
+      "write_scope": 14
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T19:31:57.340Z",
+    "base": "main",
+    "head": "task/024"
+  }
 }

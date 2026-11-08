@@ -1,0 +1,31 @@
+{
+  "task": "024",
+  "round": 3,
+  "verdict": "needs_revision",
+  "git_sha": "030fec15758e3182e9b8d26502eb158f236c82f0",
+  "passed": 0,
+  "total": 3,
+  "criteria": [
+    {
+      "id": "AC-059",
+      "pass": false,
+      "evidence": "ci-results.json(2026-11-09T03:18:47): 首条命令退出 0，12 项通过，fail/cancelled/skipped/todo 均为 0；plugin-routes #4-#6、plugin-session #9 已覆盖 full/draft、registry+envelope、管理读矩阵、session schema/到期。但 lib/index.js:101 对 discover/enumerate/probe/read-usage/secret 仍 sendError(res,'E_INTERNAL')，impl.md 自认未接入。"
+    },
+    {
+      "id": "AC-060",
+      "pass": false,
+      "evidence": "ci-results.json: 退出 0，7 项通过；逐写路由无效/过期会话、csrf 不匹配、超限体、flows 与首写真实目录变化均有用例。但五个写路由合法请求仍返回 500 E_INTERNAL（lib/index.js:101），'合法请求进入业务层'对其不成立。"
+    },
+    {
+      "id": "AC-061",
+      "pass": false,
+      "evidence": "ci-results.json: 首条命令退出 0，11 项通过。缺 CLIWORKER_TEST_CLOCK_FILE 合法/不可读文件、清单无效时间、inject 失败、多故障经 doctor 退出 9、doctor 故障 error-envelope schema 校验、各故障组 HTTP 与 doctor 逐项相等（test/integration/health.test.mjs 仅 5 项；unit/health.test.mjs:18 用假路径）。unit 回归、check-acceptance、check-fast 三条命令在 ci-results.json 无记录，无法确认；T-024.json:5-7 仍 planned。"
+    }
+  ],
+  "findings": [
+    {"severity": "P1", "summary": "discover/enumerate/probe/read-usage/secret 五个管理写路由守卫通过后仍返回 E_INTERNAL（连续第 3 轮未修）", "evidence": "lib/index.js:101；仅 pool/manual-model/allow/deny/level/alias 有分支；design.md:42 要求复用既有命令/领域函数且未列为范围外"},
+    {"severity": "P1", "summary": "AC-061 故障矩阵与 HTTP/doctor 一致性仍缺：时钟文件合法/不可读、清单无效时间、inject 失败、多故障 doctor 退出 9、doctor 故障 envelope schema 校验", "evidence": "test/integration/health.test.mjs 5 项、test/unit/health.test.mjs 6 项；unit/health.test.mjs:18 假路径；acceptance.md:74-75"},
+    {"severity": "P2", "summary": "T-024.json 三项仍为 planned，应为 covered", "evidence": "test/traceability/T-024.json:5-7"},
+    {"severity": "P2", "summary": "unit 回归、check-acceptance、check-fast 无 CI 执行证据，无法确认", "evidence": "ci-results.json total=3，仅各 AC 首条命令；impl.md 自认未运行"}
+  ]
+}
