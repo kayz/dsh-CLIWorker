@@ -1902,5 +1902,91 @@
       "token_ref": "sha256:9bcc85cdf282df84",
       "invalidated_reason": "review_new_round"
     }
+  },
+  {
+    "task": "034",
+    "role": "dev",
+    "round": 4,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-terra",
+    "model_resolved": "gpt-6.1-terra",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T12:10:41.021Z",
+    "ended_at": "2026-11-08T12:11:34.120Z",
+    "duration_ms": 53099,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 115925,
+      "output": 1117,
+      "cache_read": 103296,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/034/logs/dev-r4-1.log",
+    "error": "no_changes",
+    "session": {
+      "reused": false,
+      "token_ref": null,
+      "invalidated_reason": "model_changed"
+    },
+    "handoff": {
+      "file": "handoff/dev-r4-c1-to-c2.md",
+      "checkpoint": null,
+      "sha": null
+    }
+  },
+  {
+    "task": "034",
+    "role": "dev",
+    "round": 4,
+    "candidate": 2,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-sol",
+    "model_resolved": "gpt-6.1-sol",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T12:11:34.800Z",
+    "ended_at": "2026-11-08T12:13:10.631Z",
+    "duration_ms": 95831,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 195904,
+      "output": 2189,
+      "cache_read": 157568,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/034/logs/dev-r4-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "gpt-6.1-terra",
+      "file": "handoff/dev-r4-c1-to-c2.md"
+    },
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:708d55dbb206905a",
+      "invalidated_reason": "model_changed"
+    }
   }
 ]
