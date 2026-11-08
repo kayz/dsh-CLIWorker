@@ -1,0 +1,25 @@
+{
+  "task": "027",
+  "verdict": "pass",
+  "git_sha": "7178e85597797c237dd1c974517d6e124f627d5e",
+  "passed": 2,
+  "total": 2,
+  "findings": [],
+  "criteria": [
+    {
+      "id": "AC-065",
+      "result": "pass",
+      "evidence": "ci-results.json AC-065 passed=true exitCode=0 lastLine 'AC-065 OK'; scripts/e2e-install.mjs:10-42 (mkdtemp+workdir line, offline npm pack/install, cliworker --version and doctor, registration stub status ok, forbidden-dir checks via pack file list and install dir, finally cleanup); test/e2e/install.test.mjs:3 title [AC-065] timeout 120000; lib/commands/state/version.mjs:3 self-registered streamed route"
+    },
+    {
+      "id": "AC-066",
+      "result": "pass",
+      "evidence": "ci-results.json AC-066 passed=true exitCode=0, TAP '# tests 2 # pass 2 # fail 0 # cancelled 0 # skipped 0 # todo 0'; lib/migrate.mjs:70-155 (staged atomic backup with sha256 verify, secrets/locks/tmp excluded at :13, idempotent migrate, VERSION written last, .state-op.json rollback, manifest pre-verification in restore, name validation :52); test/e2e/upgrade.test.mjs:23-48; test/integration/restart-recovery.test.mjs:17-40 (child.kill() without signal name, leases/ledger/probes intact, expired lease dropped, stale lock reclaimed, doctor exit 0); test/traceability/T-027.json covered"
+    }
+  ],
+  "notes": [
+    "scripts/e2e-install.mjs:42 prints 'cleanup: ok' on failure path too (non-blocking)",
+    "test/e2e/upgrade.test.mjs:36-37 step-failure rollback only asserts VERSION; commit-phase rename failure asserts all file bytes",
+    "git was not run per instructions; SHA read from .git/refs/heads/task/027; merge-base diff relies on ci-results"
+  ]
+}
