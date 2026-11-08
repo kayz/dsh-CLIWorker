@@ -1,0 +1,32 @@
+{
+  "task": "015",
+  "verdict": "needs_revision",
+  "sha": "f48179b6c67b4ef5bc7004c3ad6655a069e439cc",
+  "passed": 0,
+  "total": 1,
+  "criteria": [
+    {
+      "id": "AC-035",
+      "result": "fail",
+      "evidence": "ci-results.json: AC-035 exitCode 0, lastLine 'AC-035 OK' (mechanical checks satisfied). Static review: test/integration/fake-cli.test.mjs:82-96 and 140-143 assert timers.size===0 but never assert that the timed-out child process has exited or that children.size===0; the trackedSpawn fallback kill (33-38) and finally kill mask a failed termination. acceptance.md/design.md require no leftover processes and cleanup after process exit. Also test/helpers/fake-cli.mjs:8,16 copies the full runtime into each of 72 instances, contradicting design.md 'shared runtime script, avoid 72 copies'."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "P1",
+      "file": "test/integration/fake-cli.test.mjs",
+      "line": 93,
+      "summary": "timeout case does not assert the child process exited / no leftover children; fallback kills mask cleanup failure",
+      "fix": "After the E_TIMEOUT result, await the child's close and assert children.size === 0 before the finally-block kill."
+    },
+    {
+      "id": "F2",
+      "severity": "P2",
+      "file": "test/helpers/fake-cli.mjs",
+      "line": 16,
+      "summary": "runtime logic is inlined into every generated script (72 copies) instead of a shared runtime reading per-instance data by script location",
+      "fix": "Generate a thin entry that reads sibling data and imports the shared runtime under test/fixtures/fake-cli."
+    }
+  ]
+}
