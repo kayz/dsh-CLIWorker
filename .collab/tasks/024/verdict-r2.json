@@ -1,0 +1,32 @@
+{
+  "task": "024",
+  "round": 2,
+  "verdict": "needs_revision",
+  "git_sha": "4a8937ff188d36a15ce2a76a0ea98b7bbbf94df8",
+  "passed": 0,
+  "total": 3,
+  "criteria": [
+    {
+      "id": "AC-059",
+      "pass": false,
+      "evidence": "ci-results.json: 首条命令退出 0，8 项通过，fail/cancelled/skipped/todo 均为 0。plugin-routes.test.mjs 只测 select 的 403，无 full/draft 有效会话 200；无 session HTTP 响应的 schema/no-store/无 cookie 断言；无 HTTP 层过期会话、models/forecast/snapshot 成功用例；无 403 对 registry http_status/retryable 与 envelope 校验。lib/index.js 末尾 sendError(res,'E_INTERNAL') 使 discover/enumerate/probe/read-usage/secret 无业务。"
+    },
+    {
+      "id": "AC-060",
+      "pass": false,
+      "evidence": "ci-results.json: 退出 0，6 项通过；http-select/http-admin 已存在并被 plugin-guard.test.mjs 执行，scanned.http>0 且 hits=[]，pool 与 manual-model 首写改变真实配置。但逐端点缺 csrf 不匹配、无效/过期会话、超限体 400 的 HTTP 用例；五个写路由合法请求仍返回 E_INTERNAL。"
+    },
+    {
+      "id": "AC-061",
+      "pass": false,
+      "evidence": "ci-results.json: 首条命令退出 0，7 项通过。health 故障矩阵缺 state_dir 不可写、活跃锁超时、密钥后端不可达、示例/内联秘密配置、过期探测边界、inject 失败、时钟文件合法/不可读、多故障、error-envelope schema 校验；HTTP 与 doctor 一致性仅对比健康和配置缺失两组。unit 回归与 check-fast 在 CI 无记录，无法确认。本轮只读验证 check-acceptance（acs=3 commands=6 warnings=0）与 check-traceability（covered=58 planned=17）均退出 0。"
+    }
+  ],
+  "findings": [
+    {"severity": "P1", "summary": "discover/enumerate/probe/read-usage/secret 五个管理写路由通过守卫后仍返回 E_INTERNAL", "evidence": "lib/index.js dispatch 末尾 return sendError(res, 'E_INTERNAL')；仅 pool/manual-model/allow/deny/level/alias 有分支"},
+    {"severity": "P1", "summary": "AC-061 故障矩阵不完整，且 HTTP 与 doctor 一致性只覆盖健康和配置缺失两组", "evidence": "test/unit/health.test.mjs（3 项）、test/integration/health.test.mjs（4 项）；缺 state_dir 不可写、锁超时、密钥后端、过期探测边界、inject 失败、时钟文件合法/不可读、多故障、envelope schema"},
+    {"severity": "P1", "summary": "AC-059 细则缺测试：full/draft 有效会话、session 响应字段/no-store/无 cookie、HTTP 过期会话、403 对 registry、其余管理读成功", "evidence": "test/integration/plugin-routes.test.mjs（3 项）、plugin-session.test.mjs（2 项，仅 createSessions 层）、registration.test.mjs"},
+    {"severity": "P2", "summary": "T-024.json 三项仍为 planned，应为 covered", "evidence": "test/traceability/T-024.json:5-7"},
+    {"severity": "P2", "summary": "unit 回归与 check-fast 无 CI 证据，无法确认", "evidence": "ci-results.json total=3"}
+  ]
+}
