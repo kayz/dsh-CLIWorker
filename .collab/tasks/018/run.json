@@ -168,5 +168,103 @@
       "token_ref": "sha256:f6b9f3c2408c1cd7",
       "invalidated_reason": null
     }
+  },
+  {
+    "task": "018",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T15:16:21.181Z",
+    "ended_at": "2026-11-08T15:16:21.181Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 2
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": null,
+      "total": null,
+      "ok": false,
+      "ran_at": "2026-11-08T15:16:21.181Z",
+      "report_ref": ".collab/tasks/018/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/018/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "018",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T15:20:25.152Z",
+    "ended_at": "2026-11-08T15:20:25.152Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 1
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 0,
+      "total": 3,
+      "ok": false,
+      "ran_at": "2026-11-08T15:20:25.153Z",
+      "report_ref": ".collab/tasks/018/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/018/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "018",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-terra",
+    "model_resolved": "gpt-6.1-terra",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T15:20:25.548Z",
+    "ended_at": "2026-11-08T15:20:48.128Z",
+    "duration_ms": 22580,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 222085,
+      "output": 1460,
+      "cache_read": 208000,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/018/logs/dev-r1-1.log",
+    "error": null,
+    "session": {
+      "reused": true,
+      "token_ref": "sha256:f6b9f3c2408c1cd7",
+      "invalidated_reason": null
+    }
   }
 ]
