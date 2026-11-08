@@ -1217,7 +1217,7 @@
     },
     {
       "id": "T-013",
-      "title": "用户提供令牌的密钥管理：SecretRef、OS 后端、只经 env 注入",
+      "title": "Secret 后端与令牌注入：auth set/status/clear 与适配器声明式 env 注入",
       "inputs": [
         "lib/config.mjs",
         "lib/exec.mjs",
@@ -1248,8 +1248,7 @@
         "lib/exec.mjs"
       ],
       "acceptance": [
-        "AC-032",
-        "AC-033"
+        "AC-032"
       ],
       "acceptance_direction": [
         "node scripts/run-tests.mjs --ac AC-032",
@@ -2145,6 +2144,40 @@
       ],
       "test_levels": [
         "contract",
+        "integration"
+      ]
+    },
+    {
+      "id": "T-034",
+      "title": "配置明文拒载与凭据后端失败处理（从 T-013 拆出）",
+      "milestone": "M2",
+      "inputs": [
+        "T-013 的 secret 存储",
+        "config v2",
+        "AC-033"
+      ],
+      "outputs": [
+        "lib/secrets/inline.mjs",
+        "test/unit/inline-secret.test.mjs",
+        "test/integration/secret-backend-failure.test.mjs"
+      ],
+      "depends_on": [
+        "T-013"
+      ],
+      "write_scope": [
+        "lib/secrets/inline.mjs",
+        "lib/config.mjs",
+        "test/unit/inline-secret.test.mjs",
+        "test/integration/secret-backend-failure.test.mjs"
+      ],
+      "acceptance": [
+        "AC-033"
+      ],
+      "acceptance_direction": [
+        "node --test test/unit/inline-secret.test.mjs test/integration/secret-backend-failure.test.mjs"
+      ],
+      "test_levels": [
+        "unit",
         "integration"
       ]
     }
