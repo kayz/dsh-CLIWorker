@@ -54,7 +54,7 @@ AC-027 的临时垫片由 `npm-v7.cmd.txt` 生成，而样例里的脚本名是 
 | D1 | `node scripts/check-seams.mjs` | `check-seams: ok (files=26)` |
 | D2 | `node scripts/check-traceability.mjs` | `check-traceability: ok (covered=31 planned=43)` |
 | D3 | `node scripts/milestone-gate.mjs --milestone M2` | 见下「基线阻断项」：阻断全部来自 T-011/T-012/T-013/T-014/T-015 的 AC-029..035，**T-010 的三条 AC 无阻断项** |
-| D4 | `node scripts/check-write-scope.mjs --base 040d2e9 ...` | 仅报 `.collab/tasks/010/{acceptance,design,run,state}` 四个流程文件（脚本把未跟踪的流程文件也算作改动）；T-010 的代码/测试改动全部落在 write_scope 内 |
+| D4 | `node scripts/check-write-scope.mjs --base 040d2e9 ...` | 仅报 `.collab/tasks/010/{acceptance,design,impl,run,state}` 五个流程文件（脚本把未跟踪的流程文件也算作改动）；T-010 的代码/测试改动全部落在 write_scope 内 |
 | D5 | `node scripts/check-frozen-files.mjs`、`node scripts/check-unused.mjs` | 均 exit 0（`ok (8 files)` / `ok (files=26)`） |
 | D6 | availability 无 `child_process` 且含 `ctx.exec(` | exit 0 |
 | D7 | exec 源码含 `E_UNSAFE_ARG: unsafe argument at index` | exit 0 |
@@ -71,3 +71,24 @@ E1/E2/D3 的失败均可定位到本任务之外：
 3. `node scripts/milestone-gate.mjs --milestone M2` 的 7 条 `gate.ac_not_covered` 全是 AC-029..AC-035，属主为 T-011..T-015（M2 其他任务尚未实现），按验收说明单列，不计入 T-010。
 
 上述文件的修复都需要改 `test/unit/*`、`.gitignore`、`lib/config.mjs` 或 `lib/cli.mjs`，均不在本任务 write_scope，故本任务不改动。
+
+## 5. 第 2 轮：acceptance.md 改为 CI 可解析的契约格式
+
+上一轮 CI 退出码 2（`ci_failed`），原因不是代码或测试，而是 `tools/ci-runner.ps1` 从 `acceptance.md` 解析不到任何用例：它只认 `## AC-nnn ...` 开头的小节 + 紧随的 `- 命令: \`单行命令\``，而原文件是 `## A. AC-026（...）` + 表格单元格，零命中。用户本轮给出明确契约（命令必须是单行、从 TEMP 目录执行、绝对路径，且打印 `<AC-id> OK`），且流程里 CI 失败后的修复窗口只回到 dev，因此本轮把 `acceptance.md` **整体重写**为机器可读格式（不逐行打补丁）：
+
+- 三条 AC 各一个小节（`## AC-026 ...` / `## AC-027 ...` / `## AC-028 ...`），各自一条 `- 命令:` 与一条 `- 期望:`。
+- 命令全部用 worktree 的绝对路径（`C:/git/dsh-CLIWorker/.collab/worktrees/010/scripts/...`），可从句任意当前目录执行；末尾 `echo "<AC-id> OK"` 提供 CI 的通过标记。
+- 验收内容与原文件一致，未新增字段或版本号：
+  - AC-026：`run-tests --ac AC-026`（unit + a5-shell `[repro]`/`[fixed]`）+ `check-seams`（exec 无 `node:fs`/全局定时器）+ `check-defects --milestone M2`（`[repro]` 哈希未变）。
+  - AC-027：`run-tests --ac AC-027`（win32 原生垫片解析、argv 原样、无 `cmd.exe`；非 win32 记 skip）。
+  - AC-028：`run-tests --ac AC-028`（伪时钟超时 + 杀树 + 并发上限 4）。
+
+### 本轮自测
+
+| 项 | 命令 | 结果 |
+|---|---|---|
+| CI（真实执行器） | `pwsh -NoProfile -File C:/git/dsh-Agentline/orchestrator/tools/ci-runner.ps1 -RepoRoot C:/git/dsh-CLIWorker/.collab/worktrees/010 -TaskDir .collab/tasks/010` | `AC-026 PASS`、`AC-027 PASS`、`AC-028 PASS`，`CI SUMMARY: 3/3 passed`（原为 0 用例 → exit 2） |
+| 三条子命令（TEMP 目录下） | 见 `acceptance.md` 的三个 `- 命令:` 行 | 均 exit 0，末行分别为 `AC-026 OK` / `AC-027 OK` / `AC-028 OK` |
+| 回归 | `node scripts/check-seams.mjs`、`check-traceability.mjs`、`check-defects.mjs --milestone M2`、`check-frozen-files.mjs`、`check-unused.mjs` | 均 exit 0（`ok (files=26)` / `ok (covered=31 planned=43)` / `check-defects: ok` / `ok (8 files)` / `ok (files=26)`） |
+
+E1（全量 `run-tests`）仍是 341/344：三条失败（AC-073、AC-013、AC-006）全部落在 §4 列出的基线问题上，与本轮改动无关，且不在 write_scope 内；因此新的 `acceptance.md` 只覆盖本任务拥有的 AC-026/027/028，不含这些基线项。
