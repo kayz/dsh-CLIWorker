@@ -7,3 +7,7 @@
 自测：`node --test test/integration/plugin-session.test.mjs` 通过 2 项；`node --test "test/unit/*.test.mjs"` 退出 0（473 项，472 通过，1 项既有跳过）；`node scripts/check-acceptance.mjs .collab/tasks/024/acceptance.md` 通过，warnings=0。这些结果不代表任务验收通过。
 
 尚需实现插件注册、各路由守卫和业务分发、健康收集及 doctor、flows、完整集成测试与 traceability，之后执行验收命令。未执行 `scripts/check-fast.ps1`：设计说明其隐含调用 git 或写报告，而本轮禁止执行 git 和创建范围外文件。
+
+续接第 1 轮新增 `lib/http/guard.mjs`：使用既有注册表的判定函数处理管理路由门控，提供标准错误响应和按字节限制的 JSON 读取；请求超限时立即拒绝，继续排空而不销毁响应。新增 `test/integration/plugin-guard.test.mjs`，对声明的管理写路径检查门控优先级和不读取 body，并检查畸形及超限输入。运行 `node --test test/integration/plugin-guard.test.mjs test/integration/plugin-session.test.mjs`，4 项通过。
+
+本轮新增模块同样尚未接入生产插件；这些测试只覆盖独立模块，并未执行 flows 或覆盖实际 HTTP 请求，不能当作 AC-060 通过。上述尚需工作仍未完成。
