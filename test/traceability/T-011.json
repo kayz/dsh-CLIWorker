@@ -1,0 +1,8 @@
+{
+  "task": "T-011",
+  "milestone": "M2",
+  "entries": [
+    { "ac": "AC-029", "status": "covered", "files": ["test/unit/store.test.mjs", "test/unit/lock.test.mjs", "test/integration/store-concurrency.test.mjs"] },
+    { "ac": "AC-030", "status": "covered", "files": ["test/unit/redact.test.mjs", "test/unit/audit.test.mjs"] }
+  ]
+}
