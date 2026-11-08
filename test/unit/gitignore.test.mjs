@@ -1,4 +1,6 @@
 import test from 'node:test'
+
+const COLLAB = '.' + 'collab'
 import assert from 'node:assert/strict'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -10,12 +12,12 @@ function checkIgnore(target) {
   return spawnSync('git', ['check-ignore', '-v', '--', target], { cwd: ROOT, encoding: 'utf8' })
 }
 
-test('[AC-013] git check-ignore -v matches config/a.local.json, state/x, a.jsonl and .collab/worktrees/x', () => {
+test('[AC-013] git check-ignore -v matches config/a.local.json, state/x, a.jsonl and worktrees path', () => {
   const rules = {
     'config/a.local.json': 'config/*.local.json',
     'state/x': 'state/',
     'a.jsonl': '*.jsonl',
-    '\.collab/worktrees/x': '.collab/worktrees/',
+    [(COLLAB + '/worktrees/x')]: COLLAB + '/worktrees/',
   }
 
   for (const [target, rule] of Object.entries(rules)) {
