@@ -1,0 +1,26 @@
+{
+  "id": "014",
+  "history": [
+    {
+      "at": "2026-11-08T01:35:09.364Z",
+      "to": "draft",
+      "by": "init"
+    },
+    {
+      "at": "2026-11-08T01:47:40.618Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol (inherited c1)"
+    }
+  ],
+  "status": "designed",
+  "updated_at": "2026-11-08T01:47:40.618Z",
+  "role": "design",
+  "model": "gpt-6.1-sol",
+  "model_resolved": "gpt-6.1-sol",
+  "effort": "high",
+  "attempt": 1,
+  "switches": 1,
+  "blocked_reason": null,
+  "handoff": null
+}

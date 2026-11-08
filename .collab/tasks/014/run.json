@@ -1,0 +1,78 @@
+[
+  {
+    "task": "014",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-08T01:35:09.374Z",
+    "ended_at": "2026-11-08T01:38:06.831Z",
+    "duration_ms": 177457,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 30,
+      "output": 20145,
+      "cache_read": 917399,
+      "cache_write": 89787,
+      "cost_usd": 0.6523979000000001
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/014/logs/design-r1-1.log",
+    "error": "You've hit your session limit · resets 10:50am (Asia/Shanghai)",
+    "handoff": {
+      "file": "handoff/design-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/014/design-r1-c1",
+      "sha": "5a459d152dd5e957709812ed47bac43e20723c3a"
+    }
+  },
+  {
+    "task": "014",
+    "role": "design",
+    "round": 1,
+    "candidate": 2,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-sol",
+    "model_resolved": "gpt-6.1-sol",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T01:38:08.748Z",
+    "ended_at": "2026-11-08T01:47:40.427Z",
+    "duration_ms": 571679,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 1378734,
+      "output": 15595,
+      "cache_read": 1297920,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/014/logs/design-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "claude-sonnet-5-5",
+      "file": "handoff/design-r1-c1-to-c2.md"
+    }
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "question": "T-014 有两处无法在现有规格和 write_scope 内确定的冲突：① lib/cli.mjs 静态分发拒绝 config migrate（已复现退出码 2 / E_UNKNOWN_COMMAND），但 lib/cli.mjs、bin/cliworker.mjs 都不允许修改；② pool.schema.json 只允许现有八个字段且 additionalProperties=false，迁移映射未规定 credits（尤其无换算率）与 remaining_usd 余额的无损表示，禁止自行新增字段。是否先暂停本任务，由蓝图/前置任务明确 CLI 接入归属与余额契约，再继续设计？",
+  "options": [
+    "暂停 T-014，由蓝图/前置任务补齐 CLI 接入与余额契约后重新设计",
+    "由人类明确扩大写入范围，并提供获批的 CLI 接入方案和 credits/USD 余额表示后继续"
+  ],
+  "default": "暂停 T-014，由蓝图/前置任务补齐 CLI 接入与余额契约后重新设计"
+}
