@@ -38,7 +38,7 @@
 
 ## 自测结果
 
-在仓库根执行（Node 24 / win32）：
+在仓库根执行（Node v22.23.3 / win32）：
 
 | 命令 | 结果 |
 |---|---|
@@ -52,15 +52,19 @@
 | `node scripts/check-test-discovery.mjs` | ok |
 | `node scripts/check-unused.mjs` | ok（files=28） |
 | `node scripts/check-write-scope.mjs --base 682a62e --scope-from .collab/tasks/012/design.md --scope ".collab/**"` | `check-write-scope: ok` |
+| `git status --short -- test`（跑完 flows 测试后） | 无输出（无残留临时文件；临时目录都在 `os.tmpdir()`） |
+| `git ls-files -- <7 个 write_scope 路径>` | 恰好 7 行 |
 
-`git grep --no-index` 等价检查：新增文件不含 `lib/` import、不含裸模块名/`require(`、不含硬编码哨兵值。
+`git grep --no-index` 等价检查：新增文件不含 `lib/` import、不含裸模块名/`require(`、不含硬编码哨兵值（三条命令均退出码 1、无输出）。
 
 ## 已知阻塞（与本任务改动无关，且不在 write_scope 内）
 
-当前分支基线上有 3 个既有用例失败，导致 `node scripts/run-tests.mjs`（A4）与 `scripts/check-fast.ps1`（F1）无法全绿；本次只新增文件，未触碰下列文件或其依赖：
+当前分支基线上有 3 个既有用例失败，导致 `node scripts/run-tests.mjs`（A4）与 `scripts/check-fast.ps1`（F1）无法全绿；本次只新增文件，未触碰下列文件或其依赖（均已用 `git show 682a62e:<path>` 确认基线即为此状态）：
 
 1. `test/contract/spec-tracked.test.mjs` [AC-073]：`check-no-collab` 报告 `test/unit/gitignore.test.mjs:13`、`:18` 含 `.collab` 字面量。
 2. `test/unit/gitignore.test.mjs` [AC-013]：`.gitignore` 只有 `.collab/worktrees/` 等规则，`git check-ignore .collab/x` 返回 1，用例期望 0 且命中 `.collab/`。
-3. `test/unit/import-safe.test.mjs` [AC-006]：`main(['providers','--config','/missing/config.json'])` 实际退出码 3，用例期望 1。
+3. `test/unit/import-safe.test.mjs` [AC-006]：`main(['providers','--config','/missing/config.json'])` 实际退出码 3（`E_CONFIG` 在 `contracts/registry.snapshot.json` 中为 exit 3），用例期望 1。
 
-`run-tests` 其余部分通过：`full 49 files`（基线 47 + 本任务 2 个测试文件），仅上述 3 个文件失败；本任务相关的 `test/unit/leak-scan-canary.test.mjs` 与 `test/flows/flow.test.mjs` 在完整运行中全部通过。
+`check-fast.ps1` 的失败点在 `check-no-collab.mjs` 这一步（早于 `npm test`），即上述第 1 项的同一根因。
+
+`run-tests` 其余部分通过：`full 49 files`（基线 47 + 本任务 2 个测试文件），仅上述 3 个文件失败；本任务相关的 `test/unit/leak-scan-canary.test.mjs` 与 `test/flows/flow.test.mjs` 在完整运行中全部通过（A1 的 `filtered 2 files`、23 个用例全 ✔）。
