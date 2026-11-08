@@ -15,3 +15,7 @@
 本次续接新增 `lib/health.mjs`、`lib/commands/doctor.mjs` 和两份 `[AC-061]` 测试；现有插件注册公共 health 路由，doctor 使用 streamed 钩子，正常与配置缺失时由同一收集器生成报告。测试覆盖基本聚合、配置缺失和进程内 CLI 分发与 HTTP 报告一致性。`node scripts/run-tests.mjs --ac AC-061` 退出 0（3 项）；`node --test "test/unit/*.test.mjs"` 退出 0（475 项，1 项跳过）；`node scripts/check-traceability.mjs` 退出 0。
 
 这并不代表完整 AC-061 已覆盖：真实独立 CLI 进程、故障矩阵、flows、精确时间边界及注册失败对照等仍待实现或验证。现有 registration 测试仍按旧四路由断言，新增 health 后运行该测试有 2 项失败；session/ui、其他新路由和管理读鉴权尚未接入，不能仅改测试冒充完成。注册更新、完整 T-024 追溯及所有原验收要求仍未完成。
+
+本次续接将声明表接入插件注册，加入实例会话、自举、管理读写守卫和 select 视图检查，注册失败改为脱敏；更新注册测试，并新增实际宿主请求的路由和守卫测试。health 的探测过期边界调整为与现有选择规则一致。已运行六个相关测试文件，共 14 项通过；unit 回归 475 项、0 失败、1 项既有跳过；`node scripts/check-traceability.mjs` 通过。
+
+仍未完成：管理写路由通过守卫后的业务分发目前返回 `E_INTERNAL`，snapshot/jobs 除测试注入外无数据处理；尚未验证真实目录首写、完整 select/leak-scan、flows、健康故障矩阵及 T-024 追溯分片。上述测试不足以证明三项 AC 达标，不能发布为完成的实现。此段取代前文中“session/ui、其他新路由和管理读鉴权尚未接入”的状态描述。

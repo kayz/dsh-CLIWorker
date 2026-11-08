@@ -1,7 +1,7 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\024",
   "taskDir": ".collab\\tasks\\024",
-  "ranAt": "2026-11-09T02:55:42.3454604+08:00",
+  "ranAt": "2026-11-09T03:04:08.6015950+08:00",
   "passed": 2,
   "total": 3,
   "ok": false,
@@ -9,29 +9,29 @@
     {
       "id": "AC-059",
       "title": "",
-      "passed": true,
-      "exitCode": 0,
-      "durationS": 0.68,
-      "lastLine": "AC-059 OK",
-      "output": "TAP version 13\n# Subtest: AC-059 loopback components are independently required\nok 1 - AC-059 loopback components are independently required\n  ---\n  duration_ms: 1.2958\n  type: 'test'\n  ...\n# Subtest: AC-059 session expiry, isolation and CSRF binding\nok 2 - AC-059 session expiry, isolation and CSRF binding\n  ---\n  duration_ms: 1.8283\n  type: 'test'\n  ...\n# Subtest: [AC-008] getRegistration reports a failed placeholder before the plugin is applied\nok 3 - [AC-008] getRegistration reports a failed placeholder before the plugin is applied\n  ---\n  duration_ms: 1.1393\n  type: 'test'\n  ...\n# Subtest: [AC-008] createPlugin registers the four routes and reports ok\nok 4 - [AC-008] createPlugin registers the four routes and reports ok\n  ---\n  duration_ms: 1.1445\n  type: 'test'\n  ...\n# Subtest: [AC-008] a failing route is reported without blocking the others\nok 5 - [AC-008] a failing route is reported without blocking the others\n  ---\n  duration_ms: 0.3635\n  type: 'test'\n  ...\n# Subtest: [AC-008] an inject failure is reported with a null path\nok 6 - [AC-008] an inject failure is reported with a null path\n  ---\n  duration_ms: 0.2324\n  type: 'test'\n  ...\n# Subtest: [AC-008] apply throws in strict mode and stays quiet otherwise\nok 7 - [AC-008] apply throws in strict mode and stays quiet otherwise\n  ---\n  duration_ms: 0.6106\n  type: 'test'\n  ...\n# Subtest: [AC-008] a registered handler round-trips through the injected ctx\nok 8 - [AC-008] a registered handler round-trips through the injected ctx\n  ---\n  duration_ms: 4.224\n  type: 'test'\n  ...\n1..8\n# tests 8\n# suites 0\n# pass 8\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 111.5747\nAC-059 OK"
+      "passed": false,
+      "exitCode": 1,
+      "durationS": 0.77,
+      "lastLine": "     | AC-059 route/session tests failed",
+      "output": "TAP version 13\n# Subtest: AC-059 loopback components are independently required\nok 1 - AC-059 loopback components are independently required\n  ---\n  duration_ms: 1.2496\n  type: 'test'\n  ...\n# Subtest: AC-059 session expiry, isolation and CSRF binding\nok 2 - AC-059 session expiry, isolation and CSRF binding\n  ---\n  duration_ms: 1.7222\n  type: 'test'\n  ...\n# Subtest: [AC-008] getRegistration reports a failed placeholder before the plugin is applied\nok 3 - [AC-008] getRegistration reports a failed placeholder before the plugin is applied\n  ---\n  duration_ms: 1.0897\n  type: 'test'\n  ...\n# Subtest: [AC-008] createPlugin registers the four routes and reports ok\nnot ok 4 - [AC-008] createPlugin registers the four routes and reports ok\n  ---\n  duration_ms: 2.1503\n  type: 'test'\n  location: 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\024\\\\test\\\\integration\\\\registration.test.mjs:26:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly deep-equal:\n    + actual - expected\n    \n      [\n        '/cliworker/forecast',\n    +   '/cliworker/health',\n        '/cliworker/models',\n        '/cliworker/providers',\n        '/cliworker/select'\n      ]\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected:\n    0: '/cliworker/forecast'\n    1: '/cliworker/models'\n    2: '/cliworker/providers'\n    3: '/cliworker/select'\n  actual:\n    0: '/cliworker/forecast'\n    1: '/cliworker/health'\n    2: '/cliworker/models'\n    3: '/cliworker/providers'\n    4: '/cliworker/select'\n  operator: 'deepStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///C:/git/dsh-CLIWorker/.collab/worktrees/024/test/integration/registration.test.mjs:31:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n# Subtest: [AC-008] a failing route is reported without blocking the others\nnot ok 5 - [AC-008] a failing route is reported without blocking the others\n  ---\n  duration_ms: 0.7626\n  type: 'test'\n  location: 'C:\\\\git\\\\dsh-CLIWorker\\\\.collab\\\\worktrees\\\\024\\\\test\\\\integration\\\\registration.test.mjs:41:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    4 !== 3\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 3\n  actual: 4\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///C:/git/dsh-CLIWorker/.collab/worktrees/024/test/integration/registration.test.mjs:49:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n# Subtest: [AC-008] an inject failure is reported with a null path\nok 6 - [AC-008] an inject failure is reported with a null path\n  ---\n  duration_ms: 0.4053\n  type: 'test'\n  ...\n# Subtest: [AC-008] apply throws in strict mode and stays quiet otherwise\nok 7 - [AC-008] apply throws in strict mode and stays quiet otherwise\n  ---\n  duration_ms: 0.5173\n  type: 'test'\n  ...\n# Subtest: [AC-008] a registered handler round-trips through the injected ctx\nok 8 - [AC-008] a registered handler round-trips through the injected ctx\n  ---\n  duration_ms: 4.0203\n  type: 'test'\n  ...\n1..8\n# tests 8\n# suites 0\n# pass 6\n# fail 2\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 114.5636\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-3d7672bc-f67c-4659-a041-bdc32650adbf.ps1:7\nLine |\n   7 |  if ($testExit -ne 0) { throw 'AC-059 route/session tests failed' }\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-059 route/session tests failed"
     },
     {
       "id": "AC-060",
       "title": "",
       "passed": true,
       "exitCode": 0,
-      "durationS": 0.61,
+      "durationS": 0.63,
       "lastLine": "AC-060 OK",
-      "output": "TAP version 13\n# Subtest: AC-060 write gates take precedence without reading the request body\nok 1 - AC-060 write gates take precedence without reading the request body\n  ---\n  duration_ms: 3.076\n  type: 'test'\n  ...\n# Subtest: AC-060 oversized and malformed bodies reject without destroying the stream\nok 2 - AC-060 oversized and malformed bodies reject without destroying the stream\n  ---\n  duration_ms: 1.5036\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 83.6816\nAC-060 OK"
+      "output": "TAP version 13\n# Subtest: AC-060 write gates take precedence without reading the request body\nok 1 - AC-060 write gates take precedence without reading the request body\n  ---\n  duration_ms: 2.8224\n  type: 'test'\n  ...\n# Subtest: AC-060 oversized and malformed bodies reject without destroying the stream\nok 2 - AC-060 oversized and malformed bodies reject without destroying the stream\n  ---\n  duration_ms: 1.7305\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 87.0144\nAC-060 OK"
     },
     {
       "id": "AC-061",
       "title": "",
-      "passed": false,
-      "exitCode": 1,
-      "durationS": 0.62,
-      "lastLine": "     | AC-061 health/doctor tests failed",
-      "output": "Could not find 'test/unit/health.test.mjs, test/integration/health.test.mjs'\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-c048ce5c-26ac-4cd7-bf30-47a994c2d812.ps1:7\nLine |\n   7 |  if ($testExit -ne 0) { throw 'AC-061 health/doctor tests failed' }\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-061 health/doctor tests failed"
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.69,
+      "lastLine": "AC-061 OK",
+      "output": "TAP version 13\n# Subtest: [AC-061] HTTP health and doctor agree for healthy and missing config\nok 1 - [AC-061] HTTP health and doctor agree for healthy and missing config\n  ---\n  duration_ms: 7.5489\n  type: 'test'\n  ...\n# Subtest: [AC-061] healthy facts and missing initial caches are aggregated\nok 2 - [AC-061] healthy facts and missing initial caches are aggregated\n  ---\n  duration_ms: 4.7953\n  type: 'test'\n  ...\n# Subtest: [AC-061] faults are collected without exposing the config path\nok 3 - [AC-061] faults are collected without exposing the config path\n  ---\n  duration_ms: 0.6529\n  type: 'test'\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 125.8687\nAC-061 OK"
     }
   ]
 }
