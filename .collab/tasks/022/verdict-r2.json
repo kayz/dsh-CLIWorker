@@ -1,0 +1,54 @@
+{
+  "task": "022",
+  "round": 2,
+  "verdict": "needs_revision",
+  "sha": "f92a35664fb1a53c4b107f002609aa6acc94913a",
+  "passed": 5,
+  "total": 6,
+  "criteria": [
+    { "id": "AC-051", "result": "pass", "evidence": "ci-results.json AC-051: exit 0, 11 tests, fail/cancelled/skipped/todo 0, 'AC-051 OK'" },
+    { "id": "AC-052", "result": "pass", "evidence": "ci-results.json AC-052: exit 0, 6 tests, counters 0, 'AC-052 OK'" },
+    { "id": "AC-053", "result": "pass", "evidence": "ci-results.json AC-053: exit 0, counters 0, 'AC-053 OK'" },
+    { "id": "AC-054", "result": "pass", "evidence": "ci-results.json AC-054: exit 0, 3 tests, 'AC-054 OK'; reviewer ran node --test test/integration/select-concurrency.test.mjs 3 more times: pass 3 / fail 0 each; impl.md records 4 consecutive passes" },
+    { "id": "AC-055", "result": "pass", "evidence": "ci-results.json AC-055: exit 0, noexec + a5-nocache pass; perf p95 report present" },
+    { "id": "AC-056", "result": "fail", "evidence": "ci-results.json AC-056 filtered run passes and test/contract/selection-view.test.mjs (220 lines, 7 tests) now covers goldens through real CLI + scanView, static examples, paid detail, sentinels; BUT test/traceability/T-022.json line 9 AC-056 still 'planned'; node scripts/check-fast.mjs => 'check-fast: FAILED step npm test (exit 1)' with failures [AC-023] cli-envelope.test.mjs:106 (models select --level Quick expected 0, actual 5), [AC-047] probe.test.mjs:161 (expected ok:false result, got thrown E_NO_CANDIDATE), [AC-029] lock-counter (flaky under full run; store-concurrency.test.mjs alone passes)" }
+  ],
+  "checks": [
+    { "cmd": "node --test \"test/unit/*.test.mjs\"", "result": "471 pass, 0 fail" },
+    { "cmd": "node scripts/check-traceability.mjs", "result": "ok (covered=55 planned=20)" },
+    { "cmd": "node scripts/check-fast.mjs", "result": "FAILED step npm test (exit 1)" }
+  ],
+  "findings": [
+    {
+      "severity": "P1",
+      "file": "lib/commands/models/select.mjs",
+      "line": 20,
+      "summary": "Every !result.ok now throws, including draft/legacy requests. This turns existing [AC-023] cli-envelope 'every successful command' (models select --level Quick: expected 0, got 5) and [AC-047] probe 'stale record' (expected ok:false result, got thrown E_NO_CANDIDATE) red, so check-fast fails. AC-056 only requires v1 zero-candidate CLI calls to exit 5; keep the legacy failed shape (ok:false, models:[], rejected) with W_DRAFT_DEPRECATED for the draft view, or escalate to the orchestrator if the --request-file v1 case in AC-023 genuinely conflicts. Do not leave the suite red."
+    },
+    {
+      "severity": "P1",
+      "file": "test/traceability/T-022.json",
+      "line": 9,
+      "summary": "AC-056 is still 'planned' although test/contract/selection-view.test.mjs now exists and passes; set to covered once check-fast is green."
+    },
+    {
+      "severity": "P2",
+      "file": ".collab/tasks/022/impl.md",
+      "line": 3,
+      "summary": "impl.md still says the work is unfinished and records stale failures (check-pack, flaky AC-054, 'cannot claim check-fast ok') without the final verified state (471 unit pass, six ACs pass, repeated AC-054 runs, remaining full-suite failures)."
+    },
+    {
+      "severity": "P2",
+      "file": "test/integration/store-concurrency.test.mjs",
+      "line": 1,
+      "summary": "[AC-029] lock-counter failed inside the full check-fast run (passes alone: pass 2 / fail 0). Determine whether it is load-dependent flakiness or caused by this task's lock/retry changes, and record the result."
+    },
+    {
+      "severity": "P2",
+      "file": "lib/contract/scan.mjs",
+      "line": 1,
+      "summary": "Known boundary risk (impl.md): a real model name such as 'unknown' collides with registry reason words and trips the scanner; fixtures were renamed instead. Out of write scope; record for a follow-up task."
+    }
+  ],
+  "notes": "No git commands were run; HEAD sha read from the worktree gitdir files. Reviewer executed read-only test commands (node --test, check-traceability, check-fast) to verify; these write only to the system temp dir. ci-results.json contains only the six AC commands, so the AC-056 completion check (check-fast) has no orchestrator evidence and was verified independently."
+}
