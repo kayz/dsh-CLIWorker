@@ -27,3 +27,7 @@ AC-032 尚未完成，不能声称已验收。交班单显示候选 #1 执行失
 本次交接后保留已有实现与测试：交班单记录上一候选未产生改动，现有实现符合部分设计，且定向回归通过；由于明确禁止 Git，未执行 git diff，无法独立确认差异来源。扩展隔离集成测试，增加 stdin 设置、独立进程消费及 clear 后 status；增加三平台后端参数、stdin 和执行失败的基础单测，以检查秘密不进入参数及后端失败不创建目录。
 
 自测：直接执行 `node --test --test-name-pattern=AC-032 test/integration/secrets-native.test.mjs`，3 项通过；`node --test test/unit/secrets.test.mjs`，8 项通过；配置、路径、exec 和 secrets 的组合回归 38 项通过（扩展单测之前）。本环境找不到 pwsh，无法原样执行 PowerShell 验收命令或 check-fast；后者的检查链还包含被禁止的 Git 命令。AC-032 指定的共享 auth flow、完整泄漏扫描及隔离场景仍缺失，AC-033 也缺少设计要求的完整后端和输入验证覆盖，追踪文件尚未创建，故本任务尚未完成，不能标记 covered。
+
+本次保留现场已有实现和测试：交班单记录候选 #1 未产生改动，已有实现与设计部分一致且定向测试通过；禁止执行 Git，无法独立核验差异或确认其来源。本次在隔离集成测试中增加不同 state_dir 不可见、覆盖旧凭据、新进程读取新值、清除后消费失败的断言，并在设置、消费和清除后扫描临时根目录与捕获的输出、参数，检查两次令牌的多种编码不泄漏。
+
+本次使用 PowerShell 7 原样执行 acceptance.md 中的命令，3 项通过、无跳过，输出 `AC-032 OK`；`node --test test/unit/secrets.test.mjs` 8 项通过。验收命令通过不代表设计全部完成：共享 auth flow、显式引用、后端失败的文件变化及完整平台和输入覆盖、追踪文件仍缺失。未运行 check-fast，因为检查链包含被禁止的 Git 命令；没有修改 acceptance.md 或将覆盖标为 covered。此前关于本环境找不到 pwsh 的记录不适用于本次。

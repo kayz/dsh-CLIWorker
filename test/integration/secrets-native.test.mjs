@@ -6,6 +6,7 @@ import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import crypto from 'node:crypto'
+import { leakScan } from '../helpers/leak-scan.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 
@@ -60,21 +61,50 @@ process.stdout.write(JSON.stringify({ hashes, argv: process.argv }))
     const env = { ...process.env, CLIWORKER_HOME: path.join(temp, 'home'), CW_TEST_KEY: key, CW_TEST_STORE: temp, NODE_OPTIONS: `--import=${pathToFileURL(preload).href}` }
     delete env.SENTINEL
     delete env.CW_FLOW_SENTINEL
+    const captured = { stdout: [], stderr: [], argv: [] }
+    const sentinels = [{ label: 'TOKEN', value: token }]
+    const scan = () => {
+      const result = leakScan({ sentinels, ...captured, http: [], state_dir: temp, auditFile: path.join(temp, 'state', 'audit.jsonl') })
+      assert.equal(result.ok, true)
+      assert.deepEqual(result.hits, [])
+      assert.deepEqual(result.errors, [])
+    }
     const run = (args, childEnv, input) => {
       const r = spawnSync(process.execPath, args, { env: childEnv, input, encoding: 'utf8', windowsHide: true })
+      captured.stdout.push(r.stdout || '')
+      captured.stderr.push(r.stderr || '')
+      captured.argv.push([process.execPath, ...args])
       assert.equal(r.status, 0, 'child failed')
       return JSON.parse(r.stdout)
     }
     const cli = path.join(root, 'bin/cliworker.mjs')
     const setArgs = [cli, 'auth', 'set', 'kimi', ...(source === 'from-env' ? ['--from-env', 'SENTINEL'] : []), '--config', config]
     assert.equal(run(setArgs, source === 'from-env' ? { ...env, SENTINEL: token } : env, source === 'stdin' ? `${token}\n` : undefined).state, 'set')
+    scan()
     assert.equal(run([cli, 'auth', 'status', 'kimi', '--config', config], env).state, 'set')
     const result = run([consumer, config, fake], env)
     const hash = crypto.createHash('sha256').update(token).digest('hex')
     assert.deepEqual(Object.keys(result.hashes).filter(k => result.hashes[k] === hash), ['KIMI_API_KEY'])
     assert.ok(result.argv.every(arg => !arg.includes(token)))
+    scan()
+    const otherConfig = path.join(temp, 'other-config.json')
+    fs.writeFileSync(otherConfig, JSON.stringify({ providers: {}, models: {}, state_dir: path.join(temp, 'other-state') }))
+    assert.equal(run([cli, 'auth', 'status', 'kimi', '--config', otherConfig], env).state, 'unset')
+    const replacement = crypto.randomBytes(32).toString('hex')
+    sentinels.push({ label: 'REPLACEMENT', value: replacement })
+    assert.equal(run([cli, 'auth', 'set', 'kimi', '--from-env', 'SENTINEL', '--config', config], { ...env, SENTINEL: replacement }).state, 'set')
+    const updated = run([consumer, config, fake], env)
+    const replacementHash = crypto.createHash('sha256').update(replacement).digest('hex')
+    assert.deepEqual(Object.keys(updated.hashes).filter(k => updated.hashes[k] === replacementHash), ['KIMI_API_KEY'])
     assert.equal(run([cli, 'auth', 'clear', 'kimi', '--config', config], env).state, 'unset')
     assert.equal(run([cli, 'auth', 'status', 'kimi', '--config', config], env).state, 'unset')
+    const missing = spawnSync(process.execPath, [consumer, config, fake], { env, encoding: 'utf8', windowsHide: true })
+    assert.notEqual(missing.status, 0)
+    assert.equal(missing.stdout, '')
+    captured.stdout.push(missing.stdout || '')
+    captured.stderr.push(missing.stderr || '')
+    captured.argv.push([process.execPath, consumer, config, fake])
+    scan()
   } finally { fs.rmSync(temp, { recursive: true, force: true }) }
 })
 
