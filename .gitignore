@@ -1,6 +1,8 @@
 config/*.local.json
 state/
 *.jsonl
+# Fixture sessions are test inputs, not local runtime output.
+!test/fixtures/**/*.jsonl
 .collab/worktrees/
 .collab/tasks/*/logs/
 .collab/tasks/*/live.json

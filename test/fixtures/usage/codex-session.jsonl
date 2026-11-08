@@ -1,0 +1,12 @@
+{"timestamp":"2026-11-07T08:00:00Z","payload":{"type":"session_meta","id":"sess-fixture","version":"0.1.0"}}
+{"timestamp":"2026-11-07T08:05:00Z","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":120000,"output_tokens":30000,"total_tokens":150000}}}}
+{"timestamp":"2026-11-07T08:10:00Z","payload":{"type":"message","role":"user","usage":{"input_tokens":5000,"output_tokens":1000}}}
+not valid json at all
+{"timestamp":"2026-11-07T08:30:00Z","payload":{"rate_limits":{"primary":{"used_percent":20,"window_minutes":300,"resets_at":"2026-11-07T13:00:00Z"},"secondary":{"used_percent":5,"window_minutes":10080,"resets_at":"2026-11-14T00:00:00Z"}}}}
+{"timestamp":"2026-11-07T09:00:00Z","rate_limits":{"primary":{"used_percent":40,"window_minutes":300,"resets_at":"2026-11-07T13:30:00Z"},"secondary":{"remaining_percent":90,"window_minutes":10080,"resets_at":"2026-11-14T00:00:00Z"}}}
+{"timestamp":"2026-11-07T09:15:00Z","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":175000}}}}
+[{"timestamp":"2026-11-07T09:20:00Z","payload":{"type":"unexpected"}}]
+{"timestamp":"2026-11-07T10:00:00Z","payload":{"rate_limits":{"primary":{"used_percent":50,"window_minutes":300,"resets_at":"2026-11-07T14:00:00Z"},"secondary":{"used_percent":15,"window_minutes":10080,"resets_at":"2026-11-14T00:00:00Z"}}}}
+{"timestamp":"2026-11-07T10:05:00Z","payload":{"type":"token_count"}}
+{"timestamp":"2026-11-07T10:10:00Z","payload":{"rate_limits":{"primary":{"used_percent":150,"window_minutes":300,"resets_at":"2026-11-07T14:00:00Z"}}}}
+{"timestamp":"2026-11-07T10:15:00Z","payload":{"rate_limits":{"primary":{"used_percent":-5,"window_minutes":300},"secondary":"not-an-object"}}}
