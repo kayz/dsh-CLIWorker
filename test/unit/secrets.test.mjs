@@ -48,6 +48,16 @@ test('session isolation and consumer injection', () => {
   assert.equal(calls.length, 1)
 })
 
+test('legacy configuration retains explicit secret references', () => {
+  const file = path.join(os.tmpdir(), 'cw-secret-ref-config.json')
+  const raw = { providers: {}, models: {}, secrets: { kimi: { ref: 'session:configured' } } }
+  const ctx = createFakeContext({ files: { [file]: JSON.stringify(raw) }, env: {}, platform: process.platform })
+  const config = loadConfig({ file, ctx })
+  secretAction(ctx, config, 'kimi', 'set', 'test-value')
+  assert.equal(resolveSecret(ctx, config, 'kimi'), 'test-value')
+  assert.equal(config.secrets.kimi.ref, 'session:configured')
+})
+
 test('exec forwards synchronous input without changing argv', () => {
   let observed
   const exec = createExec({ spawnSync: (file, args, options) => {
