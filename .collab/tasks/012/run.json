@@ -1,0 +1,33 @@
+[
+  {
+    "task": "012",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-08T01:25:10.847Z",
+    "ended_at": "2026-11-08T01:28:48.773Z",
+    "duration_ms": 217926,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 40,
+      "output": 26684,
+      "cache_read": 1210717,
+      "cache_write": 78392,
+      "cost_usd": 0.7015597000000001
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/012/logs/design-r1-1.log",
+    "error": null
+  }
+]
