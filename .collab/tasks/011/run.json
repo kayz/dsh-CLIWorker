@@ -122,5 +122,67 @@
     "usage_source": "cli_json",
     "log_ref": ".collab/tasks/011/logs/dev-r1-1.log",
     "error": null
+  },
+  {
+    "task": "011",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T01:12:21.354Z",
+    "ended_at": "2026-11-08T01:12:21.354Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 2,
+      "total": 2,
+      "ok": true,
+      "ran_at": "2026-11-08T01:12:21.354Z",
+      "report_ref": ".collab/tasks/011/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/011/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "011",
+    "role": "review",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "hy4free",
+    "model_resolved": "hy4free",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-08T01:12:21.362Z",
+    "ended_at": "2026-11-08T01:32:10.138Z",
+    "duration_ms": 1188776,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 5646712,
+      "output": 79763,
+      "cache_read": 5458944,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/011/logs/review-r1-1.log",
+    "error": null
   }
 ]
