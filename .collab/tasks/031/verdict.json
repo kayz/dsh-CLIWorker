@@ -1,0 +1,39 @@
+{
+  "verdict": "needs_revision",
+  "sha": "31685f25f0c371bee238bf841c35c0b0974dfe86",
+  "passed": 1,
+  "total": 1,
+  "criteria": [
+    {
+      "id": "AC-075",
+      "result": "fail",
+      "evidence": "ci-results.json: AC-075 exitCode 0, TAP '# tests 21 / # pass 21 / # fail 0 / # cancelled 0 / # skipped 0 / # todo 0', last line 'AC-075 OK'. Level mapping lib/identity.mjs:17-24; failed-first lib/identity.mjs:132; calls[] fields lib/providers/call.mjs:240-255; whitelist views lib/contract/views.mjs:80-117. The tests pass, but independent probing found a redaction gap: lib/identity.mjs:30 USER_DIR_RE has no i flag, so classifyIdentity on rollout file 'c:\\users\\alice\\r.jsonl' returns evidence.path unchanged (username leaks), and '/HOME/bob/r.jsonl' also leaks. This violates design.md 11.2 (evidence must not contain the username)."
+    }
+  ],
+  "findings": [
+    {
+      "severity": "P1",
+      "file": "lib/identity.mjs",
+      "line": 30,
+      "summary": "USER_DIR_RE is case-sensitive, so lowercase users/home path segments are not redacted",
+      "evidence": "Probe: classifyIdentity with rollout file 'c:\\users\\alice\\r.jsonl' gives evidence.path 'c:\\users\\alice\\r.jsonl'; '/HOME/bob/r.jsonl' is also unchanged.",
+      "fix": "Add the i flag to USER_DIR_RE and add a lowercase or mixed-case test."
+    },
+    {
+      "severity": "P2",
+      "file": "lib/identity.mjs",
+      "line": 30,
+      "summary": "A user name containing a space is only partly redacted",
+      "evidence": "Probe: 'C:\\Users\\John Smith\\r.jsonl' gives 'C:\\Users\\[REDACTED] Smith\\r.jsonl'.",
+      "fix": "For Windows paths, redact up to the next separator rather than stopping at whitespace, and add a test."
+    },
+    {
+      "severity": "P2",
+      "file": ".collab/tasks/031/ci-results.json",
+      "line": 1,
+      "summary": "The Session compatibility regression command has no orchestrator execution evidence",
+      "evidence": "ci-results.json has passed:1/total:1 and covers only the first AC-075 command. The second command (session.test.mjs + session-invalidation.test.mjs) is backed only by the 26/26 claim in impl.md. The code shows no contradiction.",
+      "fix": "Include the second command's result in the next CI run."
+    }
+  ]
+}

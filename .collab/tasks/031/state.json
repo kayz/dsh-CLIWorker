@@ -1,0 +1,120 @@
+{
+  "id": "031",
+  "history": [
+    {
+      "at": "2026-11-08T16:31:51.324Z",
+      "to": "draft",
+      "by": "init"
+    },
+    {
+      "at": "2026-11-08T16:43:45.007Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T16:49:34.703Z",
+      "from": "designed",
+      "to": "implemented",
+      "by": "dev:deepseek-v4.1-flash"
+    },
+    {
+      "at": "2026-11-08T16:49:36.454Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T16:50:50.023Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T16:51:55.536Z",
+      "from": "reviewed",
+      "to": "implemented",
+      "by": "dev:deepseek-v4.1-flash"
+    },
+    {
+      "at": "2026-11-08T16:51:57.412Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T16:53:33.660Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T16:53:34.221Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T16:53:34.441Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
+    }
+  ],
+  "status": "pr_open",
+  "updated_at": "2026-11-08T16:53:34.441Z",
+  "role": "review",
+  "model": "claude-sonnet-5-5",
+  "model_resolved": "claude-sonnet-5-5",
+  "effort": "high",
+  "attempt": 5,
+  "switches": 0,
+  "blocked_reason": null,
+  "handoff": null,
+  "pr": {
+    "branch": "task/031",
+    "state": "open",
+    "files": [
+      ".collab/tasks/031/acceptance.md",
+      ".collab/tasks/031/ci-results.json",
+      ".collab/tasks/031/design.md",
+      ".collab/tasks/031/impl.md",
+      ".collab/tasks/031/review-r2.md",
+      ".collab/tasks/031/review.md",
+      ".collab/tasks/031/run.json",
+      ".collab/tasks/031/sessions/.gitignore",
+      ".collab/tasks/031/state.json",
+      ".collab/tasks/031/verdict-r2.json",
+      ".collab/tasks/031/verdict.json",
+      "lib/contract/views.mjs",
+      "lib/identity.mjs",
+      "lib/providers/call.mjs",
+      "test/contract/identity.test.mjs",
+      "test/unit/identity-levels.test.mjs"
+    ],
+    "sha": "eadd75faca2dbff032768f65b127883d0bf4be35"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "low",
+    "reasons": [],
+    "metrics": {
+      "files": 5,
+      "lines": 1173,
+      "review_rounds": 2,
+      "out_of_scope": 0,
+      "write_scope": 5
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T16:53:34.377Z",
+    "base": "main",
+    "head": "HEAD"
+  }
+}
