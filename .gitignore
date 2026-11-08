@@ -1,5 +1,5 @@
 config/*.local.json
-state/
+/state/
 *.jsonl
 # Fixture sessions are test inputs, not local runtime output.
 !test/fixtures/**/*.jsonl
