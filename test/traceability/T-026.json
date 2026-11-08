@@ -1,0 +1,14 @@
+{
+  "task": "T-026",
+  "milestone": "M5",
+  "entries": [
+    {
+      "ac": "AC-064",
+      "files": [
+        "test/e2e/select-run.test.mjs",
+        "test/e2e/select-run-sequence.test.mjs"
+      ],
+      "status": "covered"
+    }
+  ]
+}

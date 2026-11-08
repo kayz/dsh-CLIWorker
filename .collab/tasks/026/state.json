@@ -1,0 +1,98 @@
+{
+  "id": "026",
+  "history": [
+    {
+      "at": "2026-11-08T19:32:16.548Z",
+      "to": "draft",
+      "by": "init"
+    },
+    {
+      "at": "2026-11-08T19:39:11.743Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T19:42:19.667Z",
+      "from": "designed",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-08T19:42:22.199Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-08T19:44:29.599Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T19:44:30.025Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T19:44:30.193Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
+    }
+  ],
+  "status": "pr_open",
+  "updated_at": "2026-11-08T19:44:30.193Z",
+  "role": "review",
+  "model": "claude-sonnet-5-5",
+  "model_resolved": "claude-sonnet-5-5",
+  "effort": "high",
+  "attempt": 3,
+  "switches": 0,
+  "blocked_reason": null,
+  "handoff": null,
+  "pr": {
+    "branch": "task/026",
+    "state": "open",
+    "files": [
+      ".collab/tasks/026/acceptance.md",
+      ".collab/tasks/026/ci-results.json",
+      ".collab/tasks/026/design.md",
+      ".collab/tasks/026/impl.md",
+      ".collab/tasks/026/review.md",
+      ".collab/tasks/026/run.json",
+      ".collab/tasks/026/sessions/.gitignore",
+      ".collab/tasks/026/state.json",
+      ".collab/tasks/026/verdict.json",
+      "test/e2e/select-run-sequence.test.mjs",
+      "test/e2e/select-run.test.mjs",
+      "test/traceability/T-026.json"
+    ],
+    "sha": "7364171a23ec1099cdddd32738177625feb96f4d"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "low",
+    "reasons": [],
+    "metrics": {
+      "files": 3,
+      "lines": 178,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 3
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T19:44:30.141Z",
+    "base": "main",
+    "head": "HEAD"
+  }
+}

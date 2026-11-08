@@ -1,0 +1,49 @@
+{
+  "verdict": "pass",
+  "sha": "c57e0d32de0998bf634a51b24225b6a54d3782fe",
+  "passed": 1,
+  "total": 1,
+  "evidence": [
+    "SHA 核验（只读）：.git/worktrees/026/HEAD = ref: refs/heads/task/026；.git/refs/heads/task/026 = c57e0d32de0998bf634a51b24225b6a54d3782fe（stage(dev): task 026）。ci-results.json ranAt=2026-11-09T03:42:22+08:00 晚于该提交。",
+    "CI 来源 .collab/tasks/026/ci-results.json：passed=1, total=1, ok=true；AC-064 退出 0，末行 AC-064 OK，TAP 为 tests 1/pass 1/fail 0/cancelled 0/skipped 0/todo 0（对应 acceptance.md 第 1 条命令 select-run.test.mjs）。CI 只有该命令的输出。",
+    "第 2 条命令（select-run-sequence.test.mjs）：CI 无输出，评审时独立执行 node --test --test-reporter=tap，退出 0，tests 4/pass 4/fail 0/cancelled 0/skipped 0/todo 0；http/cli 各一个序列组和一个过期组。",
+    "第 3 条命令：test/traceability/T-026.json:1-14 只有 task/milestone/entries，值为 T-026、M5、一条 AC-064 covered，files 为两个 e2e 文件；独立执行 node scripts/check-traceability.mjs 输出 check-traceability: ok (covered=65 planned=10)。",
+    "第 4 条命令（unit 回归）：无 CI 输出；impl.md 自报 480 通过/1 跳过/0 失败。本任务只新增 test/e2e/* 和追踪分片，未改 lib/scripts/package.json/contracts，因此不影响 unit。未重跑（全量会写文件，gitignore.test 间接调用 git）。见 finding P2-3。",
+    "第 5 条命令（check-acceptance）：CI runner 已成功解析本文件并判定 1 个 AC；impl.md 自报 1 个 AC、6 条命令、warnings=0。",
+    "第 6 条命令（check-fast）：impl.md 如实说明未执行（会调用 git）。scripts/run-tests.mjs:19 枚举 e2e 目录，并以 node --test <files> 一文件一进程运行，select-run.test.mjs 的 argv[1] 守卫在全量运行下同样生效；check-acceptance 与 check-traceability 子检查已确认。完整 check-fast 无运行证据，但与代码不矛盾。见 finding P2-3。",
+    "代码核对：select-run.test.mjs:57-63 经 createHostStub + createPlugin + POST /cliworker/select 走真实 HTTP 路由；:65-67 以 process.execPath 启动 bin/cliworker.mjs models select（shell:false）；:76、:108-111 --config/--state-dir 恰出现一次并与夹具预期绝对路径比较；:51-54 原样使用 call.command/args/cwd 并以含中文、多行、尾随空格的 INPUT 作为 stdin；:77-89 每行 JSON.parse 并经 validate(event.v1) 校验，断言 seq 连续、lease_id、at=时钟、start 首事件、唯一 result、text/usage 等于固定值；:95-100 校验 pid、cwd、input、argv；:117-120 重放得 E_LEASE_CONSUMED、retryable=false、账本字节不变、:post 恰一条。",
+    "select-run-sequence.test.mjs:13、:32 独立计算 expires_at = AT+TTL*1000+i*TIMEOUT；:15-16 显式断言 i>0 的执行时刻超过 models[0].expires_at；:21-22 每步记录数递增且每个 lease 的 :post 恰一条；:33-37 过期组使用新夹具，时钟设为 models[2].expires_at+1s，得 E_LEASE_EXPIRED、retryable=true、退出码 6、fake-cli 记录 0、无 :pre/:post 行。",
+    "合规性：交付仅为 write_scope 内三个文件；时间只来自共享时钟文件；无墙钟 sleep；夹具用 mkdtemp，路径含空格，finally 中 cleanup 并断言根目录已不存在；未新增命令或路由。未执行 git 命令，未改动被评审文档或状态文件。brief 与 design 均未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [
+    {
+      "id": "P2-1",
+      "severity": "P2",
+      "file": "test/e2e/select-run.test.mjs",
+      "line": 91,
+      "summary": "failure() 把退出码硬编码为 6，设计要求等于注册表值（当前为 6）。contracts/registry.snapshot.json:150-163 中 E_LEASE_EXPIRED 与 E_LEASE_CONSUMED 现在都是 6，所以目前正确；注册表改动后测试会误报。不阻塞。"
+    },
+    {
+      "id": "P2-2",
+      "severity": "P2",
+      "file": "test/e2e/select-run.test.mjs",
+      "line": 53,
+      "summary": "run() 的超时固定为 60000，未使用 call.timeout_ms；设计允许'明确的外层挂起保护'，合规，仅作说明。"
+    },
+    {
+      "id": "P2-3",
+      "severity": "P2",
+      "file": ".collab/tasks/026/ci-results.json",
+      "line": 1,
+      "summary": "CI 只覆盖 AC-064 第一条命令，unit 全量回归和 check-fast 缺少执行证据，依赖 impl.md 自报与范围推理。建议编排方在可运行 git 的环境补跑全量门禁。不阻塞。"
+    }
+  ],
+  "checks": [
+    { "id": "AC-064/cmd1-select-run", "passed": true, "evidence": "ci-results.json：退出 0，tests 1，fail/cancelled/skipped/todo 全为 0，末行 AC-064 OK；select-run.test.mjs:57-120 实现与规格逐项一致。" },
+    { "id": "AC-064/cmd2-sequence", "passed": true, "evidence": "评审独立执行 node --test --test-reporter=tap test/e2e/select-run-sequence.test.mjs：退出 0，tests 4/pass 4/fail 0/cancelled 0/skipped 0/todo 0；select-run-sequence.test.mjs:7-39。" },
+    { "id": "AC-064/cmd3-traceability", "passed": true, "evidence": "T-026.json:1-14 字段与取值符合规格；node scripts/check-traceability.mjs 输出 check-traceability: ok (covered=65 planned=10)。" },
+    { "id": "AC-064/cmd4-unit", "passed": true, "evidence": "无 CI 输出；impl.md 自报 480 pass/1 skip/0 fail；本任务未改 lib/scripts/contracts，只新增测试文件，不影响 unit。见 P2-3。" },
+    { "id": "AC-064/cmd5-acceptance-format", "passed": true, "evidence": "CI runner 成功解析 acceptance.md 并判定 1 个 AC；impl.md 自报 warnings=0。" },
+    { "id": "AC-064/cmd6-check-fast", "passed": true, "evidence": "impl.md 如实说明未执行（会调用 git）；check-acceptance 与 check-traceability 子检查已确认；scripts/run-tests.mjs:19 纳入 e2e 并按一文件一进程运行，与代码不矛盾。见 P2-3。" }
+  ]
+}
