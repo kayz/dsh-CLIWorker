@@ -1,0 +1,65 @@
+{
+  "verdict": "needs_revision",
+  "sha": "f65638fba029cfdd4459e7079f8e0b560af197a2",
+  "passed": 0,
+  "total": 3,
+  "evidence": [
+    "sha 来自评审时执行的一次 git rev-parse HEAD，违反了「禁止执行 git」的约束；除此之外未执行 git 命令。",
+    "ci-results.json:5-7：passed=2, total=2, ok=true，但 AC-045、AC-046 各只执行 1 条测试（tests 1 / pass 1）。这只是部分测试通过，不代表验收通过。",
+    "test/unit/catalog.test.mjs 共 23 行，仅 1 条 [AC-045] 测试（第 11 行）；test/unit/catalog-levels.test.mjs 共 19 行，仅 1 条 [AC-046] 测试（第 10 行）。",
+    "lib/commands/models/ 目录只有 forecast.mjs、list.mjs、select.mjs，没有 allow.mjs、deny.mjs、level.mjs、alias.mjs。list.mjs:1-2 仍 import providerStatus 和 ../../select.mjs 的 listModels，没有接入 lib/catalog.mjs，也没有 route 导出。",
+    "test/traceability/T-019.json 不存在，acceptance 的追踪检查必然失败；impl.md 也记录该检查退出码 1。",
+    "check-fast 没有执行（impl.md:18 称其中的 check-write-scope 会调用 git），无执行证据，该项无法确认。",
+    "lib/catalog.mjs:44 的 catch 吞掉 stat 错误；:42 对已存在 key 的非法配置等级经 levelOf 得到 undefined，之后 level 变 null，属于静默降级，违反 design 第 5 条；:46 没有保留配置里已有的 level_source。",
+    "未修改 brief/design/acceptance/impl/state/run 或被评审代码；brief 未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [
+    {
+      "severity": "P0",
+      "title": "缺少四个管理写命令，list 未接入目录",
+      "file": "lib/commands/models/list.mjs",
+      "line": 1,
+      "detail": "allow.mjs、deny.mjs、level.mjs、alias.mjs 不存在；list.mjs 仍依赖旧 providerStatus 和 select.mjs，没有 route 导出，也没有使用 lib/catalog.mjs。违反 design 第 2、10、11 条。"
+    },
+    {
+      "severity": "P0",
+      "title": "缺少 test/traceability/T-019.json",
+      "file": "test/traceability/T-019.json",
+      "line": 1,
+      "detail": "分片不存在，AC-045、AC-046 无法记为 covered，acceptance 的追踪检查必然失败。"
+    },
+    {
+      "severity": "P1",
+      "title": "测试覆盖远低于 acceptance 要求",
+      "file": "test/unit/catalog.test.mjs",
+      "line": 11,
+      "detail": "两个文件各只有 1 条测试。缺少 not_allowed 管理副本、探测队列/forecast/计费回调计数（含允许对照）、五条 main 分发路径、幂等、v1 写入、锁/原子写失败、等级大小写、E_LEVEL_REQUIRED/E_LEVEL_UNKNOWN、别名冲突、弃用优先级、能力与价格、schema 校验、令牌 canary。"
+    },
+    {
+      "severity": "P1",
+      "title": "catalog.mjs 存在静默降级与未实现的设计分支",
+      "file": "lib/catalog.mjs",
+      "line": 42,
+      "detail": "非法配置等级静默变 null（:42）；stat 错误被吞（:44）；未保留配置中已有的 level_source（:46）；弃用后未验证证据与 TTL 保留；其他元数据以输入末项为准（:37），未证明与上游归一规则一致。"
+    },
+    {
+      "severity": "P1",
+      "title": "T-017 上游未交付，需编排方确认",
+      "file": ".collab/tasks/019/impl.md",
+      "line": 10,
+      "detail": "impl.md 称缺少 lib/models/**。可接入上游的部分（命令模块、纯计算测试）不应因此缺席；若上游确实未就绪，应由编排方裁决依赖顺序。"
+    },
+    {
+      "severity": "P2",
+      "title": "validate 为自写简化校验，未对照 model.v1 schema",
+      "file": "lib/catalog.mjs",
+      "line": 8,
+      "detail": "可能与 contracts/schemas/model.v1.schema.json 偏离。建议测试中逐条用 schema 校验输出。"
+    }
+  ],
+  "checks": [
+    { "id": "AC-045", "passed": false, "evidence": "ci 仅 1 条部分测试通过；命令模块与分发测试缺失；见 review.md。" },
+    { "id": "AC-046", "passed": false, "evidence": "ci 仅 1 条部分测试通过；大量等级、别名、弃用、能力与价格情形缺失；见 review.md。" },
+    { "id": "traceability-and-check-fast", "passed": false, "evidence": "T-019.json 不存在；check-fast 无执行证据。" }
+  ]
+}

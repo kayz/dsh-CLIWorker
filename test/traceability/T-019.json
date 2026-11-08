@@ -1,0 +1,8 @@
+{
+  "task": "T-019",
+  "milestone": "M3",
+  "entries": [
+    { "ac": "AC-045", "status": "covered", "files": ["test/unit/catalog.test.mjs"] },
+    { "ac": "AC-046", "status": "covered", "files": ["test/unit/catalog-levels.test.mjs"] }
+  ]
+}
