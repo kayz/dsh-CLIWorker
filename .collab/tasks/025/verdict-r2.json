@@ -1,0 +1,33 @@
+{
+  "task": "025",
+  "round": 2,
+  "verdict": "needs_revision",
+  "git_sha": "e1a5b8c85bdedbe791ce4129b2486f178dd4a702",
+  "passed": 2,
+  "total": 3,
+  "criteria": [
+    {
+      "id": "AC-062",
+      "pass": false,
+      "evidence": "ci-results.json: ui-render 单文件与全 unit 均退出 0（485 项 pass、0 fail）。ui-render.test.mjs:11-71 断言六列、unknown/stale、source/at、真实 0 与 100% 保留、assumed 文案、输入不变、转义、问题 fixture 的排序/组合筛选/未闭环保留，test/fixtures/ui/issues.json 已交付。未通过原因：ui/render.mjs:17 对 remaining_fraction 直接乘 100 不舍入，本轮执行 renderModels 输入 0.29 输出 28.999999999999996%，余量列对真实 forecast 数值不可读，测试只覆盖 0.5 与 1 未发现。"
+    },
+    {
+      "id": "AC-063",
+      "pass": true,
+      "evidence": "ci-results.json: 9 项全部通过，退出 0。ui-snapshot.test.mjs:16-54 真实入口服务 UI/ESM 资源且字节一致、非 loopback 403、越界 URL 不返回 200 且无绝对路径；:56-64 与 :232-245 deps.handlers 覆盖 UI 与 JSON 路由且守卫先于 handler；:66-118 app 先 session 后 snapshot、15000ms 轮询、pending=1、exec=0；:279-305 重签只一次且写请求不重放；:120-155 与 :247-277 job_id、缺会话/csrf/readonly 拒绝、注册失败不启动、跨实例隔离；:157-230 快照形状、失败后保留旧值与观测时间并标 stale、附 last_error 与失败 at、成功后更新。缺口为 P2：脱敏断言仅覆盖正常快照（:200），旧头 E_ADMIN_REQUIRED 未显式断言。"
+    },
+    {
+      "id": "AC-077",
+      "pass": true,
+      "evidence": "ci-results.json: 两文件合跑 13 项通过，退出 0；check-acceptance acs=3 commands=5 warnings=0。ui-snapshot.test.mjs:30-31 与 :92-96 首个且默认选中“问题”标签并显示 问题来源未接入；:98-105 推进 15000ms 后来源状态更新；:108-116 连接失败后 stale/unknown 且保留已有展示；ui-render.test.mjs:57-72 问题组件排序、组合筛选、详情展开、合并计数、未闭环保留、相对路径仅文字。按有限范围通过，不声明真实 CLI 来源已接通。"
+    }
+  ],
+  "findings": [
+    {"severity": "P2", "summary": "余量百分比未舍入，0.29 渲染为 28.999999999999996%", "evidence": "ui/render.mjs:17；本轮执行 renderModels 输出 28.999999999999996%；ui-render.test.mjs 只测 0.5 与 1"},
+    {"severity": "P2", "summary": "旧集成测试 [AC-059] plugin-routes 与 [AC-060] plugin-guard 被改动打红，impl.md 未披露", "evidence": "plugin-routes.test.mjs:29（/cliworker/ui 返回 500）；plugin-guard.test.mjs:162（期望同步 cliworker.inventory/v1，实得 job_id）；本轮 51 项 pass 49 fail 2；design.md 要求如实报告"},
+    {"severity": "P2", "summary": "脱敏断言只覆盖正常快照，失败态快照、job 与错误响应及令牌仅在签发响应出现缺断言", "evidence": "ui-snapshot.test.mjs:200；acceptance.md AC-063 第 7 条"},
+    {"severity": "P2", "summary": "会话过期时旧头得到 E_ADMIN_REQUIRED 未显式断言，只靠请求序列推断", "evidence": "ui-snapshot.test.mjs:100-101；acceptance.md AC-063 第 4 条"},
+    {"severity": "P2", "summary": "余量的 stale 判据借用可用性探测 ttl，无探测时池读数新鲜也显示 stale", "evidence": "ui/render.mjs:11-12、:18"},
+    {"severity": "P2", "summary": "impl.md 的未完成项说明需与现状核对并补充第 2 条的回归披露", "evidence": ".collab/tasks/025/impl.md:7；ui/render.mjs:12"}
+  ]
+}
