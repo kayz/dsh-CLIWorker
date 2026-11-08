@@ -1,8 +1,0 @@
-{
-  "question": "本轮已将 lib/exec.mjs 授权、契约缺项的保守默认值和 T-015 本地 stub 写入 design.md / acceptance.md，不再就这些事项请求裁决。仅剩当前工作树与用户所述路由前提不符：lib/cli.mjs 的 resolveRoute 仍将 argv[1] 原样作为 sub，lib/routes.mjs 的 matchRoute 只做严格相等；使用 discover/sub:null 的内存注册表实测，null 能匹配，而 --full、--probe-unknown、--config 均返回 null。因此仅导出 route={cmd:'discover',sub:null} 无法通过真实 bin 带选项验收。遵守不修改 lib/cli.mjs 的裁决，请确定由公共路由任务提供已支持选项的入口，还是授权 T-016 最小修改 lib/routes.mjs：仅当 sub 是 -- 开头的选项且无精确路由时回退匹配同命令 sub:null，保留其他子命令行为？",
-  "options": [
-    "由公共路由任务提供已支持无子命令选项的入口并同步到本工作树；T-016 不修改 lib/cli.mjs 或 lib/routes.mjs，随后续接 design",
-    "授权将 lib/routes.mjs 加入 T-016 write_scope，仅实现选项到 sub:null 的受限回退并补授权范围内的回归测试；仍禁止修改 lib/cli.mjs，由 design 更新规格后实现"
-  ],
-  "default": "由公共路由任务提供已支持无子命令选项的入口并同步到本工作树；T-016 不修改 lib/cli.mjs 或 lib/routes.mjs，随后续接 design"
-}

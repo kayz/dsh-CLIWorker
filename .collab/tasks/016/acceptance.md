@@ -2,7 +2,7 @@
 
 ## 约束
 
-以下命令供下游实现完成后在仓库根独立执行，使用 Node 20+ 和 PowerShell 7。本轮已授权 lib/exec.mjs 的 WSL 解码最小修改，禁止修改 lib/cli.mjs；命令模块导出 route={cmd:'discover',sub:null}。T-015 缺失使用 test/fixtures/discovery/ 下的本地 stub 补足，不是跳过或失败理由。真实规则未规定时按 design.md 的保守默认值判定，不再要求凭空补齐 11 个真实 CLI。当前 attention.json 仅记录工作树的带选项路由与用户所述注册表前提不符，不能将该接入缺口隐藏为验收通过。brief 未指定基准 commit SHA 或既有验收报告路径；用户引用的 e2fee30、275d393 为变更线索，不新增以 git 命令执行的基准检查。
+以下命令供下游实现完成后在仓库根独立执行，使用 Node 20+ 和 PowerShell 7。本轮已授权 lib/exec.mjs 的 WSL 解码最小修改；按最新裁决，支持无子命令选项的入口由公共路由任务提供并同步到本工作树，T-016 禁止修改 lib/cli.mjs 与 lib/routes.mjs，命令模块仅导出 route={cmd:'discover',sub:null}。该归属已明确，不再等待设计裁决。当前所读公共路由文件仍严格匹配 sub，故不宣称入口已交付；AC-036 的真实 bin 带选项验收须在公共入口同步后全部通过，未到位时如实记录依赖未满足，不能 skip、改判据或直接调用命令模块替代。T-015 缺失使用 test/fixtures/discovery/ 下的本地 stub 补足，不是跳过或失败理由。真实规则未规定时按 design.md 的保守默认值判定，不再要求凭空补齐 11 个真实 CLI。brief 未指定基准 commit SHA 或既有验收报告路径；用户引用的 e2fee30、275d393 为变更线索，不新增以 git 命令执行的基准检查。
 
 每条命令的通过条件同时包括：原生命令退出码为 0、执行了对应 AC 的测试、所有下述断言通过。测试不存在、无匹配、跳过全部用例、测试进程报错均失败；不能仅打印 OK 或依赖其他命令的运行清单。run-tests 的实际稳定摘要为 `run-tests: filtered … files, manifest …`，省略号代表机器和测试数量变化，不要求测试标题全文。
 

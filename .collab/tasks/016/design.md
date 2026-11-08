@@ -21,16 +21,16 @@ write_scope:
 
 本轮用户裁决替代上一轮待决事项：
 
-1. lib/commands/discover.mjs 导出 `export const route = { cmd: 'discover', sub: null }`，使用现有注册表接入；lib/cli.mjs 明确不在 write_scope，不得修改。用户引用 e2fee30 说明注册表前提，增量另引用 275d393；两者均为用户提供的变更线索，不作为本任务新增验收基准，不执行 git 查询。
+1. lib/commands/discover.mjs 导出 `export const route = { cmd: 'discover', sub: null }`，使用注册表接入。按最新裁决，支持无子命令选项的公共入口由公共路由任务提供并同步到本工作树；lib/cli.mjs 与 lib/routes.mjs 均不在 T-016 write_scope，不得修改。用户引用 e2fee30 说明注册表前提，增量另引用 275d393；两者均为用户提供的变更线索，不作为本任务新增验收基准，不执行 git 查询。
 2. lib/exec.mjs 已获授权，加入 write_scope，仅修复 WSL 列表无损解码，不调整其他执行行为。具体方案见下文第 5 条。
 3. 识别规则与拒读规则以仓库冻结 contracts/ 和 T-004 输出为来源，不再等待人工补齐名单。当前 contracts/registry.snapshot.json 定义错误、警告、拒选原因等，没有完整 11-CLI 发现表或文件拒读表；contracts/agentline-forbidden.json 是 AgentLine 输出禁用键表，不能当文件拒读清单。contracts/examples/inventory.v1/valid/01.json 明确提供 claude 及 claude --version 的证据示例；示例路径 C:/bin 不是跨机器安装目录，示例 logged_in 也不授权推断本机已登录。其余名称、别名、安装位置、status 参数或能力未明定的部分一律跳过探测并记录 unverified 原因，不凑足 11 个真实能力，不从模型金标反推可执行规则。
 4. T-015 的 test/helpers/fake-cli.mjs 当前缺失是已知依赖缺口，不阻塞本任务。测试在 test/fixtures/discovery/ 内实现本地 stub，提供可控候选、版本输出和调用记录，生成的垫片与记录放 OS 临时目录。不能写公共 helper 或其他任务路径；将来 T-015 到位时可在授权范围内替换测试接入，但当前四条验收不得依赖其存在。
 
-尚有一项本轮核对发现的接入前提差异，已单独写入 attention.json：当前工作树的 lib/cli.mjs 虽会 collectRoutes，但 resolveRoute 仍把 argv[1] 的选项传给严格相等的 matchRoute。直接用仅含 discover/sub:null 的内存路由表验证，null 能匹配，--full、--probe-unknown、--config 均不能匹配。用户指定的导出足以注册无选项命令，却尚不足以满足本工作树的带选项调用。保持“不改 lib/cli.mjs”的裁决，等待提供已修复的公共路由入口，或明确授权 lib/routes.mjs 的最小修复；当前 write_scope 不擅自加入 lib/routes.mjs。规则默认值、T-015 缺失和执行器授权不再作为暂停原因。
+带选项路由的归属已由最新裁决确定，不再作为设计歧义或 attention 暂停事项。续接核对时，当前 lib/routes.mjs 仍严格匹配 sub，公共入口修复尚未在所读文件中体现；这是明确的外部交付依赖，不声称已同步完成。T-016 可按本设计实现授权范围内的发现模块、解码和测试。公共路由任务负责使 route={cmd:'discover',sub:null} 能接收 discover 后的 --full、--probe-unknown、--config；同步后再以 AC-036 的真实 bin 调用验收接入。在公共入口到位前，集成结果应如实记录依赖未满足，不能跳过该断言、改用直接调用命令模块冒充接入通过，或由 T-016 越界修复。无需再次请求同一归属裁决。
 
 ## 约束
 
-实现使用 Node 20+ / ESM，零第三方运行时依赖。除 front matter 外不扩大写入范围；规则、夹具、测试只能写入列出的目录。不得修改 contracts、公共测试辅助器或 lib/cli.mjs；lib/exec.mjs 只按本轮授权做 WSL 解码的最小修改。当前接入差异解决前，不通过导入副作用、篡改 argv、特殊 getter 或劫持其他命令绕过路由。
+实现使用 Node 20+ / ESM，零第三方运行时依赖。除 front matter 外不扩大写入范围；规则、夹具、测试只能写入列出的目录。不得修改 contracts、公共测试辅助器、lib/cli.mjs 或 lib/routes.mjs；lib/exec.mjs 只按本轮授权做 WSL 解码的最小修改。命令通过公开 route 导出接入公共入口，不通过导入副作用、篡改 argv、特殊 getter 或劫持其他命令绕过路由。
 
 1. lib/discovery/ 下分别承载 platform、rules、scan、wsl、inventory。平台判定输入来自 ctx.platform、ctx.env 和经 fsx 获取的 /proc/version，不直接读取全局 process.platform / process.env。先依据宿主平台区分 win32、darwin、linux；仅 Linux 使用 WSL 环境和内核证据识别 WSL。具有明确发行版名时使用既有 wsl:<d> 表达，不凭内核文本发明发行版名。host.arch 从既有可注入依赖边界获取，不给 ctx 契约添加新字段。全部时间来自 ctx.clock。
 2. rules 只固化可追溯到冻结契约的名称、别名、目录和安全探测参数；每项预期在本地测试夹具中独立注明对应源文件。扫描使用 PATH、契约明确的安装目录、discovery.extra_dirs 和 discovery.cli_overrides；未规定的安装目录不猜测。按目标平台使用对应路径分隔符、扩展名和大小写规则。仅扫描声明的目录层级，不遍历整个用户目录。缺失目录可跳过；失败不得把原始异常输出或环境值写入清单。候选已发现但规则不足时，recognized=false、version=null、auth.state=unknown，不执行版本或 status；在既有 evidence.kind 使用注册表已有 adapter_unverified 原因，cmd_redacted 仅写固定的脱敏跳过说明，exit=null、at 取时钟、digest 对固定说明计算，不新增 unverified/reason 字段。用户明确启用未知探测的情形仍按第 3 条处理。目录、候选、符号链接处理均经 fsx。候选按平台与规范化 realpath 去重，排序和 id 确定，保证重复扫描不重复建档、不同 WSL 发行版不互相覆盖。
