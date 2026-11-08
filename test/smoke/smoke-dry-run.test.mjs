@@ -5,7 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { leakScan, makeSentinel } from '../helpers/leak-scan.mjs'
-import { executeSmoke } from '../../scripts/smoke-real.mjs'
+import { executeSmoke, preflight } from '../../scripts/smoke-real.mjs'
 import { STEP_IDS, validateReport } from './report.mjs'
 
 test('[AC-069] report structure and semantics reject malformed reports', () => {
@@ -29,6 +29,51 @@ test('[AC-069] report structure and semantics reject malformed reports', () => {
     change(candidate)
     assert.equal(validateReport(candidate, 'fixture').ok, false)
   }
+})
+
+test('[AC-069] preflight enforces node, CLI, doctor and state roundtrip checks', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'smoke-preflight-'))
+  try {
+    const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version
+    const makeFlow = () => {
+      const flow = {
+        config_path: path.join(root, 'config.json'),
+        state_dir: path.join(root, 'state'),
+        run(args) {
+          if (args[0] === '--version') return { code: 0, json: { ok: true, version } }
+          if (args[0] === 'doctor') return { code: 0, json: { status: 'ok' } }
+          if (args[0] === 'state' && args[1] === 'backup') return { code: 0, json: { backup: 'backup-test' } }
+          if (args[0] === 'state' && args[1] === 'restore') {
+            fs.writeFileSync(path.join(flow.state_dir, 'smoke-roundtrip.marker'), 'before', 'utf8')
+            return { code: 0, json: { ok: true } }
+          }
+          throw new Error('unexpected command')
+        },
+      }
+      return flow
+    }
+    preflight(makeFlow(), version)
+    const cases = [
+      ['CLI --version failed', flow => { flow.run = () => ({ code: 0, json: { ok: true, version: '0.0.0' } }) }],
+      ['doctor is not healthy', flow => {
+        const run = flow.run
+        flow.run = args => (args[0] === 'doctor' ? { code: 0, json: { status: 'degraded' } } : run.call(flow, args))
+      }],
+      ['state backup failed', flow => {
+        const run = flow.run
+        flow.run = args => (args[0] === 'state' && args[1] === 'backup' ? { code: 1, json: null } : run.call(flow, args))
+      }],
+      ['state restore roundtrip mismatch', flow => {
+        const run = flow.run
+        flow.run = args => (args[0] === 'state' && args[1] === 'restore' ? { code: 0, json: {} } : run.call(flow, args))
+      }],
+    ]
+    for (const [message, mutate] of cases) {
+      const flow = makeFlow()
+      mutate(flow)
+      assert.throws(() => preflight(flow, version), new RegExp(`preflight: ${message}`))
+    }
+  } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })
 
 test('[AC-069] dry-run executes repeatedly and writes the requested report', () => {

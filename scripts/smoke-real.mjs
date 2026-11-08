@@ -72,6 +72,44 @@ function sameSet(a, b) {
   return a.length === b.length && a.every(value => b.includes(value))
 }
 
+// Release prerequisites that are not one of the seven report steps. They run against the same
+// isolated fixture root as every other dry-run action, so no user state is read or written.
+export function preflight(flow, version) {
+  const pkg = JSON.parse(fs.readFileSync(VERSION_FILE, 'utf8'))
+  const engine = String(pkg.engines?.node ?? '')
+  const minimum = /^>=\s*(\d+)/.exec(engine)
+  const major = Number(process.versions.node.split('.')[0])
+  if (minimum !== null && major < Number(minimum[1])) throw new Error('preflight: Node version does not satisfy engines')
+  const cli = flow.run(['--version'])
+  if (cli.code !== 0 || cli.json?.ok !== true || cli.json?.version !== version) throw new Error('preflight: CLI --version failed')
+  const doctor = flow.run(['doctor', '--config', flow.config_path])
+  if (doctor.code !== 0 || doctor.json?.status !== 'ok') throw new Error('preflight: doctor is not healthy')
+  const marker = path.join(flow.state_dir, 'smoke-roundtrip.marker')
+  fs.mkdirSync(flow.state_dir, { recursive: true })
+  fs.writeFileSync(marker, 'before', 'utf8')
+  const backup = flow.run(['state', 'backup', '--config', flow.config_path])
+  if (backup.code !== 0 || typeof backup.json?.backup !== 'string') throw new Error('preflight: state backup failed')
+  fs.writeFileSync(marker, 'after', 'utf8')
+  const restore = flow.run(['state', 'restore', '--from', backup.json.backup, '--config', flow.config_path])
+  if (restore.code !== 0 || fs.readFileSync(marker, 'utf8') !== 'before') throw new Error('preflight: state restore roundtrip mismatch')
+}
+
+// Failure reasons stay useful without echoing paths, distro names or raw command output.
+function safeReason(id, error) {
+  const message = String(error && error.message ? error.message : '')
+  if (message.startsWith('preflight:')) return message.replace(/\s+/g, ' ').slice(0, 160)
+  if (id === 'wsl-discover') {
+    if (/Node 20/.test(message)) return 'WSL requires Node 20 or later'
+    if (/no distributions/.test(message)) return 'WSL has no distributions'
+    if (/distribution set changed/.test(message)) return 'WSL distribution set changed'
+    if (/Windows and WSL/.test(message)) return 'real smoke requires Windows'
+    if (/WSL executable/.test(message)) return 'WSL executable unavailable'
+    if (/WSL environment mismatch/.test(message)) return 'WSL environment mismatch'
+    if (/distribution discovery/.test(message)) return 'WSL distribution discovery failed'
+  }
+  return `${id} failed`
+}
+
 export async function fixtureWsl(root, captured) {
   const expected = ['Ubuntu', 'Space Distro']
   const input = Buffer.from('\uFEFFUbuntu\0\r\nSpace Distro\r\nUbuntu\r\n', 'utf16le')
@@ -121,7 +159,8 @@ export async function realWsl(root, env, captured, originalPath) {
     const linuxRoot = wsl(['wslpath', '-a', '-u', distroRoot])
     const linuxBin = wsl(['wslpath', '-a', '-u', BIN])
     const linuxConfig = wsl(['wslpath', '-a', '-u', configFile])
-    const nodeVersion = wsl(['node', '--version'])
+    let nodeVersion
+    try { nodeVersion = wsl(['node', '--version']) } catch { throw new Error('WSL requires Node 20 or later') }
     if (!/^v(?:[2-9]\d|[1-9]\d{2,})\./.test(nodeVersion)) throw new Error('WSL requires Node 20 or later')
     const linuxPath = wsl(['printenv', 'PATH'])
     const observedDistro = wsl(['printenv', 'WSL_DISTRO_NAME'])
@@ -150,6 +189,7 @@ export async function executeSmoke({ mode = 'dry-run', out = null, hooks = {} } 
     generateFakeCli({ dir: path.join(flow.root, 'fake-cli'), name: 'claude', mode: 'ok', version: '1.2.3\n', help: '', models: '', modelsArgv: ['models'], recordDir: records })
     const actions = {
       async discover() {
+        preflight(flow, version)
         const discoveryEnv = mode === 'real' ? { ...env, PATH: originalPath } : env
         const executor = createExec({ env: discoveryEnv, fs, platform: process.platform })
         const ctx = createContext({ env: discoveryEnv, exec(command, args, options) {
@@ -188,8 +228,8 @@ export async function executeSmoke({ mode = 'dry-run', out = null, hooks = {} } 
             if (id === 'http-select') assert.ok(captured.http.length > 0)
           }
           step.status = 'pass'; step.reason = null
-        } catch {
-          failed = true; step.status = 'fail'; step.reason = `${id} failed`
+        } catch (error) {
+          failed = true; step.status = 'fail'; step.reason = safeReason(id, error)
         }
       }
       step.duration_ms = Math.max(0, performance.now() - start)
