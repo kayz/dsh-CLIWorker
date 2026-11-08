@@ -1,0 +1,7 @@
+{
+  "task": "T-015",
+  "milestone": "M2",
+  "entries": [
+    { "ac": "AC-035", "files": ["test/integration/fake-cli.test.mjs"], "status": "covered" }
+  ]
+}
