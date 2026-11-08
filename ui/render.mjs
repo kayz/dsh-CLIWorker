@@ -20,7 +20,7 @@ export function renderModels(snapshot, now) {
     const at = text(availability.at)
     return {
       title: `${text(model.key)} / ${text(model.provider)}`,
-      cells: [model.allowed === true ? '是' : model.allowed === false ? '否' : 'unknown', text(model.level), stale ? `stale（${text(availability.state)}）` : text(availability.state), remaining, `读取 ${text(snapshot.at)}；观测 ${at}`, `${text(availability.evidence?.cmd_redacted)}；exit ${text(availability.evidence?.exit)}；source ${source}；at ${at}`],
+      cells: [model.allowed === true ? '是' : model.allowed === false ? '否' : 'unknown', text(model.level), stale ? `stale（${text(availability.state)}）` : availability.state === 'callable' && !availability.evidence ? 'unknown' : text(availability.state), remaining, `读取 ${text(snapshot.at)}；观测 ${at}`, `${text(availability.evidence?.cmd_redacted)}；exit ${text(availability.evidence?.exit)}；source ${source}；at ${at}`],
     }
   })
   return { columns, rows }

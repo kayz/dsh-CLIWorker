@@ -1,9 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
 import { renderModels, renderModelsHtml, renderIssuesHtml } from '../../ui/render.mjs'
 import { projectIssues } from '../../lib/http/issues-api.mjs'
 
-test('model presentation preserves unknown values and escapes text', () => {
+test('[AC-062] model presentation preserves unknown values and escapes text', () => {
   const input = { at: '2026-01-01T00:00:00Z', models: [{ key: '<model>', provider: 'provider', availability: {} }], forecast: [] }
   const before = structuredClone(input)
   const result = renderModels(input, Date.parse('2026-01-01T00:00:00Z'))
@@ -12,10 +13,13 @@ test('model presentation preserves unknown values and escapes text', () => {
   assert.match(result.rows[0].cells[2], /^stale/)
   assert.equal(result.rows[0].cells[3], 'unknown')
   assert.match(renderModelsHtml(input, 0), /&lt;model&gt;/)
+  assert.match(result.rows[0].cells[4], /观测 unknown/)
+  assert.match(result.rows[0].cells[5], /source unknown；at unknown/)
+  assert.doesNotMatch(result.rows[0].cells.join(' '), /(?:^|\s)(?:0|100%)(?:\s|$)/)
   assert.deepEqual(input, before)
 })
 
-test('issue views combine distinct events and preserve unclosed records', () => {
+test('[AC-062] [AC-077] issue views combine distinct events and preserve unclosed records', () => {
   const base = { task_id: 'task-a', role: 'dev', model: 'm', provider: 'p', severity: 'blocking', category: 'tool', at: '2026-01-01T00:00:00Z', summary: '<failure>', raw_output: 'failed', action: 'retry', evidence: ['sessions/log.txt', 'file:///private', 'https://example.test/evidence'], unclosed: true }
   const newer = { ...base, at: '2026-01-02T00:00:00Z' }
   const other = { ...base, task_id: 'task-b', severity: 'minor', unclosed: false }
@@ -33,11 +37,36 @@ test('issue views combine distinct events and preserve unclosed records', () => 
   assert.match(html, /href="https:\/\/example.test\/evidence"/)
 })
 
-test('fresh measured and assumed remaining capacity are distinct', () => {
+test('[AC-062] fresh measured and assumed remaining capacity are distinct', () => {
   const model = { key: 'p/m', provider: 'p', allowed: true, level: 'High', availability: { state: 'callable', at: '2026-01-01T00:00:00Z', ttl_s: 60 } }
   const snapshot = { models: [model], forecast: [{ model: 'p/m', tasks_left: null, tasks_left_assumed: 4 }] }
   assert.equal(renderModels(snapshot, Date.parse(model.availability.at)).rows[0].cells[3], 'unknown（估计 4，assumed）')
+  assert.equal(renderModels(snapshot, Date.parse(model.availability.at)).rows[0].cells[2], 'unknown')
+  model.availability.evidence = { exit: 0 }
+  assert.equal(renderModels(snapshot, Date.parse(model.availability.at)).rows[0].cells[2], 'callable')
   snapshot.forecast[0].tasks_left = 0
   assert.equal(renderModels(snapshot, Date.parse(model.availability.at)).rows[0].cells[3], '0')
   assert.equal(renderModels(snapshot, Date.parse(model.availability.at) + 61000).rows[0].cells[3], 'stale（0）')
+  snapshot.forecast[0] = { model: 'p/m', tasks_left: null, remaining_fraction: 1 }
+  model.source = { kind: 'manual' }
+  const cells = renderModels(snapshot, Date.parse(model.availability.at)).rows[0].cells
+  assert.equal(cells[3], '100%')
+  assert.match(cells[5], /source manual；at 2026-01-01T00:00:00Z/)
+})
+
+test('[AC-062] [AC-077] issue fixture sorts, filters, expands evidence and retains unclosed records', () => {
+  const fixture = JSON.parse(fs.readFileSync(new URL('../fixtures/ui/issues.json', import.meta.url), 'utf8'))
+  const rows = projectIssues([], fixture)
+  assert.deepEqual(rows.map(row => row.task_id), ['task-b', 'task-a', 'task-c', 'task-d'])
+  assert.equal(rows[1].count, 2)
+  const filtered = projectIssues([], fixture, { task_id: 'task-a', role: 'dev', severity: 'blocking' })
+  assert.deepEqual(filtered.map(row => row.task_id), ['task-a'])
+  assert.deepEqual(projectIssues([], fixture, { task_id: 'task-a', role: 'reviewer', severity: 'blocking' }), [])
+  const retained = projectIssues(rows, [])
+  assert.equal(retained.length, 1)
+  assert.equal(retained[0].count, 2)
+  const html = renderIssuesHtml(retained, 'https://example.test')
+  for (const text of ['<details>', 'failed again', 'logs/output.txt', 'retry', '未闭环', '证据链接未接入']) assert.ok(html.includes(text))
+  assert.doesNotMatch(html, /href="(?:file:|logs\/)/)
+  assert.equal(projectIssues(retained, fixture)[1].count, 2)
 })
