@@ -1,0 +1,8 @@
+{
+  "question": "T-034 明确依赖 T-013 的凭据存储，但当前工作树没有 lib/secrets/、lib/commands/auth/ 或 auth 路由，T-013 也没有已交付的接口设计。四文件写入范围无法建立真实凭据后端与 auth status 接入；不能编造接口或以测试自建后端代替。应如何补齐后端失败和凭据状态验收的前置依赖？",
+  "options": [
+    "先完成并合入 T-013，保持 Task 034 的四文件范围，再依据真实公开接口补全 design.md 与 acceptance.md",
+    "明确扩展 Task 034 的实现 write_scope，并提供凭据存储及状态入口的接口约定后再继续设计"
+  ],
+  "default": "先完成并合入 T-013，保持 Task 034 的四文件范围，再依据真实公开接口补全 design.md 与 acceptance.md"
+}
