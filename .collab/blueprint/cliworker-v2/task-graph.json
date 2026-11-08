@@ -1283,7 +1283,8 @@
         "lib/commands/config/**",
         "test/unit/config-v2.test.mjs",
         "test/fixtures/config/**",
-        "test/traceability/T-014.json"
+        "test/traceability/T-014.json",
+        "lib/cli.mjs"
       ],
       "acceptance": [
         "AC-034"
