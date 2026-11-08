@@ -2210,7 +2210,12 @@
       "write_scope": [
         "scripts/check-no-model-table.mjs",
         "test/flows/steps/enumerate.mjs",
-        "lib/models/per-cli/"
+        "lib/models/per-cli/",
+        "contracts/spec/ac-index.json",
+        "contracts/schemas/ac-index.schema.json",
+        "test/unit/lock.test.mjs",
+        "test/contract/milestone-gate.test.mjs",
+        "test/unit/check-no-model-table.test.mjs"
       ],
       "acceptance": [
         "AC-079"
