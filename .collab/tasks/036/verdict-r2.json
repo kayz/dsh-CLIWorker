@@ -1,0 +1,52 @@
+{
+  "task": "036",
+  "round": 2,
+  "verdict": "needs_revision",
+  "sha": "57a8ea9",
+  "sha_note": "HEAD 取自会话 gitStatus 快照，按约束未执行 git 复核",
+  "passed": 2,
+  "total": 2,
+  "ci_passed": 2,
+  "ci_total": 2,
+  "criteria": [
+    {
+      "id": "AC-079",
+      "ok": true,
+      "evidence": "ci-results.json exitCode 0, lastLine 'AC-079 OK'"
+    },
+    {
+      "id": "AC-006",
+      "ok": true,
+      "evidence": "ci-results.json exitCode 0, lastLine 'AC-006 OK', tests 362 pass 362 fail 0。仅覆盖 test/unit，不覆盖 flow 测试"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "P1",
+      "file": "test/flows/steps/enumerate.mjs",
+      "line": 10,
+      "summary": "enumerate 步骤对 flow 夹具（config/v1，无 catalog.manual）退出码 3，令 test/flows/flow.test.mjs 的 [AC-031] full flow 失败（上轮 F1，未修复）",
+      "evidence": "node --test test/flows/flow.test.mjs: 7 pass 1 fail, 'not ok 2 - [AC-031] full flow ... enumerate: 3 !== 0'; lib/models/directory.mjs:90 抛 E_CONFIG; grep catalog test/helpers/flow.mjs 无结果",
+      "suggestion": "步骤在 flow.root 下自写含 catalog.manual 单条 q 记录的 cliworker.config/v2 配置并以 --config 指向，或由调度器扩大 write_scope 修改 flow 夹具"
+    },
+    {
+      "id": "F2",
+      "severity": "P1",
+      "file": "docs/contract.md",
+      "line": 192,
+      "summary": "ac-index.json 追加 AC-079 后摘要变化，docs/contract.md 内嵌旧摘要 809631c8… 已过期，check-contract-doc 失败（上轮 F2，未修复）",
+      "evidence": "node scripts/check-contract-doc.mjs: FAIL contract_doc.stale docs/contract.md, rc=1; sha256sum contracts/spec/ac-index.json = c80c95bb…; check-golden-frozen ok (14 files)",
+      "suggestion": "调度器将 docs/contract.md 纳入范围并用 scripts/gen-contract-doc.mjs 重新生成，或明确裁决豁免"
+    },
+    {
+      "id": "F3",
+      "severity": "P2",
+      "file": ".collab/tasks/036/impl.md",
+      "line": 7,
+      "summary": "scripts/check-fast.ps1 仍无执行证据，impl.md 未记录第二轮修复内容（上轮 F3，未解决）",
+      "evidence": "ci-results.json 仅含 AC-079 与 AC-006 两条命令；impl.md 末段仍称 flow 与契约文档问题未解决",
+      "suggestion": "F1/F2 修复后补跑完整 check-fast 并记录结果"
+    }
+  ]
+}
