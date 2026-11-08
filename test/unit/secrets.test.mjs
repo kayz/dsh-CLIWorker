@@ -7,8 +7,9 @@ import { exitCodeFor, errorBodyFrom } from '../../lib/output.mjs'
 import { createFakeContext } from '../helpers/ctx.mjs'
 import path from 'node:path'
 import os from 'node:os'
+import { resolveSecret, runWithSecrets, secretAction } from '../../lib/secrets/index.mjs'
 
-test('recursive configuration scan rejects string secrets without exposing values', () => {
+test('[AC-033] recursive inline secret detection preserves config compatibility', () => {
   const file = path.join(os.tmpdir(), 'cw-secret-config.json')
   const value = 'sensitive-test-value'
   for (const key of ['ACCESS_TOKEN', 'my_api_key_value', 'clientSecret', 'PASSWORD']) {
@@ -25,6 +26,26 @@ test('recursive configuration scan rejects string secrets without exposing value
   const raw = { providers: {}, models: {}, nested: [{ access_token: { ref: 'env:EXAMPLE' }, password: 42 }] }
   const ctx = createFakeContext({ files: { [file]: JSON.stringify(raw) }, env: {}, platform: process.platform })
   assert.doesNotThrow(() => loadConfig({ file, ctx }))
+})
+
+test('session isolation and consumer injection', () => {
+  const calls = []
+  const env = { SENTINEL: 'sensitive-value', ALIAS: 'sensitive-value', PATH: 'path' }
+  const ctx = { env, platform: 'linux', exec: (command, args, options) => {
+    calls.push({ command, args, options })
+    return { ok: true, code: 0, stdout: 'sensitive-value', stderr: '', error: null }
+  } }
+  const config = { secrets: { kimi: { ref: 'session:example' } } }
+  secretAction(ctx, config, 'kimi', 'set', 'sensitive-value')
+  assert.equal(resolveSecret(ctx, config, 'kimi'), 'sensitive-value')
+  assert.equal(resolveSecret({ ...ctx }, config, 'kimi'), null)
+  const result = runWithSecrets(ctx, config, 'kimi', { command: 'provider', args: [], env_names: ['KIMI_API_KEY'] })
+  assert.deepEqual(calls[0].options.env, { PATH: 'path', KIMI_API_KEY: 'sensitive-value' })
+  assert.equal(result.stdout, '[REDACTED]')
+  assert.equal(env.SENTINEL, 'sensitive-value')
+  secretAction(ctx, config, 'kimi', 'clear')
+  assert.throws(() => runWithSecrets(ctx, config, 'kimi', { command: 'provider', args: [], env_names: ['KIMI_API_KEY'] }), { code: 'E_SECRET_BACKEND' })
+  assert.equal(calls.length, 1)
 })
 
 test('exec forwards synchronous input without changing argv', () => {

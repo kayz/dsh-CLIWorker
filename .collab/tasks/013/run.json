@@ -243,5 +243,143 @@
       "model": "deepseek-v4.1-flash",
       "file": "handoff/dev-r1-c1-to-c2.md"
     }
+  },
+  {
+    "task": "013",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T04:26:53.051Z",
+    "ended_at": "2026-11-08T04:26:53.051Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 1
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 0,
+      "total": 2,
+      "ok": false,
+      "ran_at": "2026-11-08T04:26:53.051Z",
+      "report_ref": ".collab/tasks/013/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/013/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "013",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T04:45:09.284Z",
+    "ended_at": "2026-11-08T04:45:09.284Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 1
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 0,
+      "total": 2,
+      "ok": false,
+      "ran_at": "2026-11-08T04:45:09.284Z",
+      "report_ref": ".collab/tasks/013/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/013/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "013",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-08T04:45:09.287Z",
+    "ended_at": "2026-11-08T04:45:12.719Z",
+    "duration_ms": 3432,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/013/logs/dev-r1-1.log",
+    "error": "result error",
+    "handoff": {
+      "file": "handoff/dev-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/013/dev-r1-c1",
+      "sha": "6f73cd4d9e041726aba03602f7f08a9b54024a4a"
+    }
+  },
+  {
+    "task": "013",
+    "role": "dev",
+    "round": 1,
+    "candidate": 2,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-terra",
+    "model_resolved": "gpt-6.1-terra",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T04:45:14.376Z",
+    "ended_at": "2026-11-08T04:48:46.345Z",
+    "duration_ms": 211969,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 852892,
+      "output": 6452,
+      "cache_read": 808576,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/013/logs/dev-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": true
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "deepseek-v4.1-flash",
+      "file": "handoff/dev-r1-c1-to-c2.md"
+    }
   }
 ]
