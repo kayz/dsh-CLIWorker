@@ -67,9 +67,11 @@ test('[AC-006] failures are reported on ctx.stderr and never leave the process',
 
   const missing = createFakeContext()
   const missingResult = await main(['providers', '--config', '/missing/config.json'], missing)
-  assert.equal(missingResult.exitCode, 1)
-  assert.equal(missing.stdout.text(), '')
-  assert.ok(missing.stderr.text().startsWith('ERROR: cannot read CLIWorker config'))
+  assert.equal(missingResult.exitCode, 3)
+  // 契约变更：配置错误改为 JSON 错误体到 stdout（T-014 起）
+  const body = JSON.parse(missing.stdout.text())
+  assert.equal(body.ok, false)
+  assert.equal(body.error.code, 'E_CONFIG')
 })
 
 test('[AC-006] lib never contains the exit token', () => {
