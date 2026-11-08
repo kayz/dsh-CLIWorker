@@ -11,3 +11,9 @@ AC-032 尚未完成，不能声称已验收。交班单显示候选 #1 执行失
 用临时的最小有效配置运行真实 CLI：status 和 clear 退出 0，set 返回 E_SECRET_BACKEND、退出 3；当前执行环境中的子进程无法找到 pwsh，因此尚未验证 set 成功。示例配置有 `_example: true`，且加载器拒绝未实质修改的示例副本，单纯复制该文件仍会返回 E_CONFIG_EXAMPLE；集成测试应使用有效隔离配置。
 
 未执行 `node scripts/check-fast.mjs`：它会运行包含 Git 调用的检查和测试，与禁止执行 Git 的要求冲突。也未修改 acceptance.md；移除其中 AC-033 章节与禁止修改 acceptance.md 的要求冲突。AC-033 已移至 T-034，不作为本轮完成目标。
+
+候选 #2 继续保留现场已有的 secrets 后端、auth 路由、exec input、配置扫描及其测试：它们符合设计方向，且本轮定向回归 38 项通过。交班单没有可核验的代码差异，且本轮禁止执行 Git，因此无法进一步确认各项改动的来源。
+
+新增 `test/integration/secrets-native.test.mjs`，用真实 CLI 验证默认凭据不存在时的 status；在非 Windows 平台以临时 preload 模拟后端条目不存在。子进程非零退出时断言消息包含 stdout 和 stderr。该测试只覆盖一个状态场景，不满足 AC-032 规定的五项跨进程、消费、隔离和泄漏扫描测试，不能将 AC-032 标为 covered。
+
+自测：从仓库根运行 `node --test --test-name-pattern=AC-032 test/integration/secrets-native.test.mjs`，1 项通过；配置、paths、exec 和 secrets 的既有定向回归共 38 项通过。完整 acceptance.md 的 AC-032 命令仍不能通过：所需测试标题、auth flow 和追踪文件尚未完成；其子进程断言位于禁止修改的 acceptance.md，故未改为输出 stdout/stderr。当前环境未找到 pwsh，无法执行要求的 PowerShell 7 验收命令或 check-fast.ps1；check-fast 检查链还包含被禁止的 Git 调用。上述 Node 测试由执行工具调用，最初提供的 shell 选项实际启动了 Windows PowerShell 5.1，与环境要求不符；后续 Node 命令改用 cmd.exe 直接执行。

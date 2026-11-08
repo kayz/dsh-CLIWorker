@@ -1,7 +1,7 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\013",
   "taskDir": ".collab\\tasks\\013",
-  "ranAt": "2026-11-08T12:58:50.4977857+08:00",
+  "ranAt": "2026-11-08T13:09:15.6755757+08:00",
   "passed": 0,
   "total": 1,
   "ok": false,
@@ -11,9 +11,9 @@
       "title": "用户令牌只经适配器声明的环境变量注入",
       "passed": false,
       "exitCode": 1,
-      "durationS": 0.63,
+      "durationS": 0.66,
       "lastLine": "     | AC-032 failed",
-      "output": "node:internal/modules/run_main:123\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: child command failed\n\n1 !== 0\n\n    at run (file:///C:/git/dsh-CLIWorker/.collab/worktrees/013/[eval1]:14:5)\n    at file:///C:/git/dsh-CLIWorker/.collab/worktrees/013/[eval1]:30:15\n    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:282:26)\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:278:20)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 1,\n  expected: 0,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v22.23.3\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-4df5ba0d-f135-4980-a689-9f0756405330.ps1:67\nLine |\n  67 |  if ($LASTEXITCODE -ne 0) { throw 'AC-032 failed' }\n     |                             ~~~~~~~~~~~~~~~~~~~~~\n     | AC-032 failed"
+      "output": "node:internal/modules/run_main:123\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: child command failed\n\n1 !== 0\n\n    at run (file:///C:/git/dsh-CLIWorker/.collab/worktrees/013/[eval1]:14:5)\n    at file:///C:/git/dsh-CLIWorker/.collab/worktrees/013/[eval1]:30:15\n    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:282:26)\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:278:20)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 1,\n  expected: 0,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v22.23.3\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-5d48a8bf-3990-4db2-b207-f4f19728bfc5.ps1:67\nLine |\n  67 |  if ($LASTEXITCODE -ne 0) { throw 'AC-032 failed' }\n     |                             ~~~~~~~~~~~~~~~~~~~~~\n     | AC-032 failed"
     }
   ]
 }
