@@ -173,5 +173,103 @@
       "token_ref": "sha256:0a9089d01a516750",
       "invalidated_reason": null
     }
+  },
+  {
+    "task": "036",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T15:15:16.654Z",
+    "ended_at": "2026-11-08T15:15:16.654Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 2
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": null,
+      "total": null,
+      "ok": false,
+      "ran_at": "2026-11-08T15:15:16.654Z",
+      "report_ref": ".collab/tasks/036/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/036/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "036",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T15:20:23.508Z",
+    "ended_at": "2026-11-08T15:20:23.508Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 2,
+      "total": 2,
+      "ok": true,
+      "ran_at": "2026-11-08T15:20:23.508Z",
+      "report_ref": ".collab/tasks/036/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/036/ci-results.json",
+    "error": null
+  },
+  {
+    "task": "036",
+    "role": "review",
+    "round": 1,
+    "candidate": 1,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-08T15:20:23.645Z",
+    "ended_at": "2026-11-08T15:22:04.763Z",
+    "duration_ms": 101118,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 24,
+      "output": 7989,
+      "cache_read": 552940,
+      "cache_write": 46852,
+      "cost_usd": 0.32264000000000004
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/036/logs/review-r1-1.log",
+    "error": null,
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:86e84cb14d8cdddd",
+      "invalidated_reason": null
+    }
   }
 ]
