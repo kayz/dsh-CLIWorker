@@ -1,0 +1,28 @@
+# 发布前冒烟
+
+使用 Node.js 20 或更高版本及 PowerShell 7。CI 只运行夹具模式：
+
+```pwsh
+node scripts/smoke-real.mjs --dry-run
+```
+
+维护者在 Windows 真机上运行 real：先准备可用的 WSL 和至少一个发行版。每个发行版都需要 Node.js 20+、可发现的 CLI，并且能通过 `wslpath` 访问仓库和 Windows 临时目录。不安装软件，也不使用真实账号或调用云模型。real 模式验证真实 WSL 枚举和各发行版内的发现，其余 provider 链路使用本地夹具，不能据此宣称真实账号或云 provider 可用。
+
+报告保留在仓库外，路径由维护者按本地归档要求指定：
+
+```pwsh
+$savedSmoke = $env:CLIWORKER_SMOKE
+$reportPath = Join-Path ([System.IO.Path]::GetTempPath()) ('cliworker-real-' + [guid]::NewGuid().ToString('N') + '.json')
+try {
+  $env:CLIWORKER_SMOKE = '1'
+  node scripts/smoke-real.mjs --out $reportPath
+  if ($LASTEXITCODE -ne 0) { throw 'Real smoke failed' }
+} finally {
+  if ($null -eq $savedSmoke) { Remove-Item Env:CLIWORKER_SMOKE -ErrorAction SilentlyContinue }
+  else { $env:CLIWORKER_SMOKE = $savedSmoke }
+}
+```
+
+核对报告 `schema` 为 `cliworker.smoke/v1`、`mode` 为 `real`、`platform` 为 `win32`、`version` 与 `package.json` 一致、`redacted` 为 true；七步均为 mandatory 且 pass，尤其检查 `wsl-discover` 的 `ac` 为 `['AC-038']`。脚本成功还要求泄漏扫描零命中且无扫描错误。失败或跳过时查看脱敏的 `reason`，修复原因并重跑；检查临时目录已清理。不要提交本机报告、用户名、绝对路径或凭据。
+
+dry-run 的 WSL 结果来自夹具，不能替代 real-smoke 证据。没有合格真机时，只有 T-030 可以依据 `release/waivers.json` 显式处理豁免；本清单不判定发布放行。

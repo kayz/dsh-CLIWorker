@@ -1,0 +1,8 @@
+{
+  "task": "T-029",
+  "milestone": "M5",
+  "entries": [
+    { "ac": "AC-038", "files": ["test/smoke/wsl-discover.test.mjs"], "status": "covered" },
+    { "ac": "AC-069", "files": ["test/smoke/smoke-dry-run.test.mjs"], "status": "covered" }
+  ]
+}
