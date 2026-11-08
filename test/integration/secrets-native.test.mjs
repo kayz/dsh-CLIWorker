@@ -9,7 +9,7 @@ import crypto from 'node:crypto'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 
-test('[AC-032] from-env persists across processes and injects declared env only', () => {
+for (const source of ['from-env', 'stdin']) test(`[AC-032] ${source} persists across processes and injects declared env only`, () => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'cw-secret-persist-'))
   const token = crypto.randomBytes(32).toString('hex')
   const key = crypto.randomBytes(32).toString('hex')
@@ -60,18 +60,21 @@ process.stdout.write(JSON.stringify({ hashes, argv: process.argv }))
     const env = { ...process.env, CLIWORKER_HOME: path.join(temp, 'home'), CW_TEST_KEY: key, CW_TEST_STORE: temp, NODE_OPTIONS: `--import=${pathToFileURL(preload).href}` }
     delete env.SENTINEL
     delete env.CW_FLOW_SENTINEL
-    const run = (args, childEnv) => {
-      const r = spawnSync(process.execPath, args, { env: childEnv, encoding: 'utf8', windowsHide: true })
+    const run = (args, childEnv, input) => {
+      const r = spawnSync(process.execPath, args, { env: childEnv, input, encoding: 'utf8', windowsHide: true })
       assert.equal(r.status, 0, 'child failed')
       return JSON.parse(r.stdout)
     }
     const cli = path.join(root, 'bin/cliworker.mjs')
-    assert.deepEqual(run([cli, 'auth', 'set', 'kimi', '--from-env', 'SENTINEL', '--config', config], { ...env, SENTINEL: token }).state, 'set')
+    const setArgs = [cli, 'auth', 'set', 'kimi', ...(source === 'from-env' ? ['--from-env', 'SENTINEL'] : []), '--config', config]
+    assert.equal(run(setArgs, source === 'from-env' ? { ...env, SENTINEL: token } : env, source === 'stdin' ? `${token}\n` : undefined).state, 'set')
     assert.equal(run([cli, 'auth', 'status', 'kimi', '--config', config], env).state, 'set')
     const result = run([consumer, config, fake], env)
     const hash = crypto.createHash('sha256').update(token).digest('hex')
     assert.deepEqual(Object.keys(result.hashes).filter(k => result.hashes[k] === hash), ['KIMI_API_KEY'])
     assert.ok(result.argv.every(arg => !arg.includes(token)))
+    assert.equal(run([cli, 'auth', 'clear', 'kimi', '--config', config], env).state, 'unset')
+    assert.equal(run([cli, 'auth', 'status', 'kimi', '--config', config], env).state, 'unset')
   } finally { fs.rmSync(temp, { recursive: true, force: true }) }
 })
 

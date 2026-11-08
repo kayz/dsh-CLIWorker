@@ -23,3 +23,7 @@ AC-032 尚未完成，不能声称已验收。交班单显示候选 #1 执行失
 在 `test/integration/secrets-native.test.mjs` 新增指定的 from-env 测试：真实 CLI 在独立进程中 set 和 status，再由新进程加载生产配置及 `runWithSecrets` 启动 fake provider。测试用临时 preload 模拟 OS 后端并以认证加密保存替身数据，断言只有声明的 `KIMI_API_KEY` 的摘要与令牌一致，argv 不包含令牌；消费进程不继承来源变量。测试密钥和 preload 环境变量在创建 provider 上下文前移除。
 
 自测：`node --test --test-reporter=tap --test-name-pattern=AC-032 test/integration/secrets-native.test.mjs` 通过 2 项，无跳过。执行 acceptance.md 的 AC-032 命令，因缺少 stdin 跨进程测试标题而失败；其余三个规定标题、完整 flow 和追踪文件也尚未完成，不能声明 AC-032 已覆盖。未运行 check-fast：其检查链包含被明确禁止的 Git 调用。此前记录的 pwsh 不可用不适用于本次，本次使用 pwsh 执行了上述检查。
+
+本次交接后保留已有实现与测试：交班单记录上一候选未产生改动，现有实现符合部分设计，且定向回归通过；由于明确禁止 Git，未执行 git diff，无法独立确认差异来源。扩展隔离集成测试，增加 stdin 设置、独立进程消费及 clear 后 status；增加三平台后端参数、stdin 和执行失败的基础单测，以检查秘密不进入参数及后端失败不创建目录。
+
+自测：直接执行 `node --test --test-name-pattern=AC-032 test/integration/secrets-native.test.mjs`，3 项通过；`node --test test/unit/secrets.test.mjs`，8 项通过；配置、路径、exec 和 secrets 的组合回归 38 项通过（扩展单测之前）。本环境找不到 pwsh，无法原样执行 PowerShell 验收命令或 check-fast；后者的检查链还包含被禁止的 Git 命令。AC-032 指定的共享 auth flow、完整泄漏扫描及隔离场景仍缺失，AC-033 也缺少设计要求的完整后端和输入验证覆盖，追踪文件尚未创建，故本任务尚未完成，不能标记 covered。

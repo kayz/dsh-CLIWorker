@@ -104,3 +104,49 @@ test('exec sends empty asynchronous input and handles stdin errors', async () =>
   assert.equal(result.ok, false)
   assert.equal(result.error, 'stdin write failed')
 })
+
+test('[AC-033] platform backends use stdin and do not expose secrets in arguments', () => {
+  const secret = 'secret-value-"-\\'
+  for (const platform of ['win32', 'darwin', 'linux']) {
+    const calls = []
+    const files = new Map()
+    const ctx = {
+      platform, env: {},
+      fs: {
+        mkdirSync: () => undefined,
+        writeFileSync: (file, data) => files.set(file, data),
+        renameSync: (from, to) => { files.set(to, files.get(from)); files.delete(from) },
+        readFileSync: file => files.get(file),
+        unlinkSync: file => { files.delete(file) },
+      },
+      exec: (command, args, options) => {
+        calls.push({ command, args, options })
+        return { ok: true, code: 0, stdout: platform === 'win32' ? 'ciphertext' : '', stderr: '', error: null }
+      },
+    }
+    const config = { state_dir: platform === 'win32' ? 'C:\\state' : '/state' }
+    secretAction(ctx, config, 'kimi', 'set', secret)
+    secretAction(ctx, config, 'kimi', 'get')
+    secretAction(ctx, config, 'kimi', 'clear')
+    assert.equal(calls[0].command, { win32: 'pwsh', darwin: 'security', linux: 'secret-tool' }[platform])
+    for (const call of calls) {
+      assert.equal(call.options.shell, false)
+      assert.equal(JSON.stringify(call.args).includes(secret), false)
+    }
+    assert.ok(calls[0].options.input.includes(platform === 'darwin' ? 'secret-value-' : secret))
+  }
+})
+
+test('[AC-033] backend execution failures remain backend errors on every platform', () => {
+  for (const platform of ['win32', 'darwin', 'linux']) {
+    for (const result of [
+      { ok: false, code: null, error: 'ENOENT', stdout: '', stderr: '' },
+      { ok: false, code: 2, error: null, stdout: '', stderr: 'permission denied' },
+    ]) {
+      let writes = 0
+      const ctx = { platform, env: {}, fs: { mkdirSync: () => { writes += 1 } }, exec: () => result }
+      assert.throws(() => secretAction(ctx, { state_dir: platform === 'win32' ? 'C:\\state' : '/state' }, 'kimi', 'set', 'value'), { code: 'E_SECRET_BACKEND' })
+      assert.equal(writes, 0)
+    }
+  }
+})
