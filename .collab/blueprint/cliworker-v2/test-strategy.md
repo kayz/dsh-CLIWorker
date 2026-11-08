@@ -16,3 +16,42 @@
 4. **冻结集合**：frozen-files.json 允许集合 = v0.1 副本 + stable.test.mjs + contracts/spec/** + contracts/golden/**；lib/、bin/、config/、scripts/ 明列为禁止登记，出现即失败。
 5. **豁免重分类**：Q-2 的 manual-baseline / environment-blocked 只适用于真实环境限制（WSL 真机 discover、probe 之类）。规格缺陷（TB-1 时钟双语义、TB-3 全跳过导致集合相等失败、TB-4 工具链、TB-6 写域重叠与依赖缺失）必须在 M1 前修图与策略，不得归入环境豁免。
 6. **豁免表**：豁免单独成表，由 CI 校验「既不计 pass 也不计 fail，skip 不得折算 pass」。
+
+## 加强判据二：验收必须是黑盒的（来自 T-013 的教训）
+
+### 规则
+
+每条 AC 的判据只允许断言**可观察结果**：
+
+| 允许 | 禁止 |
+|---|---|
+| 进程退出码 | 测试标题字符串（`missing passed test: [...]`） |
+| stdout/stderr 的稳定子串 | 函数名、行号、内部变量 |
+| 文件存在/内容/哈希 | 其他任务的产物状态 |
+| `AC-xxx OK` 这类显式哨兵 | 实现目录结构（除非该结构本身就是契约） |
+
+### 反例（真实发生）
+
+`T-013` 的验收要求 TAP 输出中出现 `[AC-032] from-env persists across processes ...`。测试文件里实际标题是 `[AC-032] real CLI reports an absent default credential as unset` —— 功能通过了，验收却红。dev 补一条标题，验收又要求下一条（`stdin persists across processes ...`），形成无限追列表。
+
+### 正确写法
+
+```pwsh
+node --test --test-name-pattern=AC-032 test/integration/secrets-native.test.mjs
+if ($LASTEXITCODE -ne 0) { throw "AC-032 tests failed" }
+Write-Output "AC-032 OK"
+```
+
+判据是"该 AC 下所有测试通过"，不是"存在某些特定标题的测试"。
+
+### 作者归属（关键）
+
+**验收由设计师写，开发者不得修改。**
+
+理由：让实现方写判决标准是利益冲突 —— 写不动就改判据，而不是改实现。实测中 `acceptance.md` 在 dev 轮次里被反复重写，格式与判据都随之漂移。
+
+对应约束：
+
+- `design` 阶段产出 `design.md` + `acceptance.md`
+- `acceptance.md` **不在 dev 的 write_scope 内**
+- dev 若认为判据不可实现，走 amendment 请求，由设计师裁决
