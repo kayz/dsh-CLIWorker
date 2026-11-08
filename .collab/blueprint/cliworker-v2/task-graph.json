@@ -1363,7 +1363,8 @@
         "test/fixtures/discovery/**",
         "test/flows/steps/discover.mjs",
         "test/traceability/T-016.json",
-        "lib/cli.mjs"
+        "lib/cli.mjs",
+        "lib/exec.mjs"
       ],
       "acceptance": [
         "AC-036",
