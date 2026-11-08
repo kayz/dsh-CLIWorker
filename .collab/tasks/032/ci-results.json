@@ -1,0 +1,181 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\032",
+  "taskDir": ".collab\\tasks\\032",
+  "ranAt": "2026-11-08T09:13:08.2925361+08:00",
+  "passed": 19,
+  "total": 19,
+  "ok": true,
+  "results": [
+    {
+      "id": "AC-076",
+      "title": "A-01 过滤运行 AC-076",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.63,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-02 brief 给出的验收命令，且测试不是空壳",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.59,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-03 start：调用描述、stdin 内容、结果形状、token 不透明且不泄露",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.49,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-04 resume：调用描述、增量 stdin、重新签发 token、不写任何文件",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-05 六种失效条件：固定码、不可重试、不自动重试、检查顺序、过期边界",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.49,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-06 start 的错误路径与不支持 resume 的 provider",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.49,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-07 增量输入：resume 只接受 diff 与摘要，拒绝完整 brief/design",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.46,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-08 额度耗尽：E_SESSION_QUOTA_EXHAUSTED，换模型后用摘要加 diff 新建",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-09 角色策略与落盘 sessions/<role>.json",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.47,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-10 身份证据四档，unverified 不阻断",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.48,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-11 session id 的四种来源与非法 id",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.93,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-12 call.mjs：描述符校验、调用描述不拼 shell",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.5,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-13 views.mjs：sessionView 白名单与既有导出不变",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.49,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-14 零第三方依赖、不碰时钟、不碰契约与注册表",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.51,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-15 测试文件：全部带 [AC-076] 标签，没有 skip/todo/only，数量够",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.49,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-16 集成测试覆盖角色复用、review 每轮新建、额度续接",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.48,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-17 写域：只改 write_scope 内的文件，契约与脚本未动",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 0.73,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-18 全量测试不新增失败",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 4.5,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    },
+    {
+      "id": "AC-076",
+      "title": "A-19 既有检查脚本不退化",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 4.6,
+      "lastLine": "AC-076 OK",
+      "output": "AC-076 OK"
+    }
+  ]
+}

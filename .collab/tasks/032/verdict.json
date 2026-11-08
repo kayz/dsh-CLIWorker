@@ -1,0 +1,114 @@
+{
+  "verdict": "pass",
+  "sha": "627fb09f167b3eea7e39df405269b70958764f3b",
+  "passed": 19,
+  "total": 19,
+  "evidence": [
+    "所验证的 git sha（只读、未执行任何 git 命令）：627fb09f167b3eea7e39df405269b70958764f3b，分支 task/032 HEAD。工作区 .git 文件:1 = 'gitdir: C:/git/dsh-CLIWorker/.git/worktrees/032'；.git/worktrees/032/HEAD:1 = 'ref: refs/heads/task/032'；.git/refs/heads/task/032:1 = 627fb09f167b3eea7e39df405269b70958764f3b；.git/worktrees/032/ORIG_HEAD:1 = 040d2e9037844e5e2f0421956c1020a8d8f2d36e，与 design.md:13、acceptance.md:3 的基准 040d2e9 一致。只读 zlib 解压松散对象 .git/objects/62/7fb09f167b3eea7e39df405269b70958764f3b 得 230 字节，对解压字节重算 SHA-1 = 627fb09f167b3eea7e39df405269b70958764f3b（match=true）；对象头 commit 219，tree 868f30ae64427c3ae92311cb173fc8948006fee8，parent 725c4d5fe27378e59d9182acf13af006e9ff58d4，时间戳 1794100369 +0800 = 2026-11-08T01:12:49Z（本地 09:12:49 +0800），消息 'stage(dev): task 032'（COMMIT_EDITMSG 同）。worktrees/032/logs/HEAD 末条 725c4d5f... -> 627fb09f... 即该提交，CI 之后无新提交。",
+    "通过数/总数 = 19/19。acceptance.md 恰含 19 个以 AC id 开头的二级小节（grep -c '^## AC-076 A-' = 19，行号 16/21/26/31/36/41/46/51/56/61/66/71/76/81/86/91/96/101/106，即 A-01..A-19），每节各 1 条 '- 命令:' 与 1 条 '- 期望:'（grep -c '^- 命令:|^- 期望:' = 38），与 ci-results.json 的 19 条 results 一一对应，未自行发明编号/章节名/字段/版本号。逐条 passed=true，0 项无法确认，0 条 finding。",
+    "执行证据口径：.collab/tasks/032/ci-results.json（SHA-256 68477142453c1bbb2cbf1553c23a01a838be52b31f7e2944b341f9e2f4498064，ranAt=2026-11-08T09:13:08.2925361+08:00，:5-7 passed=19 total=19 ok=true）由编排方用 PowerShell 7 产生，含每条命令退出码与输出（19 条 results 逐条 passed=true、exitCode=0、lastLine='AC-076 OK'、output='AC-076 OK'，行段见各 check）。按口径为执行类验收项的有效运行证据，直接引用，不以其缺失为判据、也不自行重跑为判据；评审环境缺 pwsh 7 或临时文件权限不作为判 needs_revision 的理由。CI 结果不与代码矛盾：HEAD 提交时间 1794100369 +0800 = 2026-11-08T01:12:49Z，CI ranAt = 2026-11-08T01:13:08Z 晚 19 秒，reflog 末条即该提交、CI 之后无新提交；6 个交付文件按 git blob 算法（LF 归一化后 SHA-1）与 HEAD tree 逐字节比对全部 BLOB_MATCH=true，故 CI 跑的就是当前内容。",
+    "独立只读复核（不只看文件存在、不写仓库文件、不执行 git 子命令）：逐行读 design.md §2/§3/§4/§5/§6/§7 与全部 6 个交付文件核对规格一致性——lib/session.mjs（:4-16 import、:18 DEFAULT_SESSION_TTL_S=43200、:20-66 SESSION_ERRORS 9 码全 retryable:false 固定 message、:68-75 INVALIDATION_CODES 六项定序、:77-83 ROLE_POLICIES、:92-94 digest=sha256(label+'\\n'+value)[:12]、:128-134 validTarget、:147-157 composeInput、:159-178 checkInput 白名单与固定 message、:184-206 parseToken、:209-222 issueToken、:232-278 startSession、:284-341 resumeSession 检查顺序、:344-356 rolePolicy/nextAction、:362-413 writeRolePolicy）；lib/providers/call.mjs（:6-13 IDENTITY_SOURCES、:15 SESSION_ID_RE、:18-25 LEVEL_BY_SOURCE、:99-135 validateSessionDescriptor、:141-155 buildSessionCall、:158-160 runSessionCall、:172-274 extractSessionId 四来源与 __proto__ 防护、:280-307 classifyIdentity 四档）；lib/contract/views.mjs（:3 VIEW_NAMES、:7-11 新增常量、:17-46 sessionView、:48-69 resolveView 未改、全文无 import/墙钟/process.env）。node 只读内存求值：REGISTRY_EQ_SNAPSHOT=true snapshot_version=1；SESSION_ERRORS=9、INVALIDATION_CODES 六项顺序、DEFAULT_SESSION_TTL_S=43200、ROLE_KEYS=design,design_prereview,dev,review,test_architect；composeInput({constraints,findings,diff,summary}) = '## summary\\ns\\n\\n## diff\\nd\\n\\n## findings\\na\\nb\\n\\n## constraints\\nc\\n'，与 design.md:159、A-07 期望逐字一致。",
+    "行为内存复跑（假 ctx/固定时钟 2026-11-08T00:00:00Z、fakecli/prov-x/m-secret，均不写仓库文件）：buildForecast 真实实现 remaining_pct 80/3/0 -> ok/critical/exhausted；startSession 结果键恰 [schema,ok,action,session_token,identity,reply]、exec 1 次、stdin '## prompt\\nhello\\n'、identity.level=verified、解码键恰 [v,s,m,p,c,t]、scanView（reply:''，catalog 含 key/id/cli）零命中；八个失效用例得到固定码且 retryable:false / retry_after:null、exec 次数 0/0/0/0/0/0/1/0、provider 与模型同时变仍 PROVIDER_CHANGED、TTL +43200000 不过期 +43200001 过期；额度 exhausted/critical 阻塞且 provider 0 次、不带 identity，ok/low_reserve/unknown/无 forecast 放行且恰好 1 次。输出 ALL_IN_MEMORY_CHECKS=PASS，与 ci-results.json 全部 'AC-076 OK' 不矛盾。",
+    "写域（只读解析 .git tree 对象，未用 git 子命令）：base 040d2e9（tree 498 跟踪文件）-> HEAD 627fb09f（tree 868f30ae，508 跟踪文件）：ADDED 10 = 5 个 .collab/tasks/032/ 编排维护文件（acceptance.md、design.md、impl.md、run.json、state.json）+ 5 个 write_scope 文件（lib/session.mjs、lib/providers/call.mjs、test/contract/session.test.mjs、test/unit/session-invalidation.test.mjs、test/integration/session-quota.test.mjs），MODIFIED 1 = lib/contract/views.mjs，REMOVED 0；写域外（排除 taskdir）= []，与 design.md:2-9 front matter 的 6 条 write_scope 一致。contracts/、scripts/、test/helpers/、lib/contract/registry.mjs、lib/contract/scan.mjs、lib/contract/validate.mjs、lib/output.mjs、lib/request.mjs、lib/exec.mjs、lib/forecast.mjs、lib/context.mjs、package.json 零改动；Glob 确认无 test/traceability/T-032.json（design.md:264）。6 个交付文件按 git blob 算法（LF 归一化后 SHA-1）与 HEAD tree 逐字节比对全部 BLOB_MATCH=true，CI 跑的就是当前内容。",
+    "辅助门禁与回归（引用 ci-results.json 与 impl.md）：A-18 全量 tests 359 / pass 356 / fail 3（impl.md:33），失败集合恰基线遗留 AC-006/AC-013/AC-073，无新增失败且 359>=346（acceptance.md:103-104 基线 326/323/3）；A-19 check-defects/check-traceability（covered=28 planned=46）/check-seams/check-unused 均 ': ok'、check-no-collab 仍 '(2 violations)'（impl.md:34-35）；A-17 check-write-scope --base 040d2e9 --scope-from design.md --scope '.collab/tasks/032/**' 报 ok（impl.md:35）。",
+    "备注（非缺陷，不写入 findings）：brief.md 与 design.md 均未指定验收报告路径（brief.md 全文无 报告/report/追加，design.md:13 'brief 没有另给验收报告路径'，acceptance.md:3 'brief 未给既有验收报告路径'），故本轮结论无追加目标、未改动任何历史小节。acceptance.md:8-9 与 design.md:15-16 的基线遗留三条失败及 check-no-collab (2 violations) 按规格不属本任务、A-18/A-19 只要求不新增/不退化，不作为判 needs_revision 的理由。未修改 brief.md、design.md、acceptance.md、impl.md、state.json、run.json 及任何被评审代码与文档；SHA、写域、diff 等价核验均以只读解压 .git 对象与读文件完成，未执行任何 git 子命令、未用 git 得出任何验收结论；除 review.md 与 verdict.json 外未在仓库内创建任何文件。沿用既有 verdict 字段（verdict/sha/passed/total/evidence/findings/checks）与 acceptance.md 的 19 个章节名，未发明字段、版本号或章节名。"
+  ],
+  "findings": [],
+  "checks": [
+    {
+      "id": "AC-076 A-01",
+      "passed": true,
+      "evidence": "ci-results.json:9-17 passed=true、exitCode=0、lastLine='AC-076 OK'、output='AC-076 OK'。命令 node .../scripts/run-tests.mjs --ac AC-076，断言 'fail 0' 与 'filtered 3 files'；acceptance.md:16-19 期望退出码 0、输出含 fail 0 与 filtered 3 files（基线 FAIL run.no_match AC-076）。只读佐证：A-15 逐文件核对 3 个测试文件存在且含 15/11/7 个 [AC-076] 用例；impl.md:32 记 --ac AC-076 -> filtered 3 files / fail 0。"
+    },
+    {
+      "id": "AC-076 A-02",
+      "passed": true,
+      "evidence": "ci-results.json:18-26 passed=true、exitCode=0、lastLine='AC-076 OK'。命令 node --test 三测试文件，断言 '# fail 0'、'# pass' >=20、无 skipped/todo/cancelled；acceptance.md:21-24。只读逐文件 test( 计数 15+11+7=33（>=20），标题全部以 '[AC-076]' 开头，无 .skip/.todo/.only（与 impl.md:31 'tests 33 / pass 33 / fail 0 / skipped 0 / todo 0' 一致）。"
+    },
+    {
+      "id": "AC-076 A-03",
+      "passed": true,
+      "evidence": "ci-results.json:27-35 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:26-29。只读源码：lib/session.mjs:232-278 startSession 顺序（validTarget:128-134 -> checkInput:159-178 -> validateSessionDescriptor -> buildSessionCall -> runSessionCall -> classifyIdentity -> extractSessionId -> sessionView）、:209-222 issueToken（st_ + base64url(JSON.stringify({v,s,m,p,c,t}))，digest:92-94）、:184-206 parseToken 严格校验；lib/contract/views.mjs:17-30 成功键序固定；lib/providers/call.mjs:141-155 argv 为数组且不拼 shell。node 内存求值：结果键恰 [schema,ok,action,session_token,identity,reply]、exec 1 次、stdin '## prompt\\nhello\\n'、identity.level=verified、解码键恰 [v,s,m,p,c,t]、除 reply 外无 prov-x/m-secret/fakecli/C:/work、scanView 零命中，输出 START shape/token/scanView=PASS。"
+    },
+    {
+      "id": "AC-076 A-04",
+      "passed": true,
+      "evidence": "ci-results.json:36-44 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:31-34。只读源码：lib/session.mjs:284-341 resumeSession、:314 buildSessionCall(mode:'resume') 把 {session_id} 替换为 sid-1、:337 重新 issueToken（同 s、t=now）；lib/providers/call.mjs:251-274/280-307 对 stdout_json + stdout.event.model 路径不调用 readFile，故 start/resume 全程不访问 ctx.fs 写类方法；test/contract/session.test.mjs:236-241 用 fakeFs().accessed 断言为空。node 内存求值 resume stdin='## summary\\nS1\\n\\n## diff\\nD1\\n'、新 token、identity.level=verified。"
+    },
+    {
+      "id": "AC-076 A-05",
+      "passed": true,
+      "evidence": "ci-results.json:45-53 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:36-39。只读源码：lib/session.mjs:296-308 检查顺序 provider->model->contract->TTL、:310-312 forecast、:68-75 INVALIDATION_CODES 六项定序、:20-66 SESSION_ERRORS 固定 message/retryable:false、:102-110 errorOf 使 retry_after:null。node 内存求值八用例全过：MODEL_CHANGED / PROVIDER_CHANGED（单独及 provider+model 同变仍 provider 码）/ CONTRACT_CHANGED（cli_version 与 contract_version 两种）/ EXPIRED（+43200001）/ RESUME_FAILED（恰 1 次）/ NOT_SUPPORTED，exec 次数 0/0/0/0/0/0/1/0，TTL 边界 +43200000 不过期、+1 过期，输出 INVALIDATION 8 cases + exec counts=PASS。"
+    },
+    {
+      "id": "AC-076 A-06",
+      "passed": true,
+      "evidence": "ci-results.json:54-62 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:41-44。只读源码：lib/session.mjs:259-270 失败路径 E_SESSION_START_FAILED/E_SESSION_ID_MISSING 带 identity 且不回显 stderr、:239-240 validateSessionDescriptor 不 ok -> E_SESSION_NOT_SUPPORTED 且 provider 0 次、:274 resumable ? token : null、:234 与 :128-134 target 校验；lib/providers/call.mjs:99-135 validateSessionDescriptor（supported:false、非法 id_from）。test/unit/session-invalidation.test.mjs:275-284 one-shot start 返回 session_token:null。"
+    },
+    {
+      "id": "AC-076 A-07",
+      "passed": true,
+      "evidence": "ci-results.json:63-71 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:46-49。只读源码：lib/session.mjs:87-89 RESUME_KEYS、:159-178 checkInput（unsupported key -> 'resume accepts only summary, diff, findings, constraints'、空输入 -> 'input is empty'、值类型错误 -> E_REQUEST_INVALID）、:147-157 composeInput 固定顺序与 '## <name>\\n<text>\\n' 段间一空行、:184-206 坏 token -> 'session_token is malformed'；test/unit/session-invalidation.test.mjs:185-218 与 test/contract/session.test.mjs:363-369 覆盖字节级输出与四键拒绝。"
+    },
+    {
+      "id": "AC-076 A-08",
+      "passed": true,
+      "evidence": "ci-results.json:72-80 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:51-54。只读源码：lib/session.mjs:310-312 forecast.risk critical/exhausted -> E_SESSION_QUOTA_EXHAUSTED（前置检查、provider 0 次、不带 identity）；lib/forecast.mjs:176-356 为真实 buildForecast。node 内存求值：buildForecast(80/3/0).risk=ok/critical/exhausted；0/3 阻塞且 exec 0；ok/low_reserve/unknown/无 forecast 放行且 exec 1，输出 QUOTA blocked/pass-through=PASS。test/integration/session-quota.test.mjs:88-122 覆盖换另一个 provider/模型用 summary+diff 新建（stdin=composeInput({summary,diff})、新 token 不同）、旧 token 在新 target 上得 E_SESSION_PROVIDER_CHANGED。"
+    },
+    {
+      "id": "AC-076 A-09",
+      "passed": true,
+      "evidence": "ci-results.json:81-89 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:56-59。只读源码：lib/session.mjs:77-83 ROLE_POLICIES 键序/模式、:344-356 rolePolicy/nextAction、:362-413 writeRolePolicy（TASK_RE:86、foreign_schema:376-386、.tmp+renameSync:399-402、失败 rmSync + E_INTERNAL 'failed to write session policy':403-410、键序 schema,task,role,mode,shares_with,ttl_s,invalidate_on:389-397、ttl_s 缺省 43200）。test/integration/session-quota.test.mjs:148-215 五角色落盘、外来 schema 不覆盖（written:false, reason:'foreign_schema'）、角色名 ../evil 与任务号 ../x 被拒、renameSync 失败无残留临时文件。node 内存求值 ROLE_KEYS 与 TTL 一致。"
+    },
+    {
+      "id": "AC-076 A-10",
+      "passed": true,
+      "evidence": "ci-results.json:90-98 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:61-64。只读源码：lib/providers/call.mjs:18-25 LEVEL_BY_SOURCE、:280-307 classifyIdentity（failed/unverified/verified/observed、consistent、observed_at、不含模型名）；lib/session.mjs:250-257/322-329 传 requested_model=target.model_id 与 observed_at=ctx.clock.nowIso()。test/unit/session-invalidation.test.mjs:220-273 四档可达、unverified/observed 不阻断仍返回 token、模型不一致仅 consistent:false、failed/none、身份对象不含模型名。"
+    },
+    {
+      "id": "AC-076 A-11",
+      "passed": true,
+      "evidence": "ci-results.json:99-107 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:66-69。只读源码：lib/providers/call.mjs:251-274 extractSessionId 四来源、:172-216 jsonValues/valueAtPath/firstPathValue/regexCapture（整段 JSON 优先、逐行回退、数字转字符串、__proto__/constructor/prototype 拒绝、正则第 1 捕获组）、:15 SESSION_ID_RE ^[A-Za-z0-9._:-]{1,200}$、:26 UNSAFE_SEGMENTS；lib/session.mjs:263-270 取不到 -> E_SESSION_ID_MISSING。test/contract/session.test.mjs:294-345 覆盖四来源与空/含空格分号 id、__proto__ 路径。"
+    },
+    {
+      "id": "AC-076 A-12",
+      "passed": true,
+      "evidence": "ci-results.json:108-116 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:71-74。只读源码：lib/providers/call.mjs:99-135 validateSessionDescriptor（ok/resumable/problems 固定标识、不含描述符内容）、:6-13 IDENTITY_SOURCES 恰六个、:40-76 isUsablePattern/hasCaptureGroup、:141-155 buildSessionCall（返回 {command,args,cwd,input:'stdin'}、args 为数组、整元素与子串替换、start 不替换、含空格/分号/管道/&/换行/空串/../ 的 id 与未知 mode 抛 TypeError）。test/contract/session.test.mjs:243-292。"
+    },
+    {
+      "id": "AC-076 A-13",
+      "passed": true,
+      "evidence": "ci-results.json:117-125 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:76-79。只读源码：lib/contract/views.mjs:3 VIEW_NAMES=['agentline','full','draft']、:48-69 resolveView 行为未改、:7-11 SESSION_RESULT_SCHEMA/SESSION_ACTIONS/SESSION_IDENTITY_LEVELS、:17-46 sessionView（成功键序固定、缺省 session_token:null/identity:null/reply:''、多余键丢弃、失败形状 schema,ok,action,error、调用方给 identity 时追加、失败丢弃 session_token/reply、error 仅四键且 retry_after 缺省 null、未知 action 抛 TypeError）；全文无 import/node:/墙钟/定时器/process.env。test/contract/session.test.mjs:122-178、:371-384。"
+    },
+    {
+      "id": "AC-076 A-14",
+      "passed": true,
+      "evidence": "ci-results.json:126-134 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:81-84。只读源码：三文件 import 仅 node: 与相对路径（lib/session.mjs:4-16、lib/providers/call.mjs:4、lib/contract/views.mjs 无 import），无 Date.now/new Date/setTimeout/setInterval/setImmediate/process.env/performance.now/hrtime；package.json:1-42 无 dependencies/devDependencies/optionalDependencies；lib/contract/registry.mjs:5-249 无 E_SESSION_*。node 只读深比较 REGISTRY_EQ_SNAPSHOT=true、snapshot_version=1（contracts/registry.snapshot.json:3）；node 内存求值 SESSION_ERRORS=9、INVALIDATION_CODES 六项定序、DEFAULT_SESSION_TTL_S=43200。"
+    },
+    {
+      "id": "AC-076 A-15",
+      "passed": true,
+      "evidence": "ci-results.json:135-143 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:86-89。只读逐文件计数：test/contract/session.test.mjs 15 个 test(（:90,102,115,122,150,176,180,221,236,243,270,294,347,363,371）、test/unit/session-invalidation.test.mjs 11 个（:58,75,97,119,147,160,173,185,211,220,275）、test/integration/session-quota.test.mjs 7 个（:55,65,88,124,148,198,217），均 >=10/8/5；标题全部以 '[AC-076]' 开头；三文件无 .skip/.todo/.only、skip:/todo: 字面量。"
+    },
+    {
+      "id": "AC-076 A-16",
+      "passed": true,
+      "evidence": "ci-results.json:144-152 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:91-94（存在性检查，行为由 A-03~A-14 独立验证）。只读逐文件核对关键词：integration 含 E_SESSION_QUOTA_EXHAUSTED(:79)、buildForecast(:7,52)、composeInput(:9,117)、writeRolePolicy(:13,163)、nextAction(:10,125)、review(:127)、design(:125)、dev(:126)、foreign_schema(:188)、renameSync(:202)；unit 含六个失效码(:58,75,97,119,147,160) 与 createFakeContext(:9)；contract 含 scanView(:8)、agentline-forbidden(:209)、getCode(:7)、sessionView(:15)、stdout_regex(:307)、stderr_regex(:315)、sidecar_file(:323)、stdout_json(:45)。"
+    },
+    {
+      "id": "AC-076 A-17",
+      "passed": true,
+      "evidence": "ci-results.json:153-161 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:96-99。命令 check-write-scope --base 040d2e9 --scope-from design.md --scope '.collab/tasks/032/**' 报 ok，且 contracts/scripts/test/helpers/注册表/scan/validate/output/request/exec/forecast/context/package.json 的 git diff 与 ls-files --others 均为空。只读 .git tree 对象比对独立确认：base 040d2e9（498 文件）-> HEAD 627fb09f（508 文件）ADDED 10（5 个 .collab/tasks/032/ 编排维护文件 + 5 个 write_scope 文件）、MODIFIED 1（lib/contract/views.mjs）、REMOVED 0，写域外=[]；Glob 确认无 test/traceability/T-032.json（design.md:264）；6 交付文件 BLOB_MATCH=true。"
+    },
+    {
+      "id": "AC-076 A-18",
+      "passed": true,
+      "evidence": "ci-results.json:162-170 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:101-104。命令 spawnSync 全量 run-tests.mjs，断言失败集合 ⊆ {AC-006,AC-013,AC-073}、fail<=3、tests>=346；impl.md:33 记全量 'tests 359 / pass 356 / fail 3'，失败集合恰基线三条遗留，无新增失败，359>=346（基线 326/323/3，见 acceptance.md:8）。"
+    },
+    {
+      "id": "AC-076 A-19",
+      "passed": true,
+      "evidence": "ci-results.json:171-179 passed=true、exitCode=0、lastLine='AC-076 OK'。acceptance.md:106-109。命令逐个运行 check-defects/check-traceability/check-seams/check-unused 断言 ': ok'，check-no-collab 断言 '(2 violations)'；impl.md:34-35 记四脚本均 ': ok'、check-traceability 'covered=28 planned=46'、check-no-collab 仍 '(2 violations)'，与基线不增不减。"
+    }
+  ]
+}
