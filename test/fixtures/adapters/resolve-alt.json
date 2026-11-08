@@ -1,0 +1,55 @@
+{
+  "schema": "cliworker.config/v2",
+  "state_dir": "./state",
+  "secrets": {},
+  "discovery": {
+    "extra_dirs": [],
+    "wsl": true,
+    "probe_unknown": false,
+    "unknown_patterns": [],
+    "cli_overrides": {
+      "claude": { "cli": "claude-alt-fixture", "adapter": "claude", "readonly": true }
+    }
+  },
+  "catalog": {
+    "allow": ["claude:demo"],
+    "levels": { "claude:demo": "Top" },
+    "aliases": {},
+    "deprecated": {},
+    "manual": [
+      {
+        "schema": "cliworker.model/v1",
+        "key": "claude:demo",
+        "id": "demo",
+        "cli": "claude-alt-fixture",
+        "provider": "claude",
+        "vendor": "anthropic",
+        "aliases": [],
+        "allowed": false,
+        "level": "Top",
+        "level_source": { "kind": "config", "ref": "resolve-alt.json#catalog.levels.claude:demo", "at": "2026-01-01T00:00:00Z" },
+        "availability": { "state": "callable", "reason": null, "at": "2026-01-01T00:00:00Z", "ttl_s": 21600, "evidence": null },
+        "identity": "verified",
+        "capabilities": { "context_tokens": 200000, "readonly": true, "stdin": true },
+        "prices": { "input_per_mtok": 3, "output_per_mtok": 15, "source": "manual" },
+        "source": { "kind": "manual", "ref": "resolve-alt.json", "at": "2026-01-01T00:00:00Z" },
+        "deprecated": false
+      }
+    ]
+  },
+  "pools": [],
+  "policy": {
+    "probe_ttl_s": 21600,
+    "lease_ttl_s": 7200,
+    "reading_ttl_s": 600,
+    "lock_stale_ms": 30000,
+    "lock_wait_ms": 5000,
+    "lock_poll_ms": 50,
+    "session_ttl_s": 43200,
+    "reserve_fraction_for_high": 0.15,
+    "unknown_policy": "after_known",
+    "usage_estimate_mtok": { "Heavy": 2, "Normal": 0.5, "Light": 0.1 },
+    "cache_read_weight": 0,
+    "probe_schedule": null
+  }
+}

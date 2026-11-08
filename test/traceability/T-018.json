@@ -1,0 +1,8 @@
+{
+  "task": "T-018",
+  "milestone": "M3",
+  "entries": [
+    { "ac": "AC-043", "status": "covered", "files": ["test/unit/adapters.test.mjs"] },
+    { "ac": "AC-044", "status": "covered", "files": ["test/unit/adapters-unverified.test.mjs"] }
+  ]
+}
