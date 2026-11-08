@@ -1,0 +1,9 @@
+{
+  "mode": "full",
+  "filter": "",
+  "files": [
+    "test/unit/evidence.test.mjs"
+  ],
+  "platform": "linux",
+  "node": "v22.0.0"
+}

@@ -1,0 +1,9 @@
+{
+  "mode": "filtered",
+  "filter": "AC-001",
+  "files": [
+    "test/unit/evidence.test.mjs"
+  ],
+  "platform": "linux",
+  "node": "v22.23.3"
+}

@@ -1,0 +1,42 @@
+{
+  "name": "dsh-cliworker",
+  "version": "0.1.0",
+  "description": "DSH plugin: independent CLI/model layer for AgentLine (providers, models, availability, cost, selection).",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "cliworker": "bin/cliworker.mjs"
+  },
+  "scripts": {
+    "test": "node scripts/run-tests.mjs",
+    "check": "node scripts/check-fast.mjs",
+    "perf": "node scripts/run-tests.mjs --perf",
+    "snapshot:update": "node scripts/run-tests.mjs --update-snapshots"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "files": [
+    "bin",
+    "lib",
+    "config/cliworker.example.json",
+    "contracts/registry.snapshot.json",
+    "contracts/agentline-forbidden.json",
+    "contracts/schemas",
+    "contracts/host",
+    "contracts/context",
+    "cordis.patch.yml",
+    "dsh.plugin.json",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
