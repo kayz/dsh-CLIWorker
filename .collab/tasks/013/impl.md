@@ -17,3 +17,9 @@ AC-032 尚未完成，不能声称已验收。交班单显示候选 #1 执行失
 新增 `test/integration/secrets-native.test.mjs`，用真实 CLI 验证默认凭据不存在时的 status；在非 Windows 平台以临时 preload 模拟后端条目不存在。子进程非零退出时断言消息包含 stdout 和 stderr。该测试只覆盖一个状态场景，不满足 AC-032 规定的五项跨进程、消费、隔离和泄漏扫描测试，不能将 AC-032 标为 covered。
 
 自测：从仓库根运行 `node --test --test-name-pattern=AC-032 test/integration/secrets-native.test.mjs`，1 项通过；配置、paths、exec 和 secrets 的既有定向回归共 38 项通过。完整 acceptance.md 的 AC-032 命令仍不能通过：所需测试标题、auth flow 和追踪文件尚未完成；其子进程断言位于禁止修改的 acceptance.md，故未改为输出 stdout/stderr。当前环境未找到 pwsh，无法执行要求的 PowerShell 7 验收命令或 check-fast.ps1；check-fast 检查链还包含被禁止的 Git 调用。上述 Node 测试由执行工具调用，最初提供的 shell 选项实际启动了 Windows PowerShell 5.1，与环境要求不符；后续 Node 命令改用 cmd.exe 直接执行。
+
+本次继续保留现场已有 secrets、auth、exec、配置及测试改动：它们与设计方向一致，且交班单显示上一候选运行失败而没有提供可核验的代码差异。遵照禁止执行 Git 的要求，未运行 git diff，也无法确定这些改动的作者。
+
+在 `test/integration/secrets-native.test.mjs` 新增指定的 from-env 测试：真实 CLI 在独立进程中 set 和 status，再由新进程加载生产配置及 `runWithSecrets` 启动 fake provider。测试用临时 preload 模拟 OS 后端并以认证加密保存替身数据，断言只有声明的 `KIMI_API_KEY` 的摘要与令牌一致，argv 不包含令牌；消费进程不继承来源变量。测试密钥和 preload 环境变量在创建 provider 上下文前移除。
+
+自测：`node --test --test-reporter=tap --test-name-pattern=AC-032 test/integration/secrets-native.test.mjs` 通过 2 项，无跳过。执行 acceptance.md 的 AC-032 命令，因缺少 stdin 跨进程测试标题而失败；其余三个规定标题、完整 flow 和追踪文件也尚未完成，不能声明 AC-032 已覆盖。未运行 check-fast：其检查链包含被明确禁止的 Git 调用。此前记录的 pwsh 不可用不适用于本次，本次使用 pwsh 执行了上述检查。
