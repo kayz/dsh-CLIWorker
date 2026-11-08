@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { createFakeClock } from '../../helpers/clock.mjs'
 
 const V01 = process.env.CLIWORKER_V01_ROOT
   ?? fileURLToPath(new URL('../../fixtures/characterization/v0.1/', import.meta.url))
@@ -54,7 +55,9 @@ test('[fixed] [AC-012] live loadConfig gives two config files disjoint state dir
       fs.writeFileSync(file, JSON.stringify({ providers: {}, models: {} }), 'utf8')
     }
 
-    const ctx = { fs, env: { CLIWORKER_HOME: home }, platform: process.platform }
+    // Migration stamps level_source.at from ctx.clock; supply the repository fake clock so the
+    // command keeps its injected-clock seam instead of the test working around it.
+    const ctx = { fs, env: { CLIWORKER_HOME: home }, platform: process.platform, clock: createFakeClock() }
     const a = loadConfig({ file: firstFile, ctx })
     const b = loadConfig({ file: secondFile, ctx })
 
