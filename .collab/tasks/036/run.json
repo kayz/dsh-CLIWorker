@@ -106,5 +106,72 @@
       "token_ref": "sha256:0a9089d01a516750",
       "invalidated_reason": null
     }
+  },
+  {
+    "task": "036",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T15:14:24.639Z",
+    "ended_at": "2026-11-08T15:14:24.639Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 2
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": null,
+      "total": null,
+      "ok": false,
+      "ran_at": "2026-11-08T15:14:24.640Z",
+      "report_ref": ".collab/tasks/036/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/036/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "036",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-terra",
+    "model_resolved": "gpt-6.1-terra",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T15:14:25.418Z",
+    "ended_at": "2026-11-08T15:15:15.181Z",
+    "duration_ms": 49763,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 1237085,
+      "output": 8228,
+      "cache_read": 1180672,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/036/logs/dev-r1-1.log",
+    "error": null,
+    "session": {
+      "reused": true,
+      "token_ref": "sha256:0a9089d01a516750",
+      "invalidated_reason": null
+    }
   }
 ]
