@@ -2,7 +2,7 @@
   "task": "T-025",
   "milestone": "M5",
   "entries": [
-    { "ac": "AC-062", "files": ["test/unit/ui-render.test.mjs", "test/fixtures/ui/issues.json"], "status": "covered" },
+    { "ac": "AC-062", "files": ["test/unit/ui-render.test.mjs"], "status": "covered" },
     { "ac": "AC-063", "files": ["test/integration/ui-snapshot.test.mjs"], "status": "covered" }
   ]
 }
