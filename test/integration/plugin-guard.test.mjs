@@ -7,6 +7,9 @@ import { routes } from '../../lib/http/routes.mjs'
 import { createPlugin } from '../../lib/index.js'
 import { createHostStub } from '../helpers/host-stub.mjs'
 import { createFakeContext } from '../helpers/ctx.mjs'
+import { createFlow } from '../helpers/flow.mjs'
+import * as httpSelect from '../flows/steps/http-select.mjs'
+import * as httpAdmin from '../flows/steps/http-admin.mjs'
 
 test('AC-060 write gates take precedence without reading the request body', () => {
   let now = 0
@@ -57,4 +60,38 @@ test('[AC-060] registered write routes reject in order before parsing malformed 
       }
     }
   }
+})
+
+test('[AC-060] first write with the issued session and csrf updates the real pool configuration', async () => {
+  const pool = { id: 'p', cli: 'example', kind: 'credits', funding: 'paid', window: null, capacity_mtok: {}, used_fraction: null, credits_per_mtok: null }
+  const raw = { schema: 'cliworker.config/v2', state_dir: '/cw/state', discovery: { cli_overrides: {} }, catalog: { manual: [], allow: [], levels: {}, aliases: {}, deprecated: {} }, pools: [pool], policy: {}, secrets: {} }
+  const ctx = createFakeContext({ files: { '/cw/config.json': JSON.stringify(raw) } })
+  const host = createHostStub()
+  createPlugin(host.ctx, { configPath: '/cw/config.json' }, { ctx })
+  const tokens = JSON.parse((await host.request('/cliworker/api/session')).body)
+  const updated = { ...pool, credits_per_mtok: 5 }
+  const response = await host.request('/cliworker/api/pool', { method: 'POST', body: updated, headers: { 'x-cliworker-session': tokens.session, 'x-cliworker-csrf': tokens.csrf } })
+  assert.equal(response.statusCode, 200)
+  assert.equal(JSON.parse(ctx.fs.readFileSync('/cw/config.json', 'utf8')).pools[0].credits_per_mtok, 5)
+})
+
+test('[AC-060] first write can add a real model to the directory', async () => {
+  const raw = { schema: 'cliworker.config/v2', state_dir: '/cw/state', discovery: { cli_overrides: { example: { cli: 'example' } } }, catalog: { manual: [], allow: [], levels: {}, aliases: {}, deprecated: {} }, pools: [], policy: {}, secrets: {} }
+  const ctx = createFakeContext({ files: { '/cw/config.json': JSON.stringify(raw) } })
+  const host = createHostStub()
+  createPlugin(host.ctx, { configPath: '/cw/config.json' }, { ctx })
+  const tokens = JSON.parse((await host.request('/cliworker/api/session')).body)
+  const response = await host.request('/cliworker/api/manual-model', { method: 'POST', body: { provider: 'example', id: 'one', level: 'Top' }, headers: { 'x-cliworker-session': tokens.session, 'x-cliworker-csrf': tokens.csrf } })
+  assert.equal(response.statusCode, 200)
+  assert.equal(JSON.parse(ctx.fs.readFileSync('/cw/config.json', 'utf8')).catalog.manual[0].key, 'example:one')
+})
+
+test('[AC-060] HTTP flow steps exercise the real plugin and scan recorded responses', async () => {
+  const flow = createFlow()
+  try {
+    await httpSelect.run(flow)
+    await httpAdmin.run(flow)
+    assert.ok(flow.scan().scanned.http > 0)
+    assert.deepEqual(flow.scan().hits, [])
+  } finally { flow.cleanup() }
 })

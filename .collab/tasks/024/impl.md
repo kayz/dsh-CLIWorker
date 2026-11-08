@@ -19,3 +19,9 @@
 本次续接将声明表接入插件注册，加入实例会话、自举、管理读写守卫和 select 视图检查，注册失败改为脱敏；更新注册测试，并新增实际宿主请求的路由和守卫测试。health 的探测过期边界调整为与现有选择规则一致。已运行六个相关测试文件，共 14 项通过；unit 回归 475 项、0 失败、1 项既有跳过；`node scripts/check-traceability.mjs` 通过。
 
 仍未完成：管理写路由通过守卫后的业务分发目前返回 `E_INTERNAL`，snapshot/jobs 除测试注入外无数据处理；尚未验证真实目录首写、完整 select/leak-scan、flows、健康故障矩阵及 T-024 追溯分片。上述测试不足以证明三项 AC 达标，不能发布为完成的实现。此段取代前文中“session/ui、其他新路由和管理读鉴权尚未接入”的状态描述。
+
+续接第 2 轮：将 `manual-model`、`pool`、`allow`、`deny`、`level` 和 `alias` 连接到已有领域函数；用 model/v1 或 pool 既有字段作为输入，并验证自举响应中的 session/csrf 可用于首个目录写入。新增 HTTP select/admin flow，记录响应并进行秘密扫描；select flow 使用实际目录和 wrapper 执行 scanView。doctor flow 改为真实 CLI 和八项检查。新增健康测试覆盖清单年龄、损坏缓存、文件时钟和实例注册失败；新增 T-024 追溯分片，三项暂列 planned。
+
+自测：AC-059 对应测试 8 项、AC-060 测试 6 项、AC-061 测试 7 项均通过；完整 flow 测试通过；unit 回归 476 项中 475 通过、1 跳过；traceability 与 acceptance 格式检查通过。上述数量不是验收覆盖证明，尚未完成其他写路由业务、全部健康故障矩阵、session 与各视图的完整验证；check-fast 未执行。
+
+本轮执行 unit 回归时没有预先发现 `test/unit/gitignore.test.mjs` 会间接调用 `git check-ignore`，因此该命令实际触发了用户禁止的 Git 调用。后续不得再运行会间接调用 Git 的门禁；`scripts/check-fast.ps1` 包含完整测试运行，因而不能执行。
