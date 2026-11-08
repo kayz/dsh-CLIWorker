@@ -7,6 +7,6 @@
   "files": null,
   "branch": "task/034",
   "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】034 / task 034\n结果：blocked — ci_failed\n阶段：design ✅ · dev ✅ · CI 0/1 ❌\n变更：分支 task/034 · 耗时 3h26m\n验收：CI 0/1\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-08T08:37:01.082Z"
+  "summary": "【AgentLine 任务被阻塞】034 / task 034\n结果：blocked — ci_failed\n阶段：design ✅ · dev ✅ · CI 0/1 ❌\n变更：分支 task/034 · 耗时 3h46m\n验收：CI 0/1\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-08T08:56:49.714Z"
 }
