@@ -34,5 +34,85 @@
       "token_ref": "sha256:a1e46fd540e829d1",
       "invalidated_reason": null
     }
+  },
+  {
+    "task": "023",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-sol",
+    "model_resolved": "gpt-6.1-sol",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T18:15:15.719Z",
+    "ended_at": "2026-11-08T18:24:13.663Z",
+    "duration_ms": 537944,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": null,
+    "usage_source": "unavailable",
+    "log_ref": ".collab/tasks/023/logs/design-r1-1.log",
+    "error": "stall",
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:a1e46fd540e829d1",
+      "invalidated_reason": "resume_failed"
+    },
+    "handoff": {
+      "file": "handoff/design-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/023/design-r1-c1",
+      "sha": "f7ec63214958aa1f84345827e63979fc6f50daea"
+    }
+  },
+  {
+    "task": "023",
+    "role": "design",
+    "round": 1,
+    "candidate": 2,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-08T18:24:18.098Z",
+    "ended_at": "2026-11-08T18:25:20.423Z",
+    "duration_ms": 62325,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 16,
+      "output": 3972,
+      "cache_read": 358176,
+      "cache_write": 41035,
+      "cost_usd": 0.23970959999999997
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/023/logs/design-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "gpt-6.1-sol",
+      "file": "handoff/design-r1-c1-to-c2.md"
+    },
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:418618dd90d24d9f",
+      "invalidated_reason": "resume_failed"
+    }
   }
 ]

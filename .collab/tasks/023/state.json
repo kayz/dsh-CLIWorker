@@ -11,16 +11,41 @@
       "from": "draft",
       "to": "designed",
       "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-08T18:15:09.178Z",
+      "from": "designed",
+      "to": "blocked",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-08T18:15:15.347Z",
+      "from": "blocked",
+      "to": "designed",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-08T18:15:15.356Z",
+      "from": "designed",
+      "to": "draft",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-08T18:25:20.681Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:claude-sonnet-5-5 (inherited c1)"
     }
   ],
   "status": "designed",
-  "updated_at": "2026-11-08T18:15:08.752Z",
+  "updated_at": "2026-11-08T18:25:20.681Z",
   "role": "design",
-  "model": "gpt-6.1-sol",
-  "model_resolved": "gpt-6.1-sol",
+  "model": "claude-sonnet-5-5",
+  "model_resolved": "claude-sonnet-5-5",
   "effort": "high",
-  "attempt": 1,
-  "switches": 0,
+  "attempt": 2,
+  "switches": 1,
   "blocked_reason": null,
-  "handoff": null
+  "handoff": null,
+  "interrupted": null
 }
