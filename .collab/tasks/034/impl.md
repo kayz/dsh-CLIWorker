@@ -15,3 +15,9 @@ lib/config.mjs 已有 loadConfig({ file, ctx })，包含遍历对象和数组的
 scripts/check-fast.ps1 存在，入口调用 scripts/check-fast.mjs，后者运行所有 check-*.mjs 和全量测试。读取确认 scripts/check-write-scope.mjs 含 spawnSync('git', ...)；在当前禁止 git、禁止创建其他文件及设计暂停的约束下未执行该项目检查，未使用注入替代检查。首次命令工具虽显式指定 shell=pwsh，版本探测实际返回 PowerShell 5.1.26100.9711，Get-Command pwsh 未找到可执行路径；确认后停止使用该命令入口，后续读取、核查和本说明写入均使用 Node API，以显式 utf8 编码写入，不另建脚本。
 
 继续实施需要先取得 T-013 已合并的确认，并使本工作树包含 lib/secrets、lib/commands/auth 和 auth 路由的真实实现，再由有权限的角色按实际 API 补全 design.md 与 acceptance.md。已通过异步问题告知当前依赖缺口并请求 T-013 实现位置。本轮不声称上述前提已满足，也不声称两份测试已补齐或 CI 已修复。
+
+第 1 轮续接：本轮只处理用户提供的增量。该增量标示的文件为 docs/ui/cliworker-console.html，所给片段涉及控制台布局、intake 状态与页面列表；该路径不在 design.md 的四文件 write_scope 内。本轮未修改、回滚或应用该 UI 差异，也未执行提示中的 git show。提供的差异已截断，本说明不声称核验了完整差异。
+
+本轮没有收到 T-013 已合并的确认、真实后端 API 或设计恢复内容，因此沿用上一轮暂停结论；未重复已完成的依赖、源码与交班单核查。两份 [AC-033] 测试及其退出码 0 的验收要求仍待完成，不能将 UI 增量视为完成依据。本轮仅追加本说明，以记录增量超出允许修改范围的原因。
+
+本轮自测仅校验 impl.md 追加内容回读一致、原有内容完整保留、编码为 UTF-8 无 BOM；未运行 AC-033 测试或 scripts/check-fast.ps1，不新增验收通过记录。未修改 brief.md、design.md、acceptance.md、review*.md、verdict*.json、state.json、run.json 或其他文件。
