@@ -166,6 +166,11 @@ test('[AC-056] quota and non-quota failures keep distinct errors and safe views'
       const cli = f.run(['models', 'select'], request)
       assert.equal(cli.code, 5, cli.stderr || cli.stdout)
       assert.equal(cli.json.error.code, code)
+      const requestFile = path.join(f.dir, 'request.json')
+      fs.writeFileSync(requestFile, JSON.stringify(request), 'utf8')
+      const fileCli = spawnSync(process.execPath, [bin, 'models', 'select', '--config', f.file, '--request-file', requestFile], { encoding: 'utf8' })
+      assert.equal(fileCli.status, 5, fileCli.stderr || fileCli.stdout)
+      assert.equal(JSON.parse(fileCli.stdout).error.code, code)
     }
   } finally { f.cleanup() }
 })
