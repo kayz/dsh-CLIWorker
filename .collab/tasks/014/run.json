@@ -247,5 +247,112 @@
       "model": "deepseek-v4.1-flash",
       "file": "handoff/dev-r1-c1-to-c2.md"
     }
+  },
+  {
+    "task": "014",
+    "role": "ci",
+    "round": 0,
+    "backend": "local",
+    "provider": "local",
+    "model_requested": "-",
+    "model_resolved": "-",
+    "effort": "-",
+    "started_at": "2026-11-08T02:16:47.322Z",
+    "ended_at": "2026-11-08T02:16:47.322Z",
+    "duration_ms": 0,
+    "exit": {
+      "code": 1
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": {
+      "runner": "ci-runner.ps1",
+      "passed": 0,
+      "total": 1,
+      "ok": false,
+      "ran_at": "2026-11-08T02:16:47.322Z",
+      "report_ref": ".collab/tasks/014/ci-results.json"
+    },
+    "usage": null,
+    "usage_source": "none",
+    "log_ref": ".collab/tasks/014/ci-results.json",
+    "error": "ci_failed"
+  },
+  {
+    "task": "014",
+    "role": "dev",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codebuddy-cli",
+    "model_requested": "deepseek-v4.1-flash",
+    "model_resolved": "deepseek-v4.1-flash",
+    "provider": "codebuddy",
+    "effort": "high",
+    "started_at": "2026-11-08T02:16:47.324Z",
+    "ended_at": "2026-11-08T02:16:50.601Z",
+    "duration_ms": 3277,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "cost_usd": 0
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/014/logs/dev-r1-1.log",
+    "error": "result error",
+    "handoff": {
+      "file": "handoff/dev-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/014/dev-r1-c1",
+      "sha": "e5886a83126625b3a734959ca04d0971b4d44d50"
+    }
+  },
+  {
+    "task": "014",
+    "role": "dev",
+    "round": 1,
+    "candidate": 2,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-terra",
+    "model_resolved": "gpt-6.1-terra",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-08T02:16:52.115Z",
+    "ended_at": "2026-11-08T02:18:44.385Z",
+    "duration_ms": 112270,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 456754,
+      "output": 3883,
+      "cache_read": 388608,
+      "cache_write": 0,
+      "cost_usd": null
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/014/logs/dev-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": true
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "deepseek-v4.1-flash",
+      "file": "handoff/dev-r1-c1-to-c2.md"
+    }
   }
 ]

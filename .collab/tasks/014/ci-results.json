@@ -1,0 +1,19 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\014",
+  "taskDir": ".collab\\tasks\\014",
+  "ranAt": "2026-11-08T10:16:47.2258966+08:00",
+  "passed": 0,
+  "total": 1,
+  "ok": false,
+  "results": [
+    {
+      "id": "AC-034",
+      "title": "配置 v2 与 v1 迁移",
+      "passed": false,
+      "exitCode": 1,
+      "durationS": 0.58,
+      "lastLine": "Node.js v22.23.3",
+      "output": "node:internal/modules/run_main:123\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: Could not find 'C:/git/dsh-CLIWorker/.collab/worktrees/014/test/unit/config-v2.test.mjs'\n\n\n1 !== 0\n\n    at run (file:///C:/git/dsh-CLIWorker/.collab/worktrees/014/[eval1]:1:496)\n    at tap (file:///C:/git/dsh-CLIWorker/.collab/worktrees/014/[eval1]:1:573)\n    at file:///C:/git/dsh-CLIWorker/.collab/worktrees/014/[eval1]:1:825\n    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:282:26)\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:278:20)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 1,\n  expected: 0,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v22.23.3"
+    }
+  ]
+}

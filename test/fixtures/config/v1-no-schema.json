@@ -1,0 +1,11 @@
+{
+  "providers": {
+    "claude": { "cli": "claude", "readonly": true }
+  },
+  "models": {
+    "claude:alpha": { "provider": "claude", "id": "alpha", "level": "High", "identity": "verified" }
+  },
+  "quotas": {
+    "claude": { "remaining_pct": 75 }
+  }
+}
