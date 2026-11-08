@@ -1,7 +1,7 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\034",
   "taskDir": ".collab\\tasks\\034",
-  "ranAt": "2026-11-08T17:37:41.4434629+08:00",
+  "ranAt": "2026-11-08T17:56:00.6115340+08:00",
   "passed": 0,
   "total": 1,
   "ok": false,
@@ -11,9 +11,9 @@
       "title": "配置明文拒载与凭据后端失败处理",
       "passed": false,
       "exitCode": 1,
-      "durationS": 0.58,
+      "durationS": 0.62,
       "lastLine": "     | AC-033 tests failed",
-      "output": "Could not find 'test/unit/inline-secret.test.mjs, test/integration/secret-backend-failure.test.mjs'\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-841d9ab5-eb33-4a55-8f33-04dca3d28764.ps1:2\nLine |\n   2 |  鈥?t.mjs; if ($LASTEXITCODE -ne 0) { throw \"AC-033 tests failed\" }; Writ 鈥?\n     |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-033 tests failed"
+      "output": "Could not find 'test/unit/inline-secret.test.mjs, test/integration/secret-backend-failure.test.mjs'\nException: C:\\Users\\kayz\\AppData\\Local\\Temp\\agentline-ci-de09e70b-ba91-4175-9674-56ed72b6d0b3.ps1:2\nLine |\n   2 |  鈥?t.mjs; if ($LASTEXITCODE -ne 0) { throw \"AC-033 tests failed\" }; Writ 鈥?\n     |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | AC-033 tests failed"
     }
   ]
 }
