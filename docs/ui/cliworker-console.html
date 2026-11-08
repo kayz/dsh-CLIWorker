@@ -167,6 +167,10 @@
   .listline{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--border)}
   .savebar{position:sticky;bottom:8px;display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--border);background:var(--panel);border-radius:10px;margin-top:8px;box-shadow:var(--shadow)}
   .split{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:12px;align-items:start}
+  .split.rev{grid-template-columns:minmax(0,1fr) minmax(300px,420px)}
+  .intake-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 8px;border-top:1px solid var(--border);width:100%}
+  .intake-row.on{background:var(--blue-soft)}
+  .igroup{margin-bottom:12px}
   .pre{margin:0;padding:10px;background:var(--sunken);border:1px solid var(--border);border-radius:8px;overflow:auto;font-family:var(--mono);font-size:11.5px;line-height:1.45;white-space:pre-wrap}
   .toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:40}
   .toast{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px 12px;box-shadow:var(--shadow);max-width:360px}
@@ -321,12 +325,18 @@ const state = {
   addPat:'',
   addSecretName:'',
   addSecretRef:'',
-  manual:false
+  manual:false,
+  fetched:false,
+  intakePick:null,
+  intakeOnlyNew:false,
+  intakeChecks:[],
+  intakeBatch:'High'
 };
+let intake = null;
 let committed = defaultSettings();
 let draft = structuredClone(committed);
 const units = {probe_ttl_s:'h', reading_ttl_s:'m', lease_ttl_s:'h', session_ttl_s:'h'};
-const PAGES = ['home','models','providers','pools','usage','select','settings'];
+const PAGES = ['home','models','intake','providers','pools','usage','select','settings'];
 if (!PAGES.includes(state.page)) state.page = 'home';
 
 function loadLayout(){
@@ -563,7 +573,8 @@ function pageModels(){
   const nDep = models.filter(x => x.deprecated).length;
   const nUnk = models.filter(x => x.risk==='unknown' && !x.deprecated).length;
   const chips = [['all','全部档'],...LEVELS.map(l => [l,l])];
-  return `<div class="sub"><div><h1>模型</h1><div class="hint">白名单 ${nAllow} · 可调用 ${nCall} · 弃用 ${nDep} · 预测 unknown ${nUnk}。未入白名单的也列在这里，不进候选。</div></div></div>
+  return `<div class="sub"><div><h1>模型</h1><div class="hint">白名单 ${nAllow} · 可调用 ${nCall} · 弃用 ${nDep} · 预测 unknown ${nUnk}。未入白名单的也列在这里。档位、身份组和价格在收录页手工选。</div></div>
+    <button class="btn primary" data-act="open-intake">获取全部模型</button></div>
     <div class="filters">
       <input id="q" type="search" placeholder="搜索模型、渠道、厂商" value="${esc(state.q)}" />
       <span class="chips">${chips.map(([id,label]) => `<button class="chip ${state.level===id?'on':''}" data-act="level" data-id="${id}">${label}</button>`).join('')}</span>
@@ -580,7 +591,7 @@ function drawer(){
   const x = modelBy(state.detail);
   if (!x) return '';
   return `<div class="scrim" data-act="close-drawer"></div><aside class="drawer" role="dialog" aria-label="模型详情">
-    <div class="ch"><div><div class="kicker">${esc(x.group)}</div><h1 style="font-size:16px">${esc(x.key)}</h1></div><span class="grow"></span><button class="icon" data-act="close-drawer">关闭</button></div>
+    <div class="ch"><div><div class="kicker">${x.group?esc(x.group):'<span class="unknown">unknown</span>'}</div><h1 style="font-size:16px">${esc(x.key)}</h1></div><span class="grow"></span><button class="btn" data-act="edit-params" data-id="${esc(x.key)}">手工改参数</button><button class="icon" data-act="close-drawer">关闭</button></div>
     ${x.deprecated?`<div class="callout warn"><b>已弃用。</b> ${esc(x.depReason)} 不能加入白名单，也不能当候补。</div>`:''}
     ${x.probeState==='err'?`<div class="callout bad"><b>探测失败 · ${esc(x.probeErr)}</b><div class="hint">重试不会把失败改写成可调用。</div><button class="btn" data-act="retry" data-id="${esc(x.key)}">重试探测</button></div>`:''}
     ${x.probeState==='never'?`<div class="callout">还没有探测记录。未入白名单时不会自动探测。</div>`:''}
@@ -591,7 +602,7 @@ function drawer(){
       <div class="k">白名单</div><div>${x.allowed?'在白名单内':'不在白名单'}</div>
       <div class="k">可用性</div><div>${availTag(x)} <span class="hint">${x.probe?esc(x.probe):'无时间'}</span></div>
       <div class="k">身份</div><div>${idTag(x.identity)}${models.some(o => o.group===x.group && o.key!==x.key)?`<div class="hint">同一 identity_group 还有 ${esc(models.filter(o => o.group===x.group && o.key!==x.key).map(o => o.key).join('、'))}，账本按渠道分开。</div>`:''}</div>
-      <div class="k">只读</div><div>${x.readonly?'可以强制只读':'不能强制只读'}</div>
+      <div class="k">只读</div><div>${x.readonly==null?unk(null):x.readonly?'可以强制只读':'不能强制只读'}</div>
       <div class="k">上下文</div><div>${x.ctx?esc(x.ctx.toLocaleString('en-US'))+' tokens':unk(null)}</div>
       <div class="k">价格</div><div>${x.pin===null?unk(null):'$'+x.pin+' / $'+x.pout+' per Mtok'}</div>
       <div class="k">额度池</div><div>${x.pool?`<button class="btn" data-act="go" data-page="pools">${esc(x.pool)}</button>`:unk(null)}</div>
@@ -603,6 +614,187 @@ function drawer(){
       <div class="k">最近使用</div><div>${unk(x.used)}</div>
     </div>
   </aside>`;
+}
+
+const DISCOVERED = [
+  {cli:'claude', status:'ok', via:'subcommand', note:'', rows:[
+    ['claude-opus-5-5','claude-opus-5-5','anthropic'],
+    ['claude-sonnet-5-5',null,'anthropic'],
+    ['claude-sonnet-4-6',null,'anthropic'],
+    ['claude-haiku-5-5','claude-haiku-5-5','anthropic'],
+    ['claude-opus-4-5','claude-opus-4-5','anthropic']
+  ]},
+  {cli:'codex', status:'ok', via:'help', note:'未登录不影响列举。探测仍然会因 E_PROVIDER_AUTH 失败。', rows:[
+    ['gpt-6-astra','gpt-6-astra','openai'],
+    ['gpt-6.1-sol','gpt-6.1-sol','openai'],
+    ['gpt-6.1-terra','gpt-6.1-terra','openai'],
+    ['gpt-6.1-luna',null,'openai'],
+    ['gpt-5.4-mini',null,'openai']
+  ]},
+  {cli:'codebuddy', status:'ok', via:'subcommand', note:'', rows:[
+    ['hy4free','hy4free','tencent'],
+    ['deepseek-v4.1-flash','deepseek-v4.1-flash','deepseek'],
+    ['hy3','hy3','tencent'],
+    ['hy3x','hy3x','tencent'],
+    ['deepseek-v4-pro','deepseek-v4-pro','deepseek'],
+    ['hunyuan-t1',null,'tencent']
+  ]},
+  {cli:'cursor-wsl', status:'ok', via:'subcommand', note:'', rows:[
+    ['grok-4.7','cursor-wsl-grok-4.7','xai'],
+    ['grok-4.6',null,''],
+    ['composer-2.5-fast',null,'']
+  ]},
+  {cli:'gemini', status:'err', via:'cache', note:'本次列举超时。下面是上次缓存，不是完整清单。', rows:[
+    ['gemini-4-argon-high','gemini-4-argon-high','google'],
+    ['gemini-3.7-flash-high','gemini-3.7-flash-high','google'],
+    ['gemini-2.5-pro',null,'google']
+  ]},
+  {cli:'deepseek', status:'ok', via:'api', note:'HTTP 渠道按服务端模型清单列举。', rows:[
+    ['deepseek-flash','deepseek-flash','deepseek'],
+    ['deepseek-reasoner',null,'deepseek']
+  ]},
+  {cli:'kimi', status:'skip', via:null, note:'未识别的渠道不自动列举。要先在渠道页补录。', rows:[]},
+  {cli:'trae', status:'skip', via:null, note:'渠道已消失，跳过。', rows:[]}
+];
+function blankDraft(vendor){
+  return {level:'', group:'', aliases:'', vendor:vendor||'', ctx:'', readonly:'', stdin:'', pin:'', pout:'', allowed:false, deprecated:false, depReason:'', replace:''};
+}
+function draftFromModel(x){
+  return {
+    level:x.level||'', group:x.group||'', aliases:(x.aliases||[]).join(', '), vendor:x.vendor||'',
+    ctx:x.ctx==null?'':String(x.ctx), readonly:x.readonly==null?'':(x.readonly?'yes':'no'),
+    stdin:x.stdin==null?'':(x.stdin?'yes':'no'), pin:x.pin==null?'':String(x.pin), pout:x.pout==null?'':String(x.pout),
+    allowed:!!x.allowed, deprecated:!!x.deprecated, depReason:x.depReason||'', replace:x.replace||''
+  };
+}
+function ensureFetched(){
+  if (intake){ state.fetched = true; return; }
+  intake = DISCOVERED.map(g => ({
+    cli:g.cli, status:g.status, via:g.via, note:g.note,
+    items:(g.rows||[]).map(([id, catalogKey, vendor]) => {
+      const linked = catalogKey && modelBy(catalogKey);
+      return {
+        uid:g.cli+'::'+id, id, cli:g.cli, via:g.via, vendor:vendor||'',
+        catalogKey: linked ? catalogKey : null,
+        draft: linked ? draftFromModel(linked) : blankDraft(vendor||'')
+      };
+    })
+  }));
+  state.fetched = true;
+}
+function intakeItems(){ return intake ? intake.flatMap(g => g.items) : []; }
+function findIntake(uid){ return intakeItems().find(it => it.uid===uid) || null; }
+function tri(v){ return v==='' ? null : v==='yes'; }
+function numOrNull(v){ return v==='' ? null : Number(v); }
+function commitIntake(item){
+  const d = item.draft;
+  if (!d.level) return '先选档位，再写入目录';
+  if (d.deprecated && !d.depReason.trim()) return '弃用要写原因';
+  const pin = numOrNull(d.pin), pout = numOrNull(d.pout);
+  if ((pin===null) !== (pout===null)) return '输入价和输出价一起填，或都留空';
+  if (pin!==null && (Number.isNaN(pin) || pin<0 || Number.isNaN(pout) || pout<0)) return '价格要是非负数字';
+  const ctx = numOrNull(d.ctx);
+  if (ctx!==null && (!Number.isInteger(ctx) || ctx<0)) return '上下文要是非负整数';
+  const aliases = d.aliases.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+  const readonly = tri(d.readonly);
+  const stdin = tri(d.stdin);
+  let x = item.catalogKey ? modelBy(item.catalogKey) : null;
+  if (!x){
+    if (modelBy(item.id)) return '目录里已经有 '+item.id;
+    x = {
+      key:item.id, cli:item.cli, vendor:d.vendor||'', group:d.group||'', level:d.level,
+      allowed:d.deprecated?false:!!d.allowed, avail:d.deprecated?'deprecated':'discovered', availReason:null,
+      identity:'unverified', readonly, stdin, ctx, pin, pout, deprecated:!!d.deprecated, depReason:d.depReason, replace:d.replace,
+      pool:null, frac:null, reset:null, remainLabel:null, probe:null, probeState:'never', probeErr:'', stale:false, used:null,
+      risk:'unknown', tasks:null, basis:'none', conf:'none', samples:0, burn:null, eta:null, exhausts:null, reason:'no_samples', aliases
+    };
+    models.push(x);
+    item.catalogKey = x.key;
+  } else {
+    x.level = d.level;
+    x.group = d.group;
+    x.vendor = d.vendor || x.vendor;
+    x.aliases = aliases;
+    x.ctx = ctx;
+    x.pin = pin;
+    x.pout = pout;
+    x.readonly = readonly;
+    x.stdin = stdin;
+    x.deprecated = !!d.deprecated;
+    x.depReason = d.depReason;
+    x.replace = d.replace;
+    x.allowed = d.deprecated ? false : !!d.allowed;
+    if (d.deprecated) x.avail = 'deprecated';
+  }
+  return '';
+}
+function ynSelect(field, value, yes, no){
+  return `<select data-field="${field}"><option value="" ${value===''?'selected':''}>unknown</option><option value="yes" ${value==='yes'?'selected':''}>${yes}</option><option value="no" ${value==='no'?'selected':''}>${no}</option></select>`;
+}
+function intakeForm(item){
+  if (!item) return `<div class="empty">从左边点一条。档位、身份组、别名、上下文、只读和价格都由你选。留空就保持 unknown，不会替你填，也不会自动探测。</div>`;
+  const d = item.draft;
+  const groups = [...new Set(models.map(x => x.group).filter(Boolean))];
+  const fresh = !item.catalogKey;
+  return `<div class="kicker">${fresh?'未入库':'已在目录'}</div><h3 style="margin:4px 0 8px">${esc(item.id)}</h3>
+    <div class="kv" style="margin-bottom:10px">
+      <div class="k">渠道</div><div class="mono">${esc(item.cli)}</div>
+      <div class="k">列举来源</div><div class="mono">${item.via?esc(item.via):unk(null)}</div>
+      <div class="k">目录键</div><div>${item.catalogKey?`<span class="mono">${esc(item.catalogKey)}</span>`:'<span class="unknown">尚未写入</span>'}</div>
+    </div>
+    <form id="intake-form">
+      <label class="field"><b>档位</b><select data-field="draft.level"><option value="" ${d.level===''?'selected':''}>请选择</option>${LEVELS.map(l => `<option ${d.level===l?'selected':''}>${l}</option>`).join('')}</select><span class="hint">保存后 level_source.kind = config。不选不能入库。</span></label>
+      <label class="field"><b>身份组 identity_group</b><input data-field="draft.group" list="groups" value="${esc(d.group)}" placeholder="留空则 unknown" /><datalist id="groups">${groups.map(g => `<option value="${esc(g)}"></option>`).join('')}</datalist><span class="hint">同一底层模型填同一个组，账本仍按渠道分开。</span></label>
+      <label class="field"><b>别名</b><input data-field="draft.aliases" value="${esc(d.aliases)}" placeholder="用逗号分开，可空" /></label>
+      <label class="field"><b>厂商</b><input data-field="draft.vendor" value="${esc(d.vendor)}" placeholder="CLI 没给就留空" /></label>
+      <label class="field"><b>上下文 tokens</b><input data-field="draft.ctx" inputmode="numeric" value="${esc(d.ctx)}" placeholder="unknown" /></label>
+      <label class="field"><b>只读</b>${ynSelect('draft.readonly', d.readonly, '可以强制只读', '不能强制只读')}</label>
+      <label class="field"><b>stdin</b>${ynSelect('draft.stdin', d.stdin, '接受 stdin', '不接受')}</label>
+      <div class="inline" style="align-items:flex-end;margin-bottom:12px">
+        <label class="field" style="margin:0"><b>输入价 / Mtok</b><input data-field="draft.pin" value="${esc(d.pin)}" placeholder="unknown" style="width:120px" /></label>
+        <label class="field" style="margin:0"><b>输出价 / Mtok</b><input data-field="draft.pout" value="${esc(d.pout)}" placeholder="unknown" style="width:120px" /></label>
+      </div>
+      <label class="choice"><input type="checkbox" data-field="draft.allowed" ${d.allowed?'checked':''} ${d.deprecated?'disabled':''}/><span><b>加入白名单</b><div class="hint">默认关闭。未入白名单的模型不探测、不进候选。</div></span></label>
+      <label class="choice"><input type="checkbox" data-field="draft.deprecated" ${d.deprecated?'checked':''}/><span><b>标记弃用</b><div class="hint">弃用后不能进白名单，也不能当候补。</div></span></label>
+      ${d.deprecated?`<label class="field"><b>弃用原因</b><input data-field="draft.depReason" value="${esc(d.depReason)}" /></label><label class="field"><b>替代模型</b><input data-field="draft.replace" value="${esc(d.replace)}" placeholder="可空" /></label>`:''}
+      <button class="btn primary" type="submit">${fresh?'写入目录':'保存参数'}</button>
+    </form>`;
+}
+function pageIntake(){
+  if (!state.fetched){
+    return `<div class="sub"><div><h1>收录</h1><div class="hint">向每个还在的渠道要一份模型清单，再逐条选参数。列举不等于可调用。</div></div></div>
+      <div class="card heady">
+        <h3>还没有获取清单</h3>
+        <p class="hint">会问 claude、codex、codebuddy、cursor-wsl、gemini、deepseek。kimi 未识别、trae 已消失，不会问。这张稿用夹具，不调用本机 CLI。</p>
+        <button class="btn primary" data-act="fetch-models">获取全部模型</button>
+      </div>`;
+  }
+  const items = intakeItems();
+  const freshN = items.filter(it => !it.catalogKey).length;
+  const knownN = items.length - freshN;
+  const failN = intake.filter(g => g.status==='err').length;
+  const groups = intake.map(g => {
+    const rows = g.items.filter(it => !state.intakeOnlyNew || !it.catalogKey);
+    const head = `<div class="ch"><h3>${esc(g.cli)}</h3>${g.status==='ok'?'<span class="tag green">已列举</span>':g.status==='err'?'<span class="tag red">列举失败</span>':'<span class="tag">跳过</span>'}${g.via?`<span class="mono hint">${esc(g.via)}</span>`:''}</div>${g.note?`<div class="hint" style="margin-bottom:6px">${esc(g.note)}</div>`:''}`;
+    if (!g.items.length) return `<section class="igroup">${head}</section>`;
+    if (!rows.length) return '';
+    return `<section class="igroup">${head}${rows.map(it => `<div class="intake-row ${state.intakePick===it.uid?'on':''}">
+      <input type="checkbox" aria-label="勾选 ${esc(it.id)}" data-act="check-intake" data-id="${esc(it.uid)}" ${state.intakeChecks.includes(it.uid)?'checked':''} />
+      <button class="linkish" data-act="pick-intake" data-id="${esc(it.uid)}">${esc(it.id)}${it.draft.level?`<span class="hint"> · 草稿 ${esc(it.draft.level)}</span>`:''}</button>
+      ${it.catalogKey?'<span class="tag">已在目录</span>':'<span class="tag yellow">未入库</span>'}
+    </div>`).join('')}</section>`;
+  }).join('');
+  const bar = state.intakeChecks.length ? `<div class="editbar"><span>已勾选 ${state.intakeChecks.length} 条</span>
+    <select data-act="batch-level" aria-label="批量档位">${LEVELS.map(l => `<option ${state.intakeBatch===l?'selected':''}>${l}</option>`).join('')}</select>
+    <button class="btn" data-act="apply-batch">套用档位到草稿</button>
+    <button class="btn primary" data-act="save-checked">保存勾选</button></div>` : '';
+  return `<div class="sub"><div><h1>收录</h1><div class="hint">清单 ${items.length} 条 · 未入库 ${freshN} · 已在目录 ${knownN} · 列举失败的渠道 ${failN}。新模型要你选完档位才写入。</div></div>
+    <div class="inline"><label class="inline"><input type="checkbox" data-act="only-new" ${state.intakeOnlyNew?'checked':''}/> 只看未入库</label><button class="btn" data-act="fetch-models">重新获取</button></div></div>
+    ${bar}
+    <div class="split rev">
+      <div class="card heady">${groups}</div>
+      <div class="card heady">${intakeForm(findIntake(state.intakePick))}</div>
+    </div>`;
 }
 
 function pageProviders(){
@@ -804,7 +996,7 @@ function pageSettings(){
     body = `<h1>常规</h1><p class="hint">配置文件和状态目录分开。用量写在状态目录，不跟着 --config 的位置走。</p>
       <label class="field"><b>配置文件</b><input readonly value="~/.cliworker/config.json" /><span class="hint">schema cliworker.config/v2。这张稿不会往磁盘写这个文件。</span></label>
       <label class="field"><b>状态目录 state_dir</b><input data-field="state_dir" value="${esc(draft.state_dir)}" /></label>
-      <div class="callout">白名单、档位、别名和弃用在<a href="#models" data-act="go" data-page="models">模型页</a>改。这里不放第二套表格。</div>`;
+      <div class="callout">白名单开关在<a href="#models" data-act="go" data-page="models">模型页</a>。向 CLI 要全量清单并手工选档位、身份组、上下文和价格，在<a href="#intake" data-act="go" data-page="intake">收录页</a>。</div>`;
   } else if (state.setTab==='discovery'){
     body = `<h1>发现</h1><p class="hint">扫描 Windows、WSL 和你追加的目录。未识别的 CLI 先记账，默认不花探测额度。</p>
       <label class="choice"><input type="checkbox" data-field="wsl" ${draft.wsl?'checked':''}/><span><b>扫描 WSL 发行版</b><div class="hint">每个已安装的 distro 各自看一遍，不只看当前默认发行版。</div></span></label>
@@ -888,14 +1080,15 @@ function aboutPop(){
     <p>静态页面，数据来自 CLIWorker 的示例配置和契约字段。不连接 CLI，不写 config.json。</p>
     <p><b>监控</b>是可编排的主页。额度、待处理、风险、预测、租约、用量、渠道默认打开；费用、最近选模、身份在模块库里，勾上才出现。</p>
     <p><b>模型</b>管白名单、四档、可用性、身份、余量、重置、探测、价格、弃用和最近使用。缺失写 unknown。探测失败可以重试，结果仍然是失败。</p>
+    <p><b>收录</b>向每个在线渠道要一份模型清单，再手工选档位、身份组、别名、上下文、只读和价格。没选的字段保持 unknown，新模型不会自动进白名单，也不会顺便探测。</p>
     <p><b>渠道 / 额度 / 用量</b>分开，避免把策略数字和日常查看堆在一页。<b>试选</b>按档位过滤，名额不够就 truncated。<b>设置</b>用左侧分区：常规、发现、策略、凭据、外观。凭据只有引用。</p>
     <p class="hint">深色对齐 DSH 插件现在的驾驶舱：13px、#0e1116 底板、细边框、蓝绿黄红状态。浅色是同一套结构。</p>
   </div>`;
 }
 
 function shell(){
-  const tabs = [['home','监控'],['models','模型'],['providers','渠道'],['pools','额度'],['usage','用量'],['select','试选'],['settings','设置']];
-  const page = {home:pageHome, models:pageModels, providers:pageProviders, pools:pagePools, usage:pageUsage, select:pageSelect, settings:pageSettings}[state.page]() ;
+  const tabs = [['home','监控'],['models','模型'],['intake','收录'],['providers','渠道'],['pools','额度'],['usage','用量'],['select','试选'],['settings','设置']];
+  const page = {home:pageHome, models:pageModels, intake:pageIntake, providers:pageProviders, pools:pagePools, usage:pageUsage, select:pageSelect, settings:pageSettings}[state.page]() ;
   const modes = [['system','跟随'],['dark','深'],['light','浅']];
   return `<div class="shell">
     <aside class="rail" aria-label="DSH">
@@ -1045,6 +1238,53 @@ function onClick(e){
   }
   if (act==='del-secret'){ draft.secrets.splice(Number(id),1); syncDirty(); render(); return; }
   if (act==='discard'){ draft=structuredClone(committed); state.dirty=false; toast('已放弃未保存的更改'); render(); return; }
+  if (act==='fetch-models'){
+    const again = !!intake;
+    if (again) intake = null;
+    ensureFetched();
+    toast(again ? '已重新取清单（夹具）。你改过、还没保存的草稿被清掉了。' : '已向 6 个在线渠道要清单（夹具）。kimi、trae 没有问。');
+    render(); return;
+  }
+  if (act==='only-new'){ state.intakeOnlyNew = t.checked; render(); return; }
+  if (act==='pick-intake'){ state.intakePick = id; render(); return; }
+  if (act==='check-intake'){
+    const set = new Set(state.intakeChecks);
+    if (t.checked) set.add(id); else set.delete(id);
+    state.intakeChecks = [...set];
+    render(); return;
+  }
+  if (act==='apply-batch'){
+    let n = 0;
+    for (const uid of state.intakeChecks){ const it = findIntake(uid); if (it){ it.draft.level = state.intakeBatch; n++; } }
+    toast(n ? '档位已写进 '+n+' 条草稿，还没进目录。' : '先勾选模型');
+    render(); return;
+  }
+  if (act==='save-checked'){
+    let ok = 0, skip = 0, err = '';
+    for (const uid of state.intakeChecks){
+      const it = findIntake(uid);
+      if (!it) continue;
+      if (!it.draft.level){ skip++; continue; }
+      err = commitIntake(it);
+      if (err) break;
+      ok++;
+    }
+    toast(err || ('已保存 '+ok+' 条'+(skip?'，'+skip+' 条没选档位，跳过':'')));
+    render(); return;
+  }
+  if (act==='open-intake'){
+    const first = !state.fetched;
+    ensureFetched();
+    if (first) toast('已向 6 个在线渠道要清单（夹具）。kimi、trae 没有问。');
+    go('intake'); return;
+  }
+  if (act==='edit-params'){
+    ensureFetched();
+    const item = intakeItems().find(it => it.catalogKey===id);
+    state.intakePick = item ? item.uid : null;
+    if (!item) toast('这次清单里没有 '+id);
+    go('intake'); return;
+  }
 }
 function onChange(e){
   const t=e.target;
@@ -1052,6 +1292,15 @@ function onChange(e){
   if (t.dataset.act==='usage-kind'){ state.usageKind=t.value; render(); return; }
   if (t.dataset.act==='set-level'){ modelBy(t.dataset.id).level=t.value; toast('档位已改成 '+t.value+'。来源仍记为 config。'); return; }
   if (t.dataset.act==='unit'){ units[t.dataset.id]=t.value; render(); return; }
+  if (t.dataset.act==='batch-level'){ state.intakeBatch=t.value; return; }
+  if (t.dataset.field && t.dataset.field.startsWith('draft.')){
+    const item = findIntake(state.intakePick);
+    if (!item) return;
+    const k = t.dataset.field.slice(6);
+    item.draft[k] = t.type==='checkbox' ? t.checked : t.value;
+    if (k==='deprecated' && item.draft.deprecated) item.draft.allowed = false;
+    render();
+  }
 }
 function onInput(e){
   const t=e.target;
@@ -1066,6 +1315,11 @@ function onInput(e){
   if (t.id==='sec-name'){ state.addSecretName=t.value; return; }
   if (t.id==='sec-ref'){ state.addSecretRef=t.value; return; }
   const field=t.dataset.field;
+  if (field && field.startsWith('draft.') && t.type!=='checkbox'){
+    const item = findIntake(state.intakePick);
+    if (item) item.draft[field.slice(6)] = t.value;
+    return;
+  }
   if (!field) return;
   if (field.startsWith('req.')){
     const k=field.slice(4);
@@ -1120,6 +1374,16 @@ function onInput(e){
 }
 function onSubmit(e){
   const form=e.target;
+  if (form.id==='intake-form'){
+    e.preventDefault();
+    const item = findIntake(state.intakePick);
+    if (!item) return;
+    const wasNew = !item.catalogKey;
+    const err = commitIntake(item);
+    toast(err || (wasNew ? '已写入目录。未勾白名单，也还没探测。' : '参数已保存。level_source 记为 config。'));
+    if (!err) render();
+    return;
+  }
   if (form.id==='select-form'){
     e.preventDefault();
     runSelect();
