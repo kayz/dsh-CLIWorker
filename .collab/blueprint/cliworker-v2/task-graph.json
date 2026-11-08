@@ -2068,8 +2068,8 @@
     },
     {
       "id": "T-032",
-      "title": "Session 协议：start/resume 契约、六种失效条件、增量输入与额度耗尽路径",
-      "milestone": "M5",
+      "title": "Session 协议（前置）：start/resume 契约、失效条件、增量输入",
+      "milestone": "M2",
       "inputs": [
         "SESSION-MANAGEMENT.md",
         "lib/providers/call.mjs",
@@ -2084,8 +2084,7 @@
         "test/integration/session-quota.test.mjs"
       ],
       "depends_on": [
-        "T-015",
-        "T-019"
+        "T-004"
       ],
       "write_scope": [
         "lib/session.mjs",
