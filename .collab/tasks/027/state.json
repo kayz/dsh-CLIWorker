@@ -29,10 +29,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-08T19:52:01.441Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T19:52:01.638Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-08T19:52:01.023Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-08T19:52:01.638Z",
   "role": "review",
   "model": "claude-sonnet-5-5",
   "model_resolved": "claude-sonnet-5-5",
@@ -40,5 +52,51 @@
   "attempt": 3,
   "switches": 1,
   "blocked_reason": null,
-  "handoff": null
+  "handoff": null,
+  "pr": {
+    "branch": "task/027",
+    "state": "open",
+    "files": [
+      ".collab/tasks/027/acceptance.md",
+      ".collab/tasks/027/ci-results.json",
+      ".collab/tasks/027/design.md",
+      ".collab/tasks/027/handoff/design-r1-c1-to-c2.md",
+      ".collab/tasks/027/impl.md",
+      ".collab/tasks/027/review.md",
+      ".collab/tasks/027/run.json",
+      ".collab/tasks/027/sessions/.gitignore",
+      ".collab/tasks/027/state.json",
+      ".collab/tasks/027/verdict.json",
+      "lib/migrate.mjs",
+      "scripts/e2e-install.mjs",
+      "test/e2e/install.test.mjs",
+      "test/e2e/upgrade.test.mjs",
+      "test/integration/restart-recovery.test.mjs",
+      "test/traceability/T-027.json"
+    ],
+    "sha": "f43e5ad9c73b91f72993c15170a57ef9c1168f8d"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "low",
+    "reasons": [],
+    "metrics": {
+      "files": 6,
+      "lines": 305,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 7
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T19:52:01.562Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
