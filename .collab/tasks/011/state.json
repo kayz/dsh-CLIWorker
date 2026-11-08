@@ -35,10 +35,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:hy4free"
+    },
+    {
+      "at": "2026-11-08T01:32:10.504Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-08T01:32:10.649Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-08T01:32:10.138Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-08T01:32:10.649Z",
   "role": "review",
   "model": "hy4free",
   "model_resolved": "hy4free",
@@ -46,5 +58,61 @@
   "attempt": 4,
   "switches": 0,
   "blocked_reason": null,
-  "handoff": null
+  "handoff": null,
+  "pr": {
+    "branch": "task/011",
+    "state": "open",
+    "files": [
+      ".collab/tasks/011/acceptance.md",
+      ".collab/tasks/011/ci-results.json",
+      ".collab/tasks/011/design.md",
+      ".collab/tasks/011/impl.md",
+      ".collab/tasks/011/review-r1.md",
+      ".collab/tasks/011/review.md",
+      ".collab/tasks/011/run.json",
+      ".collab/tasks/011/state.json",
+      ".collab/tasks/011/verdict-r1.json",
+      ".collab/tasks/011/verdict.json",
+      "lib/audit.mjs",
+      "lib/lock.mjs",
+      "lib/redact.mjs",
+      "lib/store.mjs",
+      "test/fixtures/store/append-worker.mjs",
+      "test/fixtures/store/counter-worker.mjs",
+      "test/fixtures/store/drive.mjs",
+      "test/fixtures/store/memfs.mjs",
+      "test/integration/store-concurrency.test.mjs",
+      "test/traceability/T-011.json",
+      "test/unit/audit.test.mjs",
+      "test/unit/lock.test.mjs",
+      "test/unit/redact.test.mjs",
+      "test/unit/store.test.mjs"
+    ],
+    "sha": "cbc8e04c9ee8c4d7acfd9b87cee711217251f96f"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "confirm",
+    "reasons": [
+      "改动 14 个文件，超过 8 个"
+    ],
+    "metrics": {
+      "files": 14,
+      "lines": 1492,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 11
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-08T01:32:10.606Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
