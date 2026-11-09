@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "ac": "AC-087",
+      "status": "covered",
+      "files": [
+        "test/unit/package-contents.test.mjs"
+      ]
+    }
+  ],
+  "task": "T-044",
+  "milestone": "M5"
+}
