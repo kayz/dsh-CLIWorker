@@ -1,12 +1,9 @@
 {
   "task": "042",
-  "event": "blocked",
-  "reason": "awaiting_human",
-  "verdict": null,
-  "ci": null,
-  "files": null,
+  "event": "merged",
+  "status": "merged",
+  "ci": "0/2",
   "branch": "task/042",
-  "status": "blocked",
-  "summary": "【AgentLine 任务被阻塞】042 / task 042\n结果：blocked — awaiting_human\n阶段：design ✅\n变更：分支 task/042 · 耗时 3m16s\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
-  "at": "2026-11-09T05:04:43.720Z"
+  "summary": "【AgentLine 任务已合并】dsh-CLIWorker / task 042\n结果：已并入 main（b5a3961）\n阶段：design ✅ · dev ✅ · CI 0/2 ❌\n变更：分支 task/042（已删除） · 耗时 23m53s\n验收：CI 0/2\n下一步：无，任务已结束",
+  "at": "2026-11-09T05:36:52.908Z"
 }
