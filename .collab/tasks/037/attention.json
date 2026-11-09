@@ -1,0 +1,8 @@
+{
+  "question": "T-037 无法在原写域且不放宽既有断言的条件下完成完整目标，请裁决输出契约及实现边界：inventory/v1 的条目禁止额外字段，没有 provider/identity；lib/commands/discover.mjs 固定构造条目，但不在写域。既有 discover-command 与 scan 测试明确要求匹配 unknown_patterns 的未知 CLI 进入 entries 并支持 --probe-unknown，与 brief 的未知文件不得进入 entries 冲突。11 个名称可由 REQUIREMENTS.md 第 3 节确认，但缺少完整的生产规则声明（provider 映射、探针、身份判据）。请明确选择收窄要求并保留既有契约/未知候选行为，或提供完整字段与身份判据、规则数据来源，并授权必要的命令实现、schema、契约及兼容测试修改。在裁决前保持暂停，不自行发明字段、版本或规则。",
+  "options": [
+    "保持暂停，先补齐输出契约、11 项规则数据来源、未知 CLI 兼容语义及必要写域授权",
+    "收窄到既有 inventory/v1 的 id/recognized/version/evidence，取消本任务 provider 与身份档位输出要求，保留显式未知候选及 --probe-unknown 行为；另行指定完整规则数据来源后更新规格"
+  ],
+  "default": "保持暂停，先补齐输出契约、11 项规则数据来源、未知 CLI 兼容语义及必要写域授权"
+}
