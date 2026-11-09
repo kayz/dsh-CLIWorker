@@ -53,10 +53,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-09T09:27:29.462Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-09T09:27:29.635Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-09T09:27:28.971Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-09T09:27:29.635Z",
   "role": "review",
   "model": "claude-sonnet-5-5",
   "model_resolved": "claude-sonnet-5-5",
@@ -64,5 +76,49 @@
   "attempt": 6,
   "switches": 0,
   "blocked_reason": null,
-  "handoff": null
+  "handoff": null,
+  "pr": {
+    "branch": "task/045",
+    "state": "open",
+    "files": [
+      ".collab/tasks/045/acceptance.md",
+      ".collab/tasks/045/ci-results.json",
+      ".collab/tasks/045/design.md",
+      ".collab/tasks/045/impl.md",
+      ".collab/tasks/045/review-r2.md",
+      ".collab/tasks/045/review.md",
+      ".collab/tasks/045/run.json",
+      ".collab/tasks/045/sessions/.gitignore",
+      ".collab/tasks/045/state.json",
+      ".collab/tasks/045/verdict-r2.json",
+      ".collab/tasks/045/verdict.json",
+      "docs/release-checklist.md",
+      "scripts/check-alpha-package.mjs",
+      "test/integration/alpha-tarball.test.mjs"
+    ],
+    "sha": "3ebcbc245a01eedf97a0ade0dba1067290cd8cc0"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "low",
+    "reasons": [],
+    "metrics": {
+      "files": 3,
+      "lines": 188,
+      "review_rounds": 2,
+      "out_of_scope": 0,
+      "write_scope": 3
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-09T09:27:29.582Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
