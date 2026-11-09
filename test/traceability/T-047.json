@@ -1,0 +1,13 @@
+{
+  "milestone": "M5",
+  "task": "T-047",
+  "entries": [
+    {
+      "ac": "AC-090",
+      "status": "covered",
+      "files": [
+        "test/integration/ui-config-guide.test.mjs"
+      ]
+    }
+  ]
+}
