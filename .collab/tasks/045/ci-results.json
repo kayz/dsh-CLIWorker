@@ -1,0 +1,19 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\045",
+  "taskDir": ".collab\\tasks\\045",
+  "ranAt": "2026-11-09T17:16:51.6422799+08:00",
+  "passed": 0,
+  "total": 1,
+  "ok": false,
+  "results": [
+    {
+      "id": "AC-088",
+      "title": "alpha tarball 仓库外离线安装与黑盒验收",
+      "passed": false,
+      "exitCode": 1,
+      "durationS": 0.47,
+      "lastLine": "Node.js v22.23.3",
+      "output": "node:internal/modules/cjs/loader:1433\n  throw err;\n  ^\n\nError: Cannot find module 'C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\045\\scripts\\check-alpha-package.mjs'\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: []\n}\n\nNode.js v22.23.3"
+    }
+  ]
+}
