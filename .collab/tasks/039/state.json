@@ -95,10 +95,22 @@
       "from": "reviewable",
       "to": "reviewed",
       "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-09T02:52:46.336Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-09T02:52:46.515Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
     }
   ],
-  "status": "reviewed",
-  "updated_at": "2026-11-09T02:52:45.876Z",
+  "status": "pr_open",
+  "updated_at": "2026-11-09T02:52:46.515Z",
   "role": "review",
   "model": "claude-sonnet-5-5",
   "model_resolved": "claude-sonnet-5-5",
@@ -107,5 +119,49 @@
   "switches": 0,
   "blocked_reason": null,
   "handoff": null,
-  "interrupted": null
+  "interrupted": null,
+  "pr": {
+    "branch": "task/039",
+    "state": "open",
+    "files": [
+      ".collab/tasks/039/acceptance.md",
+      ".collab/tasks/039/ci-results.json",
+      ".collab/tasks/039/design.md",
+      ".collab/tasks/039/impl.md",
+      ".collab/tasks/039/notice.json",
+      ".collab/tasks/039/review.md",
+      ".collab/tasks/039/run.json",
+      ".collab/tasks/039/sessions/.gitignore",
+      ".collab/tasks/039/state.json",
+      ".collab/tasks/039/verdict.json",
+      "test/flows/flow.test.mjs",
+      "test/flows/steps/discover.mjs",
+      "test/integration/flow-complete.test.mjs",
+      "test/traceability/T-039.json"
+    ],
+    "sha": "7df1548abf44464ecab61d0bcdd1c31763a4745e"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "low",
+    "reasons": [],
+    "metrics": {
+      "files": 4,
+      "lines": 110,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 4
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-09T02:52:46.459Z",
+    "base": "main",
+    "head": "HEAD"
+  }
 }
