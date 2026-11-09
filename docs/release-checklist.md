@@ -1,5 +1,13 @@
 # 发布前冒烟
 
+包内容检查：
+
+```pwsh
+node scripts/check-package-contents.mjs
+```
+
+成功退出且输出 `AC-087 OK` 才通过。检查基于 `npm pack --dry-run --json` 的实际清单，强制离线、禁止生命周期脚本，不执行发布。清单必须包含 `ui/**`、`docs/ui/cliworker-console.html`、`bin/**` 和 `lib/**` 中要求的资产；缺失时修复 `files` 或资产后重跑。此检查不能替代生成资产检查、real-smoke 或其他发布门禁。
+
 生成资产检查：
 
 ```pwsh
