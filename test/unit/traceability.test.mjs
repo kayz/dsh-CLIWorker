@@ -40,9 +40,17 @@ function runJson(root, extra = []) {
 test('[AC-004] the committed AC index validates cleanly', () => {
   const index = readIndex()
   const legacy = JSON.parse(fs.readFileSync(FIXTURE_INDEX, 'utf8'))
-  const added = { ac: 'AC-079', owner: 'T-036', milestone: 'M3', levels: ['contract'], baseline: ['darwin', 'linux', 'win32'] }
-  assert.deepEqual(index, { ...legacy, acs: [...legacy.acs, added] })
-  assert.equal(index.acs.length, legacy.acs.length + 1)
+  // 冻结部分是 legacy 前缀；其后允许追加后续任务新增的 AC（AC-079 起）。
+  // 不再把'恰好新增一条 AC-079'写死：新任务会追加 AC，硬编码会让主干假红。
+  const added = index.acs.slice(legacy.acs.length)
+  assert.ok(added.length >= 1, 'at least one appended AC expected')
+  assert.equal(added[0].ac, 'AC-079', 'first appended AC must be AC-079')
+  assert.deepEqual(index.acs.slice(0, legacy.acs.length), legacy.acs, 'legacy prefix must stay unchanged')
+  for (const entry of added) {
+    assert.match(entry.ac, /^AC-0\d{2}$/)
+    assert.ok(['M1', 'M2', 'M3', 'M4', 'M5'].includes(entry.milestone))
+    assert.ok(Array.isArray(entry.levels) && entry.levels.length > 0)
+  }
   assert.deepEqual(validateIndex(legacy), [])
   assert.deepEqual(validateIndex(index), [])
 })
