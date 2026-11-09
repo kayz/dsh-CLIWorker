@@ -1028,6 +1028,46 @@
         "linux",
         "win32"
       ]
+    },
+    {
+      "ac": "AC-084",
+      "owner": "T-041",
+      "milestone": "M5",
+      "levels": [
+        "unit",
+        "contract"
+      ],
+      "baseline": [
+        "darwin",
+        "linux",
+        "win32"
+      ]
+    },
+    {
+      "ac": "AC-085",
+      "owner": "T-042",
+      "milestone": "M3",
+      "levels": [
+        "integration"
+      ],
+      "baseline": [
+        "darwin",
+        "linux",
+        "win32"
+      ]
+    },
+    {
+      "ac": "AC-086",
+      "owner": "T-043",
+      "milestone": "M5",
+      "levels": [
+        "integration"
+      ],
+      "baseline": [
+        "darwin",
+        "linux",
+        "win32"
+      ]
     }
   ]
 }
