@@ -2672,7 +2672,9 @@
         "ui/app.mjs",
         "lib/http/snapshot.mjs",
         "test/integration/ui-config-guide.test.mjs",
-        "test/fixtures/ui/**"
+        "test/fixtures/ui/**",
+        "test/integration/ui-snapshot.test.mjs",
+        "test/integration/issues-from-probe.test.mjs"
       ],
       "acceptance": [
         "AC-090"
