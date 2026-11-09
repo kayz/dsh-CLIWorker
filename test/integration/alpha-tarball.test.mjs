@@ -5,17 +5,18 @@ import os from 'node:os'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { resolveNpm } from '../../scripts/check-alpha-package.mjs'
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const checker = path.join(repo, 'scripts', 'check-alpha-package.mjs')
-const npm = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js')
+const npm = resolveNpm()
 const assets = ['package.json', 'ui/index.html', 'ui/app.mjs', 'ui/render.mjs', 'docs/ui/cliworker-console.html']
 const snapshot = () => assets.map(p => fs.readFileSync(path.join(repo, p)))
 const same = before => assert.deepEqual(snapshot(), before)
 
 function fixture(fn) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'alpha-test-'))
-  const env = { SystemRoot:process.env.SystemRoot, ComSpec:process.env.ComSpec, PATHEXT:process.env.PATHEXT, PATH:[path.dirname(process.execPath), process.env.SystemRoot && path.join(process.env.SystemRoot, 'System32')].filter(Boolean).join(path.delimiter) }
+  const env = { SystemRoot:process.env.SystemRoot, ComSpec:process.env.ComSpec, PATHEXT:process.env.PATHEXT, PATH:[path.dirname(process.execPath), ...(process.platform === 'win32' ? [process.env.SystemRoot && path.join(process.env.SystemRoot, 'System32')] : ['/usr/bin', '/bin'])].filter(Boolean).join(path.delimiter) }
   for (const name of ['HOME','USERPROFILE','APPDATA','LOCALAPPDATA','XDG_CONFIG_HOME','XDG_CACHE_HOME','XDG_DATA_HOME','TEMP','TMP','TMPDIR']) env[name] = root
   Object.assign(env, {npm_config_cache:path.join(root,'cache'),npm_config_userconfig:path.join(root,'userconfig'),npm_config_globalconfig:path.join(root,'globalconfig'),npm_config_offline:'true',npm_config_ignore_scripts:'true',npm_config_audit:'false',npm_config_fund:'false',npm_config_update_notifier:'false'})
   const run = (cmd, args, cwd = root) => spawnSync(cmd, args, {cwd, env, encoding:'utf8', timeout:120000, maxBuffer:8*1024*1024, windowsHide:true})

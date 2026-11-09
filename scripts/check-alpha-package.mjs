@@ -7,7 +7,23 @@ import { fileURLToPath } from 'node:url'
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const node = fs.realpathSync(process.execPath)
-const npm = path.join(path.dirname(node), 'node_modules', 'npm', 'bin', 'npm-cli.js')
+// Resolve npm before constructing the isolated child environment.  On Unix the
+// npm executable is commonly a symlink to npm-cli.js outside Node's directory.
+export function resolveNpm() {
+  const bin = path.dirname(node)
+  const paths = (process.env.PATH || process.env.Path || '').split(path.delimiter).filter(p => path.isAbsolute(p))
+  const candidates = [
+    path.resolve(bin, process.platform === 'win32' ? 'node_modules/npm/bin/npm-cli.js' : '../lib/node_modules/npm/bin/npm-cli.js'),
+    ...paths.map(p => path.join(p, process.platform === 'win32' ? 'node_modules/npm/bin/npm-cli.js' : 'npm')),
+  ]
+  for (const candidate of candidates) {
+    try {
+      const resolved = fs.realpathSync(candidate)
+      if (path.basename(resolved) === 'npm-cli.js' && fs.statSync(resolved).isFile()) return resolved
+    } catch { /* Try the next system installation. */ }
+  }
+  throw new Error('cannot resolve an installed npm-cli.js')
+}
 const key = 'claude:alpha-fixture'
 const inside = (base, target) => {
   const fold = s => process.platform === 'win32' ? s.toLowerCase() : s
@@ -17,7 +33,10 @@ const inside = (base, target) => {
 const read = p => JSON.parse(fs.readFileSync(p, 'utf8'))
 
 export function check(tarball) {
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'cliworker-alpha-')))
+  const tempParent = fs.realpathSync(os.tmpdir())
+  const realRepo = fs.realpathSync(repo)
+  assert(!inside(realRepo, tempParent), 'temporary parent is inside repository')
+  const root = fs.mkdtempSync(path.join(tempParent, 'cliworker-alpha-'))
   const state = path.join(root, 'state'), install = path.join(root, 'install'), config = path.join(root, 'config.json')
   const env = { SystemRoot: process.env.SystemRoot, ComSpec: process.env.ComSpec, PATHEXT: process.env.PATHEXT, PATH: [path.join(install, 'node_modules', '.bin'), path.dirname(node), process.env.SystemRoot && path.join(process.env.SystemRoot, 'System32')].filter(Boolean).join(path.delimiter) }
   for (const name of ['HOME', 'USERPROFILE', 'APPDATA', 'LOCALAPPDATA', 'XDG_CONFIG_HOME', 'XDG_CACHE_HOME', 'XDG_DATA_HOME', 'TEMP', 'TMP', 'TMPDIR', 'CLIWORKER_HOME']) env[name] = root
@@ -28,8 +47,9 @@ export function check(tarball) {
     return r.stdout
   }
   const json = (label, value) => { try { return JSON.parse(value) } catch (e) { throw new Error(`${label}: invalid JSON: ${e.message}; output: ${value.slice(0, 1000)}`) } }
+  let failure
   try {
-    assert(!inside(fs.realpathSync(repo), root), 'temporary root is inside repository')
+    const npm = resolveNpm()
     fs.mkdirSync(install)
     let packed
     if (tarball === undefined) {
@@ -72,10 +92,19 @@ export function check(tarball) {
     const rows = fs.readFileSync(path.join(state, 'usage.jsonl'), 'utf8').split(/\r?\n/).filter(Boolean).map(line => json('usage row', line)); assert(rows.some(r => r.idempotency_key === `${handle.lease_id}:post` && r.model === key && r.input_tokens === 7 && r.output_tokens === 3), 'run usage record missing')
     const marker = path.join(state, 'marker'); fs.writeFileSync(marker, 'before'); const backup = command('state', 'backup'); assert.equal(backup.ok, true); assert.equal(typeof backup.backup, 'string'); fs.writeFileSync(marker, 'after'); const restore = command('state', 'restore', '--from', backup.backup); assert.equal(restore.ok, true); assert.equal(fs.readFileSync(marker, 'utf8'), 'before')
     for (const rel of ['ui/index.html', 'ui/app.mjs', 'ui/render.mjs', 'docs/ui/cliworker-console.html']) { const file = path.join(pkg, rel); assert(fs.existsSync(file) && fs.statSync(file).isFile() && fs.readFileSync(file).length > 0, `missing or empty ${rel}`) }
+  } catch (error) {
+    failure = error
   } finally {
-    assert(inside(fs.realpathSync(os.tmpdir()), root) && !inside(fs.realpathSync(repo), root) && path.basename(root).startsWith('cliworker-alpha-'), 'unsafe cleanup root')
-    fs.rmSync(root, { recursive:true, force:true }); assert(!fs.existsSync(root), 'temporary cleanup failed')
+    try {
+      assert(inside(tempParent, root) && !inside(realRepo, root) && path.basename(root).startsWith('cliworker-alpha-'), 'unsafe cleanup root')
+      const actual = fs.realpathSync(root)
+      assert(fs.lstatSync(root).isDirectory() && inside(root, actual) && inside(actual, root), 'temporary root changed before cleanup')
+      fs.rmSync(root, { recursive:true, force:true }); assert(!fs.existsSync(root), 'temporary cleanup failed')
+    } catch (error) {
+      failure = failure ? new AggregateError([failure, error], `check failed: ${failure.message}; cleanup failed: ${error.message}`) : error
+    }
   }
+  if (failure) throw failure
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
