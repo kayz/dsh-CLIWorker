@@ -2,6 +2,7 @@
   "name": "dsh-cliworker",
   "description": "CLIWorker for DSH: independent model/provider selection, availability, cost and forecast layer",
   "version": "0.2.0-alpha.1",
+  "client": { "platform": "web" },
   "entry": {
     "name": "dsh-cliworker",
     "inject": []
