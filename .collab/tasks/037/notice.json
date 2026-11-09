@@ -1,0 +1,12 @@
+{
+  "task": "037",
+  "event": "blocked",
+  "reason": "awaiting_human",
+  "verdict": null,
+  "ci": null,
+  "files": null,
+  "branch": "task/037",
+  "status": "blocked",
+  "summary": "【AgentLine 任务被阻塞】037 / task 037\n结果：blocked — awaiting_human\n阶段：design ✅\n变更：分支 task/037 · 耗时 4m15s\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-09T02:01:21.391Z"
+}
