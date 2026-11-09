@@ -1,7 +1,9 @@
 const fs = require('node:fs')
 fs.appendFileSync(process.env.DISCOVERY_RECORD, JSON.stringify(process.argv.slice(2)) + '\n')
 if (process.argv[2] === '--version') {
-  process.stdout.write('fixture v1.2.3-alpha.1+build.7\n')
+  const mode = process.env.DISCOVERY_VERSION_MODE
+  process.stdout.write(mode === 'unparsable' ? 'not a release\n' : `fixture v${process.env.FIXTURE_VERSION || '1.2.3-alpha.1+build.7'}\n`)
+  if (mode === 'nonzero') process.exitCode = 7
 } else {
   let input = ''
   process.stdin.setEncoding('utf8')
