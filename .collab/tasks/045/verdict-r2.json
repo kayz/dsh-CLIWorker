@@ -1,0 +1,43 @@
+{
+  "task": "045",
+  "verdict": "pass",
+  "sha": "bb6b81d",
+  "passed": 1,
+  "total": 1,
+  "findings": [
+    {
+      "severity": "P2",
+      "file": ".collab/tasks/045/ci-results.json",
+      "line": 8,
+      "summary": "ci-results 仍只有合并的一条 AC-088 结果，check-fast.ps1 与 integration 两轮没有各自的执行证据",
+      "failure_scenario": "acceptance.md 的第 2 块（两轮 node --test）和第 3 块（check-fast.ps1）只能静态核对；impl.md 自述 check-fast 未运行。建议编排方在有 pwsh 7 的环境补跑，不阻塞本轮。"
+    },
+    {
+      "severity": "P2",
+      "file": "scripts/check-alpha-package.mjs",
+      "line": 99,
+      "summary": "finally 中的清理安全断言先于 rmSync，断言失败会留下临时目录",
+      "failure_scenario": "root 与 tempParent 的关系判断异常时断言抛出，rmSync 不执行；错误会经 AggregateError 报告，不会被掩盖。边界情况，不阻塞。"
+    }
+  ],
+  "results": [
+    {
+      "id": "AC-088",
+      "passed": true,
+      "evidence": [
+        "ci-results.json: AC-088 passed=true exitCode=0 lastLine='AC-088 OK' ranAt=2026-11-09T17:26（Windows，合并结果）",
+        "F1 已修复：scripts/check-alpha-package.mjs:12-26 resolveNpm() 在非 win32 使用 <node 目录>/../lib/node_modules/npm/bin/npm-cli.js，并回退到 PATH 中 npm 的 realpath，要求 basename 为 npm-cli.js；与 scripts/e2e-install.mjs:18 一致。:52 在 try 内调用。test/integration/alpha-tarball.test.mjs:8,12 复用导出的 resolveNpm，导入不触发安装（check-alpha-package.mjs:110 入口守卫）",
+        "check-alpha-package.mjs:36-39,56,64 实际 npm pack --json（非 dry-run）+ npm install --offline --ignore-scripts --no-audit --no-fund --package-lock=false，临时根断言不在仓库内；:41-43 最小隔离环境",
+        "check-alpha-package.mjs:65-76 安装目录为真实目录、shim 存在并被执行、--version JSON ok 且版本与 manifest/packed/仓库 package.json 一致",
+        "check-alpha-package.mjs:83-85 doctor status ok 且 checks 全 ok、inventory detail 'not generated'；discover 与 state/inventory.json deepEqual；models enumerate 含夹具 key",
+        "check-alpha-package.mjs:79,86-93 假 provider 在临时根内，models probe（nonce_ok、probes.json、usage.jsonl）→ select → 执行返回的 call（cliworker.event/v1 start/result、lease_id、文本、usage、usage 行）→ state backup/restore marker 恢复",
+        "check-alpha-package.mjs:94 四个 UI 资产必须存在、为普通文件、非空，诊断含精确相对路径；:97-107,110-112 finally 清理失败即失败，哨兵仅在全部成功后输出",
+        "test/integration/alpha-tarball.test.mjs:30,39 两个 [AC-088] 用例，无 skip/todo/only；:44-47 校验归档成员；:51-60 仅删除 package/ui 后重新 pack 并确认 HTML/bin/lib 仍在；:61-63 断言非零、无 AC-088 OK、stderr 含 'missing or empty ui/' 且不含 'npm install:'；:64 源 tarball 字节不变",
+        "docs/release-checklist.md:11-20 新增两条命令、AC-088 OK 含义、位置参数用法、清理与失败诊断、不覆盖 WSL/http-select；保留 AC-087、dry-run、real-smoke 与放行要求",
+        "scripts/check-fast.mjs:10,86 按 check-*.mjs 自动发现并输出 '==> <name>'，新检查器无需改 package.json",
+        "未能确认的部分：check-fast.ps1 与 integration 两轮没有独立 CI 记录，仅静态核对；Unix 路径未实际执行，仅静态核对"
+      ]
+    }
+  ],
+  "notes": "round 1 的 P1（npm-cli.js 路径不可移植）已修复，其余实现与规格一致，判 pass。遗留两项 P2 不阻塞：ci-results 仍只有合并的一条结果；finally 清理断言先于 rmSync。本轮未执行 git 命令（HEAD sha 通过读取 .git 引用文件得到），未重跑验收命令，Windows 执行证据引用 ci-results.json。"
+}

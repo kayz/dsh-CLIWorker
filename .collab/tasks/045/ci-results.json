@@ -1,7 +1,7 @@
 {
   "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\045",
   "taskDir": ".collab\\tasks\\045",
-  "ranAt": "2026-11-09T17:22:07.8969158+08:00",
+  "ranAt": "2026-11-09T17:26:25.3205723+08:00",
   "passed": 1,
   "total": 1,
   "ok": true,
@@ -11,7 +11,7 @@
       "title": "alpha tarball 仓库外离线安装与黑盒验收",
       "passed": true,
       "exitCode": 0,
-      "durationS": 4.74,
+      "durationS": 4.5,
       "lastLine": "AC-088 OK",
       "output": "AC-088 OK"
     }
