@@ -19,3 +19,5 @@ node_modules/
 .collab/tasks/*/handoff/
 .collab/tasks/*/review*.md
 .collab/tasks/*/verdict*.json
+
+*.tgz
