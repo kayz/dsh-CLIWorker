@@ -10,3 +10,4 @@
 - `node scripts/check-traceability.mjs`、`node scripts/check-test-discovery.mjs`、`node scripts/check-acceptance.mjs .collab/tasks/040/acceptance.md`：通过。
 - `node --test "test/unit/*.test.mjs"`：退出码 0，532 项中 531 项通过、1 项跳过、0 项失败。
 - 验收中的 Git 写域检查未运行：用户明确禁止执行 Git。`scripts/check-fast.ps1` 会调用包含 Git 操作的检查，也未运行。验收的过滤运行、独立夹具及规模脚本尚未逐条运行；已发现的真实丢更新使并发稳定性验收不能通过。
+- 第 2 轮评审反馈：独立运行 6 次，过期锁场景 5 次出现 23/24；评审指出 `lib/lock.mjs` 的回收检查与重命名之间存在竞态。该实现位于本任务写域之外，需要另行修复；本轮未改动测试资产或放宽断言，AC-083 仍不能判为通过。
