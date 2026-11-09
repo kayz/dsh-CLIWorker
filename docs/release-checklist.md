@@ -1,5 +1,13 @@
 # 发布前冒烟
 
+生成资产检查：
+
+```pwsh
+node scripts/check-generated-fresh.mjs
+```
+
+该检查在独立临时目录运行 `test/fixtures/release-gate/generate.mjs`，比较 `test/fixtures/release-gate/` 的全部生成文件；也运行 `scripts/gen-contract-doc.mjs`，比较 `docs/contract.md`。它只对换行、TAP 耗时和诊断中的 type、location、stack，以及报告顶层合法 Node 版本等运行环境元数据做规范化。检查不会更新工作区。CI 的 `npm run check` 通过 `scripts/check-fast.mjs` 自动发现此检查。失败时，维护者须另行获得资产写域授权，按输出指名的生成器更新对应资产并提交，再重跑检查。通过此检查不能替代 real-smoke 或发布放行。
+
 使用 Node.js 20 或更高版本及 PowerShell 7。CI 只运行夹具模式：
 
 ```pwsh

@@ -1,0 +1,38 @@
+{
+  "task": "041",
+  "verdict": "pass",
+  "sha": "f43467f417c77ad8f31e067f470f0ca443f120d2",
+  "passed": 2,
+  "total": 2,
+  "criteria": [
+    {
+      "id": "AC-084",
+      "result": "pass",
+      "evidence": "ci-results.json: AC-084 passed=true exitCode=0 lastLine 'AC-084 OK'. The saved output is only the check-fast block: it contains '==> check-generated-fresh.mjs', 'test/fixtures/release-gate/generate.mjs: fresh', 'scripts/gen-contract-doc.mjs: fresh', 'AC-084 OK' and 'check-fast: ok'; npm test (906 pass, fail 0, skipped 0, todo 0) includes 3 [AC-084] tests. The other three blocks pass only by inference from the section's exitCode 0. Code review: scripts/check-generated-fresh.mjs:9-12 (two fixed jobs), :102-107 (isolated tmp root, execPath, argv array, timeout), :108-115 (union of paths, missing/extra), :118-122 (finally cleanup, per-generator report, no short-circuit), :127-139 (args, import guard); docs/release-checklist.md:3-9."
+    },
+    {
+      "id": "AC-006",
+      "result": "pass",
+      "evidence": "ci-results.json: AC-006 passed=true exitCode=0 lastLine 'AC-006 OK'; TAP tests 535 pass 535 fail 0 cancelled 0 skipped 0 todo 0."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "P2",
+      "blocking": false,
+      "file": "scripts/check-generated-fresh.mjs",
+      "line": 89,
+      "summary": "TextDecoder drops a leading UTF-8 BOM, so a BOM-only difference compares equal, which exceeds the CRLF-only tolerance in design.md. Pass { ignoreBOM: true } to keep the BOM in the compared string."
+    },
+    {
+      "id": "F2",
+      "severity": "P2",
+      "blocking": false,
+      "file": "test/unit/check-generated-fresh.test.mjs",
+      "line": 53,
+      "summary": "The unit tests are thinner than the design list: no docs-only stale case, no 'overwrite the asset then exit non-zero' stand-in, no invalid-duration or stack negative cases, and no success-path assertion that each generator is called once. The independent stand-in block in acceptance.md covers most of these behaviours."
+    }
+  ],
+  "notes": "Verified sha read from .git/refs/heads/task/041; git was not run. Execution evidence taken from ci-results.json."
+}
