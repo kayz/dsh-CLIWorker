@@ -1,0 +1,13 @@
+{
+  "milestone": "M3",
+  "entries": [
+    {
+      "status": "covered",
+      "files": [
+        "test/integration/discovery-probe.test.mjs"
+      ],
+      "ac": "AC-085"
+    }
+  ],
+  "task": "T-042"
+}

@@ -1,0 +1,13 @@
+{
+  "milestone": "M5",
+  "entries": [
+    {
+      "ac": "AC-086",
+      "status": "covered",
+      "files": [
+        "test/integration/issues-from-probe.test.mjs"
+      ]
+    }
+  ],
+  "task": "T-043"
+}

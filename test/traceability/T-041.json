@@ -1,0 +1,13 @@
+{
+  "milestone": "M5",
+  "entries": [
+    {
+      "status": "covered",
+      "files": [
+        "test/unit/check-generated-fresh.test.mjs"
+      ],
+      "ac": "AC-084"
+    }
+  ],
+  "task": "T-041"
+}
