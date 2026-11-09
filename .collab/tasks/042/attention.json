@@ -1,8 +1,0 @@
-{
-  "question": "T-042 的写域与目标存在无法从现有文件解决的冲突，请裁决 probe 的含义、状态落点和接线写域。当前 lib/commands/discover.mjs 已通过 ctx.exec 执行规则 versionArgs，并填充 version 和 probe evidence；但它不调用待新增的 lib/discovery/probe.mjs。冻结的 inventory.v1.schema.json 仅允许 entry.status 为 present/gone，且没有失败原因字段；unverified 与 reason 属于既有 model.availability.state/reason。现有 models probe 的入口是 lib/commands/models/probe.mjs，状态更新位于 lib/probe.mjs，provider 的版本检查位于 lib/availability.mjs；这些调用方均不在 brief 写域内。是否扩写域，把版本证据接到既有 models probe，并将三类版本探测失败写入 model.availability.state/reason？版本成功本身不能替代真实模型调用与身份验证而授予 callable；inventory 仍保持冻结字段。若保持原写域，则需要明确缩小本任务目标为独立版本探测模块，不能声称已完成 models probe 的可用性接线。",
-  "options": [
-    "扩写域增加 lib/commands/discover.mjs、lib/probe.mjs、lib/availability.mjs：probe 指既有 models probe；三类版本探测失败使对应 model.availability.state 为 unverified，分别在既有 reason 中记录原因；inventory 保持冻结契约；版本成功后的模型可用性仍由既有真实调用和身份验证决定。",
-    "保持原写域并缩小目标：本任务只交付规则驱动的独立版本探测模块及离线测试；将 discover 入口和 models probe 的生产接线另行安排，不把它们计为本任务已实现。"
-  ],
-  "default": "扩写域增加 lib/commands/discover.mjs、lib/probe.mjs、lib/availability.mjs：probe 指既有 models probe；三类版本探测失败使对应 model.availability.state 为 unverified，分别在既有 reason 中记录原因；inventory 保持冻结契约；版本成功后的模型可用性仍由既有真实调用和身份验证决定。"
-}
