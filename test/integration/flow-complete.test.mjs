@@ -1,26 +1,27 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import path from 'node:path'
-import { discoverSteps, createFlow, runFlow } from '../helpers/flow.mjs'
+import { STEP_ORDER, discoverSteps, createFlow, runFlow } from '../helpers/flow.mjs'
 import { leakScan } from '../helpers/leak-scan.mjs'
 
 // 期望的步骤集合从磁盘派生，避免写死列表随新增步骤漂移（历史上这里硬编码导致多次假红）。
 // 只固定"每个步骤必须存在"的不变量，以及 introduced_by 的格式。
 import fs from 'node:fs'
 const STEPS_DIR = new URL('../flows/steps/', import.meta.url)
-const expectedNames = fs.readdirSync(STEPS_DIR)
-  .filter((name) => name.endsWith('.mjs'))
-  .map((name) => name.slice(0, -4))
+const expectedNames = fs.readdirSync(STEPS_DIR, { withFileTypes: true })
+  .filter((entry) => entry.isFile() && entry.name.endsWith('.mjs') && !entry.name.endsWith('.test.mjs'))
+  .map((entry) => entry.name.slice(0, -4))
   .sort()
-// discover 目前没有独立的 flow 步骤（其端到端覆盖在 scripts/smoke-real.mjs 的 discover 步骤）；此处只固定必须存在的步骤。
-const REQUIRED = ['auth', 'doctor', 'enumerate', 'http-admin', 'http-select', 'probe', 'run', 'select']
 const namesOf = (list) => list.map((step) => step.name).sort()
 
 test('[AC-071] complete flow uses one sentinel and scans every surface', async () => {
   const steps = await discoverSteps()
   assert.deepEqual(namesOf(steps.map(step => ({ name: step.name }))), expectedNames)
-  assert.deepEqual(namesOf(steps.map(step => ({ name: step.name }))), REQUIRED)
-  for (const step of steps) assert.match(step.mod.introduced_by, /^T-\d{3}$/)
+  for (const name of STEP_ORDER) assert.ok(expectedNames.includes(name), `missing required step: ${name}`)
+  for (const step of steps) {
+    assert.equal(step.name, path.basename(step.file, '.mjs'))
+    assert.match(step.mod.introduced_by, /^T-\d{3}$/)
+  }
   const flow = createFlow()
   const sentinel = flow.sentinel
   try {
