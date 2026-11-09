@@ -156,6 +156,7 @@ test('[AC-063] accepted jobs register an instance-specific exact route after the
     const unknown = JSON.parse((await host.request('/cliworker/api/snapshot', { headers })).body)
     assert.equal(unknown.source, 'unknown')
     assert.equal(unknown.last_error, 'E_CONFIG')
+    assert.deepEqual(unknown.issues, [])
   } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })
 
@@ -183,7 +184,9 @@ test('[AC-063] actual snapshot has evidence and retains prior values after a fai
     const read = async () => await host.request('/cliworker/api/snapshot', { headers })
     const first = await read(), data = JSON.parse(first.body)
     assert.equal(first.statusCode, 200)
-    assert.deepEqual(Object.keys(data).sort(), ['at', 'forecast', 'last_error', 'models', 'source'])
+    assert.deepEqual(Object.keys(data).sort(), ['at', 'forecast', 'issues', 'last_error', 'models', 'source'])
+    assert.deepEqual(Object.keys(data).filter(key => key !== 'issues').sort(), ['at', 'forecast', 'last_error', 'models', 'source'])
+    assert.deepEqual(data.issues, [])
     assert.equal(data.models.length, 1)
     assert.equal(data.models[0].key, MODEL_KEY)
     assert.equal(data.models[0].provider, 'claude')
@@ -219,6 +222,7 @@ test('[AC-063] actual snapshot has evidence and retains prior values after a fai
     assert.equal(job.error.code, 'E_CONFIG')
     const failureResponse = await read()
     const failure = JSON.parse(failureResponse.body)
+    assert.deepEqual(failure.issues, data.issues)
     assert.equal(failure.forecast[0].remaining_fraction, 0.5)
     assert.equal(failure.models[0].availability.at, at)
     assert.equal(failure.last_error, 'E_CONFIG')

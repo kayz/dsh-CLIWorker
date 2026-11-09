@@ -1,10 +1,12 @@
-import { renderModelsHtml } from './render.mjs'
+import { renderIssuesHtml, renderModelsHtml } from './render.mjs'
 
 export function startApp({ document, fetch, setTimeout, now = () => Date.now() }) {
   let credentials, pendingSession, pendingRead, snapshot, timer
   const status = document.getElementById('status')
   const list = document.getElementById('model-list')
   const issueSource = document.getElementById('issue-source')
+  const issueList = document.createElement?.('div')
+  if (issueList) document.getElementById('issues').appendChild(issueList)
   function selectTab(name) {
     for (const tab of ['issues', 'models']) {
       const panel = document.getElementById(tab), button = document.getElementById(`${tab}-tab`)
@@ -12,13 +14,13 @@ export function startApp({ document, fetch, setTimeout, now = () => Date.now() }
       if (button) button.setAttribute('aria-selected', String(tab === name))
     }
   }
-  // No real CLI issue source exists yet; keep the honest source notice while reporting the
-  // connection state of the 15s snapshot poll. A failed read must not clear existing rows.
+  // Keep the last issue rows visible if a poll fails.
   function setIssueSource(value, failure) {
     if (!issueSource) return
-    if (failure) issueSource.textContent = `问题来源未接入；状态 unknown（${failure}，保留上次展示）`
-    else if (value?.last_error) issueSource.textContent = `问题来源未接入；数据 stale：${value.last_error}；快照 ${value.at || 'unknown'}`
-    else issueSource.textContent = `问题来源未接入；快照 ${value?.at || 'unknown'}`
+    const source = value && (!value.source?.includes('probes unknown') || value.issues?.length) ? '问题来源已接入' : '问题来源未接入'
+    if (failure) issueSource.textContent = `${source}；状态 unknown（${failure}，保留上次展示）`
+    else if (value?.last_error) issueSource.textContent = `${source}；数据 stale：${value.last_error}；快照 ${value.at || 'unknown'}`
+    else issueSource.textContent = `${source}；快照 ${value?.at || 'unknown'}`
   }
   async function session() {
     if (!pendingSession) pendingSession = fetch('/cliworker/api/session').then(async r => { if (!r.ok) throw new Error('session failed'); credentials = await r.json(); return credentials }).finally(() => { pendingSession = null })
@@ -37,8 +39,8 @@ export function startApp({ document, fetch, setTimeout, now = () => Date.now() }
   async function read() {
     if (pendingRead) return pendingRead
     pendingRead = (async () => {
-      try { snapshot = await request('/cliworker/api/snapshot'); status.textContent = snapshot.last_error ? `stale：${snapshot.last_error}；${snapshot.at || 'unknown'}` : '已更新'; list.innerHTML = renderModelsHtml(snapshot, now()); setIssueSource(snapshot) }
-      catch { status.textContent = `stale：读取失败；${new Date(now()).toISOString()}`; setIssueSource(null, '读取失败'); if (snapshot) list.innerHTML = renderModelsHtml({ ...snapshot, last_error: '读取失败' }, now()) }
+      try { snapshot = await request('/cliworker/api/snapshot'); status.textContent = snapshot.last_error ? `stale：${snapshot.last_error}；${snapshot.at || 'unknown'}` : '已更新'; list.innerHTML = renderModelsHtml(snapshot, now()); if (issueList) issueList.innerHTML = renderIssuesHtml(snapshot.issues || []); setIssueSource(snapshot) }
+      catch { status.textContent = `stale：读取失败；${new Date(now()).toISOString()}`; setIssueSource(snapshot, '读取失败'); if (snapshot) list.innerHTML = renderModelsHtml({ ...snapshot, last_error: '读取失败' }, now()) }
     })().finally(() => { pendingRead = null })
     return pendingRead
   }
