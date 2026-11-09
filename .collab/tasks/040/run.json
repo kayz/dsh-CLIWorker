@@ -1,0 +1,82 @@
+[
+  {
+    "task": "040",
+    "role": "design",
+    "round": 1,
+    "candidate": 1,
+    "backend": "codex-cli",
+    "model_requested": "gpt-6.1-sol",
+    "model_resolved": "gpt-6.1-sol",
+    "provider": "codex",
+    "effort": "high",
+    "started_at": "2026-11-09T02:34:01.251Z",
+    "ended_at": "2026-11-09T02:34:17.270Z",
+    "duration_ms": 16019,
+    "exit": {
+      "code": 125
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": null,
+    "usage_source": "unavailable",
+    "log_ref": ".collab/tasks/040/logs/design-r1-1.log",
+    "error": "Reconnecting... 2/5 (stream disconnected before completion: tls handshake eof)",
+    "session": {
+      "reused": false,
+      "token_ref": null,
+      "invalidated_reason": null
+    },
+    "handoff": {
+      "file": "handoff/design-r1-c1-to-c2.md",
+      "checkpoint": "refs/agentline/040/design-r1-c1",
+      "sha": "b3008a5e5d14b0179b29dd98c194c75d986b2441"
+    }
+  },
+  {
+    "task": "040",
+    "role": "design",
+    "round": 1,
+    "candidate": 2,
+    "backend": "claude-cli",
+    "model_requested": "claude-sonnet-5-5",
+    "model_resolved": "claude-sonnet-5-5",
+    "provider": "claude",
+    "effort": "high",
+    "started_at": "2026-11-09T02:34:29.560Z",
+    "ended_at": "2026-11-09T02:39:10.869Z",
+    "duration_ms": 281309,
+    "exit": {
+      "code": 0
+    },
+    "commands": [],
+    "artifacts": [],
+    "git": null,
+    "ci": null,
+    "usage": {
+      "input": 36,
+      "output": 31700,
+      "cache_read": 1243741,
+      "cache_write": 101024,
+      "cost_usd": 0.8455421
+    },
+    "usage_source": "cli_json",
+    "log_ref": ".collab/tasks/040/logs/design-r1-2.log",
+    "error": null,
+    "freshness": {
+      "artifact": true,
+      "workspace": false
+    },
+    "inherited_from": {
+      "candidate": 1,
+      "model": "gpt-6.1-sol",
+      "file": "handoff/design-r1-c1-to-c2.md"
+    },
+    "session": {
+      "reused": false,
+      "token_ref": "sha256:cb2c10e735e3016f",
+      "invalidated_reason": null
+    }
+  }
+]
