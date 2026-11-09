@@ -1,0 +1,33 @@
+{
+  "task": "039",
+  "verdict": "pass",
+  "sha": "772bf1c1abf645ae03f9699681478d241b49fa5c",
+  "sha_note": "取自 .git/worktrees/039/HEAD -> refs/heads/task/039（只读文件读取，未执行 git 命令）；工作树另有 .collab/tasks/039 下 ci-results/run/state 未提交改动，与被评审代码无关",
+  "passed": 2,
+  "total": 2,
+  "ci_passed": 2,
+  "ci_total": 2,
+  "criteria": [
+    {
+      "id": "AC-082",
+      "ok": true,
+      "evidence": "ci-results.json AC-082 passed=true exitCode=0 lastLine 'AC-082 OK'（输出含 check-fast: ok、npm test 881 pass/0 fail，含 '[AC-082] full flow executes discover with its own configuration and inventory' 与 '[AC-071] complete flow uses one sentinel and scans every surface' 通过）。独立读码：test/flows/steps/discover.mjs:5-7 导出 name/introduced_by/ac 正确；:10-26 在 flow.root 写独立 v2 配置（state_dir=flow.state_dir，wsl:false、probe_unknown:false）；:27 flow.run(['discover','--config',file],{env:{PATH:'',Path:''}})，helper test/helpers/flow.mjs:194-195 使用 process.execPath 绝对路径；:28-37 断言退出码 0、stdout 与落盘 inventory 的 schema/entries/generated_at 及 deepEqual，无 catch 吞错。test/flows/flow.test.mjs:11-13 独立 readdir 派生 expectedNames；:81-121 [AC-082] 用例覆盖发现/执行集合、discover ok、argv 中 --config 位于 flow.root 且非 flow.config_path、v2 schema、state_dir 指向、同源、共享配置未改、cleanup 后 root 不存在。test/integration/flow-complete.test.mjs:10-20 expectedNames 来自磁盘，STEP_ORDER 逐项存在性断言，删除固定八项；:30-47 保留 sentinel、每步成功、report.ok、leakScan 五个表面。STEP_ORDER（test/helpers/flow.mjs:18-28）discover 位于 doctor 与 enumerate 之间。test/traceability/T-039.json 为 task T-039 / M3 / AC-082 covered / files test/flows/flow.test.mjs；contracts/spec/ac-index.json:1007-1009 AC-082 owner T-039 milestone M3。CI 的 check-traceability、check-write-scope、check-no-collab 均 ok，说明写域与追踪合规。"
+    },
+    {
+      "id": "AC-006",
+      "ok": true,
+      "evidence": "ci-results.json AC-006 passed=true exitCode=0 lastLine 'AC-006 OK'；TAP 汇总 tests 532 / pass 532 / fail 0 / skipped 0"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "P2",
+      "file": ".collab/tasks/039/impl.md",
+      "line": 10,
+      "summary": "impl.md 自测记录（单元 526 通过/5 失败、check-fast 在 check-pack 失败）与编排方 CI 结果（532/532 通过、check-fast: ok）不一致",
+      "evidence": "impl.md:10-11 vs ci-results.json AC-006 output '# pass 532 # fail 0' 与 AC-082 output 'check-fast: ok'；以 CI 结果为准，属记录过期，不影响代码判定",
+      "suggestion": "无需代码改动；如需归档可在后续由有权限的角色更新 impl.md 说明"
+    }
+  ]
+}

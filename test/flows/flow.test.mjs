@@ -8,6 +8,10 @@ import path from 'node:path'
 
 import { STEP_ORDER, createFlow, discoverSteps, runFlow } from '../helpers/flow.mjs'
 
+const expectedNames = fs.readdirSync(new URL('./steps/', import.meta.url), { withFileTypes: true })
+  .filter((entry) => entry.isFile() && entry.name.endsWith('.mjs') && !entry.name.endsWith('.test.mjs'))
+  .map((entry) => entry.name.slice(0, -4)).sort()
+
 function makeStepsDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'cliworker-steps-'))
 }
@@ -35,6 +39,7 @@ test('[AC-031] flows discover steps in STEP_ORDER', async () => {
 
   assert.ok(steps.length >= 2)
   const names = steps.map((step) => step.name)
+  assert.deepEqual([...names].sort(), expectedNames)
   assert.ok(names.includes('doctor'))
   assert.ok(names.includes('select'))
   assert.ok(names.every((name) => STEP_ORDER.includes(name)))
@@ -58,6 +63,7 @@ test('[AC-031] full flow runs all discovered steps in one state_dir', async () =
     const report = await runFlow({ flow })
 
     assert.deepEqual(report.results.map((result) => result.name), steps.map((step) => step.name))
+    assert.deepEqual(report.results.map((result) => result.name).sort(), expectedNames)
     for (const result of report.results) assert.equal(result.ok, true, `${result.name}: ${result.error}`)
     assert.equal(report.leak.ok, true, report.leak.hits.map((hit) => hit.location).join(','))
     assert.deepEqual(report.leak.hits, [])
@@ -66,6 +72,48 @@ test('[AC-031] full flow runs all discovered steps in one state_dir', async () =
     assert.equal(report.ok, true)
     assert.ok(flow.state_dir.startsWith(flow.root))
     assert.ok(flow.config_path.startsWith(flow.root))
+  } finally {
+    flow.cleanup()
+  }
+  assert.equal(fs.existsSync(flow.root), false)
+})
+
+test('[AC-082] full flow executes discover with its own configuration and inventory', async () => {
+  const flow = createFlow()
+  const original = fs.readFileSync(flow.config_path, 'utf8')
+  try {
+    const steps = await discoverSteps()
+    assert.deepEqual(steps.map((step) => step.name).sort(), expectedNames)
+    assert.ok(steps.some((step) => step.name === 'discover'))
+    const report = await runFlow({ flow })
+    assert.deepEqual(report.results.map((result) => result.name).sort(), expectedNames)
+    assert.equal(report.results.find((result) => result.name === 'discover')?.ok, true, JSON.stringify(report.results))
+    assert.equal(report.ok, true, JSON.stringify(report.results))
+    const bin = path.resolve('bin/cliworker.mjs')
+    const calls = flow.captured.argv.map((argv, index) => ({ argv, stdout: flow.captured.stdout[index] }))
+      .filter(({ argv }) => argv[0] === process.execPath && argv[1] === bin && argv[2] === 'discover')
+    assert.ok(calls.length > 0)
+    const call = calls.at(-1)
+    const flag = call.argv.indexOf('--config')
+    assert.ok(flag >= 0)
+    const configFile = path.resolve(call.argv[flag + 1])
+    const relative = path.relative(flow.root, configFile)
+    assert.ok(relative && !relative.startsWith('..') && !path.isAbsolute(relative))
+    assert.notEqual(configFile, flow.config_path)
+    const config = JSON.parse(fs.readFileSync(configFile, 'utf8'))
+    assert.equal(config.schema, 'cliworker.config/v2')
+    assert.equal(path.resolve(path.dirname(configFile), config.state_dir), flow.state_dir)
+    const output = JSON.parse(call.stdout)
+    const inventory = JSON.parse(fs.readFileSync(path.join(flow.state_dir, 'inventory.json'), 'utf8'))
+    assert.equal(output.schema, 'cliworker.inventory/v1')
+    assert.ok(Array.isArray(output.entries))
+    assert.equal(typeof output.generated_at, 'string')
+    assert.ok(output.generated_at.length > 0 && Number.isFinite(Date.parse(output.generated_at)))
+    assert.equal(inventory.schema, 'cliworker.inventory/v1')
+    assert.ok(Array.isArray(inventory.entries))
+    assert.equal(inventory.generated_at, output.generated_at)
+    assert.deepEqual(inventory, output)
+    assert.equal(fs.readFileSync(flow.config_path, 'utf8'), original)
   } finally {
     flow.cleanup()
   }
