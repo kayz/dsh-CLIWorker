@@ -11,4 +11,8 @@
 - `node scripts/check-acceptance.mjs .collab/tasks/047/acceptance.md`：通过，`acs=1 commands=4`、`warnings=0`。
 - 指定的 `pwsh -NoProfile -File scripts/check-fast.ps1` 无法运行：环境中找不到 `pwsh`。直接运行其 Node 入口 `node scripts/check-fast.mjs` 作为补充检查，止于已有任务验收文档的格式错误：46 个文件中 9 个失败、160 个问题、6 个警告；未修改范围外文档。不能宣称完整门禁通过。
 
-新增测试尚未覆盖验收要求中的所有组合，特别是 v1 示例、空模型、多 provider、同时间冲突、真实 DOM 输入值及完整行为计数；这些仍需补充验证。
+## 第 2 轮补充
+
+针对评审补充集成测试：通过真实 session/snapshot 和 `startApp` 请求链覆盖空模型、v1/v2 示例、混合 callable、同时间及新旧证据冲突、gone、不同 provider 和同名不同目录目标、逐条修复提示、定时更新、失败保留与恢复、unknown fallback、按钮鉴权及隐私哨兵。DOM seam 检查挂载位置、标签隐藏状态和只读输入值；另用渲染测试检查特殊字符转义。受控计数检查读取时没有额外执行 CLI、写入或网络访问，并单独计数秘密后端读取。本轮未修改产品实现。
+
+复测结果：新集成测试 8 项通过；三份指定回归测试 16 项通过；本任务验收格式检查通过（`acs=1 commands=4`，`warnings=0`）。指定 `pwsh -NoProfile -File scripts/check-fast.ps1` 仍因环境找不到 `pwsh` 无法执行。补充运行 `node scripts/check-fast.mjs` 仍在范围外历史验收文档格式检查失败（9 个文件、160 个问题、6 个警告），不能宣称完整门禁通过。DOM 使用测试 seam 而非真实浏览器，特殊字符的引号和尖括号另以渲染测试验证。
