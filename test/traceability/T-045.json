@@ -1,0 +1,13 @@
+{
+  "task": "T-045",
+  "entries": [
+    {
+      "status": "covered",
+      "files": [
+        "test/integration/alpha-tarball.test.mjs"
+      ],
+      "ac": "AC-088"
+    }
+  ],
+  "milestone": "M5"
+}
