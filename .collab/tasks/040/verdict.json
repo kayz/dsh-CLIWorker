@@ -1,0 +1,45 @@
+{
+  "task": "040",
+  "verdict": "needs_revision",
+  "sha": "8ecbafa0c2279bb4990b2528e6773dbc73360002",
+  "passed": 1,
+  "total": 2,
+  "criteria": [
+    {
+      "id": "AC-083",
+      "passed": false,
+      "evidence": "CI exitCode 0 but durationS 3.87s and output only has the trace block, so concurrency blocks are unproven and contradict impl.md line 8. Independent run of node --test test/integration/cross-process-write.test.mjs x6: 5 runs failed in xproc-commit-stale-lock-24x5 with '23 !== 24' (run1 round1, run2 round2, run3 round2, run5 round4, run6 round1); only run4 passed. Cause: lib/lock.mjs:157-185 reclaimLock check-then-rename is not atomic."
+    },
+    {
+      "id": "AC-006",
+      "passed": true,
+      "evidence": "ci-results.json: exitCode 0, '# tests 532 / # pass 532 / # fail 0 / # skipped 0', last line 'AC-006 OK'."
+    }
+  ],
+  "findings": [
+    {
+      "severity": "P0",
+      "file": "lib/lock.mjs",
+      "line": 157,
+      "summary": "reclaimLock re-reads the lock then renames it non-atomically; a waiter can move a fresh live lock away, letting a second process create the lock and enter the critical section concurrently (lost update). Reproduced 5/6 runs as 23/24 entries with stale lock and 24 processes. Out of this task's write scope; needs a separate fix task."
+    },
+    {
+      "severity": "P1",
+      "file": "test/integration/cross-process-write.test.mjs",
+      "line": 94,
+      "summary": "AC-083 filtered run, test file and 3x stability checks cannot pass until the lock defect is fixed; do not merge. Test assets themselves are strict and correct; do not relax them."
+    },
+    {
+      "severity": "P1",
+      "file": ".collab/tasks/040/ci-results.json",
+      "line": 16,
+      "summary": "AC-083 CI record contains only the last block output and 3.87s duration; it is not valid evidence that the concurrency blocks (test file, fixture, fault injection, scale) ran. Orchestrator should confirm all pwsh blocks are executed and recorded."
+    },
+    {
+      "severity": "P2",
+      "file": ".collab/tasks/040/impl.md",
+      "line": 12,
+      "summary": "Developer did not run the filtered runner, fixture, scale and git scope acceptance commands; rerun them after the lock fix."
+    }
+  ]
+}

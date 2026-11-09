@@ -1,0 +1,46 @@
+{
+  "task": "040",
+  "round": 2,
+  "verdict": "needs_revision",
+  "sha": "1bda7fc83e9c70b074da73e233db022b0d71c2d2",
+  "passed": 1,
+  "total": 2,
+  "criteria": [
+    {
+      "id": "AC-083",
+      "passed": false,
+      "evidence": "Independent run of node --test --test-reporter=tap test/integration/cross-process-write.test.mjs x4 at this sha: 4/4 failed in xproc-commit-stale-lock-24x5 with '23 !== 24' (# pass 2, # fail 1); with r1 that is 9 failures in 10 runs. No fault injection was set, so this is a real lost update. Cause: lib/lock.mjs:157-185 reclaimLock check (158-160) then rename (164) is not atomic, so a waiter can move a fresh live lock away and let a second process enter the critical section. lib/ is unchanged (lock.mjs mtime 10:33, before task start 10:34) and the test assets are unchanged since r1. ci-results.json AC-083 has exitCode 0 but durationS 1.11 and output only from the last block (check-traceability ok covered=76 planned=3, check-test-discovery ok), so it cannot prove the 5x24 test, filtered runner, fixture, fault-injection and scale blocks ran; it conflicts with the reproduction. Traceability/discovery block satisfied (T-040.json matches design; CI output). Fixture and git scope blocks unconfirmed (git disabled, no CI output); code matches design at commit-worker.mjs:10-12,13-24,29-32 and cross-process-write.test.mjs:15-18,50-58."
+    },
+    {
+      "id": "AC-006",
+      "passed": true,
+      "evidence": "ci-results.json: AC-006 exitCode 0, durationS 7.8, lastLine 'AC-006 OK'; impl.md records unit tests 532 total, 531 pass, 1 skipped, 0 fail."
+    }
+  ],
+  "findings": [
+    {
+      "severity": "P0",
+      "file": "lib/lock.mjs",
+      "line": 157,
+      "summary": "reclaimLock re-reads the lock then renames it non-atomically (check at 158-160, rename at 164, verify at 171-176); a waiter can move a fresh live lock away so a second process creates the lock and enters the critical section concurrently, losing an update. Reproduced 4/4 runs in r2 (9/10 with r1) as 23/24 entries with a planted stale lock and 24 processes. Out of this task's write scope; needs a separate fix task, then re-verify this task."
+    },
+    {
+      "severity": "P1",
+      "file": "test/integration/cross-process-write.test.mjs",
+      "line": 94,
+      "summary": "AC-083 test file, filtered run and 3x stability checks cannot pass until the lock defect is fixed; do not merge. Retrying dev will not help because the constraints forbid changing lib/. The test assets are strict and correct; do not relax them."
+    },
+    {
+      "severity": "P1",
+      "file": ".collab/tasks/040/ci-results.json",
+      "line": 16,
+      "summary": "AC-083 CI record has durationS 1.11 and only the last block's output; it is not valid evidence that the concurrency blocks (test file, filtered runner, fixture, fault injection, scale, git scope) ran. Orchestrator should confirm all pwsh blocks are executed and recorded."
+    },
+    {
+      "severity": "P2",
+      "file": ".collab/tasks/040/impl.md",
+      "line": 12,
+      "summary": "Developer did not run the filtered runner, fixture, scale and git scope acceptance commands; rerun them after the lock fix."
+    }
+  ]
+}

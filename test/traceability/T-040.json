@@ -1,0 +1,7 @@
+{
+  "task": "T-040",
+  "milestone": "M4",
+  "entries": [
+    { "ac": "AC-083", "files": ["test/integration/cross-process-write.test.mjs"], "status": "covered" }
+  ]
+}
