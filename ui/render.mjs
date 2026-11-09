@@ -32,7 +32,9 @@ export function renderModelsHtml(snapshot, now) {
 }
 
 export function renderIssuesHtml(issues, origin) {
+  if (!issues.length) return '<p>暂无有证据的问题</p>'
   return issues.map(issue => {
+    if (Object.hasOwn(issue, 'evidence_ref')) return `<article data-id="${escapeHtml(issue.id)}" data-kind="${escapeHtml(issue.kind)}"><p>${escapeHtml(issue.subject)} · ${escapeHtml(issue.detail)} · ${escapeHtml(issue.at)}</p><p>${escapeHtml(issue.evidence_ref)}</p></article>`
     const evidence = (issue.evidence || []).map(item => {
       let href = null
       try {
