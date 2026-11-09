@@ -1,6 +1,6 @@
 # 发布前冒烟
 
-客户端验证：运行 `node --test test/unit/client-manifest.test.mjs`。安装含客户端的新包并重新加载 DSH，确认左栏出现 CLIWorker 图标，点击后进入主区，检查实际模型数据或合法空态。停用宿主或制造受控失败，确认错误可见，恢复后点击刷新并确认数据恢复。自动化 unit/contract 仅证明加载、注册和数据行为，不证明已在真实 DSH 中观察到入口。
+客户端验证：运行 `node --test test/unit/client-manifest.test.mjs` 和 `node --test test/unit/client-shell.test.mjs`。安装含客户端的新包并重新加载 DSH，确认左栏出现 CLIWorker 图标，点击后首次加载可见完整骨架及各分区加载状态；检查实际模型数据或合法空态。制造首次受控数据失败，确认三个分区仍可见且错误位于模型区；检查配置缺失时的占位。成功加载后制造刷新失败，确认旧配置仍显示并标明上次数据，再恢复服务并点击重试确认恢复。自动化 unit 的树结构断言和 contract 检查不代表已在真实 DSH 中完成界面观察。
 
 包内容检查：
 
