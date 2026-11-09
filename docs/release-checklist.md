@@ -8,6 +8,17 @@ node scripts/check-package-contents.mjs
 
 成功退出且输出 `AC-087 OK` 才通过。检查基于 `npm pack --dry-run --json` 的实际清单，强制离线、禁止生命周期脚本，不执行发布。清单必须包含 `ui/**`、`docs/ui/cliworker-console.html`、`bin/**` 和 `lib/**` 中要求的资产；缺失时修复 `files` 或资产后重跑。此检查不能替代生成资产检查、real-smoke 或其他发布门禁。
 
+实际离线安装验收：
+
+```pwsh
+node scripts/check-alpha-package.mjs
+node --test test/integration/alpha-tarball.test.mjs
+```
+
+检查器退出码为 0 且输出独立行 `AC-088 OK`，表示实际离线打包、仓库外安装和六项检查通过。也可使用 `node scripts/check-alpha-package.mjs <本地tarball路径>` 检查已有包。检查在独立临时目录运行并清理；资产缺失时诊断会指出路径，修复后重新打包并重跑。集成测试还构造缺少 `ui/` 的包验证失败路径。
+
+包内不包含 `scripts/smoke-real.mjs`；此验收以本地假 provider 执行已安装 CLI 的 probe、select、run 和 state backup/restore。该夹具不覆盖 WSL 或 http-select，不等于完整 smoke-real，也不证明真实账号可用。仍须执行下列 dry-run、real-smoke 和发布放行要求。
+
 生成资产检查：
 
 ```pwsh
