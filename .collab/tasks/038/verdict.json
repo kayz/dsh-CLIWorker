@@ -1,0 +1,26 @@
+{
+  "verdict": "pass",
+  "sha": "293b3ad74b29a73fa11718811e5128318c088d37",
+  "passed": 1,
+  "total": 1,
+  "evidence": [
+    "SHA 核验（只读，未执行 git）：.git 指针 -> C:/git/dsh-CLIWorker/.git/worktrees/038/HEAD = ref: refs/heads/task/038；.git/refs/heads/task/038 = 293b3ad74b29a73fa11718811e5128318c088d37，与会话开头最新提交 293b3ad 一致。",
+    "CI 来源 .collab/tasks/038/ci-results.json：passed=1, total=1, ok=true，ranAt=2026-11-09T11:13:10+08:00；AC-081 passed=true、exitCode=0、lastLine='AC-081 OK'；输出为 integration 的 TAP（tests 19 / pass 19 / fail 0 / skipped 0 / todo 0）。notice.json 的 ci=1/2 是 acceptance 收窄到 AC-081（293b3ad）之前的旧记录。",
+    "CI 输出只留下第一个命令块，其余命令块另行只读复核：既有 WSL/dry-run smoke（移除 CLIWORKER_SMOKE）8/8 pass；node --test \"test/unit/*.test.mjs\" 532/532 pass、skipped 0；check-acceptance 输出 'check-acceptance: ok (files=1 warnings=0)'、acs=1 commands=5；integration 单独复跑仍为 19/19。",
+    "实现核对 scripts/smoke-real.mjs：:134-138 平台与 wsl.exe 检查；:148-152 wsl -l -q 二进制输出经 parseDistros（UTF-16LE）；:154-167 对所有发行版先做 Linux Node 检查（sh -c 'command -v node'、拒绝 .exe/.cmd/.bat、process.platform=linux、主版本>=20），全部通过后才在 :185-208 用该 Node 执行 discover --full；:205 空 entries -> 'WSL CLI not found'（与 Node 缺失原因不同）；:207-210 返回原始 inventories 数组并比较发行版集合；:98-114 safeReason 区分各类别且不回显 stderr/路径/发行版名；:248、:252 wsl-discover 仍为 mandatory 且 ac=['AC-038']；:213、:309 的注入参数默认值为 realWsl/executeSmoke。",
+    "失败映射：:269-271 错误进入 catch，步骤 fail，后续步骤保持 'dependency failed'；:324 main 在 failed 时返回 exitCodeFor('E_INTERNAL')。test/integration/wsl-smoke-preflight.test.mjs:82-99 经 --fixture-child 子进程驱动 mode=real 完整入口，断言 ok 场景退出 0 且七步全 pass，missing/no-wsl 场景退出非 0、wsl-discover 为 fail 且 reason 匹配 /WSL Node not found/ 与 /WSL executable unavailable/、后续步骤依赖跳过，并用 validateReport 校验结构；stdout 不含 sensitive-secret、/private/path、中文 Distro。",
+    "docs/release-checklist.md:9-11 说明探测顺序、每个发行版的 Linux Node 20+ 与非空 CLI 发现、四类失败原因、不自动安装、realWsl 返回值仅供测试；:30 说明夹具结果不能证明 AC-038 真机通过。",
+    "AC-038 按 acceptance.md 末节登记为待环境验证，不在自动验收之内；impl.md 记录的当前环境结果是 'WSL Node not found' 且退出非零，是明确 fail 而非 skip 或 pass。",
+    "check-fast 未能复核：impl.md 记录 npm test 在写域外的 test/integration/cross-process-write.test.mjs（AC-083）失败，我单独跑该文件为 3/3 pass，判断为与本任务无关的偶发失败，建议在空闲环境人工复跑；本任务未改动该文件。",
+    "未修改 brief/design/acceptance/impl/state/run 或任何被评审代码文档，未执行 git 命令；brief 未指定验收报告路径，无追加目标。"
+  ],
+  "findings": [
+    { "severity": "P2", "summary": "Windows Node 伪装测试只覆盖 /mnt/c/node.exe；路径无 .exe 但 process.platform 为 win32 的分支（smoke-real.mjs:164）没有用例。" },
+    { "severity": "P2", "summary": "smoke-real.mjs:158 把 sh 探测失败一律归为 'WSL Node not found'，发行版无法启动时原因略不精确；仍是 fail，不会误判为 pass。" },
+    { "severity": "P2", "summary": "测试用到 import.meta.filename（Node 20.11+），而 engines 为 >=20，在 20.0–20.10 上会失败。" },
+    { "severity": "P2", "summary": "完整 check-fast 在 CI 记录中因写域外的 cross-process-write 用例失败，我单独复跑该文件通过，疑为偶发；建议人工在空闲环境复跑 check-fast。" }
+  ],
+  "checks": [
+    { "id": "AC-081", "passed": true, "evidence": "ci-results.json: AC-081 passed=true exitCode=0，TAP 19/19、fail/skipped/todo 均为 0，末行 'AC-081 OK'；另行复核既有 WSL/dry-run smoke 8/8、unit 532/532、check-acceptance ok；实现与 design.md 逐项一致（见 evidence）。" }
+  ]
+}
