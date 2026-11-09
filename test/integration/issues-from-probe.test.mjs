@@ -9,6 +9,8 @@ import { createContext } from '../../lib/context.mjs'
 import { probeModels } from '../../lib/probe.mjs'
 import { compareVersions, projectProbeIssues } from '../../lib/http/issues-api.mjs'
 import { startApp } from '../../ui/app.mjs'
+import { renderIssuesHtml } from '../../ui/render.mjs'
+import { run as discover } from '../../lib/commands/discover.mjs'
 import { secretAction } from '../../lib/secrets/index.mjs'
 import { createHostStub } from '../helpers/host-stub.mjs'
 import { createFakeClock } from '../helpers/clock.mjs'
@@ -129,5 +131,113 @@ test('[AC-086] a declared minimum is applied by the real snapshot to discovery e
     `
     const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], { cwd: process.cwd(), env: { ...process.env, CW_RULE_ROOT: root }, encoding: 'utf8' })
     assert.equal(result.status, 0, result.stderr || result.stdout)
+  } finally { fs.rmSync(root, { recursive: true, force: true }) }
+})
+
+test('[AC-086] snapshot checks configured credentials per provider and retains the page on backend failure', async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cw-private-person-'))
+  try {
+    const state = path.join(root, 'state'), file = path.join(root, 'config.json')
+    const config = baseConfig(state); config._home = state
+    const clock = createFakeClock(), env = {}, host = createHostStub()
+    let backend = 'missing', keychainReads = 0, probes = 0
+    const fsApi = new Proxy(fs, { get(target, prop) {
+      if (prop === 'readFileSync') return (name, ...args) => {
+        if (typeof name === 'string' && name.endsWith('.dpapi')) {
+          keychainReads++
+          if (backend === 'missing') { const error = new Error('missing'); error.code = 'ENOENT'; throw error }
+          if (backend === 'error') throw new Error('backend failed')
+          return 'controlled-ciphertext'
+        }
+        return target.readFileSync(name, ...args)
+      }
+      return target[prop]
+    } })
+    const ctx = createContext({ fs: fsApi, env, clock, exec(command) {
+      if (command === 'secret-tool' || command === 'pwsh') {
+        if (command === 'secret-tool') keychainReads++
+        if (backend === 'missing') return { ok: false, code: 1, stdout: '', stderr: '' }
+        if (backend === 'present') return { ok: true, code: 0, stdout: 'sentinel-secret-value', stderr: '' }
+        return { code: null, error: 'backend failed' }
+      }
+      probes++; return { code: null, error: 'ENOENT', stdout: '', stderr: 'sentinel-secret-value' }
+    } })
+    fs.writeFileSync(file, JSON.stringify(config), 'utf8')
+    await probeModels(config, { ctx })
+    const original = JSON.parse(fs.readFileSync(path.join(state, 'probes.json'), 'utf8'))[0]
+    const second = structuredClone(original), third = structuredClone(original)
+    second.key = 'claude:second'; second.id = 'second'; second.availability.evidence.probe_id = 'second'
+    third.key = 'codex:third'; third.id = 'third'; third.cli = 'codex'; third.availability.evidence.probe_id = 'third'
+    original.source.ref = path.join(root, 'sentinel-secret-value')
+    fs.writeFileSync(path.join(state, 'probes.json'), JSON.stringify([original, second, third]), 'utf8')
+    createPlugin(host.ctx, { configPath: file }, { ctx })
+    const auth = JSON.parse((await host.request('/cliworker/api/session')).body)
+    const headers = { 'x-cliworker-session': auth.session }
+    const read = async () => { const response = await host.request('/cliworker/api/snapshot', { headers }); assert.equal(response.statusCode, 200); return JSON.parse(response.body) }
+    const update = ref => { config.secrets = ref ? { claude: { ref } } : {}; fs.writeFileSync(file, JSON.stringify(config), 'utf8') }
+    const credential = data => data.issues.filter(item => item.kind === 'missing-credential')
+    assert.equal(credential(await read()).length, 0); assert.equal(keychainReads, 0)
+    for (const ref of ['env:PRIVATE_ENV_NAME', 'session:PRIVATE_SESSION_NAME', 'keychain:PRIVATE_KEY_NAME']) {
+      update(ref)
+      const before = keychainReads, missing = await read()
+      assert.deepEqual(credential(missing).map(item => item.subject).sort(), ['claude', 'codex'])
+      assert.equal(keychainReads - before, ref.startsWith('keychain:') ? 1 : 0)
+      const repeated = await read()
+      assert.deepEqual(credential(repeated).map(item => item.id), credential(missing).map(item => item.id))
+      if (ref.startsWith('env:')) env.PRIVATE_ENV_NAME = 'sentinel-secret-value'
+      if (ref.startsWith('session:')) secretAction(ctx, config, 'claude', 'set', 'sentinel-secret-value')
+      if (ref.startsWith('keychain:')) backend = 'present'
+      assert.deepEqual(credential(await read()), [])
+      assert.doesNotMatch(JSON.stringify(missing), /PRIVATE_|sentinel-secret-value|cw-private-person/)
+    }
+    backend = 'missing'
+    const elements = new Map()
+    for (const id of ['issues', 'models', 'issues-tab', 'models-tab', 'status', 'model-list', 'issue-source']) elements.set(id, { textContent: '', innerHTML: '', addEventListener() {}, setAttribute() {}, appendChild(child) { this.child = child } })
+    const document = { getElementById: id => elements.get(id), createElement: () => ({ innerHTML: '' }), querySelectorAll: () => [] }
+    const fetch = async (url, options = {}) => { const response = await host.request(url, { headers: options.headers }); return { ok: response.statusCode < 400, json: async () => JSON.parse(response.body) } }
+    const app = startApp({ document, fetch, setTimeout: clock.setTimeout, now: clock.now })
+    await new Promise(resolve => setImmediate(resolve))
+    const before = elements.get('issues').child.innerHTML, executions = probes
+    assert.match(before, /missing-credential/)
+    backend = 'error'; await app.read()
+    assert.equal(elements.get('issues').child.innerHTML, before)
+    assert.match(elements.get('status').textContent, /stale/)
+    assert.doesNotMatch(before, /PRIVATE_|sentinel-secret-value|cw-private-person/)
+    assert.equal(probes, executions)
+    const escaped = renderIssuesHtml([{ id: '"<id>', kind: 'x', subject: '<script>', detail: 'a&b', evidence_ref: '<ref>', at: '"' }])
+    assert.doesNotMatch(escaped, /<script>|<ref>/); assert.match(escaped, /&lt;script&gt;/); assert.match(escaped, /a&amp;b/)
+  } finally { fs.rmSync(root, { recursive: true, force: true }) }
+})
+
+test('[AC-086] discover failure evidence reaches the snapshot', async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cw-discover-'))
+  try {
+    const state = path.join(root, 'state'), bin = path.join(root, 'bin'), file = path.join(root, 'config.json')
+    fs.mkdirSync(bin); fs.writeFileSync(path.join(bin, process.platform === 'win32' ? 'claude.cmd' : 'claude'), 'fixture')
+    const config = baseConfig(state); config._home = state
+    fs.writeFileSync(file, JSON.stringify(config), 'utf8')
+    let count = 0, failed = false
+    const ctx = createContext({ env: { PATH: bin }, exec() { count++; return failed ? { ok: false, code: 9, stdout: '', stderr: 'secret output' } : { ok: true, code: 0, stdout: '1.2.3', stderr: '' } } })
+    await discover({ argv: ['discover'], ctx, config })
+    const host = createHostStub(); createPlugin(host.ctx, { configPath: file }, { ctx })
+    const session = JSON.parse((await host.request('/cliworker/api/session')).body).session
+    const elements = new Map()
+    for (const id of ['issues', 'models', 'issues-tab', 'models-tab', 'status', 'model-list', 'issue-source']) elements.set(id, { textContent: '', innerHTML: '', addEventListener() {}, setAttribute() {}, appendChild(child) { this.child = child } })
+    const document = { getElementById: id => elements.get(id), createElement: () => ({ innerHTML: '' }), querySelectorAll: () => [] }
+    const fetch = async (url, options = {}) => { const response = await host.request(url, { headers: options.headers }); return { ok: response.statusCode < 400, json: async () => JSON.parse(response.body) } }
+    startApp({ document, fetch, setTimeout: () => 0 })
+    await new Promise(resolve => setImmediate(resolve))
+    assert.match(elements.get('issue-source').textContent, /已接入/)
+    assert.match(elements.get('issues').child.innerHTML, /暂无有证据的问题/)
+    assert.doesNotMatch(elements.get('issues').child.innerHTML, /<article/)
+    failed = true
+    const inventory = await discover({ argv: ['discover', '--full'], ctx, config })
+    const before = count
+    const response = await host.request('/cliworker/api/snapshot', { headers: { 'x-cliworker-session': session } })
+    const issues = JSON.parse(response.body).issues
+    assert.equal(count, before); assert.equal(issues.length, 1); assert.equal(issues[0].kind, 'unavailable')
+    assert.equal(issues[0].subject, 'claude'); assert.equal(issues[0].detail, 'non-zero exit')
+    assert.ok(issues[0].evidence_ref.includes(inventory.entries[0].evidence[0].digest))
+    assert.doesNotMatch(response.body, /secret output|cw-discover-/)
   } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })

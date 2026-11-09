@@ -17,7 +17,7 @@ export function startApp({ document, fetch, setTimeout, now = () => Date.now() }
   // Keep the last issue rows visible if a poll fails.
   function setIssueSource(value, failure) {
     if (!issueSource) return
-    const source = value && (!value.source?.includes('probes unknown') || value.issues?.length) ? '问题来源已接入' : '问题来源未接入'
+    const source = value && (!value.source?.includes('probes unknown') || value.source.includes(', discover') || value.issues?.length) ? '问题来源已接入' : '问题来源未接入'
     if (failure) issueSource.textContent = `${source}；状态 unknown（${failure}，保留上次展示）`
     else if (value?.last_error) issueSource.textContent = `${source}；数据 stale：${value.last_error}；快照 ${value.at || 'unknown'}`
     else issueSource.textContent = `${source}；快照 ${value?.at || 'unknown'}`
