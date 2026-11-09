@@ -5,3 +5,4 @@
 - 自测：新增 integration 19 项通过；既有 WSL/dry-run 8 项通过；unit 532 项中 531 通过、1 项既有 skip，退出码 0；验收格式检查通过。
 - 真机 smoke 退出码 1，`wsl-discover` 报告 `WSL distribution list failed`，因此 AC-038 未通过，后续步骤按依赖跳过。
 - 未运行 `scripts/check-fast.ps1`：该检查会执行 git 并生成写域外产物，与本任务禁止执行 git 和创建其他文件的明确约束冲突。
+- 后续 CI 记录：完整检查的 `npm test` 在写域外的 `test/integration/cross-process-write.test.mjs` 中失败（AC-083，期望 24 条记录，实际 19 条），其余 902 项通过；真实 AC-038 报告 `WSL Node not found` 并退出非零。两项门禁均未通过，未修改写域外文件或安装环境。
