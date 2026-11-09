@@ -85,4 +85,5 @@ describe('test/unit/evidence.test.mjs', () => {
   test('[AC-086] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-086') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-086') assert.fail('failure') })
   test('[AC-087] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-087') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-087') assert.fail('failure') })
   test('[AC-088] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-088') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-088') assert.fail('failure') })
+  test('[AC-089] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-089') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-089') assert.fail('failure') })
 })

@@ -652,6 +652,14 @@
       "levels": [
         "integration"
       ]
+    },
+    {
+      "id": "AC-089",
+      "text": "插件声明并交付浏览器端：dsh.plugin.json 含 client.platform=web，package.json 导出 ./client 与 ./icon 且 dsh.client.platform=web，lib/client.js 在 sidebar.panellist 注册入口并在 main 注册页面，icon.svg 存在且随包分发。",
+      "levels": [
+        "unit",
+        "contract"
+      ]
     }
   ],
   "tasks": [
@@ -2595,6 +2603,43 @@
       ],
       "test_levels": [
         "integration"
+      ]
+    },
+    {
+      "id": "T-046",
+      "title": "客户端接入 DSH 左栏与主区",
+      "milestone": "M5",
+      "inputs": [
+        "T-024/T-025 的宿主端路由与页面数据",
+        "dsh-agentline 的 client half 结构（slots API 参考）"
+      ],
+      "outputs": [
+        "lib/client.js",
+        "icon.svg",
+        "package.json exports/dsh.client",
+        "dsh.plugin.json client"
+      ],
+      "depends_on": [
+        "T-024",
+        "T-025"
+      ],
+      "write_scope": [
+        "lib/client.js",
+        "icon.svg",
+        "package.json",
+        "dsh.plugin.json",
+        "test/unit/client-manifest.test.mjs",
+        "docs/release-checklist.md"
+      ],
+      "acceptance": [
+        "AC-089"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-089"
+      ],
+      "test_levels": [
+        "unit",
+        "contract"
       ]
     }
   ]
