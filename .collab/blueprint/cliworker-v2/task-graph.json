@@ -2462,7 +2462,10 @@
         "lib/discovery/scan.mjs",
         "lib/discovery/rules.mjs",
         "test/integration/discovery-probe.test.mjs",
-        "test/fixtures/discovery/**"
+        "test/fixtures/discovery/**",
+        "lib/commands/discover.mjs",
+        "lib/probe.mjs",
+        "lib/availability.mjs"
       ],
       "acceptance": [
         "AC-085"
