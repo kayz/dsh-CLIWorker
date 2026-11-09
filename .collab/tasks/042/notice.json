@@ -1,0 +1,12 @@
+{
+  "task": "042",
+  "event": "blocked",
+  "reason": "awaiting_human",
+  "verdict": null,
+  "ci": null,
+  "files": null,
+  "branch": "task/042",
+  "status": "blocked",
+  "summary": "【AgentLine 任务被阻塞】042 / task 042\n结果：blocked — awaiting_human\n阶段：design ✅\n变更：分支 task/042 · 耗时 3m16s\n下一步：修好后让我继续（flow --resume）；或告诉我调整验收/范围",
+  "at": "2026-11-09T05:04:43.720Z"
+}
