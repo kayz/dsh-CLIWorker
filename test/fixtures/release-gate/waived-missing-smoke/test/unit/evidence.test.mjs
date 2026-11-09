@@ -76,4 +76,8 @@ describe('test/unit/evidence.test.mjs', () => {
   test('[AC-073] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-073') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-073') assert.fail('failure') })
   test('[AC-074] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-074') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-074') assert.fail('failure') })
   test('[AC-079] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-079') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-079') assert.fail('failure') })
+  test('[AC-080] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-080') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-080') assert.fail('failure') })
+  test('[AC-081] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-081') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-081') assert.fail('failure') })
+  test('[AC-082] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-082') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-082') assert.fail('failure') })
+  test('[AC-083] evidence', t => { if (process.env.FIXTURE_SKIP === 'AC-083') t.skip('platform'); if (process.env.FIXTURE_FAIL === 'AC-083') assert.fail('failure') })
 })

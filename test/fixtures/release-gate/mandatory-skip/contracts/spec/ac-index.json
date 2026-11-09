@@ -976,6 +976,58 @@
         "linux",
         "win32"
       ]
+    },
+    {
+      "ac": "AC-080",
+      "owner": "T-037",
+      "milestone": "M3",
+      "levels": [
+        "integration"
+      ],
+      "baseline": [
+        "darwin",
+        "linux",
+        "win32"
+      ]
+    },
+    {
+      "ac": "AC-081",
+      "owner": "T-038",
+      "milestone": "M5",
+      "levels": [
+        "integration"
+      ],
+      "baseline": [
+        "darwin",
+        "linux",
+        "win32"
+      ]
+    },
+    {
+      "ac": "AC-082",
+      "owner": "T-039",
+      "milestone": "M3",
+      "levels": [
+        "integration"
+      ],
+      "baseline": [
+        "darwin",
+        "linux",
+        "win32"
+      ]
+    },
+    {
+      "ac": "AC-083",
+      "owner": "T-040",
+      "milestone": "M4",
+      "levels": [
+        "integration"
+      ],
+      "baseline": [
+        "darwin",
+        "linux",
+        "win32"
+      ]
     }
   ]
 }
