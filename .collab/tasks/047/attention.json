@@ -1,0 +1,8 @@
+{
+  "question": "Task 047 要求真实 snapshot 增量新增 config（含配置文件绝对路径），但当前 test/integration/ui-snapshot.test.mjs:187 精确断言顶层只能为 at/forecast/issues/last_error/models/source，:188 在排除 issues 后精确断言原五字段；test/integration/issues-from-probe.test.mjs:48 也精确断言上述六字段，:138–140 将配置文件置于 cw-private-person-* 目录，:191 又禁止整个响应出现 cw-private-person。新增 config 必然使这些既有断言失败，而两个文件均不在 brief 写域，且 brief 要求旧 ui-snapshot 断言不得放宽。是否授权对这两个测试文件做严格的增量契约更新？建议顶层精确断言新增 config 后的七键，排除 config/issues 后仍精确断言旧五键并保留其全部值断言；路径脱敏仅对白名单 config.path 例外并精确核对实际配置路径，其他字段的原路径脱敏及整个响应的 secret/token 禁泄漏断言保留。未裁决前无法同时满足新增字段、既有断言和写域约束，design.md 与 acceptance.md 暂不生成。",
+  "options": [
+    "授权仅将 test/integration/ui-snapshot.test.mjs 与 test/integration/issues-from-probe.test.mjs 加入写域，按问题所述严格更新增量契约与 config.path 白名单断言，保留全部旧字段值及秘密脱敏检查",
+    "维持原写域与旧断言，暂停 Task 047，待人类修订冲突需求后继续"
+  ],
+  "default": "维持原写域与旧断言，暂停 Task 047，待人类修订冲突需求后继续"
+}
