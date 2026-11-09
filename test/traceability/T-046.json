@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "status": "covered",
+      "files": [
+        "test/unit/client-manifest.test.mjs"
+      ],
+      "ac": "AC-089"
+    }
+  ],
+  "task": "T-046",
+  "milestone": "M5"
+}
