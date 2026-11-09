@@ -189,7 +189,7 @@ verified, unverified, mismatch
 | contracts/golden/policy/p3-unknown.json | 16fe9c34bff7ffb0722600b2f3427ea4e6b7f758bcee2a4c906979d2901c68e8 |
 | contracts/golden/policy/p4-identity-group.json | 5bd4475e20f62f7c5391f2368b2df43bde4ba80ae7424c178302e3e69810a240 |
 | contracts/golden/quota-shapes.json | 44670f30a6042767d187adceed5fc39cfa5846b40cd8aaa28eb11f939696467e |
-| contracts/spec/ac-index.json | fc595fd63fbc4cdb992370d4241041aef7ffacf63aa2dfff64cb8e6878bc8a37 |
+| contracts/spec/ac-index.json | 39bfafe6474f38dc2b84d950263e8ac2198d91ff1ab37f35daf77ebd8e180b8e |
 | contracts/spec/migration-map.json | f68bae918ac4eeeffe6e13d7fbda98e8729059aacb44b0367eafb979ed794b1e |
 | contracts/spec/surfaces.json | ce39945e4f694b04e509f6fe02ae995e635e439e51f8d4c314e8fae749c1846a |
 

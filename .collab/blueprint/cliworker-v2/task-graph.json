@@ -660,6 +660,13 @@
         "unit",
         "contract"
       ]
+    },
+    {
+      "id": "AC-090",
+      "text": "配置引导可见且可操作：快照包含 config 摘要（配置文件路径、每个 provider 的 cli 与解析状态），UI 展示配置区；当没有任何可 callable 模型时，界面给出可执行的下一步（配置文件路径与 provider 映射写法），而不是只显示错误或空列表。",
+      "levels": [
+        "integration"
+      ]
     }
   ],
   "tasks": [
@@ -2640,6 +2647,41 @@
       "test_levels": [
         "unit",
         "contract"
+      ]
+    },
+    {
+      "id": "T-047",
+      "title": "配置引导：无可用 CLI 时也能在界面里完成配置",
+      "milestone": "M5",
+      "inputs": [
+        "T-024/T-025 的 snapshot 与 UI",
+        "T-042 的探测证据"
+      ],
+      "outputs": [
+        "ui/render.mjs 配置区",
+        "lib/http/snapshot.mjs 配置摘要",
+        "test/integration/ui-config-guide.test.mjs"
+      ],
+      "depends_on": [
+        "T-024",
+        "T-025",
+        "T-042"
+      ],
+      "write_scope": [
+        "ui/render.mjs",
+        "ui/app.mjs",
+        "lib/http/snapshot.mjs",
+        "test/integration/ui-config-guide.test.mjs",
+        "test/fixtures/ui/**"
+      ],
+      "acceptance": [
+        "AC-090"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-090"
+      ],
+      "test_levels": [
+        "integration"
       ]
     }
   ]
