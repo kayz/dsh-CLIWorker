@@ -1,0 +1,111 @@
+{
+  "id": "038",
+  "history": [
+    {
+      "at": "2026-11-09T02:58:08.651Z",
+      "to": "draft",
+      "by": "init"
+    },
+    {
+      "at": "2026-11-09T03:04:34.585Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-09T03:07:36.534Z",
+      "from": "designed",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-09T03:10:21.531Z",
+      "from": "implemented",
+      "to": "implemented",
+      "by": "dev:gpt-6.1-terra"
+    },
+    {
+      "at": "2026-11-09T03:11:41.29Z",
+      "from": "implemented",
+      "to": "blocked",
+      "by": "flow"
+    },
+    {
+      "at": "2026-11-09T03:13:10.596Z",
+      "from": "implemented",
+      "to": "reviewable",
+      "by": "ci"
+    },
+    {
+      "at": "2026-11-09T03:15:34.795Z",
+      "from": "reviewable",
+      "to": "reviewed",
+      "by": "review:claude-sonnet-5-5"
+    },
+    {
+      "at": "2026-11-09T03:15:35.253Z",
+      "from": "reviewed",
+      "to": "reviewed",
+      "by": "review"
+    },
+    {
+      "at": "2026-11-09T03:15:35.451Z",
+      "from": "reviewed",
+      "to": "pr_open",
+      "by": "agentline"
+    }
+  ],
+  "status": "pr_open",
+  "updated_at": "2026-11-09T03:15:35.451Z",
+  "role": "review",
+  "model": "claude-sonnet-5-5",
+  "model_resolved": "claude-sonnet-5-5",
+  "effort": "high",
+  "attempt": 4,
+  "switches": 0,
+  "blocked_reason": null,
+  "handoff": null,
+  "pr": {
+    "branch": "task/038",
+    "state": "open",
+    "files": [
+      ".collab/tasks/038/acceptance.md",
+      ".collab/tasks/038/ci-results.json",
+      ".collab/tasks/038/design.md",
+      ".collab/tasks/038/impl.md",
+      ".collab/tasks/038/notice.json",
+      ".collab/tasks/038/review.md",
+      ".collab/tasks/038/run.json",
+      ".collab/tasks/038/sessions/.gitignore",
+      ".collab/tasks/038/state.json",
+      ".collab/tasks/038/verdict.json",
+      "docs/release-checklist.md",
+      "scripts/smoke-real.mjs",
+      "test/integration/wsl-smoke-preflight.test.mjs"
+    ],
+    "sha": "76f0fe0c09fff451ef274e08d250a4e4bc1d93a6"
+  },
+  "merge_gate": {
+    "requires_human_permission": true,
+    "on_no_permission": "stay_in_pr"
+  },
+  "merge_risk": {
+    "tier": "low",
+    "reasons": [],
+    "metrics": {
+      "files": 3,
+      "lines": 186,
+      "review_rounds": 1,
+      "out_of_scope": 0,
+      "write_scope": 3
+    },
+    "limits": {
+      "maxReviewRounds": 3,
+      "maxFiles": 8,
+      "maxLines": 3000
+    },
+    "assessed_at": "2026-11-09T03:15:35.370Z",
+    "base": "main",
+    "head": "HEAD"
+  }
+}

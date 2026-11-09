@@ -99,6 +99,9 @@ function safeReason(id, error) {
   const message = String(error && error.message ? error.message : '')
   if (message.startsWith('preflight:')) return message.replace(/\s+/g, ' ').slice(0, 160)
   if (id === 'wsl-discover') {
+    for (const reason of ['WSL Node not found', 'WSL Node requires version 20 or later', 'WSL Node execution or version parsing failed', 'WSL CLI not found', 'WSL distribution list failed']) {
+      if (message === reason) return reason
+    }
     if (/Node 20/.test(message)) return 'WSL requires Node 20 or later'
     if (/no distributions/.test(message)) return 'WSL has no distributions'
     if (/distribution set changed/.test(message)) return 'WSL distribution set changed'
@@ -125,23 +128,52 @@ export async function fixtureWsl(root, captured) {
   assert.deepEqual(inventory.host.wsl_distros, expected)
 }
 
-export async function realWsl(root, env, captured, originalPath) {
-  if (process.platform !== 'win32') throw new Error('Windows and WSL are required')
+export async function realWsl(root, env, captured, originalPath, injected = {}) {
+  const platform = injected.platform ?? process.platform
+  const io = injected.fs ?? fs
+  if (platform !== 'win32') throw new Error('Windows and WSL are required')
   const systemEnv = { ...env, PATH: originalPath }
-  const wslExe = path.join(process.env.SystemRoot || process.env.WINDIR || '', 'System32', 'wsl.exe')
-  if (!path.isAbsolute(wslExe) || !fs.existsSync(wslExe)) throw new Error('WSL executable unavailable')
-  const list = () => parseDistros(invoke(wslExe, ['-l', '-q'], systemEnv, captured, { binary: true }))
+  const systemRoot = (injected.env ?? process.env).SystemRoot || (injected.env ?? process.env).WINDIR || ''
+  const wslExe = path.join(systemRoot, 'System32', 'wsl.exe')
+  if (!path.isAbsolute(wslExe) || !io.existsSync(wslExe)) throw new Error('WSL executable unavailable')
+  const call = (command, args, binary = false) => {
+    if (!injected.exec) return invoke(command, args, systemEnv, captured, { binary })
+    captured.argv.push([command, ...args])
+    const result = injected.exec(command, args, { env: systemEnv, timeout: TIMEOUT, windowsHide: true, maxBuffer: 8 * 1024 * 1024, encoding: binary ? null : 'utf8' })
+    captured.stdout.push(result.stdout || '')
+    captured.stderr.push(result.stderr || '')
+    if (!result.ok) throw new Error('external command failed or timed out')
+    return result.stdout || (binary ? Buffer.alloc(0) : '')
+  }
+  const list = () => {
+    try { return parseDistros(call(wslExe, ['-l', '-q'], true)) } catch { throw new Error('WSL distribution list failed') }
+  }
   const expected = list()
   if (!expected.length) throw new Error('WSL has no distributions')
-  const executor = createExec({ env: systemEnv, fs, platform: process.platform })
-  const ctx = createContext({ env: systemEnv, exec(command, args) {
+  if (expected.some(name => /[\uFEFF\0\r\n]/.test(name))) throw new Error('WSL environment mismatch')
+  const nodes = []
+  for (const distro of expected) {
+    const wsl = args => String(call(wslExe, ['-d', distro, '--exec', ...args])).trim()
+    let node
+    try { node = wsl(['sh', '-c', 'command -v node || exit 1']) } catch { throw new Error('WSL Node not found') }
+    if (!node) throw new Error('WSL Node not found')
+    if (!node.startsWith('/') || /\.(?:exe|cmd|bat)$/i.test(node) || /[\r\n\0]/.test(node)) throw new Error('WSL Node execution or version parsing failed')
+    let version, nodePlatform
+    try { version = wsl([node, '--version']); nodePlatform = wsl([node, '-p', 'process.platform']) } catch { throw new Error('WSL Node execution or version parsing failed') }
+    const match = /^v(\d+)\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.exec(version)
+    if (!match || nodePlatform !== 'linux') throw new Error('WSL Node execution or version parsing failed')
+    if (Number(match[1]) < 20) throw new Error('WSL Node requires version 20 or later')
+    nodes.push(node)
+  }
+  const executor = createExec({ env: systemEnv, fs: io, platform })
+  const ctx = createContext({ platform, fs: io, env: systemEnv, exec(command, args) {
     const isWsl = /^(?:wsl|wsl\.exe)$/i.test(command)
     if (isWsl) {
-      const output = invoke(wslExe, args, systemEnv, captured, { binary: true })
+      const output = call(wslExe, args, true)
       return { ok: true, code: 0, stdout: output.toString('utf16le') }
     }
     captured.argv.push([command, ...args])
-    const result = executor.runSync(command, args, { env: systemEnv, timeout: TIMEOUT })
+    const result = injected.exec ? injected.exec(command, args, { env: systemEnv, timeout: TIMEOUT }) : executor.runSync(command, args, { env: systemEnv, timeout: TIMEOUT })
     captured.stdout.push(result.stdout)
     captured.stderr.push(result.stderr)
     return result
@@ -149,30 +181,36 @@ export async function realWsl(root, env, captured, originalPath) {
   const inventory = await discover({ argv: [], ctx, config: { _home: path.join(root, 'windows-inventory'), discovery: { wsl: true, probe_unknown: false } } })
   captured.stdout.push(JSON.stringify(inventory))
   if (!sameSet(expected, inventory.host.wsl_distros)) throw new Error('WSL distribution set changed')
+  const inventories = []
   for (const [index, distro] of expected.entries()) {
     const distroRoot = path.join(root, `distro-${index}`)
-    fs.mkdirSync(distroRoot, { recursive: true })
-    fs.mkdirSync(path.join(distroRoot, 'home'), { recursive: true })
+    io.mkdirSync(distroRoot, { recursive: true })
+    io.mkdirSync(path.join(distroRoot, 'home'), { recursive: true })
     const configFile = path.join(distroRoot, 'config.json')
-    fs.writeFileSync(configFile, JSON.stringify({ schema: 'cliworker.config/v1', state_dir: 'state', providers: {}, models: {} }), 'utf8')
-    const wsl = args => invoke(wslExe, ['-d', distro, '--exec', ...args], systemEnv, captured).trim()
+    io.writeFileSync(configFile, JSON.stringify({ schema: 'cliworker.config/v1', state_dir: 'state', providers: {}, models: {} }), 'utf8')
+    const wsl = args => String(call(wslExe, ['-d', distro, '--exec', ...args])).trim()
     const linuxRoot = wsl(['wslpath', '-a', '-u', distroRoot])
     const linuxBin = wsl(['wslpath', '-a', '-u', BIN])
     const linuxConfig = wsl(['wslpath', '-a', '-u', configFile])
-    let nodeVersion
-    try { nodeVersion = wsl(['node', '--version']) } catch { throw new Error('WSL requires Node 20 or later') }
-    if (!/^v(?:[2-9]\d|[1-9]\d{2,})\./.test(nodeVersion)) throw new Error('WSL requires Node 20 or later')
     const linuxPath = wsl(['printenv', 'PATH'])
     const observedDistro = wsl(['printenv', 'WSL_DISTRO_NAME'])
     if (observedDistro !== distro || !linuxPath) throw new Error('WSL environment mismatch')
-    const output = wsl(['env', '-i', `HOME=${linuxRoot}/home`, `CLIWORKER_HOME=${linuxRoot}/home`, `WSL_DISTRO_NAME=${observedDistro}`, `PATH=${linuxPath}`, 'node', linuxBin, 'discover', '--config', linuxConfig, '--full'])
-    const found = JSON.parse(output)
+    let found
+    try {
+      const output = wsl(['env', '-i', `HOME=${linuxRoot}/home`, `CLIWORKER_HOME=${linuxRoot}/home`, `WSL_DISTRO_NAME=${observedDistro}`, `PATH=${linuxPath}`, nodes[index], linuxBin, 'discover', '--config', linuxConfig, '--full'])
+      found = JSON.parse(output)
+      captured.stdout.push(JSON.stringify(found))
+    } catch { throw new Error('WSL distribution discovery failed') }
+    if (found.schema !== 'cliworker.inventory/v1') throw new Error('WSL distribution discovery failed')
+    if (Array.isArray(found.entries) && found.entries.length === 0) throw new Error('WSL CLI not found')
     if (found.host?.platform !== `wsl:${distro}` || !Array.isArray(found.entries) || found.entries.length === 0 || found.entries.some(entry => entry.platform !== `wsl:${distro}` || entry.status !== 'present')) throw new Error('WSL distribution discovery failed')
+    inventories.push(found)
   }
   if (!sameSet(expected, list())) throw new Error('WSL distribution set changed; rerun smoke')
+  return inventories
 }
 
-export async function executeSmoke({ mode = 'dry-run', out = null, hooks = {} } = {}) {
+export async function executeSmoke({ mode = 'dry-run', out = null, hooks = {} } = {}, wslAction = realWsl) {
   const version = JSON.parse(fs.readFileSync(VERSION_FILE, 'utf8')).version
   const report = { schema: 'cliworker.smoke/v1', mode, version, platform: process.platform, node: process.version, steps: [], redacted: true }
   const originalPath = process.env.PATH || process.env.Path || ''
@@ -207,7 +245,7 @@ export async function executeSmoke({ mode = 'dry-run', out = null, hooks = {} } 
           assert.ok(readFakeCliRecords(records).some(record => record.argv.includes('--version')))
         }
       },
-      async 'wsl-discover'() { if (mode === 'real') await realWsl(flow.root, env, flow.captured, originalPath); else await fixtureWsl(flow.root, flow.captured) },
+      async 'wsl-discover'() { if (mode === 'real') await wslAction(flow.root, env, flow.captured, originalPath); else await fixtureWsl(flow.root, flow.captured) },
     }
     for (const id of STEP_IDS) {
       const start = performance.now()
@@ -268,7 +306,7 @@ export async function executeSmoke({ mode = 'dry-run', out = null, hooks = {} } 
   return { report, failed, json }
 }
 
-async function main(argv) {
+export async function main(argv, smoke = executeSmoke) {
   let dry = false
   let out = null
   for (let i = 0; i < argv.length; i++) {
@@ -281,7 +319,7 @@ async function main(argv) {
     return exitCodeFor('E_SMOKE_DISABLED')
   }
   try {
-    const result = await executeSmoke({ mode: dry ? 'dry-run' : 'real', out })
+    const result = await smoke({ mode: dry ? 'dry-run' : 'real', out })
     process.stdout.write(result.json)
     return result.failed ? exitCodeFor('E_INTERNAL') : 0
   } catch {

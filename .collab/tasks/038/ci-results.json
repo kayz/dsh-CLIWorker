@@ -1,0 +1,19 @@
+{
+  "repo": "C:\\git\\dsh-CLIWorker\\.collab\\worktrees\\038",
+  "taskDir": ".collab\\tasks\\038",
+  "ranAt": "2026-11-09T11:13:10.4547011+08:00",
+  "passed": 1,
+  "total": 1,
+  "ok": true,
+  "results": [
+    {
+      "id": "AC-081",
+      "title": "WSL 前置探测的离线集成验证",
+      "passed": true,
+      "exitCode": 0,
+      "durationS": 5.93,
+      "lastLine": "AC-081 OK",
+      "output": "TAP version 13\n# Subtest: [AC-081] inventories and argument boundaries\nok 1 - [AC-081] inventories and argument boundaries\n  ---\n  duration_ms: 15.7376\n  type: 'test'\n  ...\n# Subtest: [AC-081] missing\nok 2 - [AC-081] missing\n  ---\n  duration_ms: 1.9999\n  type: 'test'\n  ...\n# Subtest: [AC-081] no-wsl\nok 3 - [AC-081] no-wsl\n  ---\n  duration_ms: 1.0126\n  type: 'test'\n  ...\n# Subtest: [AC-081] old\nok 4 - [AC-081] old\n  ---\n  duration_ms: 1.048\n  type: 'test'\n  ...\n# Subtest: [AC-081] empty\nok 5 - [AC-081] empty\n  ---\n  duration_ms: 1.4018\n  type: 'test'\n  ...\n# Subtest: [AC-081] list-fail\nok 6 - [AC-081] list-fail\n  ---\n  duration_ms: 0.8293\n  type: 'test'\n  ...\n# Subtest: [AC-081] bad-version\nok 7 - [AC-081] bad-version\n  ---\n  duration_ms: 1.0779\n  type: 'test'\n  ...\n# Subtest: [AC-081] exec-fail\nok 8 - [AC-081] exec-fail\n  ---\n  duration_ms: 0.9575\n  type: 'test'\n  ...\n# Subtest: [AC-081] windows-node\nok 9 - [AC-081] windows-node\n  ---\n  duration_ms: 1.438\n  type: 'test'\n  ...\n# Subtest: [AC-081] no-cli\nok 10 - [AC-081] no-cli\n  ---\n  duration_ms: 5.4409\n  type: 'test'\n  ...\n# Subtest: [AC-081] environment\nok 11 - [AC-081] environment\n  ---\n  duration_ms: 5.867\n  type: 'test'\n  ...\n# Subtest: [AC-081] json\nok 12 - [AC-081] json\n  ---\n  duration_ms: 4.0179\n  type: 'test'\n  ...\n# Subtest: [AC-081] platform\nok 13 - [AC-081] platform\n  ---\n  duration_ms: 5.8497\n  type: 'test'\n  ...\n# Subtest: [AC-081] absent\nok 14 - [AC-081] absent\n  ---\n  duration_ms: 4.5531\n  type: 'test'\n  ...\n# Subtest: [AC-081] changed\nok 15 - [AC-081] changed\n  ---\n  duration_ms: 5.4822\n  type: 'test'\n  ...\n# Subtest: [AC-081] mixed\nok 16 - [AC-081] mixed\n  ---\n  duration_ms: 1.2846\n  type: 'test'\n  ...\n# Subtest: [AC-081] complete report ok\nok 17 - [AC-081] complete report ok\n  ---\n  duration_ms: 2634.3721\n  type: 'test'\n  ...\n# Subtest: [AC-081] complete report missing\nok 18 - [AC-081] complete report missing\n  ---\n  duration_ms: 1178.9041\n  type: 'test'\n  ...\n# Subtest: [AC-081] complete report no-wsl\nok 19 - [AC-081] complete report no-wsl\n  ---\n  duration_ms: 1233.4114\n  type: 'test'\n  ...\n1..19\n# tests 19\n# suites 0\n# pass 19\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 5222.5691\nAC-081 OK"
+    }
+  ]
+}
