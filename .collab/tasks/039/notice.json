@@ -1,9 +1,0 @@
-{
-  "task": "039",
-  "event": "merged",
-  "status": "merged",
-  "ci": "2/2",
-  "branch": "task/039",
-  "summary": "【AgentLine 任务已合并】dsh-CLIWorker / task 039\n结果：已并入 main（dabcb37）\n阶段：design ✅ · dev ✅ · CI 2/2 ✅ · review r1 pass ✅\n变更：分支 task/039（已删除） · 14 个文件 · 耗时 37m38s\n验收：CI 2/2 · verdict=pass · findings 1\n下一步：无，任务已结束",
-  "at": "2026-11-09T02:57:20.604Z"
-}

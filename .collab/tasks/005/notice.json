@@ -1,9 +1,0 @@
-{
-  "task": "005",
-  "event": "merged",
-  "status": "merged",
-  "ci": null,
-  "branch": "task/005",
-  "summary": "【AgentLine 任务已合并】dsh-CLIWorker / task 005\n结果：已并入 main（84c596d）\n阶段：design ✅ · dev ✅\n变更：分支 task/005（已删除） · 29 个文件 · 耗时 3h32m\n下一步：无，任务已结束",
-  "at": "2026-11-07T21:55:24.395Z"
-}

@@ -7,3 +7,15 @@ config/*.local.json
 .collab/tasks/*/logs/
 .collab/tasks/*/live.json
 node_modules/
+
+# AgentLine 运行期状态与日志（含本机绝对路径，不进公开仓库）
+.collab/**/logs/
+.collab/tasks/*/state.json
+.collab/tasks/*/run.json
+.collab/tasks/*/ci-results.json
+.collab/tasks/*/notice.json
+.collab/tasks/*/live.json
+.collab/studio/
+.collab/tasks/*/handoff/
+.collab/tasks/*/review*.md
+.collab/tasks/*/verdict*.json

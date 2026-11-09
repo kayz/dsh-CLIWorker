@@ -1,9 +1,0 @@
-{
-  "task": "030",
-  "event": "merged",
-  "status": "merged",
-  "ci": null,
-  "branch": "task/030",
-  "summary": "【AgentLine 任务已合并】dsh-CLIWorker / task 030\n结果：已并入 main（558d825）\n阶段：design ✅ · dev ✅\n变更：分支 task/030（已删除） · 耗时 6m18s\n下一步：无，任务已结束",
-  "at": "2026-11-08T22:12:04.777Z"
-}

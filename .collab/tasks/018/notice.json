@@ -1,9 +1,0 @@
-{
-  "task": "018",
-  "event": "merged",
-  "status": "merged",
-  "ci": "0/3",
-  "branch": "task/018",
-  "summary": "【AgentLine 任务已合并】dsh-CLIWorker / task 018\n结果：已并入 main（770b609）\n阶段：design ✅ · dev ✅ · CI 0/3 ❌\n变更：分支 task/018 · 耗时 9h25m\n验收：CI 0/3\n下一步：无，任务已结束",
-  "at": "2026-11-08T15:42:31.990Z"
-}
