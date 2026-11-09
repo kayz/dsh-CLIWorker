@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "files": [
+        "test/unit/client-shell.test.mjs"
+      ],
+      "ac": "AC-091",
+      "status": "covered"
+    }
+  ],
+  "milestone": "M5",
+  "task": "T-048"
+}
