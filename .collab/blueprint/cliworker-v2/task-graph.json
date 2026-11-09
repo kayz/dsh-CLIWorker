@@ -645,6 +645,13 @@
         "unit",
         "contract"
       ]
+    },
+    {
+      "id": "AC-088",
+      "text": "alpha 包黑盒可用：把 npm pack 的 tarball 安装到临时目录后，无需仓库内文件即可运行 cliworker --version、doctor、discover、models enumerate 与 smoke --dry-run，且 UI 入口页存在于包内；任一失败即不通过。",
+      "levels": [
+        "integration"
+      ]
     }
   ],
   "tasks": [
@@ -2557,6 +2564,37 @@
       "test_levels": [
         "unit",
         "contract"
+      ]
+    },
+    {
+      "id": "T-045",
+      "title": "alpha 包黑盒验收：以用户视角安装并验证",
+      "milestone": "M5",
+      "inputs": [
+        "npm pack 产出的 dsh-cliworker-<version>.tgz",
+        "docs/release-checklist.md"
+      ],
+      "outputs": [
+        "test/integration/alpha-tarball.test.mjs",
+        "scripts/check-alpha-package.mjs"
+      ],
+      "depends_on": [
+        "T-044",
+        "T-029"
+      ],
+      "write_scope": [
+        "test/integration/alpha-tarball.test.mjs",
+        "scripts/check-alpha-package.mjs",
+        "docs/release-checklist.md"
+      ],
+      "acceptance": [
+        "AC-088"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-088"
+      ],
+      "test_levels": [
+        "integration"
       ]
     }
   ]

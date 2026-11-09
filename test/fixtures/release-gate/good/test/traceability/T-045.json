@@ -1,0 +1,13 @@
+{
+  "task": "T-045",
+  "milestone": "M5",
+  "entries": [
+    {
+      "ac": "AC-088",
+      "files": [
+        "test/unit/evidence.test.mjs"
+      ],
+      "status": "covered"
+    }
+  ]
+}
