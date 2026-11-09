@@ -637,6 +637,14 @@
       "levels": [
         "integration"
       ]
+    },
+    {
+      "id": "AC-087",
+      "text": "安装包内容可验证：npm pack 产出的 tarball 必须包含 UI 资产（ui/** 与 docs/ui 入口页），且包含 bin/ 与 lib/；缺任一项即失败，并有测试断言文件清单而非固定字节数。",
+      "levels": [
+        "unit",
+        "contract"
+      ]
     }
   ],
   "tasks": [
@@ -2514,6 +2522,41 @@
       ],
       "test_levels": [
         "integration"
+      ]
+    },
+    {
+      "id": "T-044",
+      "title": "UI 资产随 npm 包分发",
+      "milestone": "M5",
+      "inputs": [
+        "package.json 的 files 字段",
+        "ui/**",
+        "docs/ui/cliworker-console.html"
+      ],
+      "outputs": [
+        "package.json files 增加 ui/**",
+        "scripts/check-package-contents.mjs",
+        "test/unit/package-contents.test.mjs"
+      ],
+      "depends_on": [
+        "T-024",
+        "T-025"
+      ],
+      "write_scope": [
+        "package.json",
+        "scripts/check-package-contents.mjs",
+        "test/unit/package-contents.test.mjs",
+        "docs/release-checklist.md"
+      ],
+      "acceptance": [
+        "AC-087"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-087"
+      ],
+      "test_levels": [
+        "unit",
+        "contract"
       ]
     }
   ]
