@@ -1,0 +1,13 @@
+{
+  "task": "T-037",
+  "milestone": "M3",
+  "entries": [
+    {
+      "files": [
+        "test/integration/discovery-rules.test.mjs"
+      ],
+      "status": "covered",
+      "ac": "AC-080"
+    }
+  ]
+}

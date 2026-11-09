@@ -1,0 +1,13 @@
+{
+  "task": "T-038",
+  "milestone": "M5",
+  "entries": [
+    {
+      "files": [
+        "test/integration/wsl-smoke-preflight.test.mjs"
+      ],
+      "status": "covered",
+      "ac": "AC-081"
+    }
+  ]
+}
