@@ -1,9 +1,8 @@
 {
-  "question": "T-043 有两项无法从现有文件确定：①没有既有 issues 响应字段/路由；若在 snapshot 增加问题列表，会违反 test/integration/ui-snapshot.test.mjs 的五字段精确断言和始终未接入提示断言，但该测试不在写域。请明确问题 API 字段及是否授权同步该测试的精确断言。②T-042 只提供真实版本和 command missing/non-zero exit/unparsable output，没有要求版本或比较规则；请明确‘版本不符’的判据与证据来源，不能将解析失败冒称版本不符。应如何继续？",
+  "question": "本轮七项裁决已落实，不再重问。仅发现一个实现写域缺口：lib/index.js 的 snapshotFailure 存在且 readSnapshot 抛错分支，直接 sendJson 返回 {models: [], forecast: [], source: 'unknown', at, last_error}，绕过获准修改的 snapshot.mjs。既有 ui-snapshot.test.mjs 已覆盖该分支；按新裁决 issues 永不省略，必须在这个兜底对象补 issues: []。lib/index.js 仍被明确禁止修改。是否授权仅在此对象增加 issues: []，并将 lib/index.js 加入 write_scope（其余逻辑及原五字段不变）？",
   "options": [
-    "暂停，待明确问题 API 字段、必要测试写域和版本不符判据后继续",
-    "授权在 snapshot 增加 issues 列表并修改 test/integration/ui-snapshot.test.mjs 的对应精确断言；另补充版本不符判据后继续",
-    "提供现有字段内的其他问题 API 接入方案及明确的版本不符证据规则后继续"
+    "授权 lib/index.js 仅为该 unknown 快照兜底对象补 issues: []，其余逻辑与原五字段保持不变",
+    "保持 lib/index.js 禁改，暂停等待进一步调整范围或明确兜底响应例外"
   ],
-  "default": "暂停，待明确问题 API 字段、必要测试写域和版本不符判据后继续"
+  "default": "保持 lib/index.js 禁改，暂停等待进一步调整范围或明确兜底响应例外"
 }

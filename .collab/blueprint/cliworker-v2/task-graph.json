@@ -2500,7 +2500,10 @@
         "test/integration/issues-from-probe.test.mjs",
         "ui/app.mjs",
         "ui/render.mjs",
-        "test/fixtures/ui/**"
+        "test/fixtures/ui/**",
+        "test/integration/ui-snapshot.test.mjs",
+        "lib/discovery/rules.mjs",
+        "test/fixtures/discovery/**"
       ],
       "acceptance": [
         "AC-086"

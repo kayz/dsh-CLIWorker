@@ -6,6 +6,8 @@ write_scope:
   - ui/app.mjs
   - ui/render.mjs
   - test/fixtures/ui/**
+  - test/integration/ui-snapshot.test.mjs
+  - lib/discovery/rules.mjs
 ---
 
 # Task 043 — AC-077 问题优先页接真实 CLI 问题源
@@ -14,39 +16,43 @@ write_scope:
 
 将 probe/discover 已持久化的实际观察投影为问题，并让问题首标签页展示 API 返回的同一批记录。无观察证据不能生成问题；成功观察不能生成失败问题。只接数据，不重做视觉。
 
-当前设计有致命待裁决项，见同目录 attention.json。下游须先取得裁决并更新本文件与 acceptance.md，再实现涉及待定接口和分类的部分；不能把本文视为新增字段、扩大写域或重定义“版本不符”的授权。
+本轮用户七项裁决替代上一轮的接口、版本及凭据待定内容：snapshot 仅新增 issues；每项严格为 id、kind、subject、detail、evidence_ref、at 六字段；版本比较只采用规则显式声明的 minVersion；凭据缺失只采用已配置引用的实际缺失结果。新增写域为 `test/integration/ui-snapshot.test.mjs` 与 `lib/discovery/rules.mjs`。
+
+另有一处已定位的范围阻塞：`lib/index.js` 在 snapshotFailure 存在且 readSnapshot 抛错时，直接返回五字段 unknown 快照，不经过 snapshot.mjs。本轮“issues 永不省略”的裁决也适用于这个现有响应；需要仅在该对象补 `issues: []`，但 lib/index.js 仍明确禁改。attention.json 仅申请此处最小授权，不重新询问已经裁决的七项内容。取得答复前不能规避该分支或声称接口已完整交付。
 
 T-042 的 `.collab/tasks/042/state.json` 当前为 merged，记录的合并提交为 `b5a39615fbec2900df573807b62c7bf545c9c253`。工作区已有 `lib/discovery/probe.mjs` 和 `test/integration/discovery-probe.test.mjs`，`lib/probe.mjs` 已保存版本失败的实际证据。本轮不是因依赖未合并阻塞。brief 未指定基准 commit SHA 或既有验收报告；上述 SHA 仅为依赖来源记录，不自行设为本任务比较基准。`.collab/tasks/042/impl.md` 和 `ci-results.json` 是历史交接及结果，不能代替本任务重跑验收。
 
 ## 约束
 
-1. 顶部 write_scope 严格沿用 brief，路径相对仓库根，`*` 匹配单段、`**` 匹配多段。设计轮仅创建本文件、acceptance.md，以及用户明确授权在致命歧义时创建的 attention.json。不执行 git，不创建脚本、日志或其他文件。不修改 brief、实现交接、审查、裁决、状态、运行文件或代码。
-2. 开发不得修改 `lib/cli.mjs`、`lib/routes.mjs`、`lib/context.mjs`、`lib/index.js`，也不得绕到范围外 HTTP 路由、schema、配置、索引、通用 helper 或旧测试中修补。若裁决扩大写域，必须先同步本文件 front matter；当前声明不包含待申请路径。
-3. 现有 `lib/http/routes.mjs` 没有 issues endpoint。真实管理入口仅通过 `lib/index.js` 调用 `readSnapshot` 发布 snapshot。现有 snapshot 字段为 models、forecast、source、at、last_error；不存在已约定的问题列表响应字段。`test/integration/ui-snapshot.test.mjs` 精确断言这五个字段，且始终断言“问题来源未接入”。新增问题响应会与这两类既有断言冲突，该测试又在本任务写域之外。不能偷偷新增响应字段、保持错误来源提示迎合测试、非枚举属性偷运数据、把问题塞入 models/forecast，或用另一个测试代替失败回归。attention.json 请求明确接口及必要测试授权。
-4. T-042 的版本观察区分 `command missing`、`non-zero exit`、`unparsable output`；这些不等于已安装版本不满足要求。规则表只有名称和版本命令参数，配置没有要求版本或范围。禁止发明最低版本、期望版本、比较配置、新错误码或把“无法解析”冒称“版本不符”。后者的含义、证据与分类映射必须由裁决明确。
-5. 沿用 15 秒 JSON 轮询，不引入 SSE、额外定时器或新 endpoint。只读请求不得执行 probe/discover、访问网络、读取认证材料或写入状态。生产问题来源不能读取 `.collab` 调度文件、UI fixture、个人目录或任意日志；任务状态仅供设计与依赖验收使用。
-6. 不放宽既有断言，不以 skip/todo/only、删除测试或忽略失败取得通过。`projectIssues(previous, records, filters)` 及 `renderIssuesHtml(issues, origin)` 已被单元测试使用，须保留其显式记录的合并、筛选、未闭环保留和安全渲染兼容性；旧 `test/fixtures/ui/issues.json` 是组件测试输入，不是生产数据源，不删除或改造它以躲避既有断言。
+1. 顶部 write_scope 为 brief 加本轮明确授权的两个文件；路径相对仓库根，`*` 匹配单段、`**` 匹配多段。设计轮只修改本文件、acceptance.md，以及存在范围阻塞时的 attention.json。不执行 git，不创建脚本、日志或其他文件，不修改代码或其他角色产物。用户所附 a6b4a51 增量通过直接读取当前 availability.mjs、discovery/probe.mjs 核对，不执行 git show，也不把它设为本任务验收基准。
+2. 开发仍不得修改 `lib/cli.mjs`、`lib/routes.mjs`、`lib/context.mjs`、`lib/index.js`。attention 所申请的最小 index.js 变更尚未授权，不能提前放入 write_scope。其他路由、schema、配置、索引、通用 helper、旧 unit 测试与 secrets 实现均保持范围外。
+3. `GET /cliworker/api/snapshot` 保留 models、forecast、source、at、last_error 的原有名称、类型、值语义及错误处理，仅新增一个顶层 issues。issues 永远是数组，无条目为 []，不得省略、null 或嵌入其他字段。所有正常、历史保留、stale 与 unknown 快照均遵守该要求；通用错误 envelope 不伪装成快照。不得通过非枚举属性、toJSON 特判或测试专用响应绕过精确字段检查。
+4. issues 每项严格只有 `{id: string, kind: "unavailable"|"version-mismatch"|"missing-credential", subject: string, detail: string, evidence_ref: string, at: ISO string}`。subject 为实际 CLI key，不是任务号或虚构角色；detail 为安全可读事实。evidence_ref 指向实际 probe/discover 记录，不含绝对路径或秘密，不承诺该指针是可点击 URL。不新增 schema、版本号、配置项、计数字段或其他问题字段。
+5. minVersion 只属于 `lib/discovery/rules.mjs` 的 CLI 规则，不进入 inventory/model/config schema。无声明时绝不产生 version-mismatch。不得凭空设定厂商最低版本；本轮未给任何生产最低版本值，未有依据的规则保持未声明。测试可以提供显式 minVersion 的隔离规则夹具，但不得因此为生产规则加入猜测值。
+6. 沿用 15 秒 JSON 轮询，不引入 SSE、新 endpoint 或额外轮询调度。GET 不执行 CLI 探测、不访问网络、不写业务状态；凭据存在性检查按本轮授权只使用现有 resolveSecret seam，必要的本机 secrets 后端读取不等于 CLI 探测。不得扫描个人目录、读取任意日志或将 `.collab` / UI fixture 用作生产问题来源。
+7. 不放宽、删除或跳过旧断言。授权修改 ui-snapshot.test.mjs 仅用于扩展 issues 覆盖：旧五字段及各字段内容的检查继续成立，新增单独的 issues 检查和完整六键精确检查。原来精确五键检查针对新增 issues 之外的其余字段执行，不能退化为只检查键数量或部分包含。其余鉴权、模型数据、脱敏、来源、轮询与失败保留检查不改语义。
+8. 旧 `projectIssues(previous, records, filters)` 与旧记录渲染仍须通过 unit 测试；它们的 task_id/role/count/unclosed 不是新 issues 的接口字段。新六字段数据单独投影和渲染，不能通过给生产条目添加旧字段取得兼容。旧 issues.json 保持组件 fixture 用途，不进入生产。
 
 ## 建议验收方向
 
-裁决明确接口、分类和版本判据后，按以下顺序实现；每一步只修改当时已授权的文件。
+已确定的实施规格如下；涉及 unknown 兜底响应的完整交付须先解除上述单点范围阻塞。
 
-1. `lib/http/issues-api.mjs` 承载实际证据到既有问题记录的投影；`lib/http/snapshot.mjs` 负责读取与发布。优先利用现有 `readProbeModels` 的严格读取结果及现有 inventory 读取/校验路径，不用目录里存在文件本身作为失败证据。模型的证据来自持久化 probe 记录，而非配置补出的 unknown/unverified 模型。inventory 使用 entry.evidence 的 probe 观察，不能拿 fingerprint、last_seen、recognized、version=null 或 auth.state=unknown 单独推断故障。
-2. 先建立证据资格，再分类。probe 必须有通过现有校验的 availability.evidence 和实际观测时间；不可用按记录的 availability.state/reason 与执行结果判定。版本预检失败保留其真实三类原因，不伪造版本比较；认证问题只能来自实际认证失败观察，例如 probe 的 blocked/auth，不从 secrets 配置缺省推断“凭据缺失”，也不把认证被拒武断缩窄为凭据不存在。分类字面值、认证问题文案和版本比较规则待裁决，不增加未约定字段或枚举。
-3. 复用既有 task_id、role、model、provider、severity、category/code、at、summary、raw_output、action、evidence、count、unclosed 等记录能力，不创造任务或角色。CLI 探测没有 task_id/role 时不得填入虚构任务或 dev/reviewer；缺失上下文按既有 unknown 渲染。时间取观察时间，不取轮询时间。摘要与建议须描述已观察到的事实，不能声称已经修复、拥有账号或完成版本升级。具体发布字段及缺值表示由接口裁决确定。
-4. 同一证据重复轮询不能增加 count；不同模型/provider 的问题不能因 task_id 缺失而被错误合并。生产投影基于当前有效状态，不把旧组件的未闭环保留机制当作探测历史数据库；修复后新一次成功观察须移除已失效的探测问题。GET 失败保留上次真实展示并明确 stale/unknown，成功读到无证据时问题列表为空。缓存损坏不能伪装成“无问题”。无来源与有来源但无失败均可为空，来源文案须据 API 如实区分，不能由浏览器补出条目。
-5. `ui/app.mjs` 在现有 session → snapshot 读取路径中消费获准的问题响应，并调用 `ui/render.mjs`。`ui/index.html` 不在写域；沿用现有 issues 容器与 issue-source 提示，可由 app 创建所需内容节点，保留默认问题标签、模型页及一次轮询调度。正常读取只替换对应 API 记录，后续轮询更新、失败时保留真实旧条目；不能从页面文本、静态 fixture 或模型名另造问题。UI 验收只核对字段来自 API、无伪造条目及既有轮询行为，不增加视觉断言。
-6. HTTP 投影先选取安全字段，再沿用已有脱敏；不向问题详情拷贝原始 stdout/stderr、认证配置、秘密、用户名或本机绝对路径。evidence 只展示已存在且安全的证据标识，不发明证据 HTTP 服务或 file URL。继续保留 HTML 转义及同源 HTTP 链接限制，原始持久证据不被改写。
-7. `test/integration/issues-from-probe.test.mjs` 使用 AC-086，复用现有 host-stub、受控 ctx/clock 与实际 `createPlugin` 入口，至少一组通过生产 discover/models probe 生成落盘证据，再经有会话的真实 snapshot 请求和实际 `startApp` 观察结果。不得以 deps.handlers 返回预制问题或仅直接调用投影函数证明接通。CLI 执行使用本地夹具，不访问真实服务；新增夹具只在 `test/fixtures/ui/**`，运行状态位于系统临时目录并 finally 清理。
-8. 新集成覆盖有证据的各项获准分类、无文件/空记录/仅配置模型/成功版本与成功调用均无问题、重复轮询不增计数、不同目标不误合并、失败修复后消失、损坏缓存不假空、读取失败 stale、公开标识保留及敏感哨兵不泄漏。版本比较分支在裁决前不能编造测试输入或期望。将实际 HTTP 返回的字段值与 DOM 文本逐项比较，空 API 结果断言无问题文章；确认旧 task-a/model-a/provider-a 静态样例未进入生产响应或页面。推进受控时钟 15000ms 后检查状态变化，GET 过程零额外 exec。
-9. acceptance.md 每个命令块独立建立前置条件并根据退出码、stdout 或文件状态判断；不得靠测试标题、内部函数名或行号判定。保留全 unit 回归。裁决授权后，旧 snapshot 测试只能同步明确获准的新字段及来源语义，并增加对应精确断言；认证、模型投影、脱敏、轮询与失败保留断言不得削弱。
+1. snapshot.mjs 严格读取 probes.json 和 inventory.json，issues-api.mjs 投影六字段问题。复用 readProbeModels 和已有 inventory 校验能力，不把配置补出的 unknown 模型或文件存在本身当作探测失败。每条问题须可回指实际记录；无可引用记录时不造问题。probe 指针以记录的模型 key/probe_id 定位，discover 指针以 CLI、平台及观察标识定位；使用不含本机路径的状态内相对指针。id 根据 kind、subject 和证据身份确定，重复 GET 稳定，不含轮询时间。at 为证据的 ISO 时间；凭据存在性为本轮 seam 的实际观察，可用本轮 ctx.clock 时间，但不能据此伪称探测记录刚刷新。
+2. unavailable：只投影实际 probe 的不可调用结果，或确有失败执行证据的 discover 观察。T-042 的 unverified 且 reason 为 `command missing`、`non-zero exit`、`unparsable output` 时仅可生成 unavailable，detail 保留相应真实原因。真实 timeout/unavailable、认证拒绝等不可调用结果可描述为不可用，但 auth 失败本身绝不生成 missing-credential。仅 state=unverified、无失败原因、仅 version=null、仅 auth=unknown 或配置里存在模型均不足以生成条目。discover 的 null version 无法单独区分缺命令与无法解析，不能从摘要还原不存在的原因；需要精确原因时以 probe 保存的 reason 为准。
+3. version-mismatch：实际 discover probe evidence 支持的有效 observed semver，关联同一 CLI 的规则显式有效 minVersion，且 observed 严格低于 minVersion 才生成。按语义化版本优先级比较 major/minor/patch 及 prerelease，忽略 build metadata，禁止字符串字典序；相等、较高、规则无 minVersion、版本缺失或无法解析均不产生此类问题。detail 必须同时明确标出 observed 与 minVersion 的实际值，evidence_ref 必须定位观察记录；两字段合起来同时支持本轮要求的版本证据。最低值不能从另一 CLI 或模型价格/等级推导。非法规则声明属于规则错误，不能当作已发生版本不符。
+4. missing-credential：存在可引用的 probe/discover 模型或 CLI 记录，模型有 provider，并且 `Object.hasOwn(config.secrets, provider)` 明确配置了引用时，才调用现有 resolveSecret(ctx, config, provider)。仅 seam 正常返回 null/空值表示所引用秘密确实缺失时生成；没有任何 secret 配置时不调用默认 keychain 回退，也不生成问题。secret 已存在、仅认证失败、provider 缺失均不生成此类。后端抛 E_SECRET_BACKEND 或配置无效不是秘密缺失，保持既有读取失败/stale 语义；不能吞为 null。每轮同 provider 最多解析一次，值不缓存到问题对象、不写日志、不出现在 detail/evidence_ref/id；不得复制 ref 中的环境变量名、keychain 条目名或秘密值到公开响应。
+5. 同一证据同 kind/subject 去重，不增加 count 字段；同 CLI 的多个模型不得重复列出同一凭据事实，不同 CLI 不误合并。不同种类的独立事实可以共存。每次成功读取基于当前证据重建，修复后对应问题消失；读取失败保留真实旧视图并标 stale，不将坏缓存报告为一次成功的 []。缺文件且没有可引用证据的正常读取返回 issues: []。不引入生产问题历史库。
+6. app.mjs 只消费 snapshot.issues，沿用 session → snapshot 与 15s 调度，调用 render.mjs 的六字段渲染分支；旧显式记录渲染分支保留供既有组件使用。无 issues 时明确展示“暂无有证据的问题”，不能伪造文章；失败时保留上次条目及 stale 提示。无 probe 来源时仍如实提示“问题来源未接入”，同时展示空状态，以保持旧无证据场景的来源断言；有探测证据时明确已接入，不把空列表当作健康保证。ui/index.html 不在写域，静态加载外壳保持原样，app 在现有容器内更新内容。
+7. 所有字符串选取安全事实后脱敏并转义；reason 不能直接复用现有只接收无空格 identifier 的过滤器而丢失 `command missing` 等合法原因。禁止把原始 stdout/stderr、用户名、秘密、本机绝对路径拷贝进新字段。evidence_ref 按文本展示，不发明证据 HTTP 服务或 file URL；旧渲染的同源链接限制继续成立。
+8. 新 integration 使用 AC-086、本地夹具、受控 ctx/clock、host-stub、真实 createPlugin/session/snapshot 和实际 startApp。至少一组生产 discover/models probe 写出证据，再读取 API 与 DOM，不允许 deps.handlers 预制问题取代生产链路。minVersion 测试可在隔离进程以授权 fixture 提供规则声明；测试专用规则不能写回生产文件或扩成用户配置/HTTP 参数。模块内投影逻辑接受规则输入也可作为比较边界补充测试，但不能代替真实入口覆盖。运行状态位于系统临时目录并 finally 清理。
+9. 扩展 ui-snapshot.test.mjs 覆盖正常、已有快照保留、无历史且读缓存失败的 unknown 响应均包含 issues 数组。最后一种场景目前由 index.js 构造五键对象，是 attention 所指的必改路径。不得通过 snapshot.mjs 吞掉坏 usage/probe 缓存、修改 source/last_error 或删除旧断言使其绕开。保留全部旧单元回归，具体命令与观察结果见 acceptance.md。
 
 ## 非目标
 
-不重做页面视觉，不做 SSE、版本要求配置、认证协议、真实网络探测、问题文件格式、自动任务发现、跨重启问题历史、解决按钮或证据文件服务。不宣称本任务完成 Blueprint 中完整 CLI 任务自报、角色筛选交互或自动闭环能力。
+不重做视觉，不做 SSE、用户版本要求配置、认证协议、真实网络探测、问题持久文件、自动任务发现、跨重启历史、解决按钮或证据 HTTP 服务。不把规则 minVersion 扩展为生产探测命令或新 availability 状态；不宣称完成完整 CLI 任务自报与自动闭环能力。当前 availability 增量保持已知 CLI 仅版本成功仍 unverified、未知包装器兼容行为，不为此修改范围外代码或旧断言。
 
 ## 验收格式
 
-仅使用 brief 指定的 AC-086 二级标题，将依赖、集成、回归、格式检查放在同一小节；每条命令成功后才输出 `AC-086 OK`。存在 attention.json 待决项时，即使依赖或格式命令通过，也不得宣称功能验收通过或开始猜测实现。
+仅使用 brief 指定的 AC-086 二级标题，将依赖、集成、回归、格式检查放在同一小节；每条命令成功后才输出 `AC-086 OK`。前轮七项裁决已纳入；当前 attention 仅指 unknown 兜底路径的 index.js 最小写域，不能将其解释为允许猜测修改。局部通过不代表完整功能通过。
 
 本设计轮仅运行无落盘的 acceptance 格式检查及 UTF-8/front matter 核对。`scripts/check-fast.ps1` 会遍历其他检查器、运行测试并可能调用 git 和生成报告，与本轮禁止 git、禁止其他文件冲突，因此本轮不运行。获准实施验收的阶段仍须执行该脚本并如实记录结果；本设计不豁免回归失败，也不将未执行检查写为通过。

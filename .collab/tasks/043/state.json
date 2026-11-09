@@ -11,16 +11,41 @@
       "from": "draft",
       "to": "designed",
       "by": "design:gpt-6.1-sol"
+    },
+    {
+      "at": "2026-11-09T05:42:25.348Z",
+      "from": "designed",
+      "to": "blocked",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-09T05:44:51.354Z",
+      "from": "blocked",
+      "to": "designed",
+      "by": "resume"
+    },
+    {
+      "at": "2026-11-09T05:44:51.362Z",
+      "from": "designed",
+      "to": "draft",
+      "by": "input"
+    },
+    {
+      "at": "2026-11-09T05:48:51.758Z",
+      "from": "draft",
+      "to": "designed",
+      "by": "design:gpt-6.1-sol"
     }
   ],
   "status": "designed",
-  "updated_at": "2026-11-09T05:42:24.860Z",
+  "updated_at": "2026-11-09T05:48:51.758Z",
   "role": "design",
   "model": "gpt-6.1-sol",
   "model_resolved": "gpt-6.1-sol",
   "effort": "high",
-  "attempt": 1,
+  "attempt": 2,
   "switches": 0,
   "blocked_reason": null,
-  "handoff": null
+  "handoff": null,
+  "interrupted": null
 }
