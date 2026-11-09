@@ -45,7 +45,9 @@ test('[AC-086] actual probes reach the guarded snapshot and page, then clear', a
       await probeModels(config, { ctx })
       const before = executions, data = await read(), again = await read()
       assert.equal(executions, before)
-      assert.deepEqual(Object.keys(data).sort(), ['at', 'forecast', 'issues', 'last_error', 'models', 'source'])
+      assert.deepEqual(Object.keys(data).sort(), ['at', 'config', 'forecast', 'issues', 'last_error', 'models', 'source'])
+      assert.deepEqual(Object.keys(data).filter(key => key !== 'config' && key !== 'issues').sort(), ['at', 'forecast', 'last_error', 'models', 'source'])
+      assert.equal(data.config.path, configFile)
       assert.equal(data.issues.length, 1)
       const issue = data.issues[0]
       assert.deepEqual(Object.keys(issue).sort(), ['at', 'detail', 'evidence_ref', 'id', 'kind', 'subject'])
@@ -188,7 +190,9 @@ test('[AC-086] snapshot checks configured credentials per provider and retains t
       if (ref.startsWith('session:')) secretAction(ctx, config, 'claude', 'set', 'sentinel-secret-value')
       if (ref.startsWith('keychain:')) backend = 'present'
       assert.deepEqual(credential(await read()), [])
-      assert.doesNotMatch(JSON.stringify(missing), /PRIVATE_|sentinel-secret-value|cw-private-person/)
+      assert.equal(missing.config.path, file)
+      const sanitized = structuredClone(missing); delete sanitized.config.path
+      assert.doesNotMatch(JSON.stringify(sanitized), /PRIVATE_|sentinel-secret-value|cw-private-person/)
     }
     backend = 'missing'
     const elements = new Map()
@@ -238,6 +242,7 @@ test('[AC-086] discover failure evidence reaches the snapshot', async () => {
     assert.equal(count, before); assert.equal(issues.length, 1); assert.equal(issues[0].kind, 'unavailable')
     assert.equal(issues[0].subject, 'claude'); assert.equal(issues[0].detail, 'non-zero exit')
     assert.ok(issues[0].evidence_ref.includes(inventory.entries[0].evidence[0].digest))
-    assert.doesNotMatch(response.body, /secret output|cw-discover-/)
+    const sanitized = JSON.parse(response.body); assert.equal(sanitized.config.path, file); delete sanitized.config.path
+    assert.doesNotMatch(JSON.stringify(sanitized), /secret output|cw-discover-/)
   } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })

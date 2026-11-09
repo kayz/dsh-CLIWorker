@@ -184,8 +184,9 @@ test('[AC-063] actual snapshot has evidence and retains prior values after a fai
     const read = async () => await host.request('/cliworker/api/snapshot', { headers })
     const first = await read(), data = JSON.parse(first.body)
     assert.equal(first.statusCode, 200)
-    assert.deepEqual(Object.keys(data).sort(), ['at', 'forecast', 'issues', 'last_error', 'models', 'source'])
-    assert.deepEqual(Object.keys(data).filter(key => key !== 'issues').sort(), ['at', 'forecast', 'last_error', 'models', 'source'])
+    assert.deepEqual(Object.keys(data).sort(), ['at', 'config', 'forecast', 'issues', 'last_error', 'models', 'source'])
+    assert.deepEqual(Object.keys(data).filter(key => key !== 'issues' && key !== 'config').sort(), ['at', 'forecast', 'last_error', 'models', 'source'])
+    assert.equal(data.config.path, configPath)
     assert.deepEqual(data.issues, [])
     assert.equal(data.models.length, 1)
     assert.equal(data.models[0].key, MODEL_KEY)
@@ -208,7 +209,8 @@ test('[AC-063] actual snapshot has evidence and retains prior values after a fai
     assert.ok(data.source)
     assert.equal(data.at, '2026-11-07T10:05:00.000Z')
     assert.equal(data.last_error, null)
-    assert.doesNotMatch(first.body, /sk-testtoken123|realperson|C:\\\\Users/)
+    const sanitized = structuredClone(data); delete sanitized.config.path
+    assert.doesNotMatch(JSON.stringify(sanitized), /sk-testtoken123|realperson|C:\\\\Users/)
     assert.equal(first.body.includes(auth.session), false)
     assert.equal(first.body.includes(auth.csrf), false)
     const created = JSON.parse((await host.request('/cliworker/api/read-usage', { method: 'POST', headers, body: {} })).body)
@@ -232,7 +234,9 @@ test('[AC-063] actual snapshot has evidence and retains prior values after a fai
     assert.equal(deniedResponse.statusCode, 403)
     assert.equal(JSON.parse(deniedResponse.body).error.code, 'E_ADMIN_REQUIRED')
     const pageResponse = await host.request('/cliworker/ui')
-    for (const body of [failureResponse.body, jobResponse.body, deniedResponse.body, pageResponse.body]) {
+    assert.equal(failure.config.path, configPath)
+    const sanitizedFailure = structuredClone(failure); delete sanitizedFailure.config.path
+    for (const body of [JSON.stringify(sanitizedFailure), jobResponse.body, deniedResponse.body, pageResponse.body]) {
       assert.doesNotMatch(body, /sk-testtoken123|realperson|C:\\\\Users/)
       assert.equal(body.includes(auth.session), false)
       assert.equal(body.includes(auth.csrf), false)

@@ -1,4 +1,4 @@
-import { renderIssuesHtml, renderModelsHtml } from './render.mjs'
+import { renderConfigHtml, renderIssuesHtml, renderModelsHtml } from './render.mjs'
 
 export function startApp({ document, fetch, setTimeout, now = () => Date.now() }) {
   let credentials, pendingSession, pendingRead, snapshot, timer
@@ -7,6 +7,9 @@ export function startApp({ document, fetch, setTimeout, now = () => Date.now() }
   const issueSource = document.getElementById('issue-source')
   const issueList = document.createElement?.('div')
   if (issueList) document.getElementById('issues').appendChild(issueList)
+  const main = document.querySelector?.('main')
+  const configSection = main && document.createElement?.('section')
+  if (configSection) { configSection.id = 'config'; main.appendChild(configSection) }
   function selectTab(name) {
     for (const tab of ['issues', 'models']) {
       const panel = document.getElementById(tab), button = document.getElementById(`${tab}-tab`)
@@ -39,7 +42,7 @@ export function startApp({ document, fetch, setTimeout, now = () => Date.now() }
   async function read() {
     if (pendingRead) return pendingRead
     pendingRead = (async () => {
-      try { snapshot = await request('/cliworker/api/snapshot'); status.textContent = snapshot.last_error ? `stale：${snapshot.last_error}；${snapshot.at || 'unknown'}` : '已更新'; list.innerHTML = renderModelsHtml(snapshot, now()); if (issueList) issueList.innerHTML = renderIssuesHtml(snapshot.issues || []); setIssueSource(snapshot) }
+      try { snapshot = await request('/cliworker/api/snapshot'); status.textContent = snapshot.last_error ? `stale：${snapshot.last_error}；${snapshot.at || 'unknown'}` : '已更新'; list.innerHTML = renderModelsHtml(snapshot, now()); if (issueList) issueList.innerHTML = renderIssuesHtml(snapshot.issues || []); if (configSection) configSection.innerHTML = renderConfigHtml(snapshot); setIssueSource(snapshot) }
       catch { status.textContent = `stale：读取失败；${new Date(now()).toISOString()}`; setIssueSource(snapshot, '读取失败'); if (snapshot) list.innerHTML = renderModelsHtml({ ...snapshot, last_error: '读取失败' }, now()) }
     })().finally(() => { pendingRead = null })
     return pendingRead
