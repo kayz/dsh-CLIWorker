@@ -2503,7 +2503,8 @@
         "test/fixtures/ui/**",
         "test/integration/ui-snapshot.test.mjs",
         "lib/discovery/rules.mjs",
-        "test/fixtures/discovery/**"
+        "test/fixtures/discovery/**",
+        "lib/index.js"
       ],
       "acceptance": [
         "AC-086"

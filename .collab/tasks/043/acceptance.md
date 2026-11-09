@@ -2,7 +2,7 @@
 
 所有命令在仓库根、PowerShell 7 中独立执行。每个 pwsh 块是一条完整命令，原生命令失败时立即非零退出，不打印成功哨兵。多步骤验收由调度器将块内容作为其已有临时 ps1 执行，不在仓库新增脚本。设计轮仅执行最后的格式自检；其余命令供获准实施验收的阶段执行。
 
-本轮七项裁决已纳入下列精确判据，新增授权的旧 UI 测试与规则文件已进入 design.md 的 write_scope。当前仅余一处范围阻塞：lib/index.js 的无历史且缓存读取失败分支直接返回五键 unknown 快照，必须补 issues: [] 才能满足“永不省略”，该文件仍禁改。attention.json 仅申请这一个最小修改；不能用局部通过关闭任务或规避此分支。
+七项裁决及本轮 index.js 窄授权均已纳入 design.md 的 write_scope。lib/index.js 只允许在既有 snapshotFailure 的 unknown fallback 对象添加字面量 issues: []，原五字段与其他逻辑不变；快照失败不生成 per-CLI 错误条目。此前 attention 的阻塞已解除，不需重复确认或修改历史 attention 文件。
 
 brief 未提供基准 commit SHA 或既有验收报告。T-042 状态文件记录 merged 和提交 `b5a39615fbec2900df573807b62c7bf545c9c253`，仅用于依赖溯源；历史 `.collab/tasks/042/impl.md` 与 `.collab/tasks/042/ci-results.json` 不代表本任务通过，不覆盖新一轮测试结果。
 
@@ -61,7 +61,42 @@ Write-Output 'AC-086 OK'
 
 期望输出：退出码 0，stdout 含 `AC-086 OK`，全 unit 与既有 UI 集成无失败。旧问题组件合并、过滤、未闭环保留和证据链接限制继续成立，新六字段问题不附加旧字段。模型快照、鉴权、模型证据脱敏、轮询和失败保留的所有既有断言仍成立。
 
-授权的旧 UI 测试只扩展 issues：在除 issues 外的其余字段上保留五键精确检查及原有字段值检查，另加完整六键检查、issues 数组及六字段条目检查，不退化为包含检查。原无证据场景的来源未接入断言继续成立，同时新增显式空状态断言；不能删改旧断言去掩盖接线错误。额外检查正常、失败保留旧快照及无历史坏缓存的 unknown 响应均有 issues；unknown 保持原 source='unknown'、last_error='E_CONFIG'，仅增加 issues: []。这个分支的实现授权是当前唯一 attention 项，未解决时必须如实判为未完成。
+授权的旧 UI 测试只扩展 issues：在除 issues 外的其余字段上保留五键精确检查及原有字段值检查，另加完整六键检查、issues 数组及六字段条目检查，不退化为包含检查。原无证据场景的来源未接入断言继续成立，同时新增显式空状态断言；不能删改旧断言去掩盖接线错误。正常、失败保留旧快照及无历史坏缓存的 unknown 响应均有 issues；fallback 原有 source='unknown'、last_error='E_CONFIG' 等断言原样保留并通过，新断言要求 issues 精确为 []，不能含快照错误详情。既有失败保留场景中的原模型值、原观测时间及 last_error 检查保持。
+
+按用户指定顺序，在完成上述集成后执行回归块中的全 unit 命令，再依次执行下面三条命令；各块独立判定结果，不依赖其他块生成的临时文件。
+
+AC-086 标准 runner 命令：
+
+```pwsh
+$ErrorActionPreference = 'Stop'
+node scripts/run-tests.mjs --ac AC-086
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+Write-Output 'AC-086 OK'
+```
+
+期望输出：退出码 0，stdout 含 `AC-086 OK`；标准 runner 找到并实际执行 AC-086 对应测试，运行结果无失败，不能以未发现用例、空测试或 skip/todo 替代覆盖。此命令生成的报告由获准的下游验收环境管理，不由 design 轮生成。
+
+完整检查命令：
+
+```pwsh
+$ErrorActionPreference = 'Stop'
+node scripts/check-fast.mjs
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+Write-Output 'AC-086 OK'
+```
+
+期望输出：退出码 0，stdout 含 `check-fast: ok` 和 `AC-086 OK`；格式、现有检查器和最终测试全部通过。不得注入替代检查目录或测试脚本绕过真实门禁。check-fast.ps1 转发至同一脚本，本次按用户明确要求直接执行 mjs，不重复运行包装。
+
+追踪检查命令：
+
+```pwsh
+$ErrorActionPreference = 'Stop'
+node scripts/check-traceability.mjs
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+Write-Output 'AC-086 OK'
+```
+
+期望输出：退出码 0，stdout 含 `check-traceability: ok` 和 `AC-086 OK`，现有索引与追踪关系通过检查。若失败须如实报告，不能修改范围外索引、追踪分片或检查器迎合结果。全部功能及门禁通过后，下游依用户授权提交到 task/043；本设计轮不执行 git，也不将提交要求转换为额外产品验收编号。
 
 格式自检命令：
 
@@ -72,4 +107,4 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Output 'AC-086 OK'
 ```
 
-期望输出：退出码 0，stdout 含 `acs=1 commands=4`、`warnings=0` 和 `AC-086 OK`。这只证明格式可供 runner 解析，不证明功能、回归或 unknown 兜底路径通过。设计阶段不运行会调用 git 或产生其他文件的 check-fast；获准实施验收的阶段仍须执行 scripts/check-fast.ps1 并记录真实退出结果，不豁免任何失败。
+期望输出：退出码 0，stdout 含 `acs=1 commands=7`、`warnings=0` 和 `AC-086 OK`。这只证明格式可供 runner 解析，不证明功能、回归或 unknown 兜底路径通过。设计阶段仅执行此格式自检及无落盘文档核对；指定产品检查与提交由下游实施阶段完成并记录真实结果，不豁免任何失败。

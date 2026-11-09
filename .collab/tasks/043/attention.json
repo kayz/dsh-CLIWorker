@@ -1,8 +1,0 @@
-{
-  "question": "本轮七项裁决已落实，不再重问。仅发现一个实现写域缺口：lib/index.js 的 snapshotFailure 存在且 readSnapshot 抛错分支，直接 sendJson 返回 {models: [], forecast: [], source: 'unknown', at, last_error}，绕过获准修改的 snapshot.mjs。既有 ui-snapshot.test.mjs 已覆盖该分支；按新裁决 issues 永不省略，必须在这个兜底对象补 issues: []。lib/index.js 仍被明确禁止修改。是否授权仅在此对象增加 issues: []，并将 lib/index.js 加入 write_scope（其余逻辑及原五字段不变）？",
-  "options": [
-    "授权 lib/index.js 仅为该 unknown 快照兜底对象补 issues: []，其余逻辑与原五字段保持不变",
-    "保持 lib/index.js 禁改，暂停等待进一步调整范围或明确兜底响应例外"
-  ],
-  "default": "保持 lib/index.js 禁改，暂停等待进一步调整范围或明确兜底响应例外"
-}
