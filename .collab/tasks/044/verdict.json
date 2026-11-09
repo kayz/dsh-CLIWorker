@@ -1,0 +1,24 @@
+{
+  "task": "044",
+  "verdict": "pass",
+  "sha": "7f986fab8e863bb209d4e2c3a2bfe3002158e14e",
+  "passed": 1,
+  "total": 1,
+  "findings": [],
+  "results": [
+    {
+      "id": "AC-087",
+      "passed": true,
+      "evidence": [
+        "ci-results.json: AC-087 passed=true exitCode=0 lastLine='AC-087 OK' (ranAt 2026-11-09T15:38:02+08:00)",
+        "package.json:37-38 appends ui/** and docs/ui/cliworker-console.html; all old files entries retained",
+        "scripts/check-package-contents.mjs:17-21 npm pack --dry-run --json --ignore-scripts, offline, timeout/maxBuffer/windowsHide",
+        "scripts/check-package-contents.mjs:61-73 prefix + per-file + exact HTML assertions, no counts/bytes; :101 sentinel only on zero errors; :104 main guarded",
+        "test/unit/package-contents.test.mjs:17,27,51 three [AC-087] tests, no skip/todo/only; negative copies for no-ui, no-html, no-bin, no-lib; npm-failure seam cases",
+        "docs/release-checklist.md: package contents check section with command, AC-087 OK, offline/no-scripts/no-publish, four asset classes, rerun guidance",
+        "scripts/check-pack.mjs:27 forbidden prefixes do not cover ui/ or docs/; ui assets contain no .jsonl/.local.json"
+      ]
+    }
+  ],
+  "notes": "ci-results.json holds only a merged AC-087 result (likely the first production command). The remaining blocks (independent counterexample, node --test, check-fast.ps1) were verified statically only; check-fast.ps1 was not run per impl.md and remains a downstream release gate."
+}
