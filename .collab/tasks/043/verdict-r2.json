@@ -1,0 +1,41 @@
+{
+  "task": "043",
+  "round": 2,
+  "verdict": "pass",
+  "git_sha": "e1f6ca6",
+  "passed": 1,
+  "total": 1,
+  "criteria": [
+    {
+      "id": "AC-086",
+      "passed": true,
+      "evidence": [
+        "ci-results.json: passed=true exitCode=0, output covers only the dependency command (discovery-probe 9/9 + AC-086 OK); remaining commands verified independently read-only",
+        "node --test issues-from-probe + ui-snapshot: 15 pass, 0 fail, 0 skipped",
+        "node --test test/unit/*.test.mjs: 535 pass, 0 fail",
+        "node scripts/run-tests.mjs --ac AC-086: 6 pass, 0 fail",
+        "node scripts/check-traceability.mjs: ok (covered=79 planned=3)",
+        "node scripts/check-acceptance.mjs: acs=1 commands=7 warnings=0",
+        "check-fast non-git steps (ci, contract-doc, defects, docs, frozen-files, generated-fresh, golden-frozen, no-collab, no-model-table, pack, seams, test-discovery, unused): all ok; check-scope-visible and check-write-scope need git and were not run",
+        "lib/index.js:153 adds only issues: [] to the unknown fallback; lib/http/snapshot.mjs:50-54 returns six top-level keys; lib/discovery/rules.mjs has no production minVersion",
+        "r1 P1-1 fixed: snapshot.mjs:50-52 appends ', discover' to source; ui/app.mjs:20 shows 已接入; test issues-from-probe.test.mjs:212",
+        "r1 P1-2 fixed: issues-from-probe.test.mjs:137 covers env/session/keychain missing/present, no-secrets no keychain read, multi-model and multi-CLI dedupe, E_SECRET_BACKEND stale retention, sentinels, escaping"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "severity": "P2",
+      "file": "lib/http/issues-api.mjs",
+      "line": 1,
+      "summary": "Header comment still says no production issue source is defined; contradicts projectProbeIssues (non-blocking, carried over from round 1)"
+    },
+    {
+      "severity": "P2",
+      "file": "lib/http/issues-api.mjs",
+      "line": 62,
+      "summary": "blocked/auth -> unavailable has no dedicated assertion; only indirectly covered by the secrets tests (non-blocking)"
+    }
+  ],
+  "notes": "No git commands were run in this round. check-fast.mjs as a whole was not run because check-scope-visible/check-write-scope call git; its other steps were run individually and all passed. ci-results.json still only evidences the first of the 7 AC-086 commands."
+}
