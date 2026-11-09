@@ -108,7 +108,7 @@ export function validateIndex(index) {
 
   const expected = expectedAcs()
   const got = index.acs.map((entry) => (entry && typeof entry === 'object' ? entry.ac : undefined))
-  const extended = [...expected, 'AC-079', 'AC-080', 'AC-081', 'AC-082', 'AC-083', 'AC-084', 'AC-085', 'AC-086', 'AC-087', 'AC-088', 'AC-089', 'AC-090']
+  const extended = [...expected, 'AC-079', 'AC-080', 'AC-081', 'AC-082', 'AC-083', 'AC-084', 'AC-085', 'AC-086', 'AC-087', 'AC-088', 'AC-089', 'AC-090', 'AC-091']
   const inOrder = [expected, extended].some((list) => got.length === list.length && got.every((ac, i) => ac === list[i]))
   if (!inOrder) {
     const seen = new Set()

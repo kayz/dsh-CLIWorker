@@ -667,6 +667,14 @@
       "levels": [
         "integration"
       ]
+    },
+    {
+      "id": "AC-091",
+      "text": "插件页面永不整体阻断：无论快照失败、字段缺失还是空数据，都渲染包含标题、分区（模型/问题/配置）与刷新操作的基础骨架；错误只在所属分区内联显示并附下一步提示，不得用整页错误替换界面。",
+      "levels": [
+        "unit",
+        "integration"
+      ]
     }
   ],
   "tasks": [
@@ -2683,6 +2691,38 @@
         "node scripts/run-tests.mjs --ac AC-090"
       ],
       "test_levels": [
+        "integration"
+      ]
+    },
+    {
+      "id": "T-048",
+      "title": "界面永不阻断：数据失败时也渲染基础骨架与分区错误",
+      "milestone": "M5",
+      "inputs": [
+        "T-046 的 DSH 客户端页面",
+        "T-047 的配置摘要与渲染器"
+      ],
+      "outputs": [
+        "lib/client.js 分区渲染",
+        "test/unit/client-shell.test.mjs"
+      ],
+      "depends_on": [
+        "T-046",
+        "T-047"
+      ],
+      "write_scope": [
+        "lib/client.js",
+        "test/unit/client-shell.test.mjs",
+        "docs/release-checklist.md"
+      ],
+      "acceptance": [
+        "AC-091"
+      ],
+      "acceptance_direction": [
+        "node scripts/run-tests.mjs --ac AC-091"
+      ],
+      "test_levels": [
+        "unit",
         "integration"
       ]
     }
